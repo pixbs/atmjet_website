@@ -9,7 +9,7 @@ export function KeyFeaturesSection() {
 
 	return (
 		<section className='bg-gray-150 overflow-hidden'>
-			<div className="container mx-auto px-4">
+			<div className="container mx-auto px-4 gap-4">
 				<h2>{t('title')}</h2>
 				<p className="mb-8">{t('description')}</p>
 				<EmblaCarouselWrapper>
