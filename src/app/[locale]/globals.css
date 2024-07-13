@@ -3,9 +3,7 @@
 @tailwind utilities;
 
 :root {
-	--foreground-rgb: 0, 0, 0;
-	--background-start-rgb: 214, 219, 220;
-	--background-end-rgb: 255, 255, 255;
+	@apply bg-gray-100 text-gray-600;
 }
 
 * {
@@ -14,6 +12,10 @@
 
 section {
 	@apply flex justify-center relative flex-col items-center my-10;
+}
+
+h1, h2, h3, h4 {
+	@apply font-serif text-gray-900;
 }
 
 h1 {
@@ -33,15 +35,7 @@ h4 {
 }
 
 .container {
-	@apply flex max-w-screen-xl flex-col px-6;
-}
-
-@media (prefers-color-scheme: dark) {
-	:root {
-		--foreground-rgb: 255, 255, 255;
-		--background-start-rgb: 0, 0, 0;
-		--background-end-rgb: 0, 0, 0;
-	}
+	@apply flex max-w-md flex-col px-6;
 }
 
 body {
@@ -55,3 +49,12 @@ body {
 		text-wrap: balance;
 	}
 }
+
+@font-face {
+	font-family: "TARegressoPROEasyRegular";
+	src: url('/fonts/TARegressoPROEasyRegular/font.woff2') format('woff2'), 
+		 url('/fonts/TARegressoPROEasyRegular/font.woff') format('woff');
+	font-weight: normal;
+	font-style: normal;
+  }
+  
