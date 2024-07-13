@@ -4,7 +4,7 @@ export function WhyUsSection() {
 	const t = useTranslations('why_us')
 	return (
 		<section>
-			<div className="container flex-row">
+			<div className="container">
 				<h2>{t('title')}</h2>
 				<div>
 					<Card

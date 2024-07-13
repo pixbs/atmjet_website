@@ -32,6 +32,10 @@ h4 {
 	@apply text-xl 
 }
 
+.container {
+	@apply flex max-w-screen-xl flex-col px-6;
+}
+
 @media (prefers-color-scheme: dark) {
 	:root {
 		--foreground-rgb: 255, 255, 255;
@@ -49,11 +53,5 @@ body {
 @layer utilities {
 	.text-balance {
 		text-wrap: balance;
-	}
-}
-
-@layer components {
-	.container {
-		@apply flex max-w-screen-xl flex-col;
 	}
 }
