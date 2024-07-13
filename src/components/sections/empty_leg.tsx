@@ -5,12 +5,12 @@ export function EmptyLegSection() {
 	const cards = ['card1', 'card2', 'card3', 'card4']
 	return (
 		<section className="bg-gray-150">
-			<div className="container pt-10 gap-8 py-10">
-				<div className='gap-4'>
+			<div className="container gap-8 py-10 pt-10">
+				<div className="gap-4">
 					<h2>{t('title')}</h2>
 					<p>{t('description')}</p>
 				</div>
-				<div className='gap-4'>
+				<div className="gap-4">
 					{cards.map((card, index) => (
 						<Card
 							date={t(`${card}.date`)}
@@ -27,10 +27,10 @@ export function EmptyLegSection() {
 							key={index.toString()}
 						/>
 					))}
-					<div className='card gap-4 p-6 mt-4 bg-gradient-to-b from-gray-200 from-15% to-[#14323D] border-0 items-start'>
+					<div className="card mt-4 items-start gap-4 border-0 bg-gradient-to-b from-gray-200 from-15% to-[#14323D] p-6">
 						<h3>{t('telegram.title')}</h3>
-						<p className='text-gray-900'>{t('telegram.description')}</p>
-						<button className='bg-blue-500 text-gray-900 mt-2'>{t('telegram.button')}</button>
+						<p className="text-gray-900">{t('telegram.description')}</p>
+						<button className="mt-2 bg-blue-500 text-gray-900">{t('telegram.button')}</button>
 					</div>
 				</div>
 			</div>
@@ -68,15 +68,17 @@ function Card(props: CardProps) {
 	} = props
 
 	return (
-		<div className="card bg-gray-100 gap-3 p-6">
+		<div className="card gap-3 bg-gray-100 p-6">
 			<div className="flex-row justify-between">
-				<p className='text-sm'>{date}</p>
+				<p className="text-sm">{date}</p>
 				<button>inquire</button>
 			</div>
-			<div className="flex-row gap-2 items-start">
-				<h3 className='text-3xl font-sans font-black'>{price}</h3>
-				<p className='text-xs line-through'>{initalPrice}</p>
-				<p className='text-xs px-1 bg-red-500 rounded-lg text-gray-900 font-bold'>{discountPercent}</p>
+			<div className="flex-row items-start gap-2">
+				<h3 className="font-sans text-3xl font-black">{price}</h3>
+				<p className="text-xs line-through">{initalPrice}</p>
+				<p className="rounded-lg bg-red-500 px-1 text-xs font-bold text-gray-900">
+					{discountPercent}
+				</p>
 			</div>
 			<div className="flex-row">
 				<p>
