@@ -3,11 +3,17 @@
 @tailwind utilities;
 
 :root {
+	font-size: 18px;
 	@apply bg-gray-100 text-gray-600;
 }
 
 * {
 	box-sizing: border-box;
+	margin: 0;
+}
+
+div {
+	@apply flex flex-col;
 }
 
 section {
@@ -35,7 +41,11 @@ h4 {
 }
 
 .container {
-	@apply flex max-w-md flex-col px-6;
+	@apply flex max-w-lg flex-col px-6;
+}
+
+.card {
+	@apply bg-gray-150 rounded-3xl border border-gray-400;
 }
 
 body {
