@@ -8,12 +8,12 @@ const config: Config = {
 	],
 	theme: {
 		fontFamily: {
-			'sans': ['Inter', 'sans-serif'],
-			'serif': ['TARegressoPROEasyRegular', 'serif']
+			sans: ['Inter', 'sans-serif'],
+			serif: ['TARegressoPROEasyRegular', 'serif'],
 		},
 		extend: {
 			colors: {
-				'gray': {
+				gray: {
 					100: '#1A1A1A',
 					150: '#171614',
 					200: '#1E1E1E',
@@ -23,10 +23,10 @@ const config: Config = {
 					600: '#A2ABAD',
 					700: '#C0C9CB',
 					800: '#F0F1F6',
-					900: '#FFFFFF'
+					900: '#FFFFFF',
 				},
-				'gold': 'EBC034'
-			}
+				gold: 'EBC034',
+			},
 		},
 	},
 	plugins: [],

@@ -43,8 +43,8 @@
 		"description": "Орендуйте приватний літак зі знижкою до 75%",
 		"card1": {
 			"date": "12 липня 2024 р",
-			"price": "1,275",
-			"initial-price": "32 960",
+			"price": "€1,275",
+			"initial-price": "€32,960",
 			"discount-percent": "-75%",
 			"from": "Базель",
 			"to": "Лондон",
@@ -56,8 +56,8 @@
 		},
 		"card2": {
 			"date": "12 липня 2024 р",
-			"price": "1,275",
-			"initial-price": "32 960",
+			"price": "€1,275",
+			"initial-price": "€32,960",
 			"discount-percent": "-75%",
 			"from": "Базель",
 			"to": "Лондон",
@@ -69,8 +69,8 @@
 		},
 		"card3": {
 			"date": "12 липня 2024 р",
-			"price": "1,275",
-			"initial-price": "32 960",
+			"price": "€1,275",
+			"initial-price": "€32,960",
 			"discount-percent": "-75%",
 			"from": "Базель",
 			"to": "Лондон",
@@ -82,8 +82,8 @@
 		},
 		"card4": {
 			"date": "12 липня 2024 р",
-			"price": "1,275",
-			"initial-price": "32 960",
+			"price": "€1,275",
+			"initial-price": "€32,960",
 			"discount-percent": "-75%",
 			"from": "Базель",
 			"to": "Лондон",

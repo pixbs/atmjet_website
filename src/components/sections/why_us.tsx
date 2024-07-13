@@ -32,7 +32,7 @@ function Card (props: CardProps) {
 	const { num, title, description } = props
 
 	return (
-		<div className="p-8 card gap-4 pb-24 -mb-16 last:mb-0 last:pb-10">
+		<div className="p-8 card bg-gray-150 gap-4 pb-24 -mb-16 last:mb-0 last:pb-10">
 			<p className="text-5xl font-serif">{num}</p>
 			<h3>{title}</h3>
 			<p>{description}</p>

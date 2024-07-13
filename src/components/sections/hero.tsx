@@ -1,7 +1,7 @@
-import { RequestForm } from "../form"
+import { RequestForm } from '../form'
 
 interface HeroSectionProps {
-	"title": string
+	title: string
 }
 
 export function HeroSection(props: HeroSectionProps) {
@@ -9,15 +9,9 @@ export function HeroSection(props: HeroSectionProps) {
 	return (
 		<section>
 			<div className="container h-svh justify-center gap-2">
-				<p className="text-center text-xs">
-					ATMJET
-				</p>
-				<h1 className="text-center">
-					{title}
-				</h1>
-				<p className=" absolute left-5 bottom-16 text-xs">
-					©ATM JET
-				</p>
+				<p className="text-center text-sm">ATMJET</p>
+				<h1 className="text-center">{title}</h1>
+				<p className="absolute bottom-16 left-5 text-sm">©ATM JET</p>
 				{/* <RequestForm /> */}
 			</div>
 		</section>

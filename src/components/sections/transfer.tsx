@@ -1,5 +1,5 @@
-import { useTranslations } from "next-intl"
-import { RequestForm } from "../form"
+import { useTranslations } from 'next-intl'
+import { RequestForm } from '../form'
 
 export function TransferSection() {
 	const t = useTranslations('transfer')
@@ -12,7 +12,7 @@ export function TransferSection() {
 					</div>
 					<h2>{t('title')}</h2>
 				</div>
-				<RequestForm/>
+				<RequestForm />
 			</div>
 		</section>
 	)

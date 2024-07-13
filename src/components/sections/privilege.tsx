@@ -1,4 +1,4 @@
-import { useTranslations } from "next-intl"
+import { useTranslations } from 'next-intl'
 
 export function PrivilegeSection() {
 	const t = useTranslations('privilege')

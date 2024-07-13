@@ -1,8 +1,8 @@
-import { useTranslations } from "next-intl"
+import { useTranslations } from 'next-intl'
 
 export function FaqSection() {
 	const t = useTranslations('faq')
-	const accordions = ["accordion1", "accordion2", "accordion3", "accordion4", "accordion5"]
+	const accordions = ['accordion1', 'accordion2', 'accordion3', 'accordion4', 'accordion5']
 
 	return (
 		<section>
@@ -23,15 +23,15 @@ export function FaqSection() {
 }
 
 interface AccordionProps {
-	question: string,
-	answer: string,
+	question: string
+	answer: string
 }
 
-function Accordion (props: AccordionProps) {
+function Accordion(props: AccordionProps) {
 	const { question, answer } = props
 
 	return (
-		<div className="flex flex-col gap-3 p-6 items-stretch">
+		<div className="flex flex-col items-stretch gap-3 p-6">
 			<div className="flex flex-row content-between">
 				<h3>{question}</h3>
 			</div>

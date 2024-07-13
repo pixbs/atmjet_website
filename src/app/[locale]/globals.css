@@ -17,35 +17,42 @@ div {
 }
 
 section {
-	@apply flex justify-center relative flex-col items-center my-10;
+	@apply relative my-10 flex flex-col items-center justify-center;
 }
 
-h1, h2, h3, h4 {
+button {
+	@apply bg-gray-900 text-gray-100 text-sm font-semibold rounded-full py-2 px-4;
+}
+
+h1,
+h2,
+h3,
+h4 {
 	@apply font-serif text-gray-900;
 }
 
 h1 {
-	@apply text-5xl 
+	@apply text-5xl;
 }
 
 h2 {
-	@apply text-4xl 
+	@apply text-4xl;
 }
 
 h3 {
-	@apply text-2xl 
+	@apply text-2xl;
 }
 
 h4 {
-	@apply text-xl 
+	@apply text-xl;
 }
 
 .container {
-	@apply flex max-w-lg flex-col px-6;
+	@apply flex max-w-lg flex-col px-6 relative;
 }
 
 .card {
-	@apply bg-gray-150 rounded-3xl border border-gray-400;
+	@apply rounded-3xl border border-gray-400;
 }
 
 body {
@@ -61,10 +68,10 @@ body {
 }
 
 @font-face {
-	font-family: "TARegressoPROEasyRegular";
-	src: url('/fonts/TARegressoPROEasyRegular/font.woff2') format('woff2'), 
-		 url('/fonts/TARegressoPROEasyRegular/font.woff') format('woff');
+	font-family: 'TARegressoPROEasyRegular';
+	src:
+		url('/fonts/TARegressoPROEasyRegular/font.woff2') format('woff2'),
+		url('/fonts/TARegressoPROEasyRegular/font.woff') format('woff');
 	font-weight: normal;
 	font-style: normal;
-  }
-  
+}

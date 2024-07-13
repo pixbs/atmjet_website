@@ -2,7 +2,7 @@ import { useTranslations } from 'next-intl'
 
 export function KeyFeaturesSection() {
 	const t = useTranslations('key-features')
-	const cards = ["card1", "card2", "card3", "card4"]
+	const cards = ['card1', 'card2', 'card3', 'card4']
 
 	return (
 		<section>
@@ -16,18 +16,17 @@ export function KeyFeaturesSection() {
 						key={index.toString()}
 					/>
 				))}
-
 			</div>
 		</section>
 	)
 }
 
 interface CardProps {
-	title: string,
+	title: string
 	description: string
 }
 
-function Card (props: CardProps) {
+function Card(props: CardProps) {
 	const { title, description } = props
 
 	return (
