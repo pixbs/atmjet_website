@@ -8,7 +8,7 @@ export function KeyFeaturesSection() {
 	const cards = ['card1', 'card2', 'card3', 'card4']
 
 	return (
-		<section className='bg-gray-150 overflow-hidden'>
+		<section className='bg-gray-150'>
 			<div className="container mx-auto px-4 gap-4">
 				<h2>{t('title')}</h2>
 				<p className="mb-8">{t('description')}</p>
