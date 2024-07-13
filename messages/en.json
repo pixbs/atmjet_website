@@ -1,5 +1,35 @@
 {
 	"HomePage": {
-		"title": "Welcome to the Home Page"
+		"title": "Welcome to the Home Page",
+		"why_us": {
+			"title": "Why select us?",
+			"cards": {
+				"card1": {
+					"num": "20",
+					"title": "Years of Experience",
+					"description": "At ATM JET, we have been providing private flight services since 2004, offering a range of solutions, including special, cargo, and medical flights."
+				},
+				"card2": {
+					"num": "16,000",
+					"title": "Satisfied Clients",
+					"description": "We are proud to serve over 16,000 customers who have chosen us as a reliable partner for their business aviation needs."
+				},
+				"card3": {
+					"num": "",
+					"title": "Trusted by Celebrities",
+					"description": "We are privileged to work with a diverse range of clients, including celebrities, business leaders, football clubs, public corporations and members of government. We are proud to be trusted with their comfort."
+				},
+				"card4": {
+					"num": "",
+					"title": "Same-day departures",
+					"description": "Our fleet of over 50,000 aircraft operates 24/7, allowing customers to depart within 2 hours of booking."
+				},
+				"card5": {
+					"num": "",
+					"title": "Commitment to Excellence",
+					"description": "We take great care to treat every detail with the utmost attention, and our expertise allows us to exceed your expectations."
+				}
+			}
+		}
 	}
 }
