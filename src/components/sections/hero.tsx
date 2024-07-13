@@ -1,13 +1,16 @@
+import { RequestForm } from "../form"
+
 interface HeroSectionProps {
-	headline: string;
+	"title": string
 }
 
-export function HeroSection(props : HeroSectionProps) {
-	const {headline} = props;
+export function HeroSection(props: HeroSectionProps) {
+	const { title } = props
 	return (
 		<section>
 			<div className="container">
-				<h1>{headline}</h1>
+				<h1>{title}</h1>
+				<RequestForm />
 			</div>
 		</section>
 	)

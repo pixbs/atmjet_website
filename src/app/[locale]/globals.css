@@ -8,6 +8,30 @@
 	--background-end-rgb: 255, 255, 255;
 }
 
+* {
+	box-sizing: border-box;
+}
+
+section {
+	@apply flex justify-center relative flex-col items-center my-10;
+}
+
+h1 {
+	@apply text-5xl 
+}
+
+h2 {
+	@apply text-4xl 
+}
+
+h3 {
+	@apply text-2xl 
+}
+
+h4 {
+	@apply text-xl 
+}
+
 @media (prefers-color-scheme: dark) {
 	:root {
 		--foreground-rgb: 255, 255, 255;
@@ -25,5 +49,11 @@ body {
 @layer utilities {
 	.text-balance {
 		text-wrap: balance;
+	}
+}
+
+@layer components {
+	.container {
+		@apply flex max-w-screen-xl flex-col;
 	}
 }
