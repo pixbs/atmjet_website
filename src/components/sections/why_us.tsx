@@ -1,4 +1,5 @@
 import { useTranslations } from 'next-intl'
+import { WhyUsCard } from '../elements'
 
 export function WhyUsSection() {
 	const t = useTranslations('why_us')
@@ -9,7 +10,7 @@ export function WhyUsSection() {
 				<h2>{t('title')}</h2>
 				<div>
 					{cards.map((card) => (
-						<Card
+						<WhyUsCard
 							key={card}
 							num={t(`${card}.num`)}
 							title={t(`${card}.title`)}
@@ -19,23 +20,5 @@ export function WhyUsSection() {
 				</div>
 			</div>
 		</section>
-	)
-}
-
-interface CardProps {
-	num: string
-	title: string
-	description: string
-}
-
-function Card(props: CardProps) {
-	const { num, title, description } = props
-
-	return (
-		<div className="card -mb-16 gap-4 bg-gray-150 p-8 pb-24 last:mb-0 last:pb-10">
-			<p className="font-serif text-5xl">{num}</p>
-			<h3>{title}</h3>
-			<p>{description}</p>
-		</div>
 	)
 }

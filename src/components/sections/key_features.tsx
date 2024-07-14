@@ -1,4 +1,4 @@
-"use client"
+'use client'
 import { useTranslations } from 'next-intl'
 import useEmblaCarousel from 'embla-carousel-react'
 import { useEffect } from 'react'
@@ -8,8 +8,8 @@ export function KeyFeaturesSection() {
 	const cards = ['card1', 'card2', 'card3', 'card4']
 
 	return (
-		<section className='bg-gray-150'>
-			<div className="container mx-auto px-4 gap-4">
+		<section className="bg-gray-150">
+			<div className="container mx-auto gap-4 px-4">
 				<h2>{t('title')}</h2>
 				<p className="mb-8">{t('description')}</p>
 				<EmblaCarouselWrapper>
@@ -35,10 +35,10 @@ function Card(props: CardProps) {
 	const { title, description } = props
 
 	return (
-		<div className="embla__slide flex-shrink-0 w-full pr-24 aspect-square bg-blue-400 relative justify-end gap-4">
-			<h3 className=' z-10'>{title}</h3>
-			<p className=' z-10'>{description}</p>
-			<div className='absolute inset-0 darkening'/>
+		<div className="embla__slide relative aspect-square w-full flex-shrink-0 justify-end gap-4 bg-blue-400 pr-24">
+			<h3 className="z-10">{title}</h3>
+			<p className="z-10">{description}</p>
+			<div className="darkening absolute inset-0" />
 		</div>
 	)
 }
@@ -55,9 +55,7 @@ function EmblaCarouselWrapper({ children }: { children: React.ReactNode }) {
 
 	return (
 		<div className="embla" ref={emblaRef}>
-			<div className="embla__container flex-row">
-				{children}
-			</div>
+			<div className="embla__container flex-row">{children}</div>
 		</div>
 	)
 }
