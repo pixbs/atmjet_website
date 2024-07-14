@@ -1,5 +1,5 @@
 import { useTranslations } from 'next-intl'
-import { Counter } from '../elements'
+import { EmptyLegCard } from '../elements'
 
 export function EmptyLegSection() {
 	const t = useTranslations('empty_leg')
@@ -13,7 +13,7 @@ export function EmptyLegSection() {
 				</div>
 				<div className="gap-4">
 					{cards.map((card, index) => (
-						<Card
+						<EmptyLegCard
 							date={t(`${card}.date`)}
 							price={t(`${card}.price`)}
 							initalPrice={t(`${card}.initial-price`)}
@@ -36,72 +36,5 @@ export function EmptyLegSection() {
 				</div>
 			</div>
 		</section>
-	)
-}
-
-interface CardProps {
-	date: string
-	price: string
-	initalPrice: string
-	discountPercent: string
-	from: string
-	to: string
-	fromTime: string
-	toTime: string
-	fromAirport: string
-	toAirport: string
-	howLong: string
-}
-
-function Card(props: CardProps) {
-	const {
-		date,
-		price,
-		initalPrice,
-		discountPercent,
-		from,
-		to,
-		fromTime,
-		toTime,
-		fromAirport,
-		toAirport,
-		howLong,
-	} = props
-
-	return (
-		<div className="card gap-3 bg-gray-100 p-6">
-			<div className="flex-row justify-between">
-				<p className="text-sm">{date}</p>
-				<button>inquire</button>
-			</div>
-			<div className="flex-row items-start gap-2">
-				<Counter className="font-sans text-3xl font-black">{price}</Counter>
-				<p className="text-xs line-through">{initalPrice}</p>
-				<p className="rounded-lg bg-red-500 px-1 text-xs font-bold text-gray-900">
-					{discountPercent}
-				</p>
-			</div>
-			<div className="flex-row">
-				<p>
-					{from}({fromAirport})
-				</p>
-				<p>{' -> '}</p>
-				<p>
-					{to}({toAirport})
-				</p>
-			</div>
-			<div className="flex-row">
-				<div>
-					<p>{fromTime}</p>
-					<p>{fromAirport}</p>
-				</div>
-				<p>{' -> '}</p>
-				<div>
-					<p>{toTime}</p>
-					<p>{toAirport}</p>
-				</div>
-				<p>{howLong}</p>
-			</div>
-		</div>
 	)
 }

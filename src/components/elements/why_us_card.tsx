@@ -1,6 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
+import { Counter } from './counter'
 
 interface CardProps {
 	num: string
@@ -18,7 +19,9 @@ export function WhyUsCard(props: CardProps) {
 			transition={{ duration: 0.5 }}
 			whileInView={{ opacity: 1, y: 0 }}
 		>
-			<p className="font-serif text-5xl">{num}</p>
+			<Counter className="bg-gold bg-fixed bg-clip-text font-serif text-5xl text-transparent">
+				{num}
+			</Counter>
 			<h3>{title}</h3>
 			<p>{description}</p>
 		</motion.div>
