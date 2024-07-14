@@ -1,5 +1,3 @@
 {
-    "exportall.config.folderListener": [
-        "/src/components/elements"
-    ]
+	"exportall.config.folderListener": ["/src/components/elements"]
 }

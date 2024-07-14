@@ -48,7 +48,7 @@ h4 {
 }
 
 .container {
-	@apply relative my-10 flex max-w-lg flex-col px-6;
+	@apply relative mx-6 my-10 flex max-w-lg flex-col;
 }
 
 .card {

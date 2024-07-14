@@ -25,12 +25,12 @@ const config: Config = {
 					800: '#F0F1F6',
 					900: '#FFFFFF',
 				},
-				gold: 'EBC034',
+			},
+			backgroundImage: {
+				gold: 'linear-gradient(22deg, #DFAB53 -24.85%, #E6BE6B -7.56%, #EFD487 12.04%, #EBCA7A 33.04%, #DFAB53 98.1%), linear-gradient(180deg, rgba(21, 21, 21, 0.00) 0%, rgba(21, 21, 21, 0.01) 6.67%, rgba(21, 21, 21, 0.04) 13.33%, rgba(21, 21, 21, 0.08) 20%, rgba(21, 21, 21, 0.15) 26.67%, rgba(21, 21, 21, 0.23) 33.33%, rgba(21, 21, 21, 0.33) 40%, rgba(21, 21, 21, 0.44) 46.67%, rgba(21, 21, 21, 0.56) 53.33%, rgba(21, 21, 21, 0.67) 60%, rgba(21, 21, 21, 0.77) 66.67%, rgba(21, 21, 21, 0.85) 73.33%, rgba(21, 21, 21, 0.92) 80%, rgba(21, 21, 21, 0.96) 86.67%, rgba(21, 21, 21, 0.99) 93.33%, #151515 100%)',
 			},
 		},
 	},
-	plugins: [
-		require("tailwindcss-animate"),
-	],
+	plugins: [require('tailwindcss-animate')],
 }
 export default config

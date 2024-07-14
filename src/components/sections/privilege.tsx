@@ -5,10 +5,13 @@ export function PrivilegeSection() {
 
 	return (
 		<section>
-			<div className="container">
-				<h2>{t('title')}</h2>
-				<p>{t('description')}</p>
-				<button>{t('button')}</button>
+			<div className="container gap-10 overflow-hidden rounded-2xl bg-gold">
+				<div className="h-64 bg-white" />
+				<div className="items-center gap-4 pb-10">
+					<h2 className="text-center text-gray-100">{t('title')}</h2>
+					<p className="text-center text-gray-100">{t('description')}</p>
+					<button>{t('button')}</button>
+				</div>
 			</div>
 		</section>
 	)
