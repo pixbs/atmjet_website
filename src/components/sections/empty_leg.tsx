@@ -1,4 +1,5 @@
 import { useTranslations } from 'next-intl'
+import { Counter } from '../elements'
 
 export function EmptyLegSection() {
 	const t = useTranslations('empty_leg')
@@ -74,7 +75,7 @@ function Card(props: CardProps) {
 				<button>inquire</button>
 			</div>
 			<div className="flex-row items-start gap-2">
-				<h3 className="font-sans text-3xl font-black">{price}</h3>
+				<Counter className="font-sans text-3xl font-black">{price}</Counter>
 				<p className="text-xs line-through">{initalPrice}</p>
 				<p className="rounded-lg bg-red-500 px-1 text-xs font-bold text-gray-900">
 					{discountPercent}
