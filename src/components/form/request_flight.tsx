@@ -1,4 +1,5 @@
 import { useTranslations } from 'next-intl'
+import { CounterInput } from '../elements'
 
 export function RequestForm() {
 	const t = useTranslations('form')
@@ -6,13 +7,11 @@ export function RequestForm() {
 		<form className="flex flex-col gap-1">
 			<input placeholder={t('from')}></input>
 			<input placeholder={t('to')}></input>
-			<input type="date" placeholder={t('date')}></input>
-			<div className="flex">
-				<button>-</button>
-				<input placeholder={t('passangers')}></input>
-				<button>+</button>
-			</div>
-			<button type="submit">{t('request-quote')}</button>
+			<input type="date" placeholder={t('date')} />
+			<CounterInput placeholder={t('passangers')} />
+			<button type="submit" className="big mt-3 bg-gold bg-fixed">
+				{t('request-quote')}
+			</button>
 		</form>
 	)
 }

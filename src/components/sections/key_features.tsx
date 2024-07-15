@@ -1,5 +1,6 @@
 import { useTranslations } from 'next-intl'
 import { KeyFeaturesCarousel } from '../elements/key_features_carousel'
+import { KeyFeatureCard } from '../elements'
 
 export function KeyFeaturesSection() {
 	const t = useTranslations('key-features')
@@ -12,7 +13,7 @@ export function KeyFeaturesSection() {
 				<p className="mb-8">{t('description')}</p>
 				<KeyFeaturesCarousel>
 					{cards.map((card, index) => (
-						<Card
+						<KeyFeatureCard
 							title={t(`${card}.title`)}
 							description={t(`${card}.description`)}
 							key={index.toString()}
@@ -21,22 +22,5 @@ export function KeyFeaturesSection() {
 				</KeyFeaturesCarousel>
 			</div>
 		</section>
-	)
-}
-
-interface CardProps {
-	title: string
-	description: string
-}
-
-function Card(props: CardProps) {
-	const { title, description } = props
-
-	return (
-		<div className="embla__slide relative aspect-square w-full flex-shrink-0 justify-end gap-4 bg-blue-400 pr-24">
-			<h3 className="z-10">{title}</h3>
-			<p className="z-10">{description}</p>
-			<div className="darkening absolute inset-0" />
-		</div>
 	)
 }
