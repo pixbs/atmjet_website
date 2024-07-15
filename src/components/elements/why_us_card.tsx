@@ -7,17 +7,19 @@ interface CardProps {
 	num: string
 	title: string
 	description: string
+	topPadding?: number
 }
 
 export function WhyUsCard(props: CardProps) {
-	const { num, title, description } = props
+	const { num, title, description, topPadding } = props
 
 	return (
 		<motion.div
-			className="card -mb-16 gap-4 bg-gray-150 p-8 pb-24 last:mb-0 last:pb-10"
+			className="card -mb-16 gap-4 bg-gray-150 p-8 pb-24 last:mb-0 last:pb-10 sticky"
 			initial={{ opacity: 0, y: -50 }}
 			transition={{ duration: 0.5 }}
 			whileInView={{ opacity: 1, y: 0 }}
+			style={{ top: `${topPadding}px` }}
 		>
 			<Counter className="bg-gold bg-fixed bg-clip-text font-serif text-5xl text-transparent">
 				{num}
