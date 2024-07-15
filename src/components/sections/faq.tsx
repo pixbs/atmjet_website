@@ -7,25 +7,25 @@ import { useState } from 'react'
 export function FaqSection() {
 	const t = useTranslations('faq')
 	const accordions = ['accordion1', 'accordion2', 'accordion3', 'accordion4', 'accordion5']
-	const [expanded, setExpanded] = useState<false | number>(0);
+	const [expanded, setExpanded] = useState<false | number>(0)
 
 	return (
 		<section>
 			<div className="container">
 				<h2>{t('title')}</h2>
-				<div className='pt-4'>
+				<div className="pt-4">
 					{accordions.map((accordion, index) => (
-						<div className=' border-b border-gray-300 py-6 gap-6'>
-							<Accordion 
-								i={index} 
-								expanded={expanded} 
-								setExpanded={setExpanded} 
+						<div className="gap-6 border-b border-gray-300 py-6">
+							<Accordion
+								i={index}
+								expanded={expanded}
+								setExpanded={setExpanded}
 								title={t(`question${index + 1}`)}
-								className='cursor-pointer font-serif text-2xl text-gray-900'
+								className="cursor-pointer font-serif text-2xl text-gray-900"
 							>
-									<div className="flex flex-row overflow-hidden">
-										<p>{t(`answer${index + 1}`)}</p>
-									</div>
+								<div className="flex flex-row overflow-hidden">
+									<p>{t(`answer${index + 1}`)}</p>
+								</div>
 							</Accordion>
 						</div>
 					))}
