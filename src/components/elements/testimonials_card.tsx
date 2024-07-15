@@ -13,7 +13,7 @@ export function TestimonialsCard(props: TestimonialsCardProps) {
 
 	return (
 		<motion.div
-			className="embla__slide relative mr-8 flex w-5/6 flex-shrink-0 flex-col items-stretch justify-between gap-3 rounded-xl bg-gray-100 p-8"
+			className="embla__slide relative mr-8 flex w-full flex-shrink-0 flex-col items-stretch justify-between gap-3 rounded-xl bg-gray-100 p-8"
 			initial={{ opacity: 0 }}
 			transition={{ duration: 0.5 }}
 			whileInView={{ opacity: 1 }}

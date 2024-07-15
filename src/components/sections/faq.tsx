@@ -1,20 +1,33 @@
+'use client'
+
 import { useTranslations } from 'next-intl'
+import { Accordion } from '../elements'
+import { useState } from 'react'
 
 export function FaqSection() {
 	const t = useTranslations('faq')
 	const accordions = ['accordion1', 'accordion2', 'accordion3', 'accordion4', 'accordion5']
+	const [expanded, setExpanded] = useState<false | number>(0);
 
 	return (
 		<section>
 			<div className="container">
 				<h2>{t('title')}</h2>
-				<div>
+				<div className='pt-4'>
 					{accordions.map((accordion, index) => (
-						<Accordion
-							question={t(`question${index + 1}`)}
-							answer={t(`answer${index + 1}`)}
-							key={index.toString()}
-						/>
+						<div className=' border-b border-gray-300 py-6 gap-6'>
+							<Accordion 
+								i={index} 
+								expanded={expanded} 
+								setExpanded={setExpanded} 
+								title={t(`question${index + 1}`)}
+								className='cursor-pointer font-serif text-2xl text-gray-900'
+							>
+									<div className="flex flex-row overflow-hidden">
+										<p>{t(`answer${index + 1}`)}</p>
+									</div>
+							</Accordion>
+						</div>
 					))}
 				</div>
 			</div>
@@ -27,16 +40,13 @@ interface AccordionProps {
 	answer: string
 }
 
-function Accordion(props: AccordionProps) {
+function Accordiontwo(props: AccordionProps) {
 	const { question, answer } = props
 
 	return (
 		<div className="flex flex-col items-stretch gap-3 p-6">
 			<div className="flex flex-row content-between">
 				<h3>{question}</h3>
-			</div>
-			<div className="flex flex-row">
-				<p>{answer}</p>
 			</div>
 		</div>
 	)
