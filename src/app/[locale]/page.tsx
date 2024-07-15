@@ -3,6 +3,7 @@ import {
 	FaqSection,
 	HeroSection,
 	KeyFeaturesSection,
+	MakeBookingSection,
 	OptionsSection,
 	PrivilegeSection,
 	TestimonialsSection,
@@ -17,6 +18,7 @@ export default function HomePage() {
 	return (
 		<main>
 			<HeroSection title={t('hero-section.title')} />
+			<MakeBookingSection />
 			<WhyUsSection />
 			<EmptyLegSection />
 			<KeyFeaturesSection />

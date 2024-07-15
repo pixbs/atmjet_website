@@ -3,6 +3,7 @@
 		"title": "Flying private made simple"
 	},
 	"form": {
+		"title": "Book a flight",
 		"from": "From",
 		"to": "To",
 		"date": "Date",

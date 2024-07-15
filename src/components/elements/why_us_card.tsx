@@ -15,7 +15,7 @@ export function WhyUsCard(props: CardProps) {
 
 	return (
 		<motion.div
-			className="card -mb-16 gap-4 bg-gray-150 p-8 pb-24 last:mb-0 last:pb-10 sticky"
+			className="card sticky -mb-16 gap-4 bg-gray-150 p-8 pb-24 last:mb-0 last:pb-10"
 			initial={{ opacity: 0, y: -50 }}
 			transition={{ duration: 0.5 }}
 			whileInView={{ opacity: 1, y: 0 }}
