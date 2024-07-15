@@ -72,22 +72,22 @@ export function CounterInput(props: CounterInputProps) {
 	}
 
 	return (
-		<div className="flex-row items-center rounded-lg bg-gray-900 px-4 py-2.5 text-sm font-normal text-gray-100">
-			<label className="pr-4">{label}</label>
+		<div className='flex-row items-center rounded-lg bg-gray-900 px-4 py-2.5 text-sm font-normal text-gray-100'>
+			<label className='pr-4'>{label}</label>
 			<button
 				className={`size-8 rounded-lg border border-gray-700 p-0 ${count <= 1 ? 'cursor-not-allowed opacity-50' : ''}`}
-				children="-"
+				children='-'
 				onClick={decrement}
 			/>
 			<input
-				className="w-10 border-none bg-transparent stroke-none p-0 py-1 text-center focus:stroke-none"
+				className='w-10 border-none bg-transparent stroke-none p-0 py-1 text-center focus:stroke-none'
 				onChange={handleChange}
 				value={count}
 				onBlur={onBlur}
 			/>
 			<button
 				className={`size-8 rounded-lg border border-gray-700 p-0 ${count >= 25 ? 'cursor-not-allowed opacity-50' : ''}`}
-				children="+"
+				children='+'
 				onClick={increment}
 			/>
 		</div>

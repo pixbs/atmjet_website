@@ -6,8 +6,8 @@ export function TestimonialsSection() {
 	const cards = ['card1', 'card2', 'card3', 'card4', 'card5']
 
 	return (
-		<section className="overflow-hidden bg-gray-150">
-			<div className="container static gap-8">
+		<section className='overflow-hidden bg-gray-150'>
+			<div className='container static gap-8'>
 				<h2>{t('title')}</h2>
 				<TestimonialsCarousel>
 					{cards.map((card, index) => (

@@ -38,14 +38,14 @@ export function RequestForm() {
 
 	return (
 		<FormProvider {...methods}>
-			<form className="flex flex-col gap-1" onSubmit={handleSubmit(onSubmit)}>
+			<form className='flex flex-col gap-1' onSubmit={handleSubmit(onSubmit)}>
 				<input placeholder={t('from')} {...register('from')} />
 				<input placeholder={t('to')} {...register('to')} />
-				<div className="rounded-2xl bg-gray-900" onClick={handleClick}>
-					<input type="date" placeholder={t('date')} {...register('date')} />
+				<div className='rounded-2xl bg-gray-900' onClick={handleClick}>
+					<input type='date' placeholder={t('date')} {...register('date')} />
 				</div>
-				<CounterInput label={t('passangers')} id="passangers" />
-				<button type="submit" className="big mt-3 bg-gold bg-fixed">
+				<CounterInput label={t('passangers')} id='passangers' />
+				<button type='submit' className='big mt-3 bg-gold bg-fixed'>
 					{t('request-quote')}
 				</button>
 			</form>

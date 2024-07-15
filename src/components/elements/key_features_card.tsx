@@ -12,14 +12,14 @@ export function KeyFeatureCard(props: KeyFeatureCardProps) {
 
 	return (
 		<motion.div
-			className="embla__slide relative aspect-square w-full flex-shrink-0 justify-end gap-4 bg-blue-400 pr-24"
+			className='embla__slide relative aspect-square w-full flex-shrink-0 justify-end gap-4 bg-blue-400 pr-24'
 			initial={{ opacity: 0 }}
 			transition={{ duration: 0.5 }}
 			whileInView={{ opacity: 1 }}
 		>
-			<h3 className="z-10">{title}</h3>
-			<p className="z-10">{description}</p>
-			<div className="darkening absolute inset-0" />
+			<h3 className='z-10'>{title}</h3>
+			<p className='z-10'>{description}</p>
+			<div className='darkening absolute inset-0' />
 		</motion.div>
 	)
 }

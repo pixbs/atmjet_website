@@ -5,13 +5,13 @@ export function EmptyLegSection() {
 	const t = useTranslations('empty_leg')
 	const cards = ['card1', 'card2', 'card3', 'card4']
 	return (
-		<section className="bg-gray-150">
-			<div className="container gap-8 py-10 pt-10">
-				<div className="gap-4">
+		<section className='bg-gray-150'>
+			<div className='container gap-8 py-10 pt-10'>
+				<div className='gap-4'>
 					<h2>{t('title')}</h2>
 					<p>{t('description')}</p>
 				</div>
-				<div className="gap-4">
+				<div className='gap-4'>
 					{cards.map((card, index) => (
 						<EmptyLegCard
 							date={t(`${card}.date`)}
@@ -28,10 +28,10 @@ export function EmptyLegSection() {
 							key={index.toString()}
 						/>
 					))}
-					<div className="card mt-4 items-start gap-4 border-0 bg-gradient-to-b from-gray-200 from-15% to-[#14323D] p-6">
+					<div className='card mt-4 items-start gap-4 border-0 bg-gradient-to-b from-gray-200 from-15% to-[#14323D] p-6'>
 						<h3>{t('telegram.title')}</h3>
-						<p className="text-gray-900">{t('telegram.description')}</p>
-						<button className="mt-2 bg-blue-500 text-gray-900">{t('telegram.button')}</button>
+						<p className='text-gray-900'>{t('telegram.description')}</p>
+						<button className='mt-2 bg-blue-500 text-gray-900'>{t('telegram.button')}</button>
 					</div>
 				</div>
 			</div>

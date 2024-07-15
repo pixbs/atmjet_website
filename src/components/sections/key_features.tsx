@@ -7,10 +7,10 @@ export function KeyFeaturesSection() {
 	const cards = ['card1', 'card2', 'card3', 'card4']
 
 	return (
-		<section className="overflow-hidden bg-gray-150">
-			<div className="container mx-auto gap-4 px-4">
+		<section className='overflow-hidden bg-gray-150'>
+			<div className='container mx-auto gap-4 px-4'>
 				<h2>{t('title')}</h2>
-				<p className="mb-8">{t('description')}</p>
+				<p className='mb-8'>{t('description')}</p>
 				<KeyFeaturesCarousel>
 					{cards.map((card, index) => (
 						<KeyFeatureCard

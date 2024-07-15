@@ -21,11 +21,11 @@ export function TestimonialsCarousel({ children }: { children: React.ReactNode }
 	}, [emblaApi, onScroll])
 
 	return (
-		<div className="embla" ref={emblaRef}>
-			<div className="embla__container flex-row">{children}</div>
-			<div className="embla__progress">
+		<div className='embla' ref={emblaRef}>
+			<div className='embla__container flex-row'>{children}</div>
+			<div className='embla__progress'>
 				<div
-					className="embla__progress__bar absolute -bottom-10 left-0 h-2 rounded-full bg-gold bg-fixed"
+					className='embla__progress__bar absolute -bottom-10 left-0 h-2 rounded-full bg-gold bg-fixed'
 					style={{ width: `${scrollProgress}%` }}
 				/>
 			</div>

@@ -34,23 +34,23 @@ export function EmptyLegCard(props: CardProps) {
 
 	return (
 		<motion.div
-			className="card gap-3 bg-gray-100 p-6"
+			className='card gap-3 bg-gray-100 p-6'
 			initial={{ opacity: 0, y: -50 }}
 			transition={{ duration: 0.5 }}
 			whileInView={{ opacity: 1, y: 0 }}
 		>
-			<div className="flex-row justify-between">
-				<p className="text-sm">{date}</p>
+			<div className='flex-row justify-between'>
+				<p className='text-sm'>{date}</p>
 				<button>inquire</button>
 			</div>
-			<div className="flex-row items-start gap-2">
-				<Counter className="font-sans text-3xl font-black text-gray-900">{price}</Counter>
-				<p className="text-xs line-through">{initalPrice}</p>
-				<p className="rounded-lg bg-red-500 px-1 text-xs font-bold text-gray-900">
+			<div className='flex-row items-start gap-2'>
+				<Counter className='font-sans text-3xl font-black text-gray-900'>{price}</Counter>
+				<p className='text-xs line-through'>{initalPrice}</p>
+				<p className='rounded-lg bg-red-500 px-1 text-xs font-bold text-gray-900'>
 					{discountPercent}
 				</p>
 			</div>
-			<div className="flex-row">
+			<div className='flex-row'>
 				<p>
 					{from}({fromAirport})
 				</p>
@@ -59,7 +59,7 @@ export function EmptyLegCard(props: CardProps) {
 					{to}({toAirport})
 				</p>
 			</div>
-			<div className="flex-row">
+			<div className='flex-row'>
 				<div>
 					<p>{fromTime}</p>
 					<p>{fromAirport}</p>

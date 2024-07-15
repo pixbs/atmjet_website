@@ -6,9 +6,9 @@ export function WhyUsSection() {
 	const cards = ['card1', 'card2', 'card3', 'card4', 'card5']
 	return (
 		<section>
-			<div className="container gap-10">
+			<div className='container gap-10'>
 				<h2>{t('title')}</h2>
-				<div className="relative overflow-clip rounded-2xl">
+				<div className='relative overflow-clip rounded-2xl'>
 					{cards.map((card, index) => (
 						<WhyUsCard
 							key={card}
