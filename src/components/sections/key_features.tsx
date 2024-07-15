@@ -1,5 +1,5 @@
 import { useTranslations } from 'next-intl'
-import { EmblaCarouselWrapper } from '../elements/embla_carousel'
+import { KeyFeaturesCarousel } from '../elements/key_features_carousel'
 
 export function KeyFeaturesSection() {
 	const t = useTranslations('key-features')
@@ -10,7 +10,7 @@ export function KeyFeaturesSection() {
 			<div className="container mx-auto gap-4 px-4">
 				<h2>{t('title')}</h2>
 				<p className="mb-8">{t('description')}</p>
-				<EmblaCarouselWrapper>
+				<KeyFeaturesCarousel>
 					{cards.map((card, index) => (
 						<Card
 							title={t(`${card}.title`)}
@@ -18,7 +18,7 @@ export function KeyFeaturesSection() {
 							key={index.toString()}
 						/>
 					))}
-				</EmblaCarouselWrapper>
+				</KeyFeaturesCarousel>
 			</div>
 		</section>
 	)

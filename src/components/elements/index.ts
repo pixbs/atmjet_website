@@ -1,5 +1,7 @@
 export { Counter } from './counter'
-export { EmblaCarouselWrapper } from './embla_carousel'
+export { KeyFeaturesCarousel } from './key_features_carousel'
 export { EmptyLegCard } from './empty_leg_card'
+export { TestimonialsCard } from './testimonials_card'
 export { WhyUsCard } from './why_us_card'
 export { YachtsCard } from './yachts_card'
+export { TestimonialsCarousel } from './testimonials_carousel'
