@@ -6,7 +6,7 @@ export function MakeBookingSection() {
 	return (
 		<section>
 			<div className="container gap-8">
-				<h1>{t('title')}</h1>
+				<h2>{t('title')}</h2>
 				<RequestForm />
 			</div>
 		</section>

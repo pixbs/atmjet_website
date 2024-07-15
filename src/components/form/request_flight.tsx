@@ -9,7 +9,10 @@ import { zodResolver } from '@hookform/resolvers/zod'
 const schema = z.object({
 	from: z.string().nonempty('From is required'),
 	to: z.string().nonempty('To is required'),
-	date: z.string().nonempty('Date is required').refine((val) => !isNaN(Date.parse(val)), { message: "Invalid date format" }),
+	date: z
+		.string()
+		.nonempty('Date is required')
+		.refine((val) => !isNaN(Date.parse(val)), { message: 'Invalid date format' }),
 	passangers: z.number().min(1, 'At least one passenger is required'),
 })
 
@@ -27,37 +30,21 @@ export function RequestForm() {
 	}
 
 	const handleClick = () => {
-		const input = document.querySelector('input[type="date"]') as HTMLInputElement;
+		const input = document.querySelector('input[type="date"]') as HTMLInputElement
 		if (input) {
-			input.focus();
+			input.focus()
 		}
 	}
 
 	return (
 		<FormProvider {...methods}>
 			<form className="flex flex-col gap-1" onSubmit={handleSubmit(onSubmit)}>
-				<input
-					placeholder={t('from')}
-					{...register('from')}
-				/>
-				<input
-					placeholder={t('to')}
-					{...register('to')}
-				/>
-				<div 
-					className='bg-gray-900 rounded-2xl'
-					onClick={handleClick}
-				>
-					<input
-						type="date"
-						placeholder={t('date')}
-						{...register('date')}
-					/>
+				<input placeholder={t('from')} {...register('from')} />
+				<input placeholder={t('to')} {...register('to')} />
+				<div className="rounded-2xl bg-gray-900" onClick={handleClick}>
+					<input type="date" placeholder={t('date')} {...register('date')} />
 				</div>
-				<CounterInput
-					label={t('passangers')}
-					id="passangers"
-				/>
+				<CounterInput label={t('passangers')} id="passangers" />
 				<button type="submit" className="big mt-3 bg-gold bg-fixed">
 					{t('request-quote')}
 				</button>
