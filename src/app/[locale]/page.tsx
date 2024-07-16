@@ -1,6 +1,8 @@
 import {
 	EmptyLegSection,
 	FaqSection,
+	FooterSection,
+	HeaderSection,
 	HeroSection,
 	KeyFeaturesSection,
 	MakeBookingSection,
@@ -17,6 +19,7 @@ export default function HomePage() {
 	const t = useTranslations()
 	return (
 		<main>
+			<HeaderSection	/>
 			<HeroSection title={t('hero-section.title')} />
 			<MakeBookingSection />
 			<WhyUsSection />
@@ -28,6 +31,7 @@ export default function HomePage() {
 			<TestimonialsSection />
 			<TransferSection />
 			<FaqSection />
+			<FooterSection />
 		</main>
 	)
 }

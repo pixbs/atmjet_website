@@ -8,7 +8,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 
 const schema = z.object({
 	from: z.string().nonempty('From is required'),
-	to: z.string().nonempty('To is required'),
+	to: z.string().optional(),
 	date: z
 		.string()
 		.nonempty('Date is required')

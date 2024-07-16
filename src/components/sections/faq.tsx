@@ -15,7 +15,7 @@ export function FaqSection() {
 				<h2>{t('title')}</h2>
 				<div className='pt-4'>
 					{accordions.map((accordion, index) => (
-						<div className='gap-6 border-b border-gray-300 py-6'>
+						<div className='gap-6 border-b border-gray-300 py-6' key={index}>
 							<Accordion
 								i={index}
 								expanded={expanded}
