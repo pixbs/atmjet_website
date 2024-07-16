@@ -1,0 +1,97 @@
+{
+    "hero": {
+        "overline": "ATM JET",
+        "title": "Yachts",
+        "description": "ATM JET Yachts is proud to offer the largest fleet of superyachts for sale over 20 metres worldwide.",
+        "description2": "Our extensive network of owners and shipyards allows us to access thousands of additional yachts, including those not publicly listed for sale.",
+        "button": "Get a quote"
+    },
+    "carousel": {
+        "title": "We’ll find you the perfect one",
+        "description": "We will conduct an introductory meeting to assist you in defining the most crucial parameters.",
+        "card1": {
+            "title": "Top yacht architecture bureaus",
+            "description": "Know talented designers and architects who can create yachts that are works of art."
+        },
+        "card2": {
+            "title": "Length required",
+            "description": "Will assess your expectations of comfort, planned number of guests, and required crew."
+        },
+        "card3": {
+            "title": "Price",
+            "description": "Includes transaction cost, cost of ownership, and amortisation"
+        },
+        "card4": {
+            "title": "Yield",
+            "description": "Yachts offer excellent returns when managed by experienced professionals. We will create a financial model for you."
+        }
+    },
+    "descriptor": {
+        "title": "We buy yachts for our clients as well as for ourselves."
+    },
+    "recent-yachts": {
+        "title": "Recently bought yachts for ourselves"
+    },
+    "we-incpect": {
+        "title": "We inspect",
+        "card1":{
+            "title": "Hull",
+            "description": "Inspection of the hull, deck, set, cabins and bulkheads, assessing for geometric changes and internal moisture."
+        },
+        "card2": {
+            "title": "Engine",
+            "description": "Engine, engine compartment inspection, Computer diagnostics"
+        },
+        "card3": {
+            "title": "Electronics",
+            "description": "Electrical systems, drains, taps, computers and navigation systems."
+        },
+        "card4": {
+            "title": "Steering",
+            "description": "Rudder, steering gear, Gearbox, shafting"
+        },
+        "card5": {
+            "title": "Thermal imaging inspection",
+            "description": "Hull structure integrity, engine thermal inspection, electric"
+        }
+    },
+    "options": {
+        "title": "Comprehensive yacht services",
+        "card1": {
+            "title": "Legal department",
+            "description": "The legal department is committed to ensuring that the transaction is completely secure from start to finish. We will prepare the following:",
+            "list": "Letter of intent with guarantees and undertakings \\nVerification of the yacht's bank lien \\nSale and Purchase Agreement \\nChange of ownership in the decision to register the yacht \\nRegistration of the yacht under a flag of convenience \\nOther documents required"
+        },
+        "card2": {
+            "title": "Finance department",
+            "description": "The finance department will select the most appropriate option from the following:",
+            "list": "Select the most advantageous tax jurisdiction for the transaction. \\nSelect the most suitable insurance. \\nProject the cost of ownership. \\nCalculate the projected rental income. \\nNumber and cost of crew required"
+        }
+    },
+    "why_us": {
+        "title": "Over 20 years of successful yacht management",
+        "description": "We will negotiate on your behalf to secure the most favorable terms.",
+        "subtitle": "For every yacht in our management we create:",
+        "card1": {
+            "title": "Management calendar",
+            "description": "Management calendar including financial planning."
+        },
+        "card2": {
+            "title": "Yearly marketing plan",
+            "description": "Online/offline marketing strategy for the year."
+        },
+        "card3": {
+            "title": "Top database listings",
+            "description": "All of our managed yachts in key databases, portals and MLS systems with only the top brokerage firms as members such as; Yachtfolio, Boat International, Superyachts.com, Charter Index, etc."
+        },
+        "card4": {
+            "title": "Luxury event partnerships",
+            "description": "We partner with luxury and charity events."
+        }
+    },
+    "contact_us": {
+        "title": "Contact us",
+        "description": "Contact us for a personalized consultation online or on one of our yachts around the world.",
+        "button": "Contact now"
+    }
+}

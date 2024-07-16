@@ -1,0 +1,29 @@
+{
+    "hero": {
+        "title": "For citizens of the Russian Federation",
+        "description": "We are aware of the restrictions faced by our clients from Russia.And we can help you avoid any limitations."
+    },
+    "why_us": {
+        "title": "Why select us?s",
+        "card1": {
+            "title": "We are in charge of communication on sanctions lists"
+        },
+        "card2": {
+            "title": "Organizing technical stops"
+        },
+        "card3": {
+            "title": "Selection of foreign-registered aircraft"
+        },
+        "card4": {
+            "title": "Coordination of the main passenger"
+        },
+        "card5": {
+            "title": "Any form of payment"
+        }
+    },
+    "quote": {
+        "quote": "The 14th package of EU sanctions will include a ban on any private and charter flights carried out in the interests of citizens or companies of the Russian Federation.",
+        "description": "We know what restrictions our clients from Russia face. We have been helping to overcome any borders since 2004.",
+        "button": "Contact us"
+    }
+}

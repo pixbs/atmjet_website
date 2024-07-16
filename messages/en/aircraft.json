@@ -1,0 +1,22 @@
+{
+    "hero": {
+        "title": "We have over {num} aircraft available",
+        "num": "50,000",
+        "description": "Our group of companies has been working since 2004 to combine the highest level of freedom and comfort in the air and at sea."
+    },
+    "contact-us": {
+        "title": "Contact us",
+        "description": "Write to us and we will provide you with a selection of the 5 most suitable aircraft models and tell you why.",
+        "button": "Contact now"
+    },
+    "our-fleet": {
+        "title": "Our fleet",
+        "turbo-prop": "Turbo-prop",
+        "light-jets": "Light jets",
+        "super-light-jets": "Super-light jets",
+        "midsize-jets": "Midsize jets",
+        "super-midsize-jets": "Super-midsize jets",
+        "heavy-jets": "Heavy jets",
+        "ultra-long-range-jets": "Ultra-long-range"
+    }
+}

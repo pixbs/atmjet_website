@@ -1,0 +1,43 @@
+{
+    "hero": {
+        "title": "Over {num} partners trust us.",
+        "num": "50"
+    },
+    "instant-payment": {
+        "title": "Instalment payments",
+        "description": "We offer instalment payments to regular partners. Payment is due after the client has already flown away.",
+        "button": "Make a request"
+    },
+    "we_offer": {
+        "title": "Elevate your partnership with us",
+        "subtitle": "We offer:",
+        "description": "Unlock exclusive benefits and strong partnerships tailored for long-term cooperation at the highest level.",
+        "card1": {
+            "title": "White label partnership",
+            "description": "Work under your brand as an air carrier."
+        },
+        "card2": {
+            "title": "Pricing confidentiality",
+            "description": "Your pricing policy is kept confidential."
+        },
+        "card3": {
+            "title": "Affiliate program",
+            "description": "Earn increasing discounts with fulfilled orders."
+        },
+        "card4": {
+            "title": "Payment flexibility",
+            "description": "Accepting any forms of payment and commission payments."
+        }
+    },
+    "personal-flight-manager": {
+        "title": "Personal flight manager",
+        "description": "For each of our partners we only provide managers with over 10 years experience in organising private flights.",
+        "subtitle": "We are committed to safeguarding your reputation.",
+        "button": "Make a request"
+    },
+    "contact-us": {
+        "title": "Contact us",
+        "description": "We will show you why partnering with us is the ideal choice for you.",
+        "button": "Contact now"
+    }
+}

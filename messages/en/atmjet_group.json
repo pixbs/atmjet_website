@@ -1,0 +1,35 @@
+{
+    "hero": {
+        "chip": "since 2004",
+        "title": "ATM JET Group",
+        "description": "Our group of companies has been working since 2004 to combine the highest level of freedom and comfort in the air and at sea."
+    },
+    "group1": {
+        "title": "ATM JET",
+        "description": "Jet hire - from 10 flights every day.",
+        "button": "Request now"
+    },
+    "group2": {
+        "title": "ATM JET Market",
+        "description": "Sale of jets for companies and for private individuals.",
+        "button": "Request now"
+    },
+    "yachts": {
+		"title": "ATM JET | Yachts",
+		"description": "Yacht sales and charter, welcome to our yachts in Dubai and Europe. Request now for a personalized yacht selection at our Dubai office or online.",
+        "card1": {
+            "title": "Yachts for sale",
+            "description": "We have access to over 3000 luxury yachts worldwide."
+        },
+        "card2": {
+            "title": "Expert knowledge",
+            "description": "We will assist you in the selection, valuation, and negotiation of a yacht. Our specialists and mechanics will take care of everything for you."
+        },
+        "card3": {
+            "title": "Charter yachts",
+            "description": "Enjoy your holiday on the water on our yachts in Europe and Dubai. Also on our partner yachts around the world."
+        },
+		"call-to-action": "Personalised yacht selection at Dubai office or online",
+		"button": "Request now"
+	}
+}

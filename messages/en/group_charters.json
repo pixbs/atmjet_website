@@ -1,0 +1,20 @@
+{
+    "hero": {
+        "title": "Organizing group charters",
+        "description": "We know the intricacies of organizing group flights for business companies, music groups and sports teams."
+    },
+    "cards": {
+        "card1": {
+            "title": "For business companies",
+            "description": "Interaction with each participant or organiser and office manager. Planes of any size. Organisation of departures from different cities, countries. Organising comfortable working areas to ensure productivity and convenience on the road."
+        },
+        "card2": {
+            "title": "For music groups",
+            "description": "Trepidatiously treating the riders of the artists, taking into account their wishes throughout the tour. We strictly follow the tour schedule and guarantee you on-time flights. We guarantee confidentiality in flight"
+        },
+        "card3": {
+            "title": "For sports team",
+            "description": "We select spacious aircraft for comfortable team flights and necessary sports equipment. Menus on board according to all requirements of sports team nutritionists. Comfortable aircraft will keep you toned even after long flights."
+        }
+    }
+}
