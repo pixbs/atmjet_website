@@ -19,7 +19,7 @@ export default function HomePage() {
 	const t = useTranslations()
 	return (
 		<main>
-			<HeaderSection	/>
+			<HeaderSection />
 			<HeroSection title={t('hero-section.title')} />
 			<MakeBookingSection />
 			<WhyUsSection />
