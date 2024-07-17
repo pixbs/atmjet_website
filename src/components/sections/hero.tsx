@@ -1,7 +1,4 @@
 'use client'
-
-import Video from 'next-video'
-
 interface HeroSectionProps {
 	title: string
 }
