@@ -13,7 +13,10 @@ export function YachtsCard() {
 			transition={{ duration: 0.5 }}
 			whileInView={{ opacity: 1, y: 0 }}
 		>
-			<div className='min-h-64 bg-blue-500' />
+			<div
+				className='min-h-64 bg-cover bg-center'
+				style={{ backgroundImage: 'url(images/home_page/yachts.jpg)' }}
+			/>
 			<div className='gap-8 px-6'>
 				{cards.map((card, index) => (
 					<motion.div

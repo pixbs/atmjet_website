@@ -7,11 +7,12 @@ interface CardProps {
 	num: string
 	title: string
 	description: string
+	imageSrc: string
 	topPadding?: number
 }
 
 export function WhyUsCard(props: CardProps) {
-	const { num, title, description, topPadding } = props
+	const { num, title, description, topPadding, imageSrc } = props
 
 	return (
 		<motion.div
@@ -26,6 +27,10 @@ export function WhyUsCard(props: CardProps) {
 			</Counter>
 			<h3>{title}</h3>
 			<p>{description}</p>
+			<div
+				className='-mx-9 -mb-12 h-48 bg-cover bg-center'
+				style={{ backgroundImage: `url(${imageSrc})` }}
+			/>
 		</motion.div>
 	)
 }

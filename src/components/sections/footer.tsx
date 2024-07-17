@@ -11,16 +11,22 @@ export function FooterSection() {
 
 	return (
 		<section
-			className='bg-cover bg-no-repeat bg-top bg-fixed'
+			className='bg-cover bg-fixed bg-top bg-no-repeat'
 			style={{ backgroundImage: 'url(images/home_page/footer.jpg)' }}
 		>
-			<footer className="container bg-gray-100 bg-opacity-60 backdrop-blur-lg !mb-0 !mt-24 py-10 rounded-t-2xl gap-8">
+			<footer className='container !mb-0 !mt-24 gap-8 rounded-t-2xl bg-gray-100 bg-opacity-60 py-10 backdrop-blur-lg'>
 				<div className='flex-row content-between justify-between'>
-					<Logo className='h-8 text-gray-900'/>
+					<Logo className='h-8 text-gray-900' />
 					<div className='flex-row gap-4'>
-						<Link href='/en' className={`text-base ${locale == "en" && 'opacity-50'}`}>{t('locale.en')}</Link>
-						<Link href='/ru' className={`text-base ${locale == "ru" && 'opacity-50'}`}>{t('locale.ru')}</Link>
-						<Link href='/uk' className={`text-base ${locale == "uk" && 'opacity-50'}`}>{t('locale.uk')}</Link>
+						<Link href='/en' className={`text-base ${locale == 'en' && 'opacity-50'}`}>
+							{t('locale.en')}
+						</Link>
+						<Link href='/ru' className={`text-base ${locale == 'ru' && 'opacity-50'}`}>
+							{t('locale.ru')}
+						</Link>
+						<Link href='/uk' className={`text-base ${locale == 'uk' && 'opacity-50'}`}>
+							{t('locale.uk')}
+						</Link>
 					</div>
 				</div>
 				<div className='w-full flex-row justify-between'>
@@ -49,27 +55,17 @@ export function FooterSection() {
 				</div>
 				<div className='w-full flex-row justify-between'>
 					<div className='[&>*]:duration-600 [&>*]:animate-in [&>*]:fade-in'>
-						<Link href='/sales_dept'>
-							{t('navigation.sales-dept')}
-						</Link>
-						<Link href='/group_charters'>
-							{t('navigation.group-charters')}
-						</Link>
-						<Link href='/atmjet_group'>
-							{t('navigation.atmjet-group')}
-						</Link>
-						<Link href='/aircraft'>
-							{t('navigation.aircraft')}
-						</Link>
-						<Link href='/yachts'>
-							{t('navigation.yachts')}
-						</Link>
+						<Link href='/sales_dept'>{t('navigation.sales-dept')}</Link>
+						<Link href='/group_charters'>{t('navigation.group-charters')}</Link>
+						<Link href='/atmjet_group'>{t('navigation.atmjet-group')}</Link>
+						<Link href='/aircraft'>{t('navigation.aircraft')}</Link>
+						<Link href='/yachts'>{t('navigation.yachts')}</Link>
 					</div>
 				</div>
 				<div className='items-center gap-2'>
 					<button>{t('footer.button')}</button>
 					<p>{t('footer.location')}</p>
-					<p>{t('footer.copyright', {year})}</p>
+					<p>{t('footer.copyright', { year })}</p>
 				</div>
 			</footer>
 		</section>

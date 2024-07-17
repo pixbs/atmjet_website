@@ -5,6 +5,12 @@ import { KeyFeatureCard } from '../elements'
 export function KeyFeaturesSection() {
 	const t = useTranslations('key-features')
 	const cards = ['card1', 'card2', 'card3', 'card4']
+	const images = [
+		'images/home_page/key_features_tailoredp_references.jpg',
+		'images/home_page/key_features_cuztomized_aircraft.jpg',
+		'images/home_page/key_features_payment_after_flight.jpg',
+		'images/home_page/key_features_pay_anyway.jpg',
+	]
 
 	return (
 		<section className='overflow-hidden bg-gray-150'>
@@ -17,6 +23,7 @@ export function KeyFeaturesSection() {
 							title={t(`${card}.title`)}
 							description={t(`${card}.description`)}
 							key={index.toString()}
+							imageSrc={images[index]}
 						/>
 					))}
 				</KeyFeaturesCarousel>

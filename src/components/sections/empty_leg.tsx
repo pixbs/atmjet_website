@@ -28,7 +28,7 @@ export function EmptyLegSection() {
 							key={index.toString()}
 						/>
 					))}
-					<div className='card mt-4 items-start gap-4 border-0 bg-gradient-to-b from-gray-200 from-15% to-[#14323D] p-6'>
+					<div className='card mt-4 items-start gap-4 border-0 bg-gradient-to-b from-gray-200 from-15% to-[#14323D] bg-fixed p-6'>
 						<h3>{t('telegram.title')}</h3>
 						<p className='text-gray-900'>{t('telegram.description')}</p>
 						<button className='mt-2 bg-blue-500 text-gray-900'>{t('telegram.button')}</button>
