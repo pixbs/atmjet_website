@@ -20,7 +20,7 @@ export default function HomePage() {
 	return (
 		<main>
 			<HeaderSection />
-			<HeroSection title={t('hero-section.title')} />
+			<HeroSection title={t('home-hero.title')} />
 			<MakeBookingSection />
 			<WhyUsSection />
 			<EmptyLegSection />

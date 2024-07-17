@@ -1,5 +1,5 @@
 {
-	"hero-section": {
+	"home-hero": {
 		"title": "Flying private made simple"
 	},
 	"form": {
@@ -12,7 +12,7 @@
 		"delete-leg": "Delete leg",
 		"confirm": "Request successfully sent"
 	},
-	"why_us": {
+	"home-why-us": {
 		"title": "Why select us?",
 		"card1": {
 			"num": "20",

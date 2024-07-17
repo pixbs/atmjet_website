@@ -1,5 +1,5 @@
 {
-	"hero": {
+	"sales-hero": {
 		"overline": "Sales dept.",
 		"headline1": "{num1} Years",
 		"headline2": "{num2} Aircraft",
@@ -16,7 +16,7 @@
 	"aircraft": {
 		"title": "Most-flown business aircraft:"
 	},
-	"options": {
+	"sales-options": {
 		"title": "Comprehensive aircarft services",
 		"card1": {
 			"title": "Legal department",
@@ -44,7 +44,7 @@
 			"description": "Once the inspection is complete, we will provide a detailed report on the discrepancies found and the cost of correcting them."
 		}
 	},
-	"why_us": {
+	"sales-why-us": {
 		"title": "Special management conditions apply to rental from ATM Jet",
 		"card1": {
 			"num": "50",
@@ -60,7 +60,7 @@
 			"description": "We offer the best yields in the market"
 		}
 	},
-	"contact_us": {
+	"sales-contact-us": {
 		"title": "Contact us",
 		"description": "Contact us to find out how much yield you can get on your aircraft with us.",
 		"button": "Contact us"

@@ -1,10 +1,10 @@
 {
-	"hero": {
+	"aircraft-hero": {
 		"title": "We have over {num} aircraft available",
 		"num": "50,000",
 		"description": "Our group of companies has been working since 2004 to combine the highest level of freedom and comfort in the air and at sea."
 	},
-	"contact-us": {
+	"aircraft-contact-us": {
 		"title": "Contact us",
 		"description": "Write to us and we will provide you with a selection of the 5 most suitable aircraft models and tell you why.",
 		"button": "Contact now"

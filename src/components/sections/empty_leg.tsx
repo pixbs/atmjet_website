@@ -2,7 +2,7 @@ import { useTranslations } from 'next-intl'
 import { EmptyLegCard } from '../elements'
 
 export function EmptyLegSection() {
-	const t = useTranslations('empty_leg')
+	const t = useTranslations('empty-leg')
 	const cards = ['card1', 'card2', 'card3', 'card4']
 	return (
 		<section className='bg-gray-150'>

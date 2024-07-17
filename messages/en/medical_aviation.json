@@ -1,9 +1,9 @@
 {
-	"hero": {
+	"medical-hero": {
 		"title": "Medical aviation",
 		"description": "We will take care of everything while you take care of the people important to you"
 	},
-	"key_features": {
+	"medical-key-features": {
 		"title": "Exclusive key features",
 		"description": "Unlock exceptional benefits with our exclusive key features designed to enhance your travel experience:",
 		"card1": {
@@ -23,7 +23,7 @@
 			"description": "We are able to deliver organs from any country. Our aircrafts allow for the safe transfer of the transplant to the patient under suitable conditions, with the accompaniment of a doctor."
 		}
 	},
-	"contact_us": {
+	"medical-contact-us": {
 		"title": "Leave a contact for our ATM JET Chief Medical Officer",
 		"button": "Leave a contact"
 	}

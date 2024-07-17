@@ -2,7 +2,7 @@ import { useTranslations } from 'next-intl'
 import { WhyUsCard } from '../elements'
 
 export function WhyUsSection() {
-	const t = useTranslations('why_us')
+	const t = useTranslations('home-why-us')
 	const cards = ['card1', 'card2', 'card3', 'card4', 'card5']
 	return (
 		<section>

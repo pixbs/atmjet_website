@@ -1,9 +1,9 @@
 {
-	"hero": {
+	"cargo-hero": {
 		"title": "Cargo charter",
 		"description": "We know how important speed is Entrust your cargo to the professionals in the airfreight industry. We offer Cargo Charter services for the most demanding customers."
 	},
-	"why-us": {
+	"cargo-why-us": {
 		"title": "Why choose us?",
 		"card1": {
 			"title": "Global coverage",
@@ -22,7 +22,7 @@
 			"description": "We guarantee precise compliance with all deadlines and terms and conditions of cargo carriage. We offer a high level of service."
 		}
 	},
-	"form": {
+	"cargo-form": {
 		"title": "Cargo charter request",
 		"from": "From",
 		"to": "To",

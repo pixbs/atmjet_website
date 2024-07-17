@@ -1,5 +1,5 @@
 {
-	"hero": {
+	"partners-hero": {
 		"title": "Over {num} partners trust us.",
 		"num": "50"
 	},
@@ -8,7 +8,7 @@
 		"description": "We offer instalment payments to regular partners. Payment is due after the client has already flown away.",
 		"button": "Make a request"
 	},
-	"we_offer": {
+	"we-offer": {
 		"title": "Elevate your partnership with us",
 		"subtitle": "We offer:",
 		"description": "Unlock exclusive benefits and strong partnerships tailored for long-term cooperation at the highest level.",
@@ -35,7 +35,7 @@
 		"subtitle": "We are committed to safeguarding your reputation.",
 		"button": "Make a request"
 	},
-	"contact-us": {
+	"partners-contact-us": {
 		"title": "Contact us",
 		"description": "We will show you why partnering with us is the ideal choice for you.",
 		"button": "Contact now"

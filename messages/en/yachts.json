@@ -26,7 +26,7 @@
 			"description": "Yachts offer excellent returns when managed by experienced professionals. We will create a financial model for you."
 		}
 	},
-	"descriptor": {
+	"yachts-descriptor": {
 		"title": "We buy yachts for our clients as well as for ourselves."
 	},
 	"recent-yachts": {
@@ -55,7 +55,7 @@
 			"description": "Hull structure integrity, engine thermal inspection, electric"
 		}
 	},
-	"options": {
+	"yachts-options": {
 		"title": "Comprehensive yacht services",
 		"card1": {
 			"title": "Legal department",
@@ -68,7 +68,7 @@
 			"list": "Select the most advantageous tax jurisdiction for the transaction. \\nSelect the most suitable insurance. \\nProject the cost of ownership. \\nCalculate the projected rental income. \\nNumber and cost of crew required"
 		}
 	},
-	"why_us": {
+	"yachts-why-us": {
 		"title": "Over 20 years of successful yacht management",
 		"description": "We will negotiate on your behalf to secure the most favorable terms.",
 		"subtitle": "For every yacht in our management we create:",
@@ -89,7 +89,7 @@
 			"description": "We partner with luxury and charity events."
 		}
 	},
-	"contact_us": {
+	"yachts-contact-us": {
 		"title": "Contact us",
 		"description": "Contact us for a personalized consultation online or on one of our yachts around the world.",
 		"button": "Contact now"
