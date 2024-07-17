@@ -21,7 +21,7 @@ export function WhyUsCard(props: CardProps) {
 			whileInView={{ opacity: 1, y: 0 }}
 			style={{ top: `${topPadding}px` }}
 		>
-			<Counter className='bg-gold bg-fixed bg-clip-text font-serif text-5xl text-transparent'>
+			<Counter className='bg-gold bg-fixed bg-clip-text font-serif text-6xl text-transparent'>
 				{num}
 			</Counter>
 			<h3>{title}</h3>

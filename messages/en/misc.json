@@ -28,7 +28,7 @@
 	},
 	"footer": {
 		"location": "Dubai +971 (585) 940-112",
-		"copyright": "©ATM JET, 2004- {year}. All rights reserved",
+		"copyright": "©ATM JET, 2004-{year}. All rights reserved",
 		"button": "Make a booking"
 	}
 }

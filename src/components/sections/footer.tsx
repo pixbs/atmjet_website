@@ -1,8 +1,76 @@
+import { useTranslations, useLocale } from 'next-intl'
+import Link from 'next/link'
+import ArrowTopRight from '@/assets/svg/arrow-top-right.svg'
+import Logo from '@/assets/svg/logo.svg'
+
 export function FooterSection() {
+	const t = useTranslations()
+	const locale = useLocale()
+
+	const year = new Date().getFullYear()
+
 	return (
-		<section>
-			<footer>
-				<h1>Footer</h1>
+		<section
+			className='bg-cover bg-no-repeat bg-top bg-fixed'
+			style={{ backgroundImage: 'url(images/home_page/footer.jpg)' }}
+		>
+			<footer className="container bg-gray-100 bg-opacity-60 backdrop-blur-lg !mb-0 !mt-24 py-10 rounded-t-2xl gap-8">
+				<div className='flex-row content-between justify-between'>
+					<Logo className='h-8 text-gray-900'/>
+					<div className='flex-row gap-4'>
+						<Link href='/en' className={`text-base ${locale == "en" && 'opacity-50'}`}>{t('locale.en')}</Link>
+						<Link href='/ru' className={`text-base ${locale == "ru" && 'opacity-50'}`}>{t('locale.ru')}</Link>
+						<Link href='/uk' className={`text-base ${locale == "uk" && 'opacity-50'}`}>{t('locale.uk')}</Link>
+					</div>
+				</div>
+				<div className='w-full flex-row justify-between'>
+					<div className='[&>*]:duration-600 [&>*]:animate-in [&>*]:fade-in'>
+						<Link href='/'>{t('navigation.home')}</Link>
+						<Link href='partners'>{t('navigation.partners')}</Link>
+						<Link href='/bussines_agents'>{t('navigation.bussines-agents')}</Link>
+						<Link href='/medical_aviation'>{t('navigation.medical-aviation')}</Link>
+						<Link href='/empty_legs'>{t('navigation.empty-legs')}</Link>
+						<Link href='/cargo_charter'>{t('navigation.cargo-charter')}</Link>
+					</div>
+					<div className='[&>*]:duration-600 [&>*]:animate-in [&>*]:fade-in'>
+						<Link href='/' className='flex items-center'>
+							{t('social-media.telegram')}
+							<ArrowTopRight className='size-10' />
+						</Link>
+						<Link href='/' className='flex items-center'>
+							{t('social-media.whats-app')}
+							<ArrowTopRight className='size-10' />
+						</Link>
+						<Link href='/' className='flex items-center'>
+							{t('social-media.instagram')}
+							<ArrowTopRight className='size-10' />
+						</Link>
+					</div>
+				</div>
+				<div className='w-full flex-row justify-between'>
+					<div className='[&>*]:duration-600 [&>*]:animate-in [&>*]:fade-in'>
+						<Link href='/sales_dept'>
+							{t('navigation.sales-dept')}
+						</Link>
+						<Link href='/group_charters'>
+							{t('navigation.group-charters')}
+						</Link>
+						<Link href='/atmjet_group'>
+							{t('navigation.atmjet-group')}
+						</Link>
+						<Link href='/aircraft'>
+							{t('navigation.aircraft')}
+						</Link>
+						<Link href='/yachts'>
+							{t('navigation.yachts')}
+						</Link>
+					</div>
+				</div>
+				<div className='items-center gap-2'>
+					<button>{t('footer.button')}</button>
+					<p>{t('footer.location')}</p>
+					<p>{t('footer.copyright', {year})}</p>
+				</div>
 			</footer>
 		</section>
 	)
