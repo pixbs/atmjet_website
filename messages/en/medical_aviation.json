@@ -1,30 +1,30 @@
 {
-    "hero": {
-        "title": "Medical aviation",
-        "description": "We will take care of everything while you take care of the people important to you"
-    },
-    "key_features": {
-        "title": "Exclusive key features",
-        "description": "Unlock exceptional benefits with our exclusive key features designed to enhance your travel experience:",
-        "card1": {
-            "title": "Essential medical equipment",
-            "description": "We will provide the aircraft with the necessary medical equipment. Send us the medical report or clinic contacts and our experienced doctors will coordinate the necessary equipment for the safe transport of the patient."
-        },
-        "card2": {
-            "title": "The highest-qualified doctors",
-            "description": "On our medical flights we work only with PhD doctors and nursing staff with more than 15 years of experience."
-        },
-        "card3": {
-            "title": "Emergency flight service",
-            "description": "We know that sometimes time is of the essence. We have access to air ambulances around the world. Fast."
-        },
-        "card4": {
-            "title": "Transplant delivery",
-            "description": "We are able to deliver organs from any country. Our aircrafts allow for the safe transfer of the transplant to the patient under suitable conditions, with the accompaniment of a doctor."
-        }
-    },
-    "contact_us": {
-        "title": "Leave a contact for our ATM JET Chief Medical Officer",
-        "button": "Leave a contact"
-    }
+	"hero": {
+		"title": "Medical aviation",
+		"description": "We will take care of everything while you take care of the people important to you"
+	},
+	"key_features": {
+		"title": "Exclusive key features",
+		"description": "Unlock exceptional benefits with our exclusive key features designed to enhance your travel experience:",
+		"card1": {
+			"title": "Essential medical equipment",
+			"description": "We will provide the aircraft with the necessary medical equipment. Send us the medical report or clinic contacts and our experienced doctors will coordinate the necessary equipment for the safe transport of the patient."
+		},
+		"card2": {
+			"title": "The highest-qualified doctors",
+			"description": "On our medical flights we work only with PhD doctors and nursing staff with more than 15 years of experience."
+		},
+		"card3": {
+			"title": "Emergency flight service",
+			"description": "We know that sometimes time is of the essence. We have access to air ambulances around the world. Fast."
+		},
+		"card4": {
+			"title": "Transplant delivery",
+			"description": "We are able to deliver organs from any country. Our aircrafts allow for the safe transfer of the transplant to the patient under suitable conditions, with the accompaniment of a doctor."
+		}
+	},
+	"contact_us": {
+		"title": "Leave a contact for our ATM JET Chief Medical Officer",
+		"button": "Leave a contact"
+	}
 }

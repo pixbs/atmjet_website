@@ -44,7 +44,7 @@ export function EmptyLegCard(props: CardProps) {
 				<button>inquire</button>
 			</div>
 			<div className='flex-row items-start gap-2'>
-				<Counter className='font-black font-sans text-3xl text-gray-900'>{price}</Counter>
+				<Counter className='font-sans text-3xl font-black text-gray-900'>{price}</Counter>
 				<p className='text-xs line-through'>{initalPrice}</p>
 				<p className='rounded-lg bg-red-500 px-1 text-xs font-bold text-gray-900'>
 					{discountPercent}

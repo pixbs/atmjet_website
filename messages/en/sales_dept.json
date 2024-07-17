@@ -1,68 +1,68 @@
 {
-    "hero": {
-        "overline": "Sales dept.",
-        "headline1": "{num1} Years",
-        "headline2": "{num2} Aircraft",
-        "num1": "20+",
-        "num2": "300+",
-        "description": "Over the past two decades, we have assisted in the purchasing and valuation of over 300 aircraft for corporate and private clients.",
-        "button": "Contact us"
-    },
-    "personal-manager": {
-        "title": "Personal aviation manager",
-        "description": "We will provide a personalized aviation manager with extensive experience of over 20 years. He will assist you in determining the most suitable aircraft based on your requirements:",
-        "chips": "Your plans for using the aircraft; Price expectations; High residual value; Required parameters (range, passengers quantity, based airport); Best profitability"
-    },
-    "aircraft": {
-        "title": "Most-flown business aircraft:"
-    },
-    "options": {
-        "title": "Comprehensive aircarft services",
-        "card1": {
-            "title": "Legal department",
-            "description": "The legal department is committed to ensuring the complete security of the transaction from start to finish. We will prepare the following:",
-            "list": "Proposal of intent with guarantees and commitments \\nBank lien verification of the aircraft \\nPurchase agreement \\nChange of ownership structure in the aircraft registration decision \\nExport certificates, airworthiness certificate \\nOther necessary documents"
-        },
-        "card2": {
-            "title": "Finance department",
-            "description": "We will negotiate on your behalf to secure the most favourable terms. The finance department will select the most appropriate option from the following:",
-            "list": "Select the most advantageous tax jurisdiction for the transaction \\nSelect the most suitable insurance \\nProject the cost of ownership \\nCalculate the projected rental income"
-        }
-    },
-    "aircraft-descriptor": {
-        "title": "Each aircraft is assessed by a team of mechanics licensed by the manufacturer of the desired aircraft.",
-        "card1": {
-            "title": "ABC check verification",
-            "description": "We review the reports for each ABC check and verify the corrections."
-        },
-        "card2": {
-            "title": "Test flight evaluation",
-            "description": "The technician will conduct a test flight to evaluate the aircraft's performance."
-        },
-        "card3": {
-            "title": "Detailed inspection report",
-            "description": "Once the inspection is complete, we will provide a detailed report on the discrepancies found and the cost of correcting them."
-        }
-    },
-    "why_us": {
-        "title": "Special management conditions apply to rental from ATM Jet",
-        "card1": {
-            "num": "50",
-            "title": "Flights per month",
-            "description": "We handle over 50 flights per month as a broker."
-        },
-        "card2": {
-            "title": "Experienced fleet management",
-            "description": "We successfully manage over 15 client aircraft as an operator."
-        },
-        "card3": {
-            "title": "Market-leading yields",
-            "description": "We offer the best yields in the market"
-        }
-    },
-    "contact_us": {
-        "title": "Contact us",
-        "description": "Contact us to find out how much yield you can get on your aircraft with us.",
-        "button": "Contact us"
-    }
+	"hero": {
+		"overline": "Sales dept.",
+		"headline1": "{num1} Years",
+		"headline2": "{num2} Aircraft",
+		"num1": "20+",
+		"num2": "300+",
+		"description": "Over the past two decades, we have assisted in the purchasing and valuation of over 300 aircraft for corporate and private clients.",
+		"button": "Contact us"
+	},
+	"personal-manager": {
+		"title": "Personal aviation manager",
+		"description": "We will provide a personalized aviation manager with extensive experience of over 20 years. He will assist you in determining the most suitable aircraft based on your requirements:",
+		"chips": "Your plans for using the aircraft; Price expectations; High residual value; Required parameters (range, passengers quantity, based airport); Best profitability"
+	},
+	"aircraft": {
+		"title": "Most-flown business aircraft:"
+	},
+	"options": {
+		"title": "Comprehensive aircarft services",
+		"card1": {
+			"title": "Legal department",
+			"description": "The legal department is committed to ensuring the complete security of the transaction from start to finish. We will prepare the following:",
+			"list": "Proposal of intent with guarantees and commitments \\nBank lien verification of the aircraft \\nPurchase agreement \\nChange of ownership structure in the aircraft registration decision \\nExport certificates, airworthiness certificate \\nOther necessary documents"
+		},
+		"card2": {
+			"title": "Finance department",
+			"description": "We will negotiate on your behalf to secure the most favourable terms. The finance department will select the most appropriate option from the following:",
+			"list": "Select the most advantageous tax jurisdiction for the transaction \\nSelect the most suitable insurance \\nProject the cost of ownership \\nCalculate the projected rental income"
+		}
+	},
+	"aircraft-descriptor": {
+		"title": "Each aircraft is assessed by a team of mechanics licensed by the manufacturer of the desired aircraft.",
+		"card1": {
+			"title": "ABC check verification",
+			"description": "We review the reports for each ABC check and verify the corrections."
+		},
+		"card2": {
+			"title": "Test flight evaluation",
+			"description": "The technician will conduct a test flight to evaluate the aircraft's performance."
+		},
+		"card3": {
+			"title": "Detailed inspection report",
+			"description": "Once the inspection is complete, we will provide a detailed report on the discrepancies found and the cost of correcting them."
+		}
+	},
+	"why_us": {
+		"title": "Special management conditions apply to rental from ATM Jet",
+		"card1": {
+			"num": "50",
+			"title": "Flights per month",
+			"description": "We handle over 50 flights per month as a broker."
+		},
+		"card2": {
+			"title": "Experienced fleet management",
+			"description": "We successfully manage over 15 client aircraft as an operator."
+		},
+		"card3": {
+			"title": "Market-leading yields",
+			"description": "We offer the best yields in the market"
+		}
+	},
+	"contact_us": {
+		"title": "Contact us",
+		"description": "Contact us to find out how much yield you can get on your aircraft with us.",
+		"button": "Contact us"
+	}
 }

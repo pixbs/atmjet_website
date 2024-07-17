@@ -1,31 +1,31 @@
 {
-    "hero": {
-        "title": "Cargo charter",
-        "description": "We know how important speed is Entrust your cargo to the professionals in the airfreight industry. We offer Cargo Charter services for the most demanding customers."
-    },
-    "why-us": {
-        "title": "Why choose us?",
-        "card1": {
-            "title": "Global coverage",
-            "description": "Our global fleet and extensive network of partners offer a comprehensive range of delivery options to reach any destination."
-        },
-        "card2": {
-            "title": "Personalized approach",
-            "description": "Our logistics team will identify the most effective solution for any cargo or route, regardless of complexity."
-        },
-        "card3": {
-            "title": "Security",
-            "description": "We adhere to the highest standards of security and confidentiality throughout the entire transport process."
-        },
-        "card4": {
-            "title": "Guarantees",
-            "description": "We guarantee precise compliance with all deadlines and terms and conditions of cargo carriage. We offer a high level of service."
-        }
-    },
-    "form": {
-        "title": "Cargo charter request",
-        "from": "From",
-        "to": "To",
-        "button": "Request quote"
-    }
+	"hero": {
+		"title": "Cargo charter",
+		"description": "We know how important speed is Entrust your cargo to the professionals in the airfreight industry. We offer Cargo Charter services for the most demanding customers."
+	},
+	"why-us": {
+		"title": "Why choose us?",
+		"card1": {
+			"title": "Global coverage",
+			"description": "Our global fleet and extensive network of partners offer a comprehensive range of delivery options to reach any destination."
+		},
+		"card2": {
+			"title": "Personalized approach",
+			"description": "Our logistics team will identify the most effective solution for any cargo or route, regardless of complexity."
+		},
+		"card3": {
+			"title": "Security",
+			"description": "We adhere to the highest standards of security and confidentiality throughout the entire transport process."
+		},
+		"card4": {
+			"title": "Guarantees",
+			"description": "We guarantee precise compliance with all deadlines and terms and conditions of cargo carriage. We offer a high level of service."
+		}
+	},
+	"form": {
+		"title": "Cargo charter request",
+		"from": "From",
+		"to": "To",
+		"button": "Request quote"
+	}
 }

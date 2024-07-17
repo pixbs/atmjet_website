@@ -1,34 +1,34 @@
 {
-    "locale": {
-        "en": "Eng",
-        "ru": "Ru",
-        "uk": "Ukr",
-        "english": "English",
-        "russian": "Russian",
-        "ukrainian": "Ukrainian"
-    },
-    "social-media": {
-        "telegram": "Telegram ↗",
-        "whats-app": "WhatsApp ↗",
-        "instagram": "Instagram ↗"
-    },
-    "navigation": {
-        "home": "Home",
-        "partners": "Partners",
-        "bussines-agents": "Bussines agents",
-        "citizens": "For russian citizens",
-        "medical-aviation": "Medical aviation",
-        "empty-legs": "Empty legs",
-        "cargo-charter": "Cargo charter",
-        "group-charters": "Group charters",
-        "atmjet-group": "ATM JET group",
-        "aircraft": "Our aircraft",
-        "yachts": "Yachts",
-        "sales-dept": "Sales department"
-    },
-    "footer": {
-        "location": "Dubai +971 (585) 940-112",
-        "copyright": "©ATM JET, 2004- {year}. All rights reserved",
-        "button": "Make a booking"
-    }
+	"locale": {
+		"en": "Eng",
+		"ru": "Ru",
+		"uk": "Ukr",
+		"english": "English",
+		"russian": "Russian",
+		"ukrainian": "Ukrainian"
+	},
+	"social-media": {
+		"telegram": "Telegram ↗",
+		"whats-app": "WhatsApp ↗",
+		"instagram": "Instagram ↗"
+	},
+	"navigation": {
+		"home": "Home",
+		"partners": "Partners",
+		"bussines-agents": "Bussines agents",
+		"citizens": "For russian citizens",
+		"medical-aviation": "Medical aviation",
+		"empty-legs": "Empty legs",
+		"cargo-charter": "Cargo charter",
+		"group-charters": "Group charters",
+		"atmjet-group": "ATM JET group",
+		"aircraft": "Our aircraft",
+		"yachts": "Yachts",
+		"sales-dept": "Sales department"
+	},
+	"footer": {
+		"location": "Dubai +971 (585) 940-112",
+		"copyright": "©ATM JET, 2004- {year}. All rights reserved",
+		"button": "Make a booking"
+	}
 }
