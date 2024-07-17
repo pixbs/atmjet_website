@@ -4,7 +4,7 @@
 
 :root {
 	font-size: 18px;
-	@apply bg-gray-100 text-gray-600 scroll-smooth;
+	@apply scroll-smooth bg-gray-100 text-gray-600;
 }
 
 * {
@@ -35,7 +35,7 @@ input {
 }
 
 a {
-	@apply text-gray-900 text-lg h-10 hover:opacity-50;
+	@apply h-10 text-lg text-gray-900 hover:opacity-50;
 }
 
 h1,

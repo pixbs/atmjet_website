@@ -4,7 +4,7 @@ import { motion } from 'framer-motion'
 
 export function YachtsCard() {
 	const t = useTranslations('yachts')
-	const cards = ["card1", "card2", "card3"]
+	const cards = ['card1', 'card2', 'card3']
 
 	return (
 		<motion.div

@@ -23,6 +23,6 @@ export default getRequestConfig(async ({ locale }) => {
 			...(await import(`../messages/${locale}/partners.json`)).default,
 			...(await import(`../messages/${locale}/sales_dept.json`)).default,
 			...(await import(`../messages/${locale}/yachts.json`)).default,
-		}
+		},
 	}
 })
