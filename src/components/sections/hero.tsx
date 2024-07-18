@@ -1,9 +1,18 @@
 'use client'
+
+import { useEffect, useState } from "react"
+
 interface HeroSectionProps {
 	title: string
 }
 
 export function HeroSection(props: HeroSectionProps) {
+	const [isClient, setIsClient] = useState(false)
+ 
+	useEffect(() => {
+	  setIsClient(true)
+	}, [])
+
 	const { title } = props
 	const videoSrc = 'video/hero_background.mp4'
 	return (
@@ -17,7 +26,7 @@ export function HeroSection(props: HeroSectionProps) {
 				{/* <RequestForm /> */}
 			</div>
 			<div className='hero-darkening absolute inset-0 z-10' />
-			<video
+{isClient &&			<video
 				autoPlay
 				muted
 				loop
@@ -26,7 +35,7 @@ export function HeroSection(props: HeroSectionProps) {
 			>
 				<source src={videoSrc} type='video/mp4' />
 				<track src='/path/to/captions.vtt' kind='subtitles' srcLang='en' label='English' />
-			</video>
+			</video>}
 		</section>
 	)
 }
