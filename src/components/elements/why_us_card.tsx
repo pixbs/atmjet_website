@@ -16,13 +16,13 @@ export function WhyUsCard(props: CardProps) {
 
 	return (
 		<motion.div
-			className='card sticky -mb-16 gap-4 bg-gray-150 p-8 pb-24 last:mb-0 last:pb-10 md:flex-row md:gap-40'
+			className='card sticky -mb-16 gap-4 bg-gray-150 p-8 pb-24 last:mb-0 last:pb-10 md:flex-row md:gap-16 md:py-0 md:last:pb-0'
 			initial={{ opacity: 0, y: -50 }}
 			transition={{ duration: 0.5 }}
 			whileInView={{ opacity: 1, y: 0 }}
 			style={{ top: `${topPadding}px` }}
 		>
-			<div className='gap-4 md:w-1/2'>
+			<div className='gap-4 md:w-1/2 md:pb-24 md:pt-16'>
 				<Counter className='bg-gold bg-fixed bg-clip-text font-serif text-6xl text-transparent'>
 					{num}
 				</Counter>
@@ -30,7 +30,7 @@ export function WhyUsCard(props: CardProps) {
 				<p>{description}</p>
 			</div>
 			<div
-				className='-mx-9 -mb-12 h-48 bg-cover bg-center md:w-1/2'
+				className='-mx-9 -mb-12 h-48 bg-cover bg-center md:h-full md:w-1/2'
 				style={{ backgroundImage: `url(${imageSrc})` }}
 			/>
 		</motion.div>

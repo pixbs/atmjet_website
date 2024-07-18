@@ -26,7 +26,7 @@ export function Direction(props: DirectionProps) {
 	} = useFormContext()
 
 	return (
-		<div className='gap-0.5 rounded-xl'>
+		<div className='w-full content-stretch items-stretch justify-stretch gap-0.5 rounded-xl lg:flex-row'>
 			<Controller
 				control={control}
 				name={`direction.${index}.from`}
@@ -35,7 +35,7 @@ export function Direction(props: DirectionProps) {
 						value={field.value}
 						onChange={field.onChange}
 						placeholder={t('from')}
-						className='rounded-t-xl'
+						className='w-full rounded-t-xl lg:h-full lg:min-w-40 lg:rounded-sm lg:rounded-l-xl'
 					/>
 				)}
 			/>
@@ -43,15 +43,20 @@ export function Direction(props: DirectionProps) {
 				control={control}
 				name={`direction.${index}.to`}
 				render={({ field }) => (
-					<AutoComplete value={field.value} onChange={field.onChange} placeholder={t('to')} />
+					<AutoComplete
+						value={field.value}
+						onChange={field.onChange}
+						placeholder={t('to')}
+						className='w-full lg:h-full lg:min-w-40'
+					/>
 				)}
 			/>
-			<div className='rounded-sm bg-gray-900'>
+			<div className='w-full rounded-sm bg-gray-900'>
 				<Controller
 					control={control}
 					name={`direction.${index}.date`}
 					render={({ field }) => (
-						<input {...field} type='date' placeholder={t('date')} className='w-full' />
+						<input {...field} type='date' placeholder={t('date')} className='w-full lg:h-full' />
 					)}
 				/>
 			</div>
@@ -63,7 +68,7 @@ export function Direction(props: DirectionProps) {
 						{...field}
 						placeholder={t('passengers')}
 						onChange={(e) => field.onChange(Number(e.target.value))}
-						className='rounded-b-xl'
+						className='w-full rounded-b-xl lg:rounded-sm lg:!rounded-r-xl'
 					/>
 				)}
 			/>

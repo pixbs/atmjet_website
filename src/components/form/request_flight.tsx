@@ -61,23 +61,36 @@ export function RequestForm(props: RequestFormProps) {
 
 	return (
 		<FormProvider {...methods}>
-			<form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-6'>
+			<form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-6 lg:gap-3'>
 				{fields.map((field, index) => (
-					<div key={field.id} className='flex flex-col gap-2'>
+					<div key={field.id} className='flex flex-col gap-2 lg:flex-row'>
 						<Direction index={index} />
 						{index != 0 && (
-							<button type='button' onClick={() => handleRemove(index)} className='self-end'>
+							<button
+								type='button'
+								onClick={() => handleRemove(index)}
+								className='self-end border border-gray-300 bg-gray-100 text-gray-900 lg:h-14 lg:w-48'
+							>
 								{t('delete-leg')}
+							</button>
+						)}
+						{index == 0 && (
+							<button type='submit' className={`w-48 ${buttonClassName}`}>
+								{buttonText || t('request-quote')}
 							</button>
 						)}
 					</div>
 				))}
 				{fields.length < max && (
-					<button type='button' onClick={handleAppend} className='self-start'>
+					<button
+						type='button'
+						onClick={handleAppend}
+						className='self-start border border-gray-300 bg-gray-100 text-gray-900'
+					>
 						{t('add-leg')}
 					</button>
 				)}
-				<button type='submit' className={buttonClassName || 'big'}>
+				<button type='submit' className={`big lg:hidden ${buttonClassName}`}>
 					{buttonText || t('request-quote')}
 				</button>
 			</form>
