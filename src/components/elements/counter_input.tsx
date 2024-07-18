@@ -34,7 +34,9 @@ export function CounterInput(props: React.InputHTMLAttributes<HTMLInputElement>)
 	}
 
 	return (
-		<div className={`flex-row items-center rounded-sm bg-gray-900 px-4 py-2.5 text-sm font-normal text-gray-100 ${className}`}>
+		<div
+			className={`flex-row items-center rounded-sm bg-gray-900 px-4 py-2.5 text-sm font-normal text-gray-100 ${className}`}
+		>
 			<label className='pr-4'>{placeholder}</label>
 			<button
 				className={`size-8 rounded-lg border border-gray-700 p-0 ${value <= 1 ? 'cursor-not-allowed opacity-50' : ''}`}
