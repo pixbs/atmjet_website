@@ -30,7 +30,7 @@ export function BookingModal({ closeModal }: BookingModalProps) {
 				className='container mx-auto gap-8 rounded-2xl bg-gray-150 stroke-gray-800 stroke-1 !p-10'
 			>
 				<BookingForm />
-				<div className='[&>*]:duration-600 flex-row items-center justify-center gap-4 [&>*]:animate-in [&>*]:fade-in'>
+				<div className='[&>*]:duration-600 flex-row flex-wrap items-center justify-center gap-4 [&>*]:animate-in [&>*]:fade-in'>
 					<Link href='/' className='flex items-center text-base'>
 						{t('social-media.telegram')}
 						<ArrowTopRight className='size-10' />

@@ -46,11 +46,15 @@ export function Direction(props: DirectionProps) {
 					<AutoComplete value={field.value} onChange={field.onChange} placeholder={t('to')} />
 				)}
 			/>
-			<Controller
-				control={control}
-				name={`direction.${index}.date`}
-				render={({ field }) => <input {...field} type='date' placeholder={t('date')} />}
-			/>
+			<div className='rounded-sm bg-gray-900'>
+				<Controller
+					control={control}
+					name={`direction.${index}.date`}
+					render={({ field }) => (
+						<input {...field} type='date' placeholder={t('date')} className='w-full' />
+					)}
+				/>
+			</div>
 			<Controller
 				control={control}
 				name={`direction.${index}.passengers`}
