@@ -14,7 +14,7 @@ export function TestimonialsCard(props: TestimonialsCardProps) {
 
 	return (
 		<motion.div
-			className='embla__slide relative mr-8 flex w-full flex-shrink-0 flex-col items-stretch justify-between gap-3 overflow-hidden rounded-xl bg-cover bg-center p-8 last:mr-0'
+			className='embla__slide relative mr-8 flex w-full flex-shrink-0 flex-col items-stretch justify-between gap-3 overflow-hidden rounded-xl bg-cover bg-center p-8 last:mr-0 md:w-2/3 lg:w-1/3'
 			initial={{ opacity: 0 }}
 			transition={{ duration: 0.5 }}
 			whileInView={{ opacity: 1 }}

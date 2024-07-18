@@ -17,11 +17,11 @@ export function YachtsCard() {
 				className='min-h-64 bg-cover bg-center'
 				style={{ backgroundImage: 'url(images/home_page/yachts.jpg)' }}
 			/>
-			<div className='gap-8 px-6'>
+			<div className='gap-8 px-6 md:flex-row'>
 				{cards.map((card, index) => (
 					<motion.div
 						key={index}
-						className='gap-3'
+						className='w-full gap-3'
 						initial={{ opacity: 0, y: -50 }}
 						transition={{ duration: 0.5 }}
 						whileInView={{ opacity: 1, y: 0 }}
@@ -32,13 +32,13 @@ export function YachtsCard() {
 				))}
 			</div>
 			<motion.div
-				className='mx-6 mb-6 gap-6 rounded-2xl bg-gray-100 p-6'
+				className='mx-6 mb-6 gap-6 rounded-2xl bg-gray-100 p-6 md:text-center'
 				initial={{ opacity: 0, y: -50 }}
 				transition={{ duration: 0.5 }}
 				whileInView={{ opacity: 1, y: 0 }}
 			>
 				<h3>{t('call-to-action')}</h3>
-				<button>{t('button')}</button>
+				<button className='md:self-center md:px-8'>{t('button')}</button>
 			</motion.div>
 		</motion.div>
 	)

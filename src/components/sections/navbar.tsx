@@ -7,9 +7,9 @@ export function Navbar() {
 	const locale = useLocale()
 
 	return (
-		<section className='fixed bottom-0 left-0 right-0 top-0 z-40 flex-col bg-gray-100 bg-opacity-80 backdrop-blur-xl duration-200 animate-in fade-in'>
+		<section className='fixed inset-0 bottom-0 z-40 flex-col bg-gray-100 bg-opacity-80 backdrop-blur-xl duration-200 animate-in fade-in lg:bottom-auto'>
 			<nav className='container !m-0 flex h-full !flex-row content-stretch pb-10 pt-36'>
-				<div className='w-full flex-col justify-between'>
+				<div className='w-full flex-col justify-between lg:flex-row'>
 					<div className='[&>*]:duration-600 [&>*]:animate-in [&>*]:fade-in'>
 						<Link href='/'>{t('navigation.home')}</Link>
 						<Link href='partners'>{t('navigation.partners')}</Link>

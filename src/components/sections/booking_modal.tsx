@@ -27,26 +27,28 @@ export function BookingModal({ closeModal }: BookingModalProps) {
 		>
 			<div
 				ref={containerRef}
-				className='container mx-auto gap-8 rounded-2xl bg-gray-150 stroke-gray-800 stroke-1 !p-10'
+				className='container mx-auto rounded-2xl bg-gray-150 stroke-gray-800 stroke-1 !p-10'
 			>
-				<BookingForm />
-				<div className='[&>*]:duration-600 flex-row flex-wrap items-center justify-center gap-4 [&>*]:animate-in [&>*]:fade-in'>
-					<Link href='/' className='flex items-center text-base'>
-						{t('social-media.telegram')}
-						<ArrowTopRight className='size-10' />
-					</Link>
-					<Link href='/' className='flex items-center text-base'>
-						{t('social-media.whats-app')}
-						<ArrowTopRight className='size-10' />
-					</Link>
-					<Link href='/' className='flex items-center text-base'>
-						{t('social-media.instagram')}
-						<ArrowTopRight className='size-10' />
+				<div className='max-w-screen-md gap-8 self-center'>
+					<BookingForm />
+					<div className='[&>*]:duration-600 flex-row flex-wrap items-center justify-center gap-4 [&>*]:animate-in [&>*]:fade-in'>
+						<Link href='/' className='flex items-center text-base'>
+							{t('social-media.telegram')}
+							<ArrowTopRight className='size-10' />
+						</Link>
+						<Link href='/' className='flex items-center text-base'>
+							{t('social-media.whats-app')}
+							<ArrowTopRight className='size-10' />
+						</Link>
+						<Link href='/' className='flex items-center text-base'>
+							{t('social-media.instagram')}
+							<ArrowTopRight className='size-10' />
+						</Link>
+					</div>
+					<Link href='tel:+971585940112' className='!-mt-6 text-center text-base text-gray-700'>
+						{t('footer.phone')}
 					</Link>
 				</div>
-				<Link href='tel:+971585940112' className='!-mt-6 text-center text-base text-gray-700'>
-					{t('footer.phone')}
-				</Link>
 			</div>
 		</section>
 	)

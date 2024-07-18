@@ -21,7 +21,7 @@ export function KeyFeaturesCarousel({ children }: { children: React.ReactNode })
 	}, [emblaApi, onScroll])
 
 	return (
-		<div className='embla' ref={emblaRef}>
+		<div className='embla overflow-clip' ref={emblaRef}>
 			<div className='embla__container flex-row'>{children}</div>
 		</div>
 	)

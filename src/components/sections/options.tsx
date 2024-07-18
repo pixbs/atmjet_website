@@ -5,9 +5,9 @@ export function OptionsSection() {
 
 	return (
 		<section>
-			<div className='container gap-6'>
+			<div className='container gap-6 lg:flex-row lg:content-stretch'>
 				<div
-					className='relative h-64 items-start justify-center gap-6 overflow-hidden rounded-2xl bg-cover p-6'
+					className='relative h-64 w-full items-start justify-center gap-6 overflow-hidden rounded-2xl bg-cover p-6'
 					style={{ backgroundImage: 'url(images/home_page/why_us_clients.jpg)' }}
 				>
 					<h2 className='z-10'>{t('assistant')}</h2>
@@ -15,7 +15,7 @@ export function OptionsSection() {
 					<div className='option-darkening absolute inset-0' />
 				</div>
 				<div
-					className='relative h-64 items-start justify-center gap-6 overflow-hidden rounded-2xl bg-cover p-6'
+					className='relative h-64 w-full items-start justify-center gap-6 overflow-hidden rounded-2xl bg-cover p-6'
 					style={{ backgroundImage: 'url(images/home_page/why_us_clients.jpg)' }}
 				>
 					<h2 className='z-10'>{t('agencies')}</h2>

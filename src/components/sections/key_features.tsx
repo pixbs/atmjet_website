@@ -14,9 +14,11 @@ export function KeyFeaturesSection() {
 
 	return (
 		<section className='overflow-hidden bg-gray-150'>
-			<div className='container mx-auto gap-4 px-4'>
-				<h2>{t('title')}</h2>
-				<p className='mb-8'>{t('description')}</p>
+			<div className='container mx-auto gap-4 px-4 md:flex-row md:gap-5'>
+				<div className='relative z-10 min-w-80 gap-4'>
+					<h2>{t('title')}</h2>
+					<p className='mb-8'>{t('description')}</p>
+				</div>
 				<KeyFeaturesCarousel>
 					{cards.map((card, index) => (
 						<KeyFeatureCard
