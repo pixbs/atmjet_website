@@ -121,8 +121,11 @@
 		"title": "Leave your details",
 		"description": "Form additional text",
 		"name": "Name",
+		"name-placeholder": "John Snow",
 		"phone-number": "Phone number",
+		"phone-placeholder": "+1 234 567 89 10",
 		"email": "Email",
+		"email-placeholder": "example@example.com",
 		"send": "Send",
 		"confirm": "Successfully sent"
 	}

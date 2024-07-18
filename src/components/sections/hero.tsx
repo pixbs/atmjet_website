@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from "react"
+import { useEffect, useState } from 'react'
 
 interface HeroSectionProps {
 	title: string
@@ -8,9 +8,9 @@ interface HeroSectionProps {
 
 export function HeroSection(props: HeroSectionProps) {
 	const [isClient, setIsClient] = useState(false)
- 
+
 	useEffect(() => {
-	  setIsClient(true)
+		setIsClient(true)
 	}, [])
 
 	const { title } = props
@@ -26,16 +26,18 @@ export function HeroSection(props: HeroSectionProps) {
 				{/* <RequestForm /> */}
 			</div>
 			<div className='hero-darkening absolute inset-0 z-10' />
-{isClient &&			<video
-				autoPlay
-				muted
-				loop
-				playsInline
-				className='absolute inset-0 z-0 h-full w-full object-cover'
-			>
-				<source src={videoSrc} type='video/mp4' />
-				<track src='/path/to/captions.vtt' kind='subtitles' srcLang='en' label='English' />
-			</video>}
+			{isClient && (
+				<video
+					autoPlay
+					muted
+					loop
+					playsInline
+					className='absolute inset-0 z-0 h-full w-full object-cover'
+				>
+					<source src={videoSrc} type='video/mp4' />
+					<track src='/path/to/captions.vtt' kind='subtitles' srcLang='en' label='English' />
+				</video>
+			)}
 		</section>
 	)
 }

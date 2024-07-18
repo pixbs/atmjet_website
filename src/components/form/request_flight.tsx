@@ -1,11 +1,12 @@
 'use client'
 
 import { useTranslations } from 'next-intl'
-import { CounterInput } from '../elements'
 import { z } from 'zod'
 import { useForm, FormProvider, useFieldArray } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Direction, directionSchema } from './direction'
+import { useState } from 'react'
+import Checkmark from '@/assets/svg/checkmark.svg'
 
 const schema = z.object({
 	direction: z.array(directionSchema),
@@ -21,6 +22,7 @@ interface RequestFormProps {
 
 export function RequestForm(props: RequestFormProps) {
 	const { buttonText, buttonClassName, max = 4 } = props
+	const [submitted, setSubmitted] = useState(false)
 	const t = useTranslations('form')
 	const methods = useForm<FormSchemaType>({
 		resolver: zodResolver(schema),
@@ -37,6 +39,7 @@ export function RequestForm(props: RequestFormProps) {
 
 	const onSubmit = (data: FormSchemaType) => {
 		console.log(data)
+		setSubmitted(true)
 	}
 
 	const handleAppend = () => {
@@ -45,6 +48,15 @@ export function RequestForm(props: RequestFormProps) {
 
 	const handleRemove = (index: number) => {
 		remove(index)
+	}
+
+	if (submitted) {
+		return (
+			<>
+				<h2 className='text-center'>{t('confirm')}</h2>
+				<Checkmark className='mx-auto my-10 h-20 stroke-none text-orange-200 duration-500 animate-in fade-in-0 slide-in-from-top-4' />
+			</>
+		)
 	}
 
 	return (
