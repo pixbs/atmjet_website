@@ -29,7 +29,7 @@ button.big {
 }
 
 input {
-	@apply rounded-lg bg-gray-900 px-4 py-4 text-sm font-normal text-gray-100;
+	@apply rounded-sm bg-gray-900 px-4 py-4 text-sm font-normal text-gray-100;
 	-webkit-appearance: none;
 	appearance: none;
 }

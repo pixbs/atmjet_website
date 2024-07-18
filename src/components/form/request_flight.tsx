@@ -3,50 +3,70 @@
 import { useTranslations } from 'next-intl'
 import { CounterInput } from '../elements'
 import { z } from 'zod'
-import { useForm, FormProvider } from 'react-hook-form'
+import { useForm, FormProvider, useFieldArray } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { Direction, directionSchema } from './direction'
 
 const schema = z.object({
-	from: z.string().nonempty('From is required'),
-	to: z.string().optional(),
-	date: z
-		.string()
-		.nonempty('Date is required')
-		.refine((val) => !isNaN(Date.parse(val)), { message: 'Invalid date format' }),
-	passangers: z.number().min(1, 'At least one passenger is required'),
+	direction: z.array(directionSchema),
 })
 
-export function RequestForm() {
+type FormSchemaType = z.infer<typeof schema>
+
+interface RequestFormProps {
+	buttonText?: string
+	buttonClassName?: string
+	max?: number
+}
+
+export function RequestForm(props: RequestFormProps) {
+	const { buttonText, buttonClassName, max = 4 } = props
 	const t = useTranslations('form')
-	type FormData = z.infer<typeof schema>
-	const methods = useForm<FormData>({
+	const methods = useForm<FormSchemaType>({
 		resolver: zodResolver(schema),
+		defaultValues: {
+			direction: [{ from: '', to: '', date: '', passangers: 1 }],
+		},
 	})
 
-	const { register, handleSubmit } = methods
+	const { control, handleSubmit } = methods
+	const { fields, append, remove } = useFieldArray({
+		control,
+		name: 'direction',
+	})
 
-	const onSubmit = (data: FormData) => {
+	const onSubmit = (data: FormSchemaType) => {
 		console.log(data)
 	}
 
-	const handleClick = () => {
-		const input = document.querySelector('input[type="date"]') as HTMLInputElement
-		if (input) {
-			input.focus()
-		}
+	const handleAppend = () => {
+		append({ from: '', to: '', date: '', passangers: 1 })
+	}
+
+	const handleRemove = (index: number) => {
+		remove(index)
 	}
 
 	return (
 		<FormProvider {...methods}>
-			<form className='flex flex-col gap-1' onSubmit={handleSubmit(onSubmit)}>
-				<input placeholder={t('from')} {...register('from')} />
-				<input placeholder={t('to')} {...register('to')} />
-				<div className='rounded-2xl bg-gray-900' onClick={handleClick}>
-					<input type='date' placeholder={t('date')} {...register('date')} />
-				</div>
-				<CounterInput label={t('passangers')} id='passangers' />
-				<button type='submit' className='big mt-3 bg-gold bg-fixed'>
-					{t('request-quote')}
+			<form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-6'>
+				{fields.map((field, index) => (
+					<div key={field.id} className='flex flex-col gap-2'>
+						<Direction index={index} />
+						{index != 0 && (
+							<button type='button' onClick={() => handleRemove(index)} className='self-end'>
+								{t('delete-leg')}
+							</button>
+						)}
+					</div>
+				))}
+				{fields.length < max && (
+					<button type='button' onClick={handleAppend} className='self-start'>
+						{t('add-leg')}
+					</button>
+				)}
+				<button type='submit' className={buttonClassName || 'big'}>
+					{buttonText || t('request-quote')}
 				</button>
 			</form>
 		</FormProvider>
