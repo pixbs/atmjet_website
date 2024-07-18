@@ -1,10 +1,10 @@
 {
 	"bussines-agents-hero": {
-		"title": "For business agents"
+		"title": "For personal assistants"
 	},
 	"guide": {
-		"title": "Business assistant guides",
-		"description": "At ATM JET, we know how many tasks a business assistant has to deal with. We strive to help our clients from the very beginning of thetask at hand.",
+		"title": "Personal assistant guides",
+		"description": "At ATM JET, we know how many tasks a personal assistant has to deal with. We strive to help our clients from the very beginning of thetask at hand.",
 		"description2": "We have compiled our flight preparation checklist for you, which will help you to organise your flight more easily, taking into account all the wishes of your manager."
 	},
 	"documents": {
