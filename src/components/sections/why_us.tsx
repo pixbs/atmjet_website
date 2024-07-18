@@ -13,8 +13,10 @@ export function WhyUsSection() {
 	]
 	return (
 		<section>
-			<div className='container gap-10'>
-				<h2>{t('title')}</h2>
+			<div className='container gap-10 lg:flex-row'>
+				<h2 className='min-w-80 lg:sticky top-40'>
+					{t('title')}
+				</h2>
 				<div className='relative overflow-clip rounded-2xl'>
 					{cards.map((card, index) => (
 						<WhyUsCard
