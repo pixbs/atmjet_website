@@ -11,7 +11,7 @@ export const directionSchema = z.object({
 		.string()
 		.nonempty('Date is required')
 		.refine((val) => !isNaN(Date.parse(val)), { message: 'Invalid date format' }),
-	passangers: z.number().int().positive('Passangers must be a positive number'),
+	passengers: z.number().int().positive('passengers must be a positive number'),
 })
 
 interface DirectionProps {
@@ -45,11 +45,11 @@ export function Direction(props: DirectionProps) {
 			/>
 			<Controller
 				control={control}
-				name={`direction.${index}.passangers`}
+				name={`direction.${index}.passengers`}
 				render={({ field }) => (
 					<CounterInput
 						{...field}
-						placeholder={t('passangers')}
+						placeholder={t('passengers')}
 						onChange={(e) => field.onChange(Number(e.target.value))}
 					/>
 				)}

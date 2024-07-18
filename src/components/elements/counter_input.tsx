@@ -7,7 +7,7 @@ export function CounterInput(props: React.InputHTMLAttributes<HTMLInputElement>)
 	const {
 		field: { value, onChange, onBlur },
 	} = useController({
-		name: props.name || 'passangers',
+		name: props.name || 'passengers',
 		control,
 		defaultValue: 1,
 	})

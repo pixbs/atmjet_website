@@ -7,7 +7,7 @@
 		"from": "From",
 		"to": "To",
 		"date": "Date",
-		"passangers": "Passangers",
+		"passengers": "passengers",
 		"request-quote": "Request Quote",
 		"delete-leg": "Delete leg",
 		"add-leg": "Add leg",

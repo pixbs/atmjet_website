@@ -25,7 +25,7 @@ export function RequestForm(props: RequestFormProps) {
 	const methods = useForm<FormSchemaType>({
 		resolver: zodResolver(schema),
 		defaultValues: {
-			direction: [{ from: '', to: '', date: '', passangers: 1 }],
+			direction: [{ from: '', to: '', date: '', passengers: 1 }],
 		},
 	})
 
@@ -40,7 +40,7 @@ export function RequestForm(props: RequestFormProps) {
 	}
 
 	const handleAppend = () => {
-		append({ from: '', to: '', date: '', passangers: 1 })
+		append({ from: '', to: '', date: '', passengers: 1 })
 	}
 
 	const handleRemove = (index: number) => {
