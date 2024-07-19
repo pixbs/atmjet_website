@@ -75,7 +75,10 @@ export function RequestForm(props: RequestFormProps) {
 							</button>
 						)}
 						{index == 0 && (
-							<button type='submit' className={`w-48 ${buttonClassName}`}>
+							<button
+								type='submit'
+								className={`w-48 ${buttonClassName} hidden lg:flex lg:items-center lg:justify-center`}
+							>
 								{buttonText || t('request-quote')}
 							</button>
 						)}

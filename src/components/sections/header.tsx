@@ -5,6 +5,7 @@ import Close from '@/assets/svg/close.svg'
 import Logo from '@/assets/svg/logo.svg'
 import { useEffect, useState } from 'react'
 import { Navbar } from './navbar'
+import Link from 'next/link'
 
 export function HeaderSection() {
 	const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -14,7 +15,7 @@ export function HeaderSection() {
 
 	const handleClick = () => {
 		setIsMenuOpen(!isMenuOpen)
-		isMenuOpen ? (document.body.style.overflow = 'auto') : (document.body.style.overflow = 'hidden')
+		//isMenuOpen ? (document.body.style.overflow = 'auto') : (document.body.style.overflow = 'hidden')
 	}
 
 	useEffect(() => {
@@ -57,7 +58,9 @@ export function HeaderSection() {
 								<BurgerMenu className='h-8 animate-in spin-in' onClick={handleClick} />
 							)}
 						</button>
-						<Logo className='h-8 text-gray-900' />
+						<Link href={'/'}>
+							<Logo className='h-8 text-gray-900' />
+						</Link>
 					</header>
 				</div>
 			</section>

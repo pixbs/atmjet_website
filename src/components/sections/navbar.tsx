@@ -36,7 +36,7 @@ export function Navbar() {
 				</div>
 				<div className='w-full flex-col justify-between'>
 					<div className='[&>*]:duration-600 [&>*]:animate-in [&>*]:fade-in'>
-						<Link href='/sales_dept' className='text-right'>
+						<Link href={`/sales_dept`} className='text-right'>
 							{t('navigation.sales-dept')}
 						</Link>
 						<Link href='/group_charters' className='text-right'>
@@ -48,7 +48,7 @@ export function Navbar() {
 						<Link href='/aircraft' className='text-right'>
 							{t('navigation.aircraft')}
 						</Link>
-						<Link href='/yachts' className='text-right'>
+						<Link href={`/yachts`} className='text-right'>
 							{t('navigation.yachts')}
 						</Link>
 					</div>

@@ -7,7 +7,7 @@ export function EmptyLegSection() {
 	return (
 		<section className='bg-gray-150'>
 			<div className='container gap-8 py-10 pt-10 lg:flex-row'>
-				<div className='top-40 min-w-80 gap-4 self-start lg:sticky'>
+				<div className='top-40 min-w-40 flex-shrink-0 gap-4 self-start lg:sticky lg:w-72'>
 					<h2>{t('title')}</h2>
 					<p>{t('description')}</p>
 				</div>
