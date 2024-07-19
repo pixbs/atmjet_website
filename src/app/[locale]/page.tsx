@@ -51,7 +51,7 @@ export default function HomePage() {
 			<MakeBookingSection />
 			<WhyUsSection title={tWhyUs('title')} cards={whyUsCards} images={whyUsImages} />
 			<EmptyLegSection />
-			<KeyFeaturesSection 
+			<KeyFeaturesSection
 				title={t('key-features.title')}
 				description={t('key-features.description')}
 				cards={keyFeaturesCards}

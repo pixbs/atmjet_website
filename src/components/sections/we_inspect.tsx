@@ -37,17 +37,13 @@ interface WeInspectCardProps {
 	imageSrc: string
 }
 
-function WeInspectCard(props : WeInspectCardProps) {
+function WeInspectCard(props: WeInspectCardProps) {
 	const { title, description, imageSrc } = props
 	return (
-		<div className='embla__slide mr-8 w-4/5 flex-shrink-0 gap-3 overflow-hidden rounded-xl bg-cover bg-center pt-8 last:mr-0 md:w-2/3 lg:w-1/3 bg-gray-150 justify-between'>
+		<div className='embla__slide mr-8 w-4/5 flex-shrink-0 justify-between gap-3 overflow-hidden rounded-xl bg-gray-150 bg-cover bg-center pt-8 last:mr-0 md:w-2/3 lg:w-1/3'>
 			<div className='gap-3 px-8'>
-				<h3 className=''>
-					{title}
-				</h3>
-				<p className=''>
-					{description}
-				</p>
+				<h3 className=''>{title}</h3>
+				<p className=''>{description}</p>
 			</div>
 			<div
 				className='h-52 w-full bg-cover bg-center'
