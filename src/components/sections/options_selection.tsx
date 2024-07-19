@@ -39,7 +39,7 @@ interface OptionCardProps {
 function OptionCard(props: OptionCardProps) {
 	const { title, description, list, imageSrc } = props
 	return (
-		<div className='card sticky gap-4 overflow-hidden bg-gray-150'>
+		<div className='card sticky gap-4 overflow-hidden bg-gray-150 w-full'>
 			<div className='h-48 bg-cover bg-center' style={{ backgroundImage: imageSrc }} />
 			<div className='gap-4 p-8'>
 				<h3 className='bg-gold bg-clip-text text-transparent'>{title}</h3>
