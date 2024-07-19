@@ -19,12 +19,12 @@ export default function HomePage() {
 	const t = useTranslations()
 	const tWhyUs = useTranslations('home-why-us')
 
-	const cards = ['card1', 'card2', 'card3', 'card4', 'card5'].map((card) => ({
+	const whyUsCards = ['card1', 'card2', 'card3', 'card4', 'card5'].map((card) => ({
 		num: tWhyUs(`${card}.num`),
 		title: tWhyUs(`${card}.title`),
 		description: tWhyUs(`${card}.description`),
 	}))
-	const images = [
+	const whyUsImages = [
 		'images/home_page/why_us_years.jpg',
 		'images/home_page/why_us_clients.jpg',
 		'images/home_page/why_us_trusted_by_celeb.jpg',
@@ -32,14 +32,31 @@ export default function HomePage() {
 		'images/home_page/why_us_excellence.jpg',
 	]
 
+	const keyFeaturesCards = ['card1', 'card2', 'card3', 'card4'].map((card) => ({
+		title: t(`key-features.${card}.title`),
+		description: t(`key-features.${card}.description`),
+	}))
+
+	const keyFeaturesImages = [
+		'images/home_page/key_features_tailoredp_references.jpg',
+		'images/home_page/key_features_cuztomized_aircraft.jpg',
+		'images/home_page/key_features_payment_after_flight.jpg',
+		'images/home_page/key_features_pay_anyway.jpg',
+	]
+
 	return (
 		<main>
 			<HeaderSection />
 			<HeroSection title={t('home-hero.title')} />
 			<MakeBookingSection />
-			<WhyUsSection title={tWhyUs('title')} cards={cards} images={images} />
+			<WhyUsSection title={tWhyUs('title')} cards={whyUsCards} images={whyUsImages} />
 			<EmptyLegSection />
-			<KeyFeaturesSection />
+			<KeyFeaturesSection 
+				title={t('key-features.title')}
+				description={t('key-features.description')}
+				cards={keyFeaturesCards}
+				images={keyFeaturesImages}
+			/>
 			<OptionsSection />
 			<PrivilegeSection />
 			<YachtsSection />

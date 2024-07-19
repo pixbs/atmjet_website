@@ -24,12 +24,26 @@ import { useTranslations } from 'next-intl'
 
 export default function YachtsPage() {
     const t = useTranslations()
-    const cards = ['card1', 'card2', 'card3', 'card4'].map((card) => ({
+
+    const whyUsCards = ['card1', 'card2', 'card3', 'card4'].map((card) => ({
         num: '',
         title: t(`yachts-why-us.${card}.title`),
         description: t(`yachts-why-us.${card}.description`),
     }))
-    const images = [
+
+    const whyUsImages = [
+        'images/yachts/yacht_page_over20years_management.jpg',
+        'images/yachts/yacht_page_over20years_plan.jpg',
+        'images/yachts/yacht_page_over20years_database.jpg',
+        'images/yachts/yacht_page_over20years_luxury.jpg',
+    ]
+
+    const keyFeaturesCards = ['card1', 'card2', 'card3', 'card4'].map((card) => ({
+        title: t(`carousel.${card}.title`),
+        description: t(`carousel.${card}.description`),
+    }))
+
+    const keyFeatures = [
         'images/yachts/yacht_page_over20years_management.jpg',
         'images/yachts/yacht_page_over20years_plan.jpg',
         'images/yachts/yacht_page_over20years_database.jpg',
@@ -39,7 +53,12 @@ export default function YachtsPage() {
         <main>
             <HeaderSection />
             <HeroYachtsSection />
-            <KeyFeaturesSection />
+            <KeyFeaturesSection 
+                title={t('carousel.title')}
+                description={t('carousel.description')}
+                cards={keyFeaturesCards}
+                images={keyFeatures}
+            />
             <section>
                 <div className='container'>
                     <div className='bg-gold p-0.5 rounded-xl'>
@@ -84,8 +103,8 @@ export default function YachtsPage() {
              </section>
              <WhyUsSection 
                 title={t('yachts-why-us.title')}
-                cards={cards}
-                images={images}
+                cards={whyUsCards}
+                images={whyUsImages}
              />
             <ContactUsSection
                 title={t('yachts-contact-us.title')}

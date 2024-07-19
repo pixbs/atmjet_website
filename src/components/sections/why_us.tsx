@@ -1,12 +1,5 @@
 import { useTranslations } from 'next-intl'
 import { WhyUsCard } from '../elements'
-
-interface WhyUsCardProps {
-	num: string
-	title: string
-	description: string
-	imageSrc: string
-}
 interface WhyUsSectionProps {
 	title: string
 	cards: { num: string; title: string; description: string }[]
