@@ -1,11 +1,11 @@
 {
 	"locale": {
 		"en": "Анг",
-		"ru": "Рус",
+		"ru": "Рос",
 		"uk": "Укр",
-		"english": "Английский",
-		"russian": "Русский",
-		"ukrainian": "Украинский"
+		"english": "Англійська",
+		"russian": "Російський",
+		"ukrainian": "Український"
 	},
 	"social-media": {
 		"telegram": "Telegram",
@@ -13,23 +13,23 @@
 		"instagram": "Instagram"
 	},
 	"navigation": {
-		"home": "Главная",
-		"partners": "Партнеры",
-		"bussines-agents": "Персональным ассистентам",
-		"citizens": "Для граждан РФ",
-		"medical-aviation": "Медицинская авиация",
+		"home": "Головна",
+		"partners": "Партнери",
+		"bussines-agents": "Персональним асистентам",
+		"citizens": "Для громадян РФ",
+		"medical-aviation": "Медична авіація",
 		"empty-legs": "Empty Leg",
-		"cargo-charter": "Грузовые перевозки",
-		"group-charters": "Для групповых рейсов",
-		"atmjet-group": "Группа компаний АТМ JET",
-		"aircraft": "Наши самолеты",
-		"yachts": "Яхты",
-		"sales-dept": "Продажи самолетов"
+		"cargo-charter": "Вантажні перевезення",
+		"group-charters": "Для групових рейсів",
+		"atmjet-group": "Група компаній АТМ JET",
+		"aircraft": "Наші літаки",
+		"yachts": "Яхти",
+		"sales-dept": "Продажі літаків"
 	},
 	"footer": {
 		"location": "Дубай +971 (585) 940-112",
 		"phone": "+971 (585) 940-112",
-		"copyright": "©ATM JET, 2004-{year}. Все права защищены",
-		"button": "Забронировать"
+		"copyright": "©ATM JET, 2004-{рік}. Усі права захищені",
+		"button": "Забронювати"
 	}
 }
