@@ -1,0 +1,34 @@
+{
+	"locale": {
+		"en": "Анг",
+		"ru": "Рус",
+		"uk": "Укр",
+		"english": "Английский",
+		"russian": "Русский",
+		"ukrainian": "Украинский"
+	},
+	"social-media": {
+		"telegram": "Telegram",
+		"whats-app": "WhatsApp",
+		"instagram": "Instagram"
+	},
+	"navigation": {
+		"home": "Главная",
+		"partners": "Партнеры",
+		"bussines-agents": "Персональным ассистентам",
+		"citizens": "Для граждан РФ",
+		"medical-aviation": "Медицинская авиация",
+		"empty-legs": "Empty Leg",
+		"cargo-charter": "Грузовые перевозки",
+		"group-charters": "Для групповых рейсов",
+		"atmjet-group": "Группа компаний АТМ JET",
+		"aircraft": "Наши самолеты",
+		"yachts": "Яхты",
+		"sales-dept": "Продажи самолетов"
+	},
+	"footer": {
+		"location": "Дубай +971 (585) 940-112",
+		"copyright": "©ATM JET, 2004-{year}. Все права защищены",
+		"button": "Забронировать"
+	}
+}

@@ -16,7 +16,7 @@ export function TestimonialsSection() {
 							name={t(`${card}.name`)}
 							title={t(`${card}.title`)}
 							key={index.toString()}
-							imageSrc='images/home_page/why_us_clients.jpg'
+							imageSrc='/images/home_page/why_us_clients.jpg'
 						/>
 					))}
 				</TestimonialsCarousel>

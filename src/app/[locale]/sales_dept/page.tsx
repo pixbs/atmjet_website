@@ -29,9 +29,9 @@ export default function SalesDeptPage() {
 		description: tWhyUs(`${card}.description`),
 	}))
 	const images = [
-		'images/jets_dep/jetsmarket_page_specialmanagement_50flights.jpg',
-		'images/jets_dep/jetsmarket_page_specialmanagement_experience.jpg',
-		'images/jets_dep/jetsmarket_page_specialmanagement_yields.jpg',
+		'/images/jets_dep/jetsmarket_page_specialmanagement_50flights.jpg',
+		'/images/jets_dep/jetsmarket_page_specialmanagement_experience.jpg',
+		'/images/jets_dep/jetsmarket_page_specialmanagement_yields.jpg',
 	]
 	return (
 		<main>
@@ -45,13 +45,13 @@ export default function SalesDeptPage() {
 					title: t('sales-options.card1.title'),
 					description: t('sales-options.card1.description'),
 					list: t('sales-options.card1.list').split(' \\n'),
-					imageSrc: 'url(images/jets_dep/jetsmarket_page_aircraftservices_legaldpt.jpg)',
+					imageSrc: 'url(/images/jets_dep/jetsmarket_page_aircraftservices_legaldpt.jpg)',
 				}}
 				card2={{
 					title: t('sales-options.card2.title'),
 					description: t('sales-options.card2.description'),
 					list: t('sales-options.card2.list').split(' \\n'),
-					imageSrc: 'url(images/jets_dep/jetsmarket_page_aircraftservices_financedpt.jpg)',
+					imageSrc: 'url(/images/jets_dep/jetsmarket_page_aircraftservices_financedpt.jpg)',
 				}}
 			/>
 			<AdvantagesSection
@@ -70,14 +70,14 @@ export default function SalesDeptPage() {
 						description: t('aircraft-descriptor.card3.description'),
 					},
 				]}
-				imageSrc='images/jets_dep/jetsmarket_page_team_atmjet.jpg'
+				imageSrc='/images/jets_dep/jetsmarket_page_team_atmjet.jpg'
 			/>
 			<WhyUsSection title={tWhyUs('title')} cards={cards} images={images} />
 			<ContactUsSection
 				title={t('sales-contact-us.title')}
 				description={t('sales-contact-us.description')}
 				buttonText={t('sales-contact-us.button')}
-				imageSrc='images/jets_dep/jetsmarket_page_team_contactus.jpg'
+				imageSrc='/images/jets_dep/jetsmarket_page_team_contactus.jpg'
 			/>
 			<FooterSection />
 		</main>

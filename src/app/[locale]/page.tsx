@@ -25,11 +25,11 @@ export default function HomePage() {
 		description: tWhyUs(`${card}.description`),
 	}))
 	const whyUsImages = [
-		'images/home_page/why_us_years.jpg',
-		'images/home_page/why_us_clients.jpg',
-		'images/home_page/why_us_trusted_by_celeb.jpg',
-		'images/home_page/why_us_same_day_departure.jpg',
-		'images/home_page/why_us_excellence.jpg',
+		'/images/home_page/why_us_years.jpg',
+		'/images/home_page/why_us_clients.jpg',
+		'/images/home_page/why_us_trusted_by_celeb.jpg',
+		'/images/home_page/why_us_same_day_departure.jpg',
+		'/images/home_page/why_us_excellence.jpg',
 	]
 
 	const keyFeaturesCards = ['card1', 'card2', 'card3', 'card4'].map((card) => ({
@@ -38,10 +38,10 @@ export default function HomePage() {
 	}))
 
 	const keyFeaturesImages = [
-		'images/home_page/key_features_tailoredp_references.jpg',
-		'images/home_page/key_features_cuztomized_aircraft.jpg',
-		'images/home_page/key_features_payment_after_flight.jpg',
-		'images/home_page/key_features_pay_anyway.jpg',
+		'/images/home_page/key_features_tailoredp_references.jpg',
+		'/images/home_page/key_features_cuztomized_aircraft.jpg',
+		'/images/home_page/key_features_payment_after_flight.jpg',
+		'/images/home_page/key_features_pay_anyway.jpg',
 	]
 
 	return (

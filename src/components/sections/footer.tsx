@@ -28,7 +28,7 @@ export function FooterSection() {
 		<>
 			<section
 				className='bg-cover bg-fixed bg-top bg-no-repeat'
-				style={{ backgroundImage: 'url(images/home_page/footer.jpg)' }}
+				style={{ backgroundImage: 'url(/images/home_page/footer.jpg)' }}
 			>
 				<footer className='container !static !mb-0 !mt-24 gap-8 rounded-t-2xl bg-gray-100 bg-opacity-60 py-10 backdrop-blur-lg'>
 					<div className='flex-row content-between justify-between'>

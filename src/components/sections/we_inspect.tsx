@@ -5,11 +5,11 @@ export function WeInspectSection() {
 	const t = useTranslations('we-incpect')
 	const cards = ['card1', 'card2', 'card3', 'card4', 'card5']
 	const images = [
-		'images/yachts/image_01.svg',
-		'images/yachts/image_02.svg',
-		'images/yachts/image_03.svg',
-		'images/yachts/image_04.svg',
-		'images/yachts/image_05.svg',
+		'/images/yachts/image_01.svg',
+		'/images/yachts/image_02.svg',
+		'/images/yachts/image_03.svg',
+		'/images/yachts/image_04.svg',
+		'/images/yachts/image_05.svg',
 	]
 
 	return (

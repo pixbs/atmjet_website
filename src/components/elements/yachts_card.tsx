@@ -15,7 +15,7 @@ export function YachtsCard() {
 		>
 			<div
 				className='min-h-64 bg-cover bg-center'
-				style={{ backgroundImage: 'url(images/home_page/yachts.jpg)' }}
+				style={{ backgroundImage: 'url(/images/home_page/yachts.jpg)' }}
 			/>
 			<div className='gap-8 px-6 md:flex-row'>
 				{cards.map((card, index) => (
