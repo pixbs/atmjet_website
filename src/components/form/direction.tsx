@@ -10,16 +10,21 @@ export const directionSchema = z.object({
 		.string()
 		.nonempty('Date is required')
 		.refine((val) => !isNaN(Date.parse(val)), { message: 'Invalid date format' }),
+	returnDate: z
+		.string()
+		.refine((val) => !isNaN(Date.parse(val)), { message: 'Invalid date format' })
+		.optional(),
 	passengers: z.number().int().positive('passengers must be a positive number'),
 })
 
 interface DirectionProps {
 	index: number
+	showReturn?: boolean
 }
 
 export function Direction(props: DirectionProps) {
 	const t = useTranslations('form')
-	const { index } = props
+	const { index, showReturn = false } = props
 	const {
 		control,
 		formState: { errors },
@@ -65,6 +70,22 @@ export function Direction(props: DirectionProps) {
 					)}
 				/>
 			</div>
+			{showReturn && (
+				<div className='w-full rounded-sm bg-gray-900'>
+					<Controller
+						control={control}
+						name={`direction.${index}.returnDate`}
+						render={({ field }) => (
+							<input
+								{...field}
+								type='date'
+								placeholder={t('date')}
+								className='min-h-16 w-full flex-shrink-0 lg:h-full'
+							/>
+						)}
+					/>
+				</div>
+			)}
 			<Controller
 				control={control}
 				name={`direction.${index}.passengers`}

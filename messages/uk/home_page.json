@@ -10,6 +10,8 @@
 		"passangers": "Пасажири",
 		"request-quote": "Надіслати запит",
 		"delete-leg": " Видалити зупинку",
+		"round-trip": "Туди-назад",
+		"multi-leg": "Багато зупинок",
 		"confirm": "Запит успішно надіслано"
 	},
 	"home-why-us": {

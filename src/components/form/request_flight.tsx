@@ -23,6 +23,7 @@ interface RequestFormProps {
 export function RequestForm(props: RequestFormProps) {
 	const { buttonText, buttonClassName, max = 4 } = props
 	const [submitted, setSubmitted] = useState(false)
+	const [isRoundTrip, setIsRoundTrip] = useState(false)
 	const t = useTranslations('form')
 	const methods = useForm<FormSchemaType>({
 		resolver: zodResolver(schema),
@@ -50,6 +51,14 @@ export function RequestForm(props: RequestFormProps) {
 		remove(index)
 	}
 
+	const handeleRoundTrip = (state: boolean) => {
+		if (!isRoundTrip) {
+			remove()
+			handleAppend()
+		}
+		setIsRoundTrip(!isRoundTrip)
+	}
+
 	if (submitted) {
 		return (
 			<>
@@ -64,7 +73,7 @@ export function RequestForm(props: RequestFormProps) {
 			<form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-6 lg:gap-3'>
 				{fields.map((field, index) => (
 					<div key={field.id} className='flex flex-col gap-2 lg:flex-row'>
-						<Direction index={index} />
+						<Direction index={index} showReturn={isRoundTrip} />
 						{index != 0 && (
 							<button
 								type='button'
@@ -84,15 +93,31 @@ export function RequestForm(props: RequestFormProps) {
 						)}
 					</div>
 				))}
-				{fields.length < max && (
-					<button
-						type='button'
-						onClick={handleAppend}
-						className='self-start border border-gray-300 bg-gray-100 text-gray-900'
-					>
-						{t('add-leg')}
-					</button>
-				)}
+				<div className='flex-row justify-between gap-4'>
+					<div className='flex-row gap-1 rounded-full border border-gray-500 p-0.5'>
+						<button
+							onClick={() => handeleRoundTrip(false)}
+							className={`${isRoundTrip ? 'bg-gray-100 text-gray-900' : 'bg-gray-300 text-gray-500'}`}
+						>
+							{t('multi-leg')}
+						</button>
+						<button
+							onClick={() => handeleRoundTrip(true)}
+							className={`${isRoundTrip ? 'bg-gray-300 text-gray-500' : 'bg-gray-100 text-gray-900'}`}
+						>
+							{t('round-trip')}
+						</button>
+					</div>
+					{fields.length < max && !isRoundTrip && (
+						<button
+							type='button'
+							onClick={handleAppend}
+							className='self-start border border-gray-300 bg-gray-100 text-gray-900'
+						>
+							{t('add-leg')}
+						</button>
+					)}
+				</div>
 				<button type='submit' className={`big lg:hidden ${buttonClassName}`}>
 					{buttonText || t('request-quote')}
 				</button>

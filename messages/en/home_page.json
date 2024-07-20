@@ -11,6 +11,8 @@
 		"request-quote": "Request Quote",
 		"delete-leg": "Delete leg",
 		"add-leg": "Add leg",
+		"round-trip": "Round trip",
+		"multi-leg": "Multi-leg",
 		"confirm": "Request successfully sent"
 	},
 	"home-why-us": {
