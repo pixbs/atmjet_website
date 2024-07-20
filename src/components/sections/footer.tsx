@@ -48,11 +48,11 @@ export function FooterSection() {
 					<div className='w-full flex-row justify-between'>
 						<div className='[&>*]:duration-600 [&>*]:animate-in [&>*]:fade-in'>
 							<Link href='/'>{t('navigation.home')}</Link>
-							<Link href='partners'>{t('navigation.partners')}</Link>
-							<Link href='/bussines_agents'>{t('navigation.bussines-agents')}</Link>
-							<Link href='/medical_aviation'>{t('navigation.medical-aviation')}</Link>
-							<Link href='/empty_legs'>{t('navigation.empty-legs')}</Link>
-							<Link href='/cargo_charter'>{t('navigation.cargo-charter')}</Link>
+							<Link href='https://atmjet.webflow.io/agencies'>{t('navigation.partners')}</Link>
+							<Link href='https://atmjet.webflow.io/business-agents'>{t('navigation.bussines-agents')}</Link>
+							<Link href='https://atmjet.webflow.io/medical-aviation'>{t('navigation.medical-aviation')}</Link>
+							<Link href='https://atmjet.webflow.io/empty-legs'>{t('navigation.empty-legs')}</Link>
+							<Link href='https://atmjet.webflow.io/cargo-charter'>{t('navigation.cargo-charter')}</Link>
 						</div>
 						<div className='[&>*]:duration-600 [&>*]:animate-in [&>*]:fade-in'>
 							<Link href='/' className='flex items-center'>
@@ -72,9 +72,9 @@ export function FooterSection() {
 					<div className='w-full flex-row justify-between'>
 						<div className='[&>*]:duration-600 [&>*]:animate-in [&>*]:fade-in'>
 							<Link href='/sales_dept'>{t('navigation.sales-dept')}</Link>
-							<Link href='/group_charters'>{t('navigation.group-charters')}</Link>
-							<Link href='/atmjet_group'>{t('navigation.atmjet-group')}</Link>
-							<Link href='/aircraft'>{t('navigation.aircraft')}</Link>
+							<Link href='https://atmjet.webflow.io/group-charters'>{t('navigation.group-charters')}</Link>
+							<Link href='https://atmjet.webflow.io/atm-group'>{t('navigation.atmjet-group')}</Link>
+							<Link href='https://atmjet.webflow.io/aircraft'>{t('navigation.aircraft')}</Link>
 							<Link href='/yachts'>{t('navigation.yachts')}</Link>
 						</div>
 					</div>

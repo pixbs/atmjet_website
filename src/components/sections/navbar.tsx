@@ -12,11 +12,11 @@ export function Navbar() {
 				<div className='w-full flex-col justify-between lg:flex-row'>
 					<div className='[&>*]:duration-600 [&>*]:animate-in [&>*]:fade-in'>
 						<Link href='/'>{t('navigation.home')}</Link>
-						<Link href='partners'>{t('navigation.partners')}</Link>
-						<Link href='/bussines_agents'>{t('navigation.bussines-agents')}</Link>
-						<Link href='/medical_aviation'>{t('navigation.medical-aviation')}</Link>
-						<Link href='/empty_legs'>{t('navigation.empty-legs')}</Link>
-						<Link href='/cargo_charter'>{t('navigation.cargo-charter')}</Link>
+						<Link href='https://atmjet.webflow.io/agencies'>{t('navigation.partners')}</Link>
+						<Link href='https://atmjet.webflow.io/business-agents'>{t('navigation.bussines-agents')}</Link>
+						<Link href='https://atmjet.webflow.io/medical-aviation'>{t('navigation.medical-aviation')}</Link>
+						<Link href='https://atmjet.webflow.io/empty-legs'>{t('navigation.empty-legs')}</Link>
+						<Link href='https://atmjet.webflow.io/cargo-charter'>{t('navigation.cargo-charter')}</Link>
 					</div>
 					<div className='[&>*]:duration-600 [&>*]:animate-in [&>*]:fade-in'>
 						<Link href='/' className='flex items-center'>
@@ -39,13 +39,13 @@ export function Navbar() {
 						<Link href={`/sales_dept`} className='text-right'>
 							{t('navigation.sales-dept')}
 						</Link>
-						<Link href='/group_charters' className='text-right'>
+						<Link href='https://atmjet.webflow.io/group-charters' className='text-right'>
 							{t('navigation.group-charters')}
 						</Link>
-						<Link href='/atmjet_group' className='text-right'>
+						<Link href='https://atmjet.webflow.io/atm-group' className='text-right'>
 							{t('navigation.atmjet-group')}
 						</Link>
-						<Link href='/aircraft' className='text-right'>
+						<Link href='https://atmjet.webflow.io/aircraft' className='text-right'>
 							{t('navigation.aircraft')}
 						</Link>
 						<Link href={`/yachts`} className='text-right'>

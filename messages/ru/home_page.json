@@ -121,8 +121,11 @@
 		"title": "Оставьте свои данные",
 		"description": "Введите дополнительный текст",
 		"name": "Имя",
+		"name-placeholder": "Введите ваше имя",
 		"phone-number": "Номер телефона",
+		"phone-placeholder": "+1 234 567 89 10",
 		"email": "Email",
+		"email-placeholder": "example@example.com",
 		"send": "Отправить",
 		"confirm": "Успешно отправлено"
 	}
