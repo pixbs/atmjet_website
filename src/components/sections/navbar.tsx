@@ -52,6 +52,17 @@ export function Navbar() {
 							{t('navigation.yachts')}
 						</Link>
 					</div>
+					<div className='flex-row gap-4 justify-end'>
+							<Link href='/en' className={`text-base text-right ${locale == 'en' && 'opacity-50'}`}>
+								{t('locale.en')}
+							</Link>
+							<Link href='/ru' className={`text-base text-right ${locale == 'ru' && 'opacity-50'}`}>
+								{t('locale.ru')}
+							</Link>
+							<Link href='/uk' className={`text-base text-right ${locale == 'uk' && 'opacity-50'}`}>
+								{t('locale.uk')}
+							</Link>
+					</div>
 				</div>
 			</nav>
 		</section>
