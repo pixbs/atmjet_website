@@ -8,7 +8,7 @@ export function OptionsSection() {
 			<div className='container gap-6 lg:flex-row lg:content-stretch'>
 				<div
 					className='relative h-64 w-full items-start justify-center gap-6 overflow-hidden rounded-2xl bg-cover p-6'
-					style={{ backgroundImage: 'url(/images/home_page/1-For-Business-Agents.jpg)' }}
+					style={{ backgroundImage: 'url(/images/home_page/For-Business-Agents-one.jpg)' }}
 				>
 					<h2 className='z-10'>{t('assistant')}</h2>
 					<button className='z-10'>{t('button')}</button>
@@ -16,7 +16,7 @@ export function OptionsSection() {
 				</div>
 				<div
 					className='relative h-64 w-full items-start justify-center gap-6 overflow-hidden rounded-2xl bg-cover p-6'
-					style={{ backgroundImage: 'url(/images/home_page/2-For-Business-Agents.jpg)' }}
+					style={{ backgroundImage: 'url(/images/home_page/For-Business-Agents-two.jpg)' }}
 				>
 					<h2 className='z-10'>{t('agencies')}</h2>
 					<button className='z-10'>{t('button')}</button>
