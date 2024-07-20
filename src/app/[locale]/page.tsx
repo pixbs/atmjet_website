@@ -1,3 +1,4 @@
+import { Preloader } from '@/components/elements'
 import {
 	EmptyLegSection,
 	FaqSection,
@@ -14,6 +15,7 @@ import {
 	YachtsSection,
 } from '@/components/sections'
 import { useTranslations } from 'next-intl'
+import { Suspense } from 'react'
 
 export default function HomePage() {
 	const t = useTranslations()
@@ -45,7 +47,9 @@ export default function HomePage() {
 	]
 
 	return (
+		<Suspense fallback={<Preloader/>}>
 		<main>
+			<Preloader />
 			<HeaderSection />
 			<HeroSection title={t('home-hero.title')} />
 			<MakeBookingSection />
@@ -65,5 +69,6 @@ export default function HomePage() {
 			<FaqSection />
 			<FooterSection />
 		</main>
+		</Suspense>
 	)
 }
