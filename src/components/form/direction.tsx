@@ -56,7 +56,12 @@ export function Direction(props: DirectionProps) {
 					control={control}
 					name={`direction.${index}.date`}
 					render={({ field }) => (
-						<input {...field} type='date' placeholder={t('date')} className='w-full lg:h-full' />
+						<input
+							{...field}
+							type='date'
+							placeholder={t('date')}
+							className='min-h-16 w-full flex-shrink-0 lg:h-full'
+						/>
 					)}
 				/>
 			</div>

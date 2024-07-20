@@ -9,7 +9,7 @@ export function PrivilegeSection() {
 				<div className='gap-10 overflow-hidden rounded-2xl bg-gold lg:flex-row-reverse lg:items-center'>
 					<div
 						className='h-64 w-full bg-cover bg-center lg:h-80'
-						style={{ backgroundImage: 'url(/images/home_page/why_us_clients.jpg)' }}
+						style={{ backgroundImage: 'url(/images/home_page/artem.jpg)' }}
 					/>
 					<div className='w-full items-center gap-4 px-6 pb-10 lg:h-80 lg:items-start lg:py-10 lg:pb-0'>
 						<h2 className='text-center text-gray-100 lg:text-left'>{t('title')}</h2>

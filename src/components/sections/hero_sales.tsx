@@ -17,7 +17,7 @@ export function HeroSalesSection() {
 					</Counter>{' '}
 					{t('headline2')}
 				</h1>
-				<p className='pt-4 text-gray-900'>{t('description')}</p>
+				<p className='max-w-xs pt-4 text-gray-900'>{t('description')}</p>
 				<button className='big mt-8'>{t('button')}</button>
 				<p className='absolute bottom-8 left-5 z-20 text-sm'>©ATM JET</p>
 			</div>

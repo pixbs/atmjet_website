@@ -13,10 +13,16 @@ export function Navbar() {
 					<div className='[&>*]:duration-600 [&>*]:animate-in [&>*]:fade-in'>
 						<Link href='/'>{t('navigation.home')}</Link>
 						<Link href='https://atmjet.webflow.io/agencies'>{t('navigation.partners')}</Link>
-						<Link href='https://atmjet.webflow.io/business-agents'>{t('navigation.bussines-agents')}</Link>
-						<Link href='https://atmjet.webflow.io/medical-aviation'>{t('navigation.medical-aviation')}</Link>
+						<Link href='https://atmjet.webflow.io/business-agents'>
+							{t('navigation.bussines-agents')}
+						</Link>
+						<Link href='https://atmjet.webflow.io/medical-aviation'>
+							{t('navigation.medical-aviation')}
+						</Link>
 						<Link href='https://atmjet.webflow.io/empty-legs'>{t('navigation.empty-legs')}</Link>
-						<Link href='https://atmjet.webflow.io/cargo-charter'>{t('navigation.cargo-charter')}</Link>
+						<Link href='https://atmjet.webflow.io/cargo-charter'>
+							{t('navigation.cargo-charter')}
+						</Link>
 					</div>
 					<div className='[&>*]:duration-600 [&>*]:animate-in [&>*]:fade-in'>
 						<Link href='/' className='flex items-center'>
@@ -52,16 +58,16 @@ export function Navbar() {
 							{t('navigation.yachts')}
 						</Link>
 					</div>
-					<div className='flex-row gap-4 justify-end'>
-							<Link href='/en' className={`text-base text-right ${locale == 'en' && 'opacity-50'}`}>
-								{t('locale.en')}
-							</Link>
-							<Link href='/ru' className={`text-base text-right ${locale == 'ru' && 'opacity-50'}`}>
-								{t('locale.ru')}
-							</Link>
-							<Link href='/uk' className={`text-base text-right ${locale == 'uk' && 'opacity-50'}`}>
-								{t('locale.uk')}
-							</Link>
+					<div className='flex-row justify-end gap-4'>
+						<Link href='/en' className={`text-right text-base ${locale == 'en' && 'opacity-50'}`}>
+							{t('locale.en')}
+						</Link>
+						<Link href='/ru' className={`text-right text-base ${locale == 'ru' && 'opacity-50'}`}>
+							{t('locale.ru')}
+						</Link>
+						<Link href='/uk' className={`text-right text-base ${locale == 'uk' && 'opacity-50'}`}>
+							{t('locale.uk')}
+						</Link>
 					</div>
 				</div>
 			</nav>

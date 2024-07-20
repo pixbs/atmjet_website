@@ -39,7 +39,7 @@ input.dark {
 }
 
 a {
-	@apply h-10 text-lg text-gray-900 hover:opacity-50;
+	@apply py-2;
 }
 
 h1,
