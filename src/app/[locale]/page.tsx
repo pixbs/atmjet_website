@@ -47,28 +47,28 @@ export default function HomePage() {
 	]
 
 	return (
-		<Suspense fallback={<Preloader/>}>
-		<main>
-			<Preloader />
-			<HeaderSection />
-			<HeroSection title={t('home-hero.title')} />
-			<MakeBookingSection />
-			<WhyUsSection title={tWhyUs('title')} cards={whyUsCards} images={whyUsImages} />
-			<EmptyLegSection />
-			<KeyFeaturesSection
-				title={t('key-features.title')}
-				description={t('key-features.description')}
-				cards={keyFeaturesCards}
-				images={keyFeaturesImages}
-			/>
-			<OptionsSection />
-			<PrivilegeSection />
-			<YachtsSection />
-			<TestimonialsSection />
-			<TransferSection />
-			<FaqSection />
-			<FooterSection />
-		</main>
+		<Suspense fallback={<Preloader />}>
+			<main>
+				<Preloader />
+				<HeaderSection />
+				<HeroSection title={t('home-hero.title')} />
+				<MakeBookingSection />
+				<WhyUsSection title={tWhyUs('title')} cards={whyUsCards} images={whyUsImages} />
+				<EmptyLegSection />
+				<KeyFeaturesSection
+					title={t('key-features.title')}
+					description={t('key-features.description')}
+					cards={keyFeaturesCards}
+					images={keyFeaturesImages}
+				/>
+				<OptionsSection />
+				<PrivilegeSection />
+				<YachtsSection />
+				<TestimonialsSection />
+				<TransferSection />
+				<FaqSection />
+				<FooterSection />
+			</main>
 		</Suspense>
 	)
 }

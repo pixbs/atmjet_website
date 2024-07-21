@@ -1,6 +1,6 @@
 'use server'
 
-import { db,  vehicles } from '@/lib/drizzle'
+import { db, vehicles } from '@/lib/drizzle'
 import Link from 'next/link'
 
 export default async function Aircraft() {
@@ -8,5 +8,13 @@ export default async function Aircraft() {
 
 	console.log(vehiclesList)
 
-	return <div>{vehiclesList.map((v) => <Link key={v.id} href={`aircraft/${v.id}`}>{v.tailModel}</Link>)}</div>
+	return (
+		<div>
+			{vehiclesList.map((v) => (
+				<Link key={v.id} href={`aircraft/${v.id}`}>
+					{v.tailModel}
+				</Link>
+			))}
+		</div>
+	)
 }

@@ -93,7 +93,7 @@ export function RequestForm(props: RequestFormProps) {
 						)}
 					</div>
 				))}
-				<div className='flex-row justify-between gap-4 flex-wrap'>
+				<div className='flex-row flex-wrap justify-between gap-4'>
 					<div className='flex-row gap-1 rounded-full border border-gray-500 p-0.5'>
 						<button
 							onClick={() => handeleRoundTrip(false)}

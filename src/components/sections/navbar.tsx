@@ -19,7 +19,7 @@ export function Navbar() {
 						<Link href='https://atmjet.webflow.io/medical-aviation'>
 							{t('navigation.medical-aviation')}
 						</Link>
-						<Link href='https://atmjet.webflow.io/empty-legs'>{t('navigation.empty-legs')}</Link>
+						<Link href='/empty_legs'>{t('navigation.empty-legs')}</Link>
 						<Link href='https://atmjet.webflow.io/cargo-charter'>
 							{t('navigation.cargo-charter')}
 						</Link>
