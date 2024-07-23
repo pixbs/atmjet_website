@@ -1,24 +1,10 @@
 import {
-	EmptyLegSection,
-	FaqSection,
-	FooterSection,
-	HeaderSection,
-	HeroSection,
-	KeyFeaturesSection,
-	MakeBookingSection,
-	OptionsSection,
-	PrivilegeSection,
-	TestimonialsSection,
-	TransferSection,
-	WhyUsSection,
-	YachtsSection,
-	HeroSalesSection,
-	PersonalManagerSection,
-	OptionsSelectionSection,
-	AdvantagesSection,
 	ContactUsSection,
 	HeroYachtsSection,
+	KeyFeaturesSection,
+	OptionsSelectionSection,
 	WeInspectSection,
+	WhyUsSection
 } from '@/components/sections'
 import { useTranslations } from 'next-intl'
 
@@ -51,7 +37,6 @@ export default function YachtsPage() {
 	]
 	return (
 		<main>
-			<HeaderSection />
 			<HeroYachtsSection />
 			<KeyFeaturesSection
 				title={t('carousel.title')}
@@ -101,7 +86,6 @@ export default function YachtsPage() {
 				buttonText={t('yachts-contact-us.button')}
 				imageSrc='/images/yachts/yacht_page_contactus.jpg'
 			/>
-			<FooterSection />
 		</main>
 	)
 }

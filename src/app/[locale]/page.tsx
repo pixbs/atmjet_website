@@ -2,8 +2,6 @@ import { Preloader } from '@/components/elements'
 import {
 	EmptyLegSection,
 	FaqSection,
-	FooterSection,
-	HeaderSection,
 	HeroSection,
 	KeyFeaturesSection,
 	MakeBookingSection,
@@ -12,7 +10,7 @@ import {
 	TestimonialsSection,
 	TransferSection,
 	WhyUsSection,
-	YachtsSection,
+	YachtsSection
 } from '@/components/sections'
 import { useTranslations } from 'next-intl'
 import { Suspense } from 'react'
@@ -50,7 +48,6 @@ export default function HomePage() {
 		<Suspense fallback={<Preloader />}>
 			<main>
 				<Preloader />
-				<HeaderSection />
 				<HeroSection title={t('home-hero.title')} />
 				<MakeBookingSection />
 				<WhyUsSection title={tWhyUs('title')} cards={whyUsCards} images={whyUsImages} />
@@ -67,7 +64,6 @@ export default function HomePage() {
 				<TestimonialsSection />
 				<TransferSection />
 				<FaqSection />
-				<FooterSection />
 			</main>
 		</Suspense>
 	)

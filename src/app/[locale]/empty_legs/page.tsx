@@ -1,9 +1,7 @@
 import { Counter } from '@/components/elements'
 import {
 	ContactUsSection,
-	EmptyLegSection,
-	FooterSection,
-	HeaderSection,
+	EmptyLegSection
 } from '@/components/sections'
 import { useTranslations } from 'next-intl'
 
@@ -12,7 +10,6 @@ export default function EmptyLegsPage() {
 
 	return (
 		<main>
-			<HeaderSection />
 			<section>
 				<div className='container gap-8 pt-32'>
 					<h1 className='text-center'>
@@ -41,7 +38,6 @@ export default function EmptyLegsPage() {
 				buttonText={t('empty-leg-contact-us.button')}
 				imageSrc='/images/home_page/key_features_tailoredp_references.jpg'
 			/>
-			<FooterSection />
 		</main>
 	)
 }

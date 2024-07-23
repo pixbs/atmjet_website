@@ -1,22 +1,10 @@
 import {
-	EmptyLegSection,
-	FaqSection,
-	FooterSection,
-	HeaderSection,
-	HeroSection,
-	KeyFeaturesSection,
-	MakeBookingSection,
-	OptionsSection,
-	PrivilegeSection,
-	TestimonialsSection,
-	TransferSection,
-	WhyUsSection,
-	YachtsSection,
-	HeroSalesSection,
-	PersonalManagerSection,
-	OptionsSelectionSection,
 	AdvantagesSection,
 	ContactUsSection,
+	HeroSalesSection,
+	OptionsSelectionSection,
+	PersonalManagerSection,
+	WhyUsSection
 } from '@/components/sections'
 import { useTranslations } from 'next-intl'
 
@@ -35,7 +23,6 @@ export default function SalesDeptPage() {
 	]
 	return (
 		<main>
-			<HeaderSection />
 			<HeroSalesSection />
 			<PersonalManagerSection />
 			{/* <TestimonialsSection /> */}
@@ -79,7 +66,6 @@ export default function SalesDeptPage() {
 				buttonText={t('sales-contact-us.button')}
 				imageSrc='/images/jets_dep/jetsmarket_page_team_contactus.jpg'
 			/>
-			<FooterSection />
 		</main>
 	)
 }

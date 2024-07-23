@@ -1,9 +1,9 @@
 'use client'
 
-import { useTranslations, useLocale } from 'next-intl'
-import Link from 'next/link'
 import ArrowTopRight from '@/assets/svg/arrow-top-right.svg'
 import Logo from '@/assets/svg/logo.svg'
+import { useLocale, useTranslations } from 'next-intl'
+import Link from 'next/link'
 import { useState } from 'react'
 import { BookingModal } from './booking_modal'
 
@@ -49,23 +49,20 @@ export function FooterSection() {
 						<div className='[&>*]:duration-600 [&>*]:animate-in [&>*]:fade-in'>
 							<Link href='/'>{t('navigation.home')}</Link>
 							<Link href='/agencies'>{t('navigation.partners')}</Link>
-							<Link href='/business_agents'>
-								{t('navigation.bussines-agents')}
-							</Link>
-							<Link href='/medical_aviation'>
-								{t('navigation.medical-aviation')}
-							</Link>
+							<Link href='/business_agents'>{t('navigation.bussines-agents')}</Link>
+							<Link href='/medical_aviation'>{t('navigation.medical-aviation')}</Link>
 							<Link href='/empty_legs'>{t('navigation.empty-legs')}</Link>
-							<Link href='/cargo_charter'>
-								{t('navigation.cargo-charter')}
-							</Link>
+							<Link href='/cargo_charter'>{t('navigation.cargo-charter')}</Link>
 						</div>
 						<div className='[&>*]:duration-600 [&>*]:animate-in [&>*]:fade-in'>
 							<Link href='tg://resolve?domain=@atmjet1' className='flex items-center'>
 								{t('social-media.telegram')}
 								<ArrowTopRight className='size-10' />
 							</Link>
-							<Link href='https://m.sitehelp.me/whatsappOfficial?siteId=kdjz1r9wpcb00x6o5ksiqxahidz566ll&clientId=kG1xsAPIwQrDwTJfGPC3vMikfU3QrfWo&url=whatsapp%3A%2F%2Fsend%3Fphone%3D971585940112' className='flex items-center'>
+							<Link
+								href='https://m.sitehelp.me/whatsappOfficial?siteId=kdjz1r9wpcb00x6o5ksiqxahidz566ll&clientId=kG1xsAPIwQrDwTJfGPC3vMikfU3QrfWo&url=whatsapp%3A%2F%2Fsend%3Fphone%3D971585940112'
+								className='flex items-center'
+							>
 								{t('social-media.whats-app')}
 								<ArrowTopRight className='size-10' />
 							</Link>
@@ -78,9 +75,7 @@ export function FooterSection() {
 					<div className='w-full flex-row justify-between'>
 						<div className='[&>*]:duration-600 [&>*]:animate-in [&>*]:fade-in'>
 							<Link href='/sales_dept'>{t('navigation.sales-dept')}</Link>
-							<Link href='/group_charters'>
-								{t('navigation.group-charters')}
-							</Link>
+							<Link href='/group_charters'>{t('navigation.group-charters')}</Link>
 							<Link href='/atm_jet_group'>{t('navigation.atmjet-group')}</Link>
 							<Link href='/aircraft'>{t('navigation.aircraft')}</Link>
 							<Link href='/yachts'>{t('navigation.yachts')}</Link>

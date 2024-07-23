@@ -1,13 +1,10 @@
-import { FooterSection, HeaderSection } from "@/components/sections";
 import { useTranslations } from 'next-intl'
 
 export default function Page() {
-    const t = useTranslations()
+	const t = useTranslations()
 
-    return (
-        <main>
-            <HeaderSection />
-            <FooterSection />
-        </main>
-    )
+	return (
+		<main>
+		</main>
+	)
 }
