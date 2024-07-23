@@ -48,24 +48,24 @@ export function FooterSection() {
 					<div className='w-full flex-row justify-between'>
 						<div className='[&>*]:duration-600 [&>*]:animate-in [&>*]:fade-in'>
 							<Link href='/'>{t('navigation.home')}</Link>
-							<Link href='https://atmjet.webflow.io/agencies'>{t('navigation.partners')}</Link>
-							<Link href='https://atmjet.webflow.io/business-agents'>
+							<Link href='/agencies'>{t('navigation.partners')}</Link>
+							<Link href='/business_agents'>
 								{t('navigation.bussines-agents')}
 							</Link>
-							<Link href='https://atmjet.webflow.io/medical-aviation'>
+							<Link href='/medical_aviation'>
 								{t('navigation.medical-aviation')}
 							</Link>
 							<Link href='/empty_legs'>{t('navigation.empty-legs')}</Link>
-							<Link href='https://atmjet.webflow.io/cargo-charter'>
+							<Link href='/cargo_charter'>
 								{t('navigation.cargo-charter')}
 							</Link>
 						</div>
 						<div className='[&>*]:duration-600 [&>*]:animate-in [&>*]:fade-in'>
-							<Link href='/' className='flex items-center'>
+							<Link href='tg://resolve?domain=@atmjet1' className='flex items-center'>
 								{t('social-media.telegram')}
 								<ArrowTopRight className='size-10' />
 							</Link>
-							<Link href='/' className='flex items-center'>
+							<Link href='https://m.sitehelp.me/whatsappOfficial?siteId=kdjz1r9wpcb00x6o5ksiqxahidz566ll&clientId=kG1xsAPIwQrDwTJfGPC3vMikfU3QrfWo&url=whatsapp%3A%2F%2Fsend%3Fphone%3D971585940112' className='flex items-center'>
 								{t('social-media.whats-app')}
 								<ArrowTopRight className='size-10' />
 							</Link>
@@ -78,11 +78,11 @@ export function FooterSection() {
 					<div className='w-full flex-row justify-between'>
 						<div className='[&>*]:duration-600 [&>*]:animate-in [&>*]:fade-in'>
 							<Link href='/sales_dept'>{t('navigation.sales-dept')}</Link>
-							<Link href='https://atmjet.webflow.io/group-charters'>
+							<Link href='/group_charters'>
 								{t('navigation.group-charters')}
 							</Link>
-							<Link href='https://atmjet.webflow.io/atm-group'>{t('navigation.atmjet-group')}</Link>
-							<Link href='https://atmjet.webflow.io/aircraft'>{t('navigation.aircraft')}</Link>
+							<Link href='/atm_jet_group'>{t('navigation.atmjet-group')}</Link>
+							<Link href='/aircraft'>{t('navigation.aircraft')}</Link>
 							<Link href='/yachts'>{t('navigation.yachts')}</Link>
 						</div>
 					</div>
