@@ -4,7 +4,7 @@ import { BookingModal } from './booking_modal'
 
 interface ContactUsSectionProps {
 	title: string
-	description: string
+	description?: string
 	buttonText: string
 	imageSrc: string
 }
@@ -30,7 +30,7 @@ export function ContactUsSection(props: ContactUsSectionProps) {
 			>
 				<div className='hero-darkening absolute inset-0' />
 				<div className='container min-h-svh content-center items-center justify-center lg:min-h-[50svh]'>
-					<h2>{title}</h2>
+					<h2 className='text-center'>{title}</h2>
 					<p className='pt-4'>{description}</p>
 					<button className='big mt-10' onClick={handleOpen}>
 						{buttonText}

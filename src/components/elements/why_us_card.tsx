@@ -23,9 +23,11 @@ export function WhyUsCard(props: WhyUsCardProps) {
 			style={{ top: `${topPadding}px` }}
 		>
 			<div className='gap-4 md:w-full md:pb-24 md:pt-16'>
-				<Counter className='bg-gold bg-fixed bg-clip-text font-serif text-6xl text-transparent'>
-					{num}
-				</Counter>
+				{!!num && (
+					<Counter className='bg-gold bg-fixed bg-clip-text font-serif text-6xl text-transparent'>
+						{num}
+					</Counter>
+				)}
 				<h3>{title}</h3>
 				<p>{description}</p>
 			</div>
