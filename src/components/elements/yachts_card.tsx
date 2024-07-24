@@ -1,6 +1,7 @@
 'use client'
-import { useTranslations } from 'next-intl'
 import { motion } from 'framer-motion'
+import { useTranslations } from 'next-intl'
+import Link from 'next/link'
 
 export function YachtsCard() {
 	const t = useTranslations('yachts')
@@ -38,7 +39,9 @@ export function YachtsCard() {
 				whileInView={{ opacity: 1, y: 0 }}
 			>
 				<h3>{t('call-to-action')}</h3>
-				<button className='md:self-center md:px-8'>{t('button')}</button>
+				<Link href='/yachts'>
+					<button className='md:self-center md:px-8'>{t('button')}</button>
+				</Link>
 			</motion.div>
 		</motion.div>
 	)

@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useTranslations } from 'next-intl'
 
 interface HeroSectionProps {
 	title: string
@@ -19,7 +18,7 @@ export function HeroSection(props: HeroSectionProps) {
 	return (
 		<section>
 			<div className='container z-20 !my-0 h-svh justify-center gap-2'>
-				<p className='text-center text-sm'>ATMJET</p>
+				<p className='text-center text-sm'>ATM JET</p>
 				<h1 className='text-center duration-1000 animate-in fade-in slide-in-from-top-10'>
 					{title}
 				</h1>

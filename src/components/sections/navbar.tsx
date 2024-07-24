@@ -46,7 +46,7 @@ export function Navbar() {
 							{t('navigation.group-charters')}
 						</Link>
 						<Link href='/atm_jet_group' className='text-right'>
-							{t('navigation.atmjet-group')}
+							{t('navigation.atm-jet-group')}
 						</Link>
 						<Link href='/aircraft' className='text-right'>
 							{t('navigation.aircraft')}

@@ -76,7 +76,7 @@ export function FooterSection() {
 						<div className='[&>*]:duration-600 [&>*]:animate-in [&>*]:fade-in'>
 							<Link href='/sales_dept'>{t('navigation.sales-dept')}</Link>
 							<Link href='/group_charters'>{t('navigation.group-charters')}</Link>
-							<Link href='/atm_jet_group'>{t('navigation.atmjet-group')}</Link>
+							<Link href='/atm_jet_group'>{t('navigation.atm-jet-group')}</Link>
 							<Link href='/aircraft'>{t('navigation.aircraft')}</Link>
 							<Link href='/yachts'>{t('navigation.yachts')}</Link>
 						</div>
