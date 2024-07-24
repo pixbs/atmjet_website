@@ -1,5 +1,5 @@
-import { notFound } from 'next/navigation'
 import { getRequestConfig } from 'next-intl/server'
+import { notFound } from 'next/navigation'
 
 // Can be imported from a shared config
 const locales = ['en', 'uk', 'ru']
@@ -12,7 +12,7 @@ export default getRequestConfig(async ({ locale }) => {
 		messages: {
 			...(await import(`../messages/${locale}/aircraft.json`)).default,
 			...(await import(`../messages/${locale}/atmjet_group.json`)).default,
-			...(await import(`../messages/${locale}/bussines_agents.json`)).default,
+			...(await import(`../messages/${locale}/business_agents.json`)).default,
 			...(await import(`../messages/${locale}/cargo.json`)).default,
 			...(await import(`../messages/${locale}/citizens.json`)).default,
 			...(await import(`../messages/${locale}/empty_leg.json`)).default,

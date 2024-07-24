@@ -19,40 +19,40 @@ export default function PartnersPage() {
 		'/images/home_page/why_us_excellence.jpg',
 	]
 
-	return <main>
-		<section>
-			<div className='container pt-32 gap-20'>
-				<h1 className='text-center'>
-					{t('partners-hero.title')}
-					<Counter
-						className='bg-gold bg-clip-text text-transparent'
-					>
-						{t('partners-hero.num')}
-					</Counter>
-					{t('partners-hero.title2')}
-				</h1>
-				<div
-					className='bg-cover bg-center bg-no-repeat h-64 rounded-2xl'
-					style={{ backgroundImage: 'url(/images/partners/hero.jpg)' }}
-				/>
-				<div className='card bg-gray-150 gap-4 p-8 md:p-10'>
-					<h2>{t('instant-payment.title')}</h2>
-					<p>{t('instant-payment.description')}</p>
+	return (
+		<main>
+			<section>
+				<div className='container gap-20 pt-32'>
+					<h1 className='text-center'>
+						{t('partners-hero.title')}
+						<Counter className='bg-gold bg-clip-text text-transparent'>
+							{t('partners-hero.num')}
+						</Counter>
+						{t('partners-hero.title2')}
+					</h1>
+					<div
+						className='h-64 rounded-2xl bg-cover bg-center bg-no-repeat'
+						style={{ backgroundImage: 'url(/images/partners/hero.jpg)' }}
+					/>
+					<div className='card gap-4 bg-gray-150 p-8 md:p-10'>
+						<h2>{t('instant-payment.title')}</h2>
+						<p>{t('instant-payment.description')}</p>
+					</div>
 				</div>
-			</div>
-		</section>
-		<WhyUsSection 
-			title={t('we-offer.subtitle')}
-			description={t('we-offer.description')}
-			cards={whyUsCards}
-			images={whyUsImages}
-		/>
-		<PersonalFlightManagerSection />
-		<ContactUsSection 
-			title={t('partners-contact-us.title')}
-			description={t('partners-contact-us.description')}
-			buttonText={t('partners-contact-us.button')}
-			imageSrc='/images/partners/contact_us.jpg'
-		/>
-	</main>
+			</section>
+			<WhyUsSection
+				title={t('we-offer.subtitle')}
+				description={t('we-offer.description')}
+				cards={whyUsCards}
+				images={whyUsImages}
+			/>
+			<PersonalFlightManagerSection />
+			<ContactUsSection
+				title={t('partners-contact-us.title')}
+				description={t('partners-contact-us.description')}
+				buttonText={t('partners-contact-us.button')}
+				imageSrc='/images/partners/contact_us.jpg'
+			/>
+		</main>
+	)
 }

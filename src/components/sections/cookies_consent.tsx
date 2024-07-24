@@ -32,14 +32,14 @@ export function CookiesConsent() {
 		showToast && (
 			<>
 				<section className='fixed inset-0 top-auto z-[900]'>
-					<div className='container !flex-row gap-6 rounded-2xl bg-gray-150 p-6 duration-300 animate-in fade-in slide-in-from-top-10 flex-wrap'>
+					<div className='container !flex-row flex-wrap gap-6 rounded-2xl bg-gray-150 p-6 duration-300 animate-in fade-in slide-in-from-top-10'>
 						<p className=' '>
 							{t('message')}{' '}
 							<Link className='text-gray-900' href='/privacy'>
 								{t('privacy-policy')}
 							</Link>
 						</p>
-						<div className='flex-row items-center gap-2 flex-wrap'>
+						<div className='flex-row flex-wrap items-center gap-2'>
 							<button className='middle dark w-full md:w-auto' onClick={() => setIsOpened(true)}>
 								{t('customize')}
 							</button>

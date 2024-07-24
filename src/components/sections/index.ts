@@ -1,4 +1,5 @@
 export { AdvantagesSection } from './advantages'
+export { BestPriceSection } from './best_price'
 export { ContactUsSection } from './contact_us'
 export { CookiesConsent as Cookies } from './cookies_consent'
 export { EmptyLegSection } from './empty_leg'
@@ -21,4 +22,3 @@ export { TransferSection } from './transfer'
 export { WeInspectSection } from './we_inspect'
 export { WhyUsSection } from './why_us'
 export { YachtsSection } from './yachts'
-
