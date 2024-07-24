@@ -48,7 +48,7 @@ export function FooterSection() {
 					<div className='w-full flex-row justify-between'>
 						<div className='[&>*]:duration-600 [&>*]:animate-in [&>*]:fade-in'>
 							<Link href='/'>{t('navigation.home')}</Link>
-							<Link href='/agencies'>{t('navigation.partners')}</Link>
+							<Link href='/partners'>{t('navigation.partners')}</Link>
 							<Link href='/business_agents'>{t('navigation.bussines-agents')}</Link>
 							<Link href='/medical_aviation'>{t('navigation.medical-aviation')}</Link>
 							<Link href='/empty_legs'>{t('navigation.empty-legs')}</Link>

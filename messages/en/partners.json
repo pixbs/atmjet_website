@@ -1,7 +1,8 @@
 {
 	"partners-hero": {
-		"title": "Over {num} partners trust us.",
-		"num": "50"
+		"title": "Over ",
+		"num": "50",
+		"title2": " partners trust us."
 	},
 	"instant-payment": {
 		"title": "Instalment payments",
