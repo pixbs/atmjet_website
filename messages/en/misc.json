@@ -26,6 +26,21 @@
 		"yachts": "Yachts",
 		"sales-dept": "Sales department"
 	},
+	"cookies": {
+		"message": "We use cookies to enhance your browsing experience, serve personalized ads or content, and analyze our traffic. By clicking \"Accept\", you consent to our use of cookies. For more information, please read our",
+		"privacy-policy": "Privacy Policy",
+		"title": "Cookie settings",
+		"description": "We use cookies to help you navigate efficiently and perform certain functions. You will find detailed information about cookies under each consent category below. The cookies that are categorized as \"Necessary\" are stored on your browser as they are essential for enabling the basic functionalities of the site. We also use third-party cookies that help us analyze how you use this website, store your preferences, and provide the content and advertisements that are relevant to you. These cookies will only be stored in your browser with your priorconsent. You can choose to enable or disable some or all of these cookies but disabling some of them may affect your browsing experience.",
+		"customize": "Customize",
+		"reject-all": "Reject all",
+		"accept-all": "Accept all",
+		"reject": "Reject",
+		"accept": "Accept",
+		"necessary": "Necessary cookies",
+		"required": "Required",
+		"marketing-cookies": "Marketing cookies",
+		"personal-cookies": "Personal Cookies"
+	},
 	"footer": {
 		"location": "Dubai +971 (585) 940-112",
 		"phone": "+971 (585) 940-112",

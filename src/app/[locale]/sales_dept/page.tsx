@@ -4,7 +4,7 @@ import {
 	HeroSalesSection,
 	OptionsSelectionSection,
 	PersonalManagerSection,
-	WhyUsSection
+	WhyUsSection,
 } from '@/components/sections'
 import { useTranslations } from 'next-intl'
 

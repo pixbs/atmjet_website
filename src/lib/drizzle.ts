@@ -1,7 +1,7 @@
-import { decimal, index, integer, pgTable, serial, text, varchar } from 'drizzle-orm/pg-core'
 import { sql } from '@vercel/postgres'
-import { drizzle } from 'drizzle-orm/vercel-postgres'
 import { config } from 'dotenv'
+import { decimal, index, integer, pgTable, serial, text, varchar } from 'drizzle-orm/pg-core'
+import { drizzle } from 'drizzle-orm/vercel-postgres'
 
 config({ path: '.env.local' })
 

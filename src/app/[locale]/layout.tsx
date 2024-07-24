@@ -1,9 +1,9 @@
+import { Cookies, FooterSection, HeaderSection } from '@/components/sections'
+import type { Metadata } from 'next'
 import { NextIntlClientProvider } from 'next-intl'
 import { getMessages } from 'next-intl/server'
-import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
-import { FooterSection, HeaderSection } from '@/components/sections'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -27,6 +27,7 @@ export default async function LocaleLayout({
 		<html lang={locale}>
 			<body className={inter.className}>
 				<NextIntlClientProvider messages={messages}>
+					<Cookies />
 					<HeaderSection />
 					{children}
 					<FooterSection />

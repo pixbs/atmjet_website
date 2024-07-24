@@ -1,8 +1,5 @@
 import { Counter } from '@/components/elements'
-import {
-	ContactUsSection,
-	EmptyLegSection
-} from '@/components/sections'
+import { ContactUsSection, EmptyLegSection } from '@/components/sections'
 import { useTranslations } from 'next-intl'
 
 export default function EmptyLegsPage() {

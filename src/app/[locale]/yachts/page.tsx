@@ -4,7 +4,7 @@ import {
 	KeyFeaturesSection,
 	OptionsSelectionSection,
 	WeInspectSection,
-	WhyUsSection
+	WhyUsSection,
 } from '@/components/sections'
 import { useTranslations } from 'next-intl'
 
