@@ -1,7 +1,12 @@
-import { CargoRequestSection, ContactUsSection, SubpageHeroSection, WhyUsSection } from '@/components/sections'
+import {
+	CargoRequestSection,
+	ContactUsSection,
+	SubpageHeroSection,
+	WhyUsSection,
+} from '@/components/sections'
 import { useTranslations } from 'next-intl'
 
-export default function Page() {
+export default function CargoPage() {
 	const t = useTranslations()
 	const cards = ['card1', 'card2', 'card3', 'card4'].map((card) => ({
 		num: '',

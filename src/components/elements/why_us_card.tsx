@@ -4,10 +4,10 @@ import { motion } from 'framer-motion'
 import { Counter } from './counter'
 
 interface WhyUsCardProps {
-	num: string
+	num?: string
 	title: string
 	description: string
-	imageSrc: string
+	imageSrc?: string
 	topPadding?: number
 }
 
@@ -31,10 +31,12 @@ export function WhyUsCard(props: WhyUsCardProps) {
 				<h3>{title}</h3>
 				<p>{description}</p>
 			</div>
-			<div
-				className='-mx-9 -mb-12 h-48 flex-shrink-0 bg-cover bg-center md:h-80 md:w-1/2 lg:h-full'
-				style={{ backgroundImage: `url(${imageSrc})` }}
-			/>
+			{!!imageSrc && (
+				<div
+					className='-mx-9 -mb-12 h-48 flex-shrink-0 bg-cover bg-center md:h-80 md:w-1/2 lg:h-full'
+					style={{ backgroundImage: `url(${imageSrc})` }}
+				/>
+			)}
 		</motion.div>
 	)
 }
