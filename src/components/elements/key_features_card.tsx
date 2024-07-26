@@ -13,7 +13,7 @@ export function KeyFeatureCard(props: KeyFeatureCardProps) {
 
 	return (
 		<motion.div
-			className='embla__slide relative aspect-square w-full flex-shrink-0 justify-end gap-4 bg-cover pr-24 md:w-1/2'
+			className='embla__slide relative aspect-[3/4] w-full flex-shrink-0 justify-end gap-4 bg-cover pr-10 md:w-1/2'
 			initial={{ opacity: 0 }}
 			transition={{ duration: 0.5 }}
 			whileInView={{ opacity: 1 }}

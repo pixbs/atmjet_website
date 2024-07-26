@@ -1,19 +1,19 @@
-'use server'
+import { VehicleCard } from '@/components/elements'
 
-import { db, vehicles } from '@/lib/drizzle'
-import { eq } from 'drizzle-orm'
-import Link from 'next/link'
+interface VehiclePageProps {
+	params: {
+		id: string
+	}
+}
 
-import { useParams } from 'next/navigation'
+export default function VehiclePage(props: VehiclePageProps) {
+	const { id } = props.params
 
-export default async function AircraftSlug({ params }: { params: { id: string } }) {
-	const { id } = params
-
-	const [vehicle] = await db
-		.select()
-		.from(vehicles)
-		.limit(1)
-		.where(eq(vehicles.id, parseInt(decodeURIComponent(params.id))))
-
-	return <div>{JSON.stringify(vehicle, null, 4)}</div>
+	return (
+		<section>
+			<div className='container'>
+				<VehicleCard id={Number(id)} />
+			</div>
+		</section>
+	)
 }
