@@ -1,7 +1,7 @@
 import { useTranslations } from 'next-intl'
-import { AutoComplete, CounterInput } from '../elements'
+import { Controller, useFormContext } from 'react-hook-form'
 import { z } from 'zod'
-import { useFormContext, Controller } from 'react-hook-form'
+import { AutoComplete, CounterInput } from '../elements'
 
 export const directionSchema = z.object({
 	from: z.string().nonempty('From is required'),
@@ -63,7 +63,9 @@ export function Direction(props: DirectionProps) {
 					render={({ field }) => (
 						<input
 							{...field}
-							type='date'
+							type='text'
+							onFocus={(e) => (e.target.type = 'date')}
+							onBlur={(e) => (e.target.type = 'text')}
 							placeholder={t('date')}
 							className='min-h-16 w-full flex-shrink-0 lg:h-full'
 						/>
@@ -78,7 +80,9 @@ export function Direction(props: DirectionProps) {
 						render={({ field }) => (
 							<input
 								{...field}
-								type='date'
+								type='text'
+								onFocus={(e) => (e.target.type = 'date')}
+								onBlur={(e) => (e.target.type = 'text')}
 								placeholder={t('date')}
 								className='min-h-16 w-full flex-shrink-0 lg:h-full'
 							/>

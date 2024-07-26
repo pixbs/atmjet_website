@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect, InputHTMLAttributes } from 'react'
+import { InputHTMLAttributes, useEffect, useState } from 'react'
 
 interface AutoCompleteProps extends InputHTMLAttributes<HTMLInputElement> {
 	suggestionsFile?: string
@@ -32,6 +32,11 @@ export function AutoComplete(props: AutoCompleteProps) {
 						onChange(e)
 					}
 					setShowSuggestions(true)
+				}}
+				onBlur={() => {
+					setTimeout(() => {
+						setShowSuggestions(false)
+					}, 200)
 				}}
 				{...inputProps}
 			/>

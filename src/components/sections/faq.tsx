@@ -1,8 +1,8 @@
 'use client'
 
 import { useTranslations } from 'next-intl'
-import { Accordion } from '../elements'
 import { useState } from 'react'
+import { Accordion } from '../elements'
 
 export function FaqSection() {
 	const t = useTranslations('faq')
@@ -12,7 +12,7 @@ export function FaqSection() {
 	return (
 		<section>
 			<div className='container lg:flex-row'>
-				<h2 className='min-w-80'>{t('title')}</h2>
+				<h2 className='md:min-w-80'>{t('title')}</h2>
 				<div className='pt-4'>
 					{accordions.map((accordion, index) => (
 						<div className='gap-6 border-b border-gray-300 py-6' key={index}>

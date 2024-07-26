@@ -9,6 +9,11 @@ export default function GroupCharterPage() {
 		title: t(`group-charters-cards.${card}.title`),
 		description: t(`group-charters-cards.${card}.description`),
 	}))
+	const images = [
+		'/images/business_agencies/hero.jpg',
+		'/images/group_charter/card2.jpg',
+		'/images/group_charter/hero.jpg',
+	]
 
 	return (
 		<main>
@@ -26,6 +31,7 @@ export default function GroupCharterPage() {
 							title={card.title}
 							description={card.description}
 							topPadding={(index + 1) * 32}
+							imageSrc={images[index]}
 						/>
 					))}
 				</div>

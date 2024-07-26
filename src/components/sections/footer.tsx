@@ -81,8 +81,10 @@ export function FooterSection() {
 							<Link href='/yachts'>{t('navigation.yachts')}</Link>
 						</div>
 					</div>
+					<button className='md:self-start' onClick={handleOpen}>
+						{t('footer.button')}
+					</button>
 					<div className='items-center gap-2'>
-						<button onClick={handleOpen}>{t('footer.button')}</button>
 						<p>{t('footer.location')}</p>
 						<p>{t('footer.copyright', { year })}</p>
 					</div>

@@ -11,12 +11,15 @@ export function Navbar() {
 			<nav className='container !m-0 flex h-full !flex-row content-stretch pb-10 pt-36'>
 				<div className='w-full flex-col justify-between lg:flex-row'>
 					<div className='[&>*]:duration-600 [&>*]:animate-in [&>*]:fade-in'>
-						<Link href='/'>{t('navigation.home')}</Link>
+						<Link href='/' legacyBehavior passHref>
+							{t('navigation.home')}
+						</Link>
 						<Link href='/partners'>{t('navigation.partners')}</Link>
 						<Link href='/business_agents'>{t('navigation.business-agents')}</Link>
 						<Link href='/medical_aviation'>{t('navigation.medical-aviation')}</Link>
 						<Link href='/empty_legs'>{t('navigation.empty-legs')}</Link>
 						<Link href='/cargo_charter'>{t('navigation.cargo-charter')}</Link>
+						<button className='mt-4 hidden self-start lg:block'>{t('footer.button')}</button>
 					</div>
 					<div className='[&>*]:duration-600 [&>*]:animate-in [&>*]:fade-in'>
 						<Link href='tg://resolve?domain=@atmjet1' className='flex items-center'>
@@ -34,7 +37,7 @@ export function Navbar() {
 							{t('social-media.instagram')}
 							<ArrowTopRight className='size-10' />
 						</Link>
-						<button className='mt-4 self-start'>{t('footer.button')}</button>
+						<button className='mt-4 self-start lg:hidden'>{t('footer.button')}</button>
 					</div>
 				</div>
 				<div className='w-full flex-col justify-between'>

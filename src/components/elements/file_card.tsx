@@ -11,7 +11,7 @@ export function FileCard(props: FileCardProps) {
 	const { url, title, imageUrl, button } = props
 
 	return (
-		<div className='min-w-80 overflow-hidden rounded-2xl bg-gray-150'>
+		<div className='overflow-hidden rounded-2xl bg-gray-150 md:min-w-80'>
 			<div
 				className='h-56 w-full bg-cover bg-center bg-no-repeat'
 				style={{ backgroundImage: `url(${imageUrl})` }}

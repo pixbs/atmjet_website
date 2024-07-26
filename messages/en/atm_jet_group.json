@@ -16,7 +16,8 @@
 	},
 	"yachts": {
 		"title": "ATM JET | Yachts",
-		"description": "Yacht sales and charter, welcome to our yachts in Dubai and Europe. Request now for a personalized yacht selection at our Dubai office or online.",
+		"description": "Yacht sales and charter, welcome to our yachts in Dubai and Europe.",
+		"description2": "Request now for a personalized yacht selection at our Dubai office or online.",
 		"card1": {
 			"title": "Yachts for sale",
 			"description": "We have access to over 3000 luxury yachts worldwide."

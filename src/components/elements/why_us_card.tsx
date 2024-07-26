@@ -33,7 +33,7 @@ export function WhyUsCard(props: WhyUsCardProps) {
 			</div>
 			{!!imageSrc && (
 				<div
-					className='-mx-9 -mb-12 h-48 flex-shrink-0 bg-cover bg-center md:h-80 md:w-1/2 lg:h-full'
+					className='-mx-9 -mb-12 h-48 flex-shrink-0 bg-cover bg-center md:h-80 md:w-1/2 lg:min-h-full'
 					style={{ backgroundImage: `url(${imageSrc})` }}
 				/>
 			)}

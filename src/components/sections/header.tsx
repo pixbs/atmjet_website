@@ -3,19 +3,26 @@
 import BurgerMenu from '@/assets/svg/burger-menu.svg'
 import Close from '@/assets/svg/close.svg'
 import Logo from '@/assets/svg/logo.svg'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { Navbar } from './navbar'
-import Link from 'next/link'
 
 export function HeaderSection() {
 	const [isMenuOpen, setIsMenuOpen] = useState(false)
 	const [isScrolled, setIsScrolled] = useState(false)
 	const [showHeader, setShowHeader] = useState(true)
 	const [lastScrollY, setLastScrollY] = useState(0)
+	const path = usePathname()
+
+	useEffect(() => {
+		document.body.style.overflow = 'auto'
+		setIsMenuOpen(false)
+	}, [path])
 
 	const handleClick = () => {
 		setIsMenuOpen(!isMenuOpen)
-		//isMenuOpen ? (document.body.style.overflow = 'auto') : (document.body.style.overflow = 'hidden')
+		isMenuOpen ? (document.body.style.overflow = 'auto') : (document.body.style.overflow = 'hidden')
 	}
 
 	useEffect(() => {
