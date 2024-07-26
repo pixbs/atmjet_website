@@ -12,7 +12,7 @@ export { Preloader } from './preloader'
 export { TestimonialsCard } from './testimonials_card'
 export { TestimonialsCarousel } from './testimonials_carousel'
 export { VehicleCard } from './vehicle_card'
-export { VehicleCard as VehicleCard2 } from './vehicle_card2'
 export { VehiclesCarousel } from './vehicles_carousel'
 export { WhyUsCard } from './why_us_card'
 export { YachtsCard } from './yachts_card'
+

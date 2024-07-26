@@ -19,5 +19,19 @@
 		"super-midsize-jets": "Super-midsize jets",
 		"heavy-jets": "Heavy jets",
 		"ultra-long-range-jets": "Ultra-long-range"
+	},
+	"vehicle": {
+		"tail-number": "Number:",
+		"tail-operator": "Operator:",
+		"tail-vendor": "Vendor:",
+		"tail-weight": "Type:",
+		"tail-year": "Year:",
+		"tail-maxpax": "Max pax:",
+		"tail-homebase": "Home base:",
+		"tail-homebase-city": "Home city:",
+		"tail-homebase-country": "Home country:",
+		"tail-manufacturer": "Manufacturer:",
+		"tail-interiorrefit": "Interiorrefit:",
+		"tail-exteriorrefit": "Exteriorrefit:"
 	}
 }

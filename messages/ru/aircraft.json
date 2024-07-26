@@ -19,5 +19,19 @@
 		"super-midsize-jets": "Super-midsize самолеты",
 		"heavy-jets": "Heavy jets самолеты",
 		"ultra-long-range-jets": "Сверхдальние"
+	},
+	"vehicle": {
+		"tail-number": "Номер:",
+		"tail-operator": "Оператор:",
+		"tail-vendor": "Вендор:",
+		"tail-weight": "Тип:",
+		"tail-year": "Год:",
+		"tail-maxpax": "Макс. пас.:",
+		"tail-homebase": "Место стоянки:",
+		"tail-homebase-city": "Город стоянки:",
+		"tail-homebase-country": "Страна стоянки:",
+		"tail-manufacturer": "Производитель:",
+		"tail-interiorrefit": "Переделка интерьера:",
+		"tail-exteriorrefit": "Переделка экстерьера':"
 	}
 }

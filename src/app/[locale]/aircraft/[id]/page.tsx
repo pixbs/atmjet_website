@@ -1,4 +1,7 @@
-import { VehicleCard } from '@/components/elements'
+import { MakeBookingSection } from '@/components/sections'
+import { db, vehicles } from '@/lib/drizzle'
+import { eq } from 'drizzle-orm'
+import { getTranslations } from 'next-intl/server'
 
 interface VehiclePageProps {
 	params: {
@@ -6,14 +9,84 @@ interface VehiclePageProps {
 	}
 }
 
-export default function VehiclePage(props: VehiclePageProps) {
+export default async function VehiclePage(props: VehiclePageProps) {
+	const t = await getTranslations('vehicle')
 	const { id } = props.params
+	const [vehicle] = await db
+		.select()
+		.from(vehicles)
+		.limit(1)
+		.where(eq(vehicles.id, parseInt(decodeURIComponent(id))))
+
+	const labels = [
+		t('tail-number'),
+		t('tail-operator'),
+		t('tail-vendor'),
+		t('tail-weight'),
+		t('tail-year'),
+		t('tail-maxpax'),
+		t('tail-homebase'),
+		t('tail-homebase-city'),
+		t('tail-homebase-country'),
+		t('tail-manufacturer'),
+		t('tail-interiorrefit'),
+		t('tail-exteriorrefit')
+	]
+
+	const values = [
+		vehicle.tailNumber,
+		vehicle.tailOperator,
+		vehicle.vendor,
+		vehicle.weight,
+		vehicle.tailYear,
+		vehicle.tailMaxpax,
+		vehicle.tailHomebase,
+		vehicle.tailHomebase_city,
+		vehicle.tailHomebase_country,
+		vehicle.tailManufacturer,
+		vehicle.tailInteriorrefit,
+		vehicle.tailExteriorrefit
+	]
 
 	return (
-		<section>
-			<div className='container'>
-				<VehicleCard id={Number(id)} />
-			</div>
-		</section>
+		<main>
+			<section
+				className='h-[80svh] bg-cover bg-fixed bg-center bg-no-repeat bg-origin-content pb-96'
+				style={{ backgroundImage: `url(http://${vehicle.image})` }}
+			>
+				<div className='hero-darkening absolute inset-0 z-10' />
+			</section>
+			<section>
+				<div className='container'>
+					<h1 className='text-center'>{vehicle.tailModel}</h1>
+				</div>
+			</section>
+			<MakeBookingSection />
+			<section>
+				<div className='container md:flex-row'>
+					<div className='card bg-gray-150 w-full p-8 md:p-10'>
+						{labels.map((label, index) => (
+							<ContextLine key={index} label={label} value={values[index]} />
+						))}
+					</div>
+				</div>
+			</section>
+		</main>
+	)
+}
+
+interface ContextLineProps {
+	label: string
+	value: string | number | null
+}
+
+function ContextLine(props : ContextLineProps) {
+	const { label, value } = props
+
+	return (
+		<div className='h-10 flex-row items-center justify-between border-b border-gray-300'>
+			<p className='w-full'>{label}</p>
+			<p className='w-full'>{value}</p>
+		</div>
 	)
 }

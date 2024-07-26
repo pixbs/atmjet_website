@@ -19,5 +19,19 @@
 		"super-midsize-jets": "Super-midsize літаки",
 		"heavy-jets": "Heavy jets літаки",
 		"ultra-long-range-jets": "Наддалекі"
+	},
+	"vehicle": {
+		"tail-number": "Номер:",
+		"tail-operator": "Оператор:",
+		"tail-vendor": "Вендор:",
+		"tail-weight": "Тип:",
+		"tail-year": "Рік:",
+		"tail-maxpax": "Макс. пас.:",
+		"tail-homebase": "Місце стоянки:",
+		"tail-homebase-city": "Місто стоянки:",
+		"tail-homebase-country": "Країна стоянки:",
+		"tail-manufacturer": "Виробник:",
+		"tail-interiorrefit": "Переробка інтер'єру:",
+		"tail-exteriorrefit": "Переробка екстер'єру':"
 	}
 }
