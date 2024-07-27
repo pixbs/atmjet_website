@@ -1,9 +1,16 @@
 import { useTranslations } from 'next-intl'
-import { TestimonialsCarousel, TestimonialsCard } from '../elements'
+import { TestimonialsCard, TestimonialsCarousel } from '../elements'
 
 export function TestimonialsSection() {
 	const t = useTranslations('testimonials')
 	const cards = ['card1', 'card2', 'card3', 'card4', 'card5']
+	const images = [
+		'/images/testimonials/sardar.jpg',
+		'/images/testimonials/pele.png',
+		'/images/testimonials/nicole.png',
+		'/images/testimonials/anna_netrebko.png',
+		'/images/testimonials/jamiroquai.jpg',
+	]
 
 	return (
 		<section className='overflow-hidden bg-gray-150'>
@@ -16,7 +23,7 @@ export function TestimonialsSection() {
 							name={t(`${card}.name`)}
 							title={t(`${card}.title`)}
 							key={index.toString()}
-							imageSrc='/images/home_page/why_us_clients.jpg'
+							imageSrc={images[index]}
 						/>
 					))}
 				</TestimonialsCarousel>
