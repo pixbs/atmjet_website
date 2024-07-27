@@ -1,5 +1,6 @@
 import { Preloader } from '@/components/elements'
 import {
+	AngleBar,
 	EmptyLegSection,
 	FaqSection,
 	HeroSection,
@@ -48,6 +49,7 @@ export default function HomePage() {
 		<Suspense fallback={<Preloader />}>
 			<main>
 				<Preloader />
+				<AngleBar />
 				<HeroSection title={t('home-hero.title')} />
 				<MakeBookingSection />
 				<WhyUsSection title={tWhyUs('title')} cards={whyUsCards} images={whyUsImages} />

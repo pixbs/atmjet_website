@@ -33,15 +33,21 @@ export function YachtsCard() {
 				))}
 			</div>
 			<motion.div
-				className='mx-6 mb-6 gap-6 rounded-2xl bg-gray-100 p-6 md:text-center'
+				className='mx-6 mb-6 gap-4 overflow-hidden rounded-2xl bg-gray-100 md:text-center'
 				initial={{ opacity: 0, y: -50 }}
 				transition={{ duration: 0.5 }}
 				whileInView={{ opacity: 1, y: 0 }}
 			>
-				<h3>{t('call-to-action')}</h3>
-				<Link href='/yachts'>
-					<button className='md:self-center md:px-8'>{t('button')}</button>
-				</Link>
+				<div
+					className='mx-auto aspect-[3/1] w-full bg-cover bg-center'
+					style={{ backgroundImage: 'url(/images/atm_jet_group/yachts.jpg)' }}
+				/>
+				<div className='gap-6 p-6'>
+					<h3>{t('call-to-action')}</h3>
+					<Link href='/yachts'>
+						<button className='md:self-center md:px-8'>{t('button')}</button>
+					</Link>
+				</div>
 			</motion.div>
 		</motion.div>
 	)

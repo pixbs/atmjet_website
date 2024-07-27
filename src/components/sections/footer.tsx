@@ -84,7 +84,7 @@ export function FooterSection() {
 					<button className='md:self-start' onClick={handleOpen}>
 						{t('footer.button')}
 					</button>
-					<div className='items-center gap-2'>
+					<div className='items-center gap-2 pr-24 md:pr-0'>
 						<p>{t('footer.location')}</p>
 						<p>{t('footer.copyright', { year })}</p>
 					</div>

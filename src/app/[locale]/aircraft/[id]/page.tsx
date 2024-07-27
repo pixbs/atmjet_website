@@ -30,7 +30,7 @@ export default async function VehiclePage(props: VehiclePageProps) {
 		t('tail-homebase-country'),
 		t('tail-manufacturer'),
 		t('tail-interiorrefit'),
-		t('tail-exteriorrefit')
+		t('tail-exteriorrefit'),
 	]
 
 	const values = [
@@ -45,7 +45,7 @@ export default async function VehiclePage(props: VehiclePageProps) {
 		vehicle.tailHomebase_country,
 		vehicle.tailManufacturer,
 		vehicle.tailInteriorrefit,
-		vehicle.tailExteriorrefit
+		vehicle.tailExteriorrefit,
 	]
 
 	return (
@@ -64,7 +64,7 @@ export default async function VehiclePage(props: VehiclePageProps) {
 			<MakeBookingSection />
 			<section>
 				<div className='container md:flex-row'>
-					<div className='card bg-gray-150 w-full p-8 md:p-10'>
+					<div className='card w-full bg-gray-150 p-8 md:p-10'>
 						{labels.map((label, index) => (
 							<ContextLine key={index} label={label} value={values[index]} />
 						))}
@@ -80,7 +80,7 @@ interface ContextLineProps {
 	value: string | number | null
 }
 
-function ContextLine(props : ContextLineProps) {
+function ContextLine(props: ContextLineProps) {
 	const { label, value } = props
 
 	return (

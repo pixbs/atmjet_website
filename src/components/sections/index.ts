@@ -1,4 +1,5 @@
 export { AdvantagesSection } from './advantages'
+export { AngleBar } from './angle_bar'
 export { BestPriceSection } from './best_price'
 export { CargoRequestSection } from './cargo_request'
 export { ContactUsSection } from './contact_us'
