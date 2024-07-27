@@ -40,8 +40,8 @@ export default function businessAgentsPage() {
 					/>
 				</div>
 			</section>
-			<TransferSection />
 			<BestPriceSection />
+			<TransferSection />
 		</main>
 	)
 }
