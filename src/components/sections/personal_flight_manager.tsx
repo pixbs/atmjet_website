@@ -1,22 +1,9 @@
 'use client'
 import { useTranslations } from 'next-intl'
-import { useState } from 'react'
-import { BookingModal } from './booking_modal'
+import Link from 'next/link'
 
 export function PersonalFlightManagerSection() {
 	const t = useTranslations('personal-flight-manager')
-	const [isOpened, setIsOpened] = useState(false)
-
-	const handleOpen = () => {
-		setIsOpened(true)
-		isOpened ? (document.body.style.overflow = 'auto') : (document.body.style.overflow = 'hidden')
-	}
-
-	const handleClose = () => {
-		setIsOpened(false)
-		document.body.style.overflow = 'auto'
-	}
-
 	return (
 		<>
 			<section>
@@ -33,13 +20,14 @@ export function PersonalFlightManagerSection() {
 							</h3>
 							<hr />
 						</div>
-						<button className='big self-center' onClick={handleOpen}>
-							{t('button')}
-						</button>
+						<Link href='?showBooking' scroll={false} className='self-center'>
+							<button className='big'>
+								{t('button')}
+							</button>
+						</Link>
 					</div>
 				</div>
 			</section>
-			{isOpened && <BookingModal closeModal={handleClose} />}
 		</>
 	)
 }

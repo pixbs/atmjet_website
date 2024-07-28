@@ -1,3 +1,4 @@
+import { BookingDialog } from '@/components/elements'
 import { Cookies, FooterSection, HeaderSection } from '@/components/sections'
 import type { Metadata } from 'next'
 import { NextIntlClientProvider } from 'next-intl'
@@ -11,8 +12,6 @@ export const metadata: Metadata = {
 	title: 'ATM JET - Flying private made simple',
 	description: '',
 }
-
-
 
 export default async function LocaleLayout({
 	children,
@@ -29,16 +28,17 @@ export default async function LocaleLayout({
 		<html lang={locale}>
 			<body className={inter.className}>
 				<script
-				async
-				type='text/javascript'
-				src="https://piper.kommo.com/pixel/js/identifier/pixel_identifier.js"
-				id="kommo_pixel_identifier_js"
+					async
+					type='text/javascript'
+					src='https://piper.kommo.com/pixel/js/identifier/pixel_identifier.js'
+					id='kommo_pixel_identifier_js'
 				/>
 				<NextIntlClientProvider messages={messages}>
 					<Cookies />
 					<HeaderSection />
 					{children}
 					<FooterSection />
+					<BookingDialog />
 				</NextIntlClientProvider>
 			</body>
 		</html>

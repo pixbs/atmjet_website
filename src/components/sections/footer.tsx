@@ -1,28 +1,13 @@
-'use client'
-
 import ArrowTopRight from '@/assets/svg/arrow-top-right.svg'
 import Logo from '@/assets/svg/logo.svg'
 import { useLocale, useTranslations } from 'next-intl'
 import Link from 'next/link'
-import { useState } from 'react'
-import { BookingModal } from './booking_modal'
 
 export function FooterSection() {
-	const [isOpened, setIsOpened] = useState(false)
 	const t = useTranslations()
 	const locale = useLocale()
 
 	const year = new Date().getFullYear()
-
-	const handleOpen = () => {
-		setIsOpened(true)
-		isOpened ? (document.body.style.overflow = 'auto') : (document.body.style.overflow = 'hidden')
-	}
-
-	const handleClose = () => {
-		setIsOpened(false)
-		document.body.style.overflow = 'auto'
-	}
 
 	return (
 		<>
@@ -81,16 +66,17 @@ export function FooterSection() {
 							<Link href='/yachts'>{t('navigation.yachts')}</Link>
 						</div>
 					</div>
-					<button className='md:self-start' onClick={handleOpen}>
-						{t('footer.button')}
-					</button>
+					<Link href='?showBooking' className='md:self-start' scroll={false}>
+						<button>
+							{t('footer.button')}
+						</button>
+					</Link>
 					<div className='items-center gap-2 pr-24 md:pr-0'>
 						<p>{t('footer.location')}</p>
 						<p>{t('footer.copyright', { year })}</p>
 					</div>
 				</footer>
 			</section>
-			{isOpened && <BookingModal closeModal={handleClose} />}
 		</>
 	)
 }

@@ -1,4 +1,5 @@
-import { ContactUsSection, SubpageHeroSection, WhyUsSection } from '@/components/sections'
+import ForbesLogo from '@/assets/svg/forbes-logo.svg'
+import { SubpageHeroSection, WhyUsSection } from '@/components/sections'
 import { useTranslations } from 'next-intl'
 
 export default function CitizensPage() {
@@ -26,12 +27,20 @@ export default function CitizensPage() {
 				imageUrl='/images/citizens/hero.jpg'
 			/>
 			<WhyUsSection title={t('citizens-why-us.title')} cards={cards} images={images} />
-			<ContactUsSection
-				title={t('partners-contact-us.title')}
-				description={t('partners-contact-us.description')}
-				buttonText={t('partners-contact-us.button')}
-				imageSrc='/images/partners/contact_us.jpg'
-			/>
+			<section>
+				<div className='container'>
+					<div className='card gap-8 bg-gray-150 p-8 md:gap-10 md:p-10'>
+						<ForbesLogo className='-mb-6 h-14' />
+						<h2 className='rounded-r-2xl border-l-2 border-gray-500 bg-gray-200 px-8 py-4 text-3xl md:px-10'>
+							{t('quote.quote')}
+						</h2>
+						<p className='border-y border-gray-400 bg-gold bg-clip-text px-10 py-4 text-center text-transparent md:px-16'>
+							{t('quote.description')}
+						</p>
+						<button className='big self-center'>{t('quote.button')}</button>
+					</div>
+				</div>
+			</section>
 		</main>
 	)
 }

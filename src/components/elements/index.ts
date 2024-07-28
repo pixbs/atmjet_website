@@ -1,5 +1,6 @@
 export { Accordion } from './accordion'
 export { AutoComplete } from './autocomplete'
+export { BookingDialog } from './booking_dialog'
 export { Checkbox } from './checkbox'
 export { Counter } from './counter'
 export { CounterInput } from './counter_input'
@@ -15,3 +16,4 @@ export { VehicleCard } from './vehicle_card'
 export { VehiclesCarousel } from './vehicles_carousel'
 export { WhyUsCard } from './why_us_card'
 export { YachtsCard } from './yachts_card'
+
