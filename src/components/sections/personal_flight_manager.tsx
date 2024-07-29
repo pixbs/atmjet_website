@@ -20,7 +20,7 @@ export function PersonalFlightManagerSection() {
 							</h3>
 							<hr />
 						</div>
-						<Link href='?showBooking' scroll={false} className='self-center'>
+						<Link href='?showBooking=Personal_flight_manager' scroll={false} className='self-center'>
 							<button className='big'>
 								{t('button')}
 							</button>

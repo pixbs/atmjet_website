@@ -1,21 +1,32 @@
 'use client'
 
-import { useTranslations } from 'next-intl'
-import { z } from 'zod'
-import { useForm, FormProvider } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useState } from 'react'
 import Checkmark from '@/assets/svg/checkmark.svg'
+import { zodResolver } from '@hookform/resolvers/zod'
+import axios from 'axios'
+import { useLocale, useTranslations } from 'next-intl'
+import { usePathname, useSearchParams } from 'next/navigation'
+import { useState } from 'react'
+import { FormProvider, useForm } from 'react-hook-form'
+import { z } from 'zod'
 
 const schema = z.object({
 	name: z.string().min(1).max(32),
-	'phone-number': z.string().min(1).optional(),
+	phone_number: z.string().min(1).optional(),
 	email: z.string().email(),
 })
 
-export function BookingForm() {
+interface BookingFormProps {
+	host: string
+}
+
+export function BookingForm(props : BookingFormProps) {
+	const { host } = props
 	const t = useTranslations('contact-form')
 	const [submitted, setSubmitted] = useState(false)
+	const locale = useLocale()
+	const pathname = usePathname()
+	const searchParams = useSearchParams()
+	const booking = searchParams.get('showBooking')
 
 	const methods = useForm({
 		resolver: zodResolver(schema),
@@ -23,9 +34,15 @@ export function BookingForm() {
 
 	const { register, handleSubmit } = methods
 
-	const onSubmit = (data: any) => {
+	const onSubmit = async (data: any) => {
 		console.log(data)
-		setSubmitted(true)
+
+		try {
+			await axios.post(`http://${host}/api/post_data?name=${data.name}&phone_number=${data.phone_number}&email=${data.email}&locale=${locale}&from=${booking}&path=${host+pathname}`)
+			setSubmitted(true)
+		} catch (error) {
+			console.error(error)
+		}
 	}
 
 	if (submitted) {
@@ -56,7 +73,7 @@ export function BookingForm() {
 					<input
 						className='dark'
 						type='tel'
-						{...register('phone-number')}
+						{...register('phone_number')}
 						placeholder={t('phone-placeholder')}
 					/>
 					<label className='-mb-6 text-sm'>{t('email')}</label>

@@ -66,7 +66,7 @@ export function FooterSection() {
 							<Link href='/yachts'>{t('navigation.yachts')}</Link>
 						</div>
 					</div>
-					<Link href='?showBooking' className='md:self-start' scroll={false}>
+					<Link href='?showBooking=Footer' className='md:self-start' scroll={false}>
 						<button>
 							{t('footer.button')}
 						</button>

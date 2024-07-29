@@ -8,12 +8,13 @@ import { useCallback, useEffect, useRef } from 'react'
 import { BookingForm } from '../form'
 
 interface BookingDialogProps {
+	host: string
 	onClose?: () => void
 	onConfirm?: () => void
 }
 
 export function BookingDialog(props: BookingDialogProps) {
-	const { onClose, onConfirm } = props
+	const { onClose, onConfirm, host } = props
 	const t = useTranslations()
 	const searchParams = useSearchParams()
 	const pathname = usePathname()
@@ -80,7 +81,7 @@ export function BookingDialog(props: BookingDialogProps) {
 				ref={contentRef}
 			>
 				<div className='max-w-screen-md gap-8 self-center'>
-					<BookingForm />
+					<BookingForm host={host}/>
 					<div className='[&>*]:duration-600 flex-row flex-wrap items-center justify-center gap-4 [&>*]:animate-in [&>*]:fade-in'>
 						<Link href='/' className='flex items-center text-base'>
 							{t('social-media.telegram')}

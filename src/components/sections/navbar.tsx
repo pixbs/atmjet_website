@@ -19,7 +19,7 @@ export function Navbar() {
 						<Link href='/medical_aviation'>{t('navigation.medical-aviation')}</Link>
 						<Link href='/empty_legs'>{t('navigation.empty-legs')}</Link>
 						<Link href='/cargo_charter'>{t('navigation.cargo-charter')}</Link>
-						<Link href='?showBooking' scroll={false} className='hidden self-start lg:block'>
+						<Link href='?showBooking=Header' scroll={false} className='hidden self-start lg:block'>
 							<button className='mt-4'>{t('footer.button')}</button>
 						</Link>
 					</div>
@@ -39,7 +39,7 @@ export function Navbar() {
 							{t('social-media.instagram')}
 							<ArrowTopRight className='size-10' />
 						</Link>
-						<Link href='?showBooking' scroll={false} className='flex self-start lg:hidden'>
+						<Link href='?showBooking=Header' scroll={false} className='flex self-start lg:hidden'>
 							<button className='mt-4 '>{t('footer.button')}</button>
 						</Link>
 					</div>
