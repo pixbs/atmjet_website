@@ -1,3 +1,4 @@
+import { VehiclesCarousel } from '@/components/elements'
 import {
 	AdvantagesSection,
 	ContactUsSection,
@@ -6,26 +7,46 @@ import {
 	PersonalManagerSection,
 	WhyUsSection,
 } from '@/components/sections'
-import { useTranslations } from 'next-intl'
+import { db, vehicles } from '@/lib/drizzle'
+import { sql } from 'drizzle-orm'
+import { getTranslations } from 'next-intl/server'
 
-export default function SalesDeptPage() {
-	const t = useTranslations()
-	const tWhyUs = useTranslations('sales-why-us')
+export default async function SalesDeptPage() {
+	const t = await getTranslations()
 	const cards = ['card1', 'card2', 'card3'].map((card) => ({
-		num: tWhyUs(`${card}.num`),
-		title: tWhyUs(`${card}.title`),
-		description: tWhyUs(`${card}.description`),
+		num: t(`sales-why-us.${card}.num`),
+		title: t(`sales-why-us.${card}.title`),
+		description: t(`sales-why-us.${card}.description`),
 	}))
 	const images = [
 		'/images/jets_dep/jetsmarket_page_specialmanagement_50flights.jpg',
 		'/images/jets_dep/jetsmarket_page_specialmanagement_experience.jpg',
 		'/images/jets_dep/jetsmarket_page_specialmanagement_yields.jpg',
 	]
+
+	const smallJets = (await db
+		.select()
+		.from(vehicles)
+		.orderBy(
+			sql`CASE 
+         	WHEN ${vehicles.tailYear} = '' THEN NULL 
+          	ELSE CAST(${vehicles.tailYear} AS INT) 
+        	END DESC NULLS LAST`,
+		)
+		.limit(15)) as (typeof vehicles.$inferSelect)[]
+
 	return (
 		<main>
 			<HeroSalesSection />
 			<PersonalManagerSection />
-			{/* <TestimonialsSection /> */}
+			<section>
+				<div className='container'>
+					<div className='card gap-8 rounded-2xl bg-gray-150 p-8 !pr-0 md:gap-10 md:p-10'>
+						<h2>{t('aircraft.title')}</h2>
+						<VehiclesCarousel vehicles={smallJets} />
+					</div>
+				</div>
+			</section>
 			<OptionsSelectionSection
 				title={t('sales-options.title')}
 				card1={{
@@ -59,7 +80,7 @@ export default function SalesDeptPage() {
 				]}
 				imageSrc='/images/jets_dep/jetsmarket_page_team_atmjet.jpg'
 			/>
-			<WhyUsSection title={tWhyUs('title')} cards={cards} images={images} />
+			<WhyUsSection title={t('sales-why-us.title')} cards={cards} images={images} />
 			<ContactUsSection
 				title={t('sales-contact-us.title')}
 				description={t('sales-contact-us.description')}
