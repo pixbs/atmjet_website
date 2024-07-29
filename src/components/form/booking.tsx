@@ -38,7 +38,7 @@ export function BookingForm(props : BookingFormProps) {
 		console.log(data)
 
 		try {
-			await axios.post(`http://${host}/api/post_data?name=${data.name}&phone_number=${data.phone_number}&email=${data.email}&locale=${locale}&from=${booking}&path=${host+pathname}`)
+			await axios.post(`https://${host}/api/post_data?name=${data.name}&phone_number=${data.phone_number}&email=${data.email}&locale=${locale}&from=${booking}&path=${host+pathname}`)
 			setSubmitted(true)
 		} catch (error) {
 			console.error(error)
