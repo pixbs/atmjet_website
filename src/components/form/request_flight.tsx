@@ -1,12 +1,13 @@
 'use client'
 
-import { useTranslations } from 'next-intl'
-import { z } from 'zod'
-import { useForm, FormProvider, useFieldArray } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { Direction, directionSchema } from './direction'
-import { useState } from 'react'
 import Checkmark from '@/assets/svg/checkmark.svg'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useTranslations } from 'next-intl'
+import { useRouter } from 'next/navigation'
+import { useState } from 'react'
+import { FormProvider, useFieldArray, useForm } from 'react-hook-form'
+import { z } from 'zod'
+import { Direction, directionSchema } from './direction'
 
 const schema = z.object({
 	direction: z.array(directionSchema),
@@ -21,6 +22,7 @@ interface RequestFormProps {
 }
 
 export function RequestForm(props: RequestFormProps) {
+	const router = useRouter()
 	const { buttonText, buttonClassName, max = 4 } = props
 	const [submitted, setSubmitted] = useState(false)
 	const [isRoundTrip, setIsRoundTrip] = useState(false)
@@ -39,8 +41,10 @@ export function RequestForm(props: RequestFormProps) {
 	})
 
 	const onSubmit = (data: FormSchemaType) => {
+		router.push(`?showBooking=Flight_request&direction=${JSON.stringify(data.direction)}`)
 		console.log(data)
 		setSubmitted(true)
+		
 	}
 
 	const handleAppend = () => {
