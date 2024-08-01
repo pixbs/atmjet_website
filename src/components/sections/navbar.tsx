@@ -7,7 +7,7 @@ export function Navbar() {
 	const locale = useLocale()
 
 	return (
-		<section className='fixed inset-0 bottom-0 z-40 flex-col bg-gray-100 bg-opacity-80 backdrop-blur-xl duration-200 animate-in fade-in lg:bottom-auto overflow-y-auto'>
+		<section className='fixed inset-0 bottom-0 z-40 flex-col overflow-y-auto bg-gray-100 bg-opacity-80 backdrop-blur-xl duration-200 animate-in fade-in lg:bottom-auto'>
 			<nav className='container !m-0 flex h-full !flex-row content-stretch pb-10 pt-36'>
 				<div className='w-full flex-col justify-between lg:flex-row'>
 					<div className='[&>*]:duration-600 [&>*]:animate-in [&>*]:fade-in'>
@@ -40,7 +40,7 @@ export function Navbar() {
 							<ArrowTopRight className='size-10' />
 						</Link>
 						<Link href='?showBooking=Header' scroll={false} className='flex self-start lg:hidden'>
-							<button className='mt-4 '>{t('footer.button')}</button>
+							<button className='mt-4'>{t('footer.button')}</button>
 						</Link>
 					</div>
 				</div>

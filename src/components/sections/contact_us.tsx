@@ -21,9 +21,7 @@ export function ContactUsSection(props: ContactUsSectionProps) {
 					<h2 className='text-center'>{title}</h2>
 					<p className='pt-4'>{description}</p>
 					<Link href='?showBooking=Contact_us' scroll={false}>
-						<button className='big mt-10'>
-							{buttonText}
-						</button>
+						<button className='big mt-10'>{buttonText}</button>
 					</Link>
 				</div>
 			</section>

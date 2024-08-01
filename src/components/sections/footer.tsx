@@ -67,9 +67,7 @@ export function FooterSection() {
 						</div>
 					</div>
 					<Link href='?showBooking=Footer' className='md:self-start' scroll={false}>
-						<button>
-							{t('footer.button')}
-						</button>
+						<button>{t('footer.button')}</button>
 					</Link>
 					<div className='items-center gap-2 pr-24 md:pr-0'>
 						<p>{t('footer.location')}</p>

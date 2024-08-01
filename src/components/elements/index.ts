@@ -15,5 +15,6 @@ export { TestimonialsCarousel } from './testimonials_carousel'
 export { VehicleCard } from './vehicle_card'
 export { VehiclesCarousel } from './vehicles_carousel'
 export { WhyUsCard } from './why_us_card'
+export { YachtCard } from './yacht_card'
+export { YachtCarousel } from './yacht_carousel'
 export { YachtsCard } from './yachts_card'
-

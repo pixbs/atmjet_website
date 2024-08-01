@@ -19,7 +19,7 @@ interface BookingFormProps {
 	host: string
 }
 
-export function BookingForm(props : BookingFormProps) {
+export function BookingForm(props: BookingFormProps) {
 	const { host } = props
 	const t = useTranslations('contact-form')
 	const [submitted, setSubmitted] = useState(false)
@@ -39,7 +39,9 @@ export function BookingForm(props : BookingFormProps) {
 		console.log(data)
 
 		try {
-			await axios.post(`https://${host}/api/post_data?name=${data.name}&phone_number=${data.phone_number}&email=${data.email}&locale=${locale}&from=${booking}&path=${host+pathname}&direction=${direction}`)
+			await axios.post(
+				`https://${host}/api/post_data?name=${data.name}&phone_number=${data.phone_number}&email=${data.email}&locale=${locale}&from=${booking}&path=${host + pathname}&direction=${direction}`,
+			)
 			setSubmitted(true)
 		} catch (error) {
 			console.error(error)

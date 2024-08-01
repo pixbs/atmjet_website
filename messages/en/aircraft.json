@@ -32,6 +32,14 @@
 		"tail-homebase-country": "Home country:",
 		"tail-manufacturer": "Manufacturer:",
 		"tail-interiorrefit": "Interiorrefit:",
-		"tail-exteriorrefit": "Exteriorrefit:"
+		"tail-exteriorrefit": "Exteriorrefit:",
+		"yacht-maxspeed": "Max speed:",
+		"yacht-speed": "Speed:",
+		"yacht-winter-areas": "Winter areas:",
+		"yacht-summer-areas": "Summer areas:",
+		"yacht-guests": "Guests:",
+		"yacht-year": "Year:",
+		"yacht-builder": "Builder:",
+		"yacht-length": "Length:"
 	}
 }

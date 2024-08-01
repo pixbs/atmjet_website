@@ -44,7 +44,6 @@ export function RequestForm(props: RequestFormProps) {
 		router.push(`?showBooking=Flight_request&direction=${JSON.stringify(data.direction)}`)
 		console.log(data)
 		setSubmitted(true)
-		
 	}
 
 	const handleAppend = () => {

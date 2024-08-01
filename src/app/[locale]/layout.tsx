@@ -40,7 +40,7 @@ export default async function LocaleLayout({
 					<HeaderSection />
 					{children}
 					<FooterSection />
-					<BookingDialog host={host}/>
+					<BookingDialog host={host} />
 				</NextIntlClientProvider>
 			</body>
 		</html>

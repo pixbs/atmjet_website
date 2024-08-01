@@ -7,8 +7,8 @@ export async function POST(req: NextRequest) {
 	const phone_number = searchParams.get('phone_number')
 	const email = searchParams.get('email')
 	const direction = searchParams.get('direction')
-    const from = searchParams.get('from')
-    const locale = searchParams.get('locale')
+	const from = searchParams.get('from')
+	const locale = searchParams.get('locale')
 	const path = searchParams.get('path')
 	const data = [
 		{
@@ -66,14 +66,14 @@ export async function POST(req: NextRequest) {
 									},
 								],
 							},
-                            {
-                                field_id: 1077074,
-                                values: [
-                                    {
-                                        value: path,
-                                    },
-                                ],
-                            }
+							{
+								field_id: 1077074,
+								values: [
+									{
+										value: path,
+									},
+								],
+							},
 						],
 					},
 				],

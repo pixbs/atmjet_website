@@ -1,3 +1,4 @@
+import { YachtCarousel } from '@/components/elements'
 import {
 	ContactUsSection,
 	HeroYachtsSection,
@@ -6,10 +7,18 @@ import {
 	WeInspectSection,
 	WhyUsSection,
 } from '@/components/sections'
-import { useTranslations } from 'next-intl'
+import { db, vehicles } from '@/lib/drizzle'
+import { sql } from 'drizzle-orm'
+import { getTranslations } from 'next-intl/server'
 
-export default function YachtsPage() {
-	const t = useTranslations()
+export default async function YachtsPage() {
+	const t = await getTranslations()
+
+	const yachts = await db
+		.select()
+		.from(vehicles)
+		.where(sql`yacht_guests <> '' AND CAST(yacht_guests AS INTEGER) > 0`)
+		.limit(15)
 
 	const whyUsCards = ['card1', 'card2', 'card3', 'card4'].map((card) => ({
 		num: '',
@@ -50,6 +59,14 @@ export default function YachtsPage() {
 						<div className='rounded-xl bg-gray-150 p-10'>
 							<h2 className='text-center'>{t('yachts-descriptor.title')}</h2>
 						</div>
+					</div>
+				</div>
+			</section>
+			<section>
+				<div className='container'>
+					<div className='card gap-8 rounded-2xl bg-gray-150 p-8 !pr-0 md:gap-10 md:p-10'>
+						<h2>{t('aircraft.title')}</h2>
+						<YachtCarousel vehicles={yachts} />
 					</div>
 				</div>
 			</section>

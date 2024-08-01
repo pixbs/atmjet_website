@@ -18,7 +18,7 @@ export function BookingDialog(props: BookingDialogProps) {
 	const t = useTranslations()
 	const searchParams = useSearchParams()
 	const pathname = usePathname()
-    const router = useRouter()
+	const router = useRouter()
 	const dialogRef = useRef<null | HTMLDivElement>(null)
 	const contentRef = useRef<null | HTMLDivElement>(null)
 	const showDialog = searchParams.has('showBooking')
@@ -40,7 +40,6 @@ export function BookingDialog(props: BookingDialogProps) {
 				document.body.style.overflow = 'hidden'
 			} else {
 				dialogRef.current.style.display = 'none'
-				
 			}
 		}
 	}, [showDialog])
@@ -60,7 +59,7 @@ export function BookingDialog(props: BookingDialogProps) {
 		if (dialogRef.current) {
 			dialogRef.current.style.display = 'none'
 		}
-        router.push(pathname, { scroll: false })
+		router.push(pathname, { scroll: false })
 
 		onClose?.()
 	}
@@ -81,7 +80,7 @@ export function BookingDialog(props: BookingDialogProps) {
 				ref={contentRef}
 			>
 				<div className='max-w-screen-md gap-8 self-center'>
-					<BookingForm host={host}/>
+					<BookingForm host={host} />
 					<div className='[&>*]:duration-600 flex-row flex-wrap items-center justify-center gap-4 [&>*]:animate-in [&>*]:fade-in'>
 						<Link href='/' className='flex items-center text-base'>
 							{t('social-media.telegram')}
