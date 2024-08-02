@@ -65,7 +65,7 @@ export default async function YachtsPage() {
 			<section>
 				<div className='container'>
 					<div className='card gap-8 rounded-2xl bg-gray-150 p-8 !pr-0 md:gap-10 md:p-10'>
-						<h2>{t('aircraft.title')}</h2>
+						<h2>{t('recent-yachts.title')}</h2>
 						<YachtCarousel vehicles={yachts} />
 					</div>
 				</div>
