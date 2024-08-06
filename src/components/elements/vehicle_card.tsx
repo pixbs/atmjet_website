@@ -10,7 +10,7 @@ export function VehicleCard(props: typeof vehicles.$inferSelect) {
 		>
 			<div
 				className='aspect-video rounded-xl bg-cover bg-center'
-				style={{ backgroundImage: `url(https://${props.thumb})` }}
+				style={{ backgroundImage: `url(https://${props.image})` }}
 			/>
 			<h3 className='pt-10'>{props.tailModel}</h3>
 			<div className='mt-4 h-10 flex-row content-stretch items-center justify-stretch border-b border-gray-300'>

@@ -56,7 +56,7 @@ export function MenuBar() {
 					{t('social-media.whats-app')}
 					<ArrowTopRight className='size-10 text-gray-500' />
 				</Link>
-				<Link href='/' className='flex items-center'>
+				<Link href='https://www.instagram.com/atmjet/' className='flex items-center'>
 					{t('social-media.instagram')}
 					<ArrowTopRight className='size-10 text-gray-500' />
 				</Link>
@@ -65,9 +65,11 @@ export function MenuBar() {
 						{t('navigation.citizens')}
 					</Link>
 				)}
-				<button className='mr-16 mt-4 self-start bg-gray-150 text-gray-900'>
-					{t('footer.button')}
-				</button>
+				<Link href='?showBooking=Angle_bar' className='mr-16 mt-4 self-start' scroll={false}>
+					<button className='bg-gray-150 text-gray-900'>
+						{t('footer.button')}
+					</button>
+				</Link>
 			</div>
 			<div className='h-full items-start justify-end'>
 				<Link href='/en' className={`text-right text-base ${locale == 'en' && 'opacity-50'}`}>

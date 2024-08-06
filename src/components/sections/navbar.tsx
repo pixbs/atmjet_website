@@ -35,7 +35,7 @@ export function Navbar() {
 							{t('social-media.whats-app')}
 							<ArrowTopRight className='size-10' />
 						</Link>
-						<Link href='/' className='flex items-center'>
+						<Link href='https://www.instagram.com/atmjet/' className='flex items-center'>
 							{t('social-media.instagram')}
 							<ArrowTopRight className='size-10' />
 						</Link>

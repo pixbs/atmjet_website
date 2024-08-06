@@ -19,13 +19,13 @@ export function FooterSection() {
 					<div className='flex-row content-between justify-between'>
 						<Logo className='h-8 text-gray-900' />
 						<div className='flex-row gap-4'>
-							<Link href='/en' className={`text-base ${locale == 'en' && 'opacity-50'}`}>
+							<Link href='' locale='en' className={`text-base ${locale == 'en' && 'opacity-50'}`}>
 								{t('locale.en')}
 							</Link>
-							<Link href='/ru' className={`text-base ${locale == 'ru' && 'opacity-50'}`}>
+							<Link href='/ru' locale='ru' className={`text-base ${locale == 'ru' && 'opacity-50'}`}>
 								{t('locale.ru')}
 							</Link>
-							<Link href='/uk' className={`text-base ${locale == 'uk' && 'opacity-50'}`}>
+							<Link href='/uk' locale='uk' className={`text-base ${locale == 'uk' && 'opacity-50'}`}>
 								{t('locale.uk')}
 							</Link>
 						</div>
@@ -51,7 +51,7 @@ export function FooterSection() {
 								{t('social-media.whats-app')}
 								<ArrowTopRight className='size-10' />
 							</Link>
-							<Link href='/' className='flex items-center'>
+							<Link href='https://www.instagram.com/atmjet/' className='flex items-center'>
 								{t('social-media.instagram')}
 								<ArrowTopRight className='size-10' />
 							</Link>

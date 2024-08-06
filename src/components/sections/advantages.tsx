@@ -1,6 +1,5 @@
 'use client'
 import { motion } from 'framer-motion'
-import { YachtsCard } from '../elements'
 
 interface AdvantagesSectionProps {
 	title: string
@@ -47,7 +46,7 @@ function AdvantagesCard(props: AdvantagesSectionProps) {
 			whileInView={{ opacity: 1, y: 0 }}
 		>
 			<div
-				className='min-h-64 bg-cover bg-center'
+				className='min-h-80 bg-cover bg-center'
 				style={{ backgroundImage: `url(${imageSrc})` }}
 			/>
 			<div className='gap-8 px-6 md:flex-row'>

@@ -1,6 +1,7 @@
 import ForbesLogo from '@/assets/svg/forbes-logo.svg'
 import { SubpageHeroSection, WhyUsSection } from '@/components/sections'
 import { useTranslations } from 'next-intl'
+import Link from 'next/link'
 
 export default function CitizensPage() {
 	const t = useTranslations()
@@ -37,7 +38,9 @@ export default function CitizensPage() {
 						<p className='border-y border-gray-400 bg-gold bg-clip-text px-10 py-4 text-center text-transparent md:px-16'>
 							{t('quote.description')}
 						</p>
-						<button className='big self-center'>{t('quote.button')}</button>
+						<Link href='?showBooking=Citizens' className='self-center' scroll={false}>
+							<button className='big'>{t('quote.button')}</button>
+						</Link>
 					</div>
 				</div>
 			</section>

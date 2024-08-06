@@ -1,4 +1,5 @@
 import { useTranslations } from 'next-intl'
+import Link from 'next/link'
 import { Counter } from '../elements'
 
 export function HeroSalesSection() {
@@ -18,7 +19,9 @@ export function HeroSalesSection() {
 					{t('headline2')}
 				</h1>
 				<p className='max-w-xs pt-4 text-gray-900'>{t('description')}</p>
-				<button className='big mt-8'>{t('button')}</button>
+				<Link href='?showBooking=Hero_sales' scroll={false}>
+					<button className='big mt-8'>{t('button')}</button>
+				</Link>
 				<p className='absolute bottom-8 left-5 z-20 text-sm'>©ATM JET</p>
 			</div>
 			<div className='hero-darkening absolute inset-0 z-10' />

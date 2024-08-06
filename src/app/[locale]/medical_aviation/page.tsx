@@ -8,10 +8,10 @@ export default function Page() {
 		description: t(`medical-key-features.${card}.description`),
 	}))
 	const images = [
-		'/images/home_page/key_features_tailoredp_references.jpg',
-		'/images/home_page/key_features_cuztomized_aircraft.jpg',
-		'/images/home_page/key_features_payment_after_flight.jpg',
-		'/images/home_page/key_features_pay_anyway.jpg',
+		'/images/medical/slide1.jpg',
+		'/images/medical/slide4.jpg',
+		'/images/medical/slide2.jpg',
+		'/images/medical/slide3.jpg',
 	]
 
 	return (

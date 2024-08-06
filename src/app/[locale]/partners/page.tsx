@@ -1,5 +1,5 @@
 import { Counter } from '@/components/elements'
-import { ContactUsSection, PersonalFlightManagerSection, WhyUsSection } from '@/components/sections'
+import { ContactUsSection, PersonalManagerSection, WhyUsSection } from '@/components/sections'
 import { useTranslations } from 'next-intl'
 
 export default function PartnersPage() {
@@ -46,7 +46,7 @@ export default function PartnersPage() {
 				cards={whyUsCards}
 				images={whyUsImages}
 			/>
-			<PersonalFlightManagerSection />
+			<PersonalManagerSection />
 			<ContactUsSection
 				title={t('partners-contact-us.title')}
 				description={t('partners-contact-us.description')}

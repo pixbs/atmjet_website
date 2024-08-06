@@ -1,4 +1,5 @@
 import { useTranslations } from 'next-intl'
+import Link from 'next/link'
 
 export function PrivilegeSection() {
 	const t = useTranslations('privilege')
@@ -14,7 +15,9 @@ export function PrivilegeSection() {
 					<div className='w-full items-center gap-4 px-6 pb-10 lg:h-80 lg:items-start lg:py-10 lg:pb-0'>
 						<h2 className='text-center text-gray-100 lg:text-left'>{t('title')}</h2>
 						<p className='text-center text-gray-100 lg:text-left'>{t('description')}</p>
-						<button className='big'>{t('button')}</button>
+						<Link href='tg://resolve?domain=@atmjet1'>
+							<button className='big'>{t('button')}</button>
+						</Link>
 					</div>
 				</div>
 			</div>

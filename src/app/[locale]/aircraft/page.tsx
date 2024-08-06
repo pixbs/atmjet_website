@@ -5,6 +5,7 @@ import { ContactUsSection } from '@/components/sections'
 import { db, vehicles } from '@/lib/drizzle'
 import { sql } from 'drizzle-orm'
 import { getTranslations } from 'next-intl/server'
+import Link from 'next/link'
 
 export default async function Aircraft() {
 	const t = await getTranslations()
@@ -62,7 +63,9 @@ export default async function Aircraft() {
 					<div className='card items-center gap-4 bg-gray-150 p-8 md:p-10'>
 						<h2>{t('aircraft-contact-us.title')}</h2>
 						<p className='text-center md:max-w-screen-sm'>{t('aircraft-contact-us.description')}</p>
-						<button className='mt-4'>{t('aircraft-contact-us.button')}</button>
+						<Link href='?showBooking=Contact_us_aircraft' className='mt-4' scroll={false}>
+							<button>{t('aircraft-contact-us.button')}</button>
+						</Link>
 					</div>
 				</div>
 			</section>

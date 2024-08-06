@@ -1,6 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
+import Link from 'next/link'
 import { Counter } from '../elements'
 
 interface CardProps {
@@ -41,7 +42,9 @@ export function EmptyLegCard(props: CardProps) {
 		>
 			<div className='flex-row justify-between'>
 				<p className='text-sm'>{date}</p>
-				<button>inquire</button>
+				<Link href='?showBooking=Empty-legs' scroll={false}>
+					<button>inquire</button>
+				</Link>
 			</div>
 			<div className='flex-row items-start gap-2'>
 				<Counter className='font-sans text-3xl font-black text-gray-900'>{price}</Counter>
