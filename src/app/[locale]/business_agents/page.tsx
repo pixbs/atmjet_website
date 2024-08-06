@@ -6,7 +6,10 @@ export default function businessAgentsPage() {
 	const t = useTranslations()
 	const locale = useLocale()
 
-	const checklistUrl = locale === 'en' ? 'https://atmjet.ams3.cdn.digitaloceanspaces.com/Checklist%20for%20ordering%20%20a%20private%20jet%20for%20an%20executive%20EN.pdf' : 'https://atmjet.ams3.cdn.digitaloceanspaces.com/Checklist%20for%20ordering%20%20a%20private%20jet%20for%20an%20executive%20RU.pdf'
+	const checklistUrl =
+		locale === 'en'
+			? 'https://atmjet.ams3.cdn.digitaloceanspaces.com/Checklist%20for%20ordering%20%20a%20private%20jet%20for%20an%20executive%20EN.pdf'
+			: 'https://atmjet.ams3.cdn.digitaloceanspaces.com/Checklist%20for%20ordering%20%20a%20private%20jet%20for%20an%20executive%20RU.pdf'
 
 	return (
 		<main>

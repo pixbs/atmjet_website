@@ -12,7 +12,7 @@ interface VehiclesCarouselProps {
 }
 
 export function VehiclesCarousel(props: VehiclesCarouselProps) {
-	const {vehicles, useImgInsteadOfThumb} = props
+	const { vehicles, useImgInsteadOfThumb } = props
 	const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, align: 'start' })
 	const [scrollProgress, setScrollProgress] = useState(0)
 

@@ -86,7 +86,10 @@ export function BookingDialog(props: BookingDialogProps) {
 							{t('social-media.telegram')}
 							<ArrowTopRight className='size-10' />
 						</Link>
-						<Link href='https://m.sitehelp.me/whatsappOfficial?siteId=kdjz1r9wpcb00x6o5ksiqxahidz566ll&clientId=kG1xsAPIwQrDwTJfGPC3vMikfU3QrfWo&url=whatsapp%3A%2F%2Fsend%3Fphone%3D971585940112' className='flex items-center text-base'>
+						<Link
+							href='https://m.sitehelp.me/whatsappOfficial?siteId=kdjz1r9wpcb00x6o5ksiqxahidz566ll&clientId=kG1xsAPIwQrDwTJfGPC3vMikfU3QrfWo&url=whatsapp%3A%2F%2Fsend%3Fphone%3D971585940112'
+							className='flex items-center text-base'
+						>
 							{t('social-media.whats-app')}
 							<ArrowTopRight className='size-10' />
 						</Link>

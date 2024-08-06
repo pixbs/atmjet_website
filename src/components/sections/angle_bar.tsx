@@ -6,9 +6,9 @@ import Plane from '@/assets/svg/plane.svg'
 import { useLocale, useTranslations } from 'next-intl'
 import Link from 'next/link'
 import { useState } from 'react'
+import { LocaleSwitch } from '../elements'
 
 export function AngleBar() {
-	const locale = useLocale()
 	const [isMenuOpen, setIsMenuOpen] = useState(false)
 
 	const handleClick = () => {
@@ -66,21 +66,11 @@ export function MenuBar() {
 					</Link>
 				)}
 				<Link href='?showBooking=Angle_bar' className='mr-16 mt-4 self-start' scroll={false}>
-					<button className='bg-gray-150 text-gray-900'>
-						{t('footer.button')}
-					</button>
+					<button className='bg-gray-150 text-gray-900'>{t('footer.button')}</button>
 				</Link>
 			</div>
 			<div className='h-full items-start justify-end'>
-				<Link href='/en' className={`text-right text-base ${locale == 'en' && 'opacity-50'}`}>
-					{t('locale.en')}
-				</Link>
-				<Link href='/ru' className={`text-right text-base ${locale == 'ru' && 'opacity-50'}`}>
-					{t('locale.ru')}
-				</Link>
-				<Link href='/uk' className={`text-right text-base ${locale == 'uk' && 'opacity-50'}`}>
-					{t('locale.uk')}
-				</Link>
+				<LocaleSwitch />
 			</div>
 		</div>
 	)

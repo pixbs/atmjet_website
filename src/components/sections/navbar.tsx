@@ -1,10 +1,10 @@
 import ArrowTopRight from '@/assets/svg/arrow-top-right.svg'
-import { useLocale, useTranslations } from 'next-intl'
+import { useTranslations } from 'next-intl'
 import Link from 'next/link'
+import { LocaleSwitch } from '../elements'
 
 export function Navbar() {
 	const t = useTranslations()
-	const locale = useLocale()
 
 	return (
 		<section className='fixed inset-0 bottom-0 z-40 flex-col overflow-y-auto bg-gray-100 bg-opacity-80 backdrop-blur-xl duration-200 animate-in fade-in lg:bottom-auto'>
@@ -62,16 +62,8 @@ export function Navbar() {
 							{t('navigation.yachts')}
 						</Link>
 					</div>
-					<div className='flex-row justify-end gap-4'>
-						<Link href='/en' className={`text-right text-base ${locale == 'en' && 'opacity-50'}`}>
-							{t('locale.en')}
-						</Link>
-						<Link href='/ru' className={`text-right text-base ${locale == 'ru' && 'opacity-50'}`}>
-							{t('locale.ru')}
-						</Link>
-						<Link href='/uk' className={`text-right text-base ${locale == 'uk' && 'opacity-50'}`}>
-							{t('locale.uk')}
-						</Link>
+					<div className='flex-row justify-end gap-4 [&>*]:text-right'>
+						<LocaleSwitch />
 					</div>
 				</div>
 			</nav>

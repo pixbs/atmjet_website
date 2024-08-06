@@ -1,12 +1,11 @@
 import ArrowTopRight from '@/assets/svg/arrow-top-right.svg'
 import Logo from '@/assets/svg/logo.svg'
-import { useLocale, useTranslations } from 'next-intl'
+import { useTranslations } from 'next-intl'
 import Link from 'next/link'
+import { LocaleSwitch } from '../elements'
 
 export function FooterSection() {
 	const t = useTranslations()
-	const locale = useLocale()
-
 	const year = new Date().getFullYear()
 
 	return (
@@ -19,15 +18,7 @@ export function FooterSection() {
 					<div className='flex-row content-between justify-between'>
 						<Logo className='h-8 text-gray-900' />
 						<div className='flex-row gap-4'>
-							<Link href='' locale='en' className={`text-base ${locale == 'en' && 'opacity-50'}`}>
-								{t('locale.en')}
-							</Link>
-							<Link href='/ru' locale='ru' className={`text-base ${locale == 'ru' && 'opacity-50'}`}>
-								{t('locale.ru')}
-							</Link>
-							<Link href='/uk' locale='uk' className={`text-base ${locale == 'uk' && 'opacity-50'}`}>
-								{t('locale.uk')}
-							</Link>
+							<LocaleSwitch />
 						</div>
 					</div>
 					<div className='w-full flex-row justify-between'>

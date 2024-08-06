@@ -1,11 +1,11 @@
 import { YachtCarousel } from '@/components/elements'
 import {
-    ContactUsSection,
-    HeroYachtsSection,
-    KeyFeaturesSection,
-    OptionsSelectionSection,
-    WeInspectSection,
-    WhyUsSection,
+	ContactUsSection,
+	HeroYachtsSection,
+	KeyFeaturesSection,
+	OptionsSelectionSection,
+	WeInspectSection,
+	WhyUsSection,
 } from '@/components/sections'
 import { db, vehicles } from '@/lib/drizzle'
 import { sql } from 'drizzle-orm'
