@@ -1,0 +1,37 @@
+'use client'
+import { motion } from "framer-motion";
+import { useInView } from "react-intersection-observer";
+
+export function TilesSection() {
+    const images = Array.from({ length: 8 }, (_, index) => `/images/tiles/slice_${index}.jpg`);
+
+    const imageVariants = {
+        hidden: { opacity: 0, scale: 0 },
+        visible: { opacity: 1, scale: 1 }
+    };
+
+    const [ref, inView] = useInView({
+        triggerOnce: true, // Only trigger the animation once
+        threshold: 0.1 // Percentage of the element's visibility required to trigger the animation
+    });
+
+    return (
+        <section>
+            <div className="container !grid grid-cols-2 md:grid-cols-3">
+                {images.map((image, index) => (
+                    <motion.div
+                        key={index}
+                        className="relative aspect-w-1 aspect-h-1"
+                        initial="hidden"
+                        animate={inView ? "visible" : "hidden"} // Start animation only when in view
+                        variants={imageVariants}
+                        transition={{ duration: 0.5, delay: index * 0.2 }}
+                        ref={ref} // Attach the ref to the element being observed
+                    >
+                        <img src={image} alt="" className="object-cover" />
+                    </motion.div>
+                ))}
+            </div>
+        </section>
+    );
+}

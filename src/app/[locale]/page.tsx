@@ -8,10 +8,10 @@ import {
 	MakeBookingSection,
 	OptionsSection,
 	PrivilegeSection,
-	TestimonialsSection,
+	TilesSection,
 	TransferSection,
 	WhyUsSection,
-	YachtsSection,
+	YachtsSection
 } from '@/components/sections'
 import { useTranslations } from 'next-intl'
 import { Suspense } from 'react'
@@ -63,7 +63,7 @@ export default function HomePage() {
 				<OptionsSection />
 				<PrivilegeSection />
 				<YachtsSection />
-				<TestimonialsSection />
+				<TilesSection />
 				<TransferSection />
 				<FaqSection />
 			</main>
