@@ -18,7 +18,7 @@ export function HeroYachtsSection() {
 			</div>
 			<div className='hero-darkening absolute inset-0 z-10' />
 			<div
-				className='absolute inset-0 z-0 h-full w-full bg-cover bg-fixed bg-center bg-no-repeat object-cover'
+				className='absolute inset-0 z-0 h-full w-full bg-cover md:bg-fixed bg-center bg-no-repeat object-cover'
 				style={{ backgroundImage: `url(/images/yachts/yacht_page_firstscreen_mainpic.jpg)` }}
 			/>
 		</section>

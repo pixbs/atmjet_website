@@ -1,8 +1,8 @@
 'use client'
 
+import { EmblaCarouselType } from 'embla-carousel'
 import useEmblaCarousel from 'embla-carousel-react'
 import { useCallback, useEffect, useState } from 'react'
-import { EmblaCarouselType, EmblaOptionsType } from 'embla-carousel'
 
 export function TestimonialsCarousel({ children }: { children: React.ReactNode }) {
 	const [emblaRef, emblaApi] = useEmblaCarousel({ align: 'start' })
@@ -25,7 +25,7 @@ export function TestimonialsCarousel({ children }: { children: React.ReactNode }
 			<div className='embla__container flex-row'>{children}</div>
 			<div className='embla__progress'>
 				<div
-					className='embla__progress__bar absolute -bottom-10 left-0 h-2 rounded-full bg-gold bg-fixed'
+					className='embla__progress__bar absolute -bottom-10 left-0 h-2 rounded-full bg-gold md:bg-fixed'
 					style={{ width: `${scrollProgress}%` }}
 				/>
 			</div>

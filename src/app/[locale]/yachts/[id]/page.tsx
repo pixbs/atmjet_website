@@ -43,7 +43,7 @@ export default async function VehiclePage(props: VehiclePageProps) {
 	return (
 		<main>
 			<section
-				className='h-[80svh] bg-cover bg-fixed bg-center bg-no-repeat bg-origin-content pb-96'
+				className='h-[80svh] bg-cover md:bg-fixed bg-center bg-no-repeat bg-origin-content pb-96'
 				style={{ backgroundImage: `url(http://${vehicle.image})` }}
 			>
 				<div className='hero-darkening absolute inset-0 z-10' />

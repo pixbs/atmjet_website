@@ -13,7 +13,7 @@ export function ContactUsSection(props: ContactUsSectionProps) {
 	return (
 		<>
 			<section
-				className='bg-cover bg-fixed bg-center'
+				className='bg-cover md:bg-fixed bg-center'
 				style={{ backgroundImage: `url(${props.imageSrc})` }}
 			>
 				<div className='hero-darkening absolute inset-0' />
