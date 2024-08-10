@@ -23,7 +23,7 @@ export function GroupCard(props: GroupCardProps) {
 					<button className='mt-6'>{button}</button>
 				</Link>
 			</div>
-			<div className='absolute inset-0 bg-gradient-to-r from-gray-150 md:from-0% via-gray-150 md:via-40% to-gray-150/80 md:to-transparent'/>
+			<div className='absolute inset-0 bg-gradient-to-r from-gray-150 via-gray-150 to-gray-150/80 md:from-0% md:via-40% md:to-transparent' />
 		</div>
 	)
 }

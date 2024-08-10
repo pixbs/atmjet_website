@@ -24,7 +24,7 @@ export function WhyUsCard(props: WhyUsCardProps) {
 		>
 			<div className='gap-4 md:w-full md:pb-24 md:pt-16'>
 				{!!num && (
-					<Counter className='bg-gold md:bg-fixed bg-clip-text font-serif text-6xl text-transparent'>
+					<Counter className='bg-gold bg-clip-text font-serif text-6xl text-transparent md:bg-fixed'>
 						{num}
 					</Counter>
 				)}

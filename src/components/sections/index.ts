@@ -26,4 +26,3 @@ export { TransferSection } from './transfer'
 export { WeInspectSection } from './we_inspect'
 export { WhyUsSection } from './why_us'
 export { YachtsSection } from './yachts'
-

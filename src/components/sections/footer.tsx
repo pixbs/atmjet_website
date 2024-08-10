@@ -11,7 +11,7 @@ export function FooterSection() {
 	return (
 		<>
 			<section
-				className='bg-cover md:bg-fixed bg-top bg-no-repeat'
+				className='bg-cover bg-top bg-no-repeat md:bg-fixed'
 				style={{ backgroundImage: 'url(/images/home_page/footer.jpg)' }}
 			>
 				<footer className='container !static !mb-0 !mt-24 gap-8 rounded-t-2xl bg-gray-100 bg-opacity-60 py-10 backdrop-blur-lg'>

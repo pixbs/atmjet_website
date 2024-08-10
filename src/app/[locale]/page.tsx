@@ -11,7 +11,7 @@ import {
 	TilesSection,
 	TransferSection,
 	WhyUsSection,
-	YachtsSection
+	YachtsSection,
 } from '@/components/sections'
 import { useTranslations } from 'next-intl'
 import { Suspense } from 'react'
