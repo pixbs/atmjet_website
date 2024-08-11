@@ -1,6 +1,6 @@
 import { sql } from '@vercel/postgres'
 import { config } from 'dotenv'
-import { decimal, index, integer, pgTable, serial, text, varchar } from 'drizzle-orm/pg-core'
+import { decimal, index, integer, pgTable, serial, text, timestamp, varchar } from 'drizzle-orm/pg-core'
 import { drizzle } from 'drizzle-orm/vercel-postgres'
 
 config({ path: '.env.local' })
@@ -19,6 +19,19 @@ export const airports = pgTable('airports', {
 	isoCode: varchar('iso_code', { length: 255 }).notNull(),
 	latitude: varchar('latitude', { length: 255 }).notNull(),
 	longitude: varchar('longitude', { length: 255 }).notNull(),
+})
+
+export const empty_legs = pgTable('empty_legs', {
+	id: serial('id').primaryKey(),
+	start: timestamp('start', {withTimezone: true}).notNull(),
+	end: timestamp('end', {withTimezone: true}).notNull(),
+	from: varchar('from', { length: 4 }).notNull(),
+	to: varchar('to', { length: 4 }).notNull(),
+	type: varchar('type', { length: 255 }),
+	category: varchar('type', { length: 255 }), // Light Jets || Midsize Jets || Heavy Jets || VIP Airliners || Other Jets
+	company: varchar('company', { length: 255 }),
+	safety: varchar('safety', { length: 255 }),
+	price: integer('price').default(0),
 })
 
 export const cityList = pgTable('city_list', {
