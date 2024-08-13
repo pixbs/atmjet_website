@@ -4,6 +4,9 @@ import { airports, db } from '@/lib/drizzle'
 import { ilike, or } from 'drizzle-orm'
 
 export async function getAirport(str: string, locale: string) {
+	if (str.toLowerCase().includes('saint')) {
+		str = str.replace('saint', 'st')
+	}
 	const query = await db
 		.select()
 		.from(airports)
