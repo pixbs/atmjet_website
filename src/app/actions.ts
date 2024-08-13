@@ -1,7 +1,7 @@
 'use server'
 
 import { airports, db } from '@/lib/drizzle'
-import { like, or } from 'drizzle-orm'
+import { ilike, or } from 'drizzle-orm'
 
 export async function getAirport(str: string, locale: string) {
 	const query = await db
@@ -9,14 +9,14 @@ export async function getAirport(str: string, locale: string) {
 		.from(airports)
 		.where(
 			or(
-				like(airports.cityEng, `%${str}%`),
-				like(airports.cityRus, `%${str}%`),
-				like(airports.countryEng, `%${str}%`),
-				like(airports.countryRus, `%${str}%`),
-				like(airports.nameEng, `%${str}%`),
-				like(airports.nameRus, `%${str}%`),
-				like(airports.iataCode, `%${str}%`),
-				like(airports.icaoCode, `%${str}%`),
+				ilike(airports.cityEng, `%${str}%`),
+				ilike(airports.cityRus, `%${str}%`),
+				ilike(airports.countryEng, `%${str}%`),
+				ilike(airports.countryRus, `%${str}%`),
+				ilike(airports.nameEng, `%${str}%`),
+				ilike(airports.nameRus, `%${str}%`),
+				ilike(airports.iataCode, `%${str}%`),
+				ilike(airports.icaoCode, `%${str}%`),
 			),
 		)
 		.limit(10)
