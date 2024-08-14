@@ -7,7 +7,7 @@ import {
 	WeInspectSection,
 	WhyUsSection,
 } from '@/components/sections'
-import { db, vehicles } from '@/lib/drizzle'
+import { db, vehicles, yachts as yachtsTable } from '@/lib/drizzle'
 import { sql } from 'drizzle-orm'
 import { getTranslations } from 'next-intl/server'
 
@@ -16,9 +16,7 @@ export default async function YachtsPage() {
 
 	const yachts = await db
 		.select()
-		.from(vehicles)
-		.where(sql`yacht_guests <> '' AND CAST(yacht_guests AS INTEGER) > 0`)
-		.limit(15)
+		.from(yachtsTable)
 
 	const whyUsCards = ['card1', 'card2', 'card3', 'card4'].map((card) => ({
 		num: '',

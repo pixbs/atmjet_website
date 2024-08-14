@@ -1,39 +1,42 @@
 import Beds from '@/assets/svg/f7_bed-double-fill.svg'
 import Captain from '@/assets/svg/healthicons_security-worker.svg'
 import People from '@/assets/svg/ion_people.svg'
-import { vehicles } from '@/lib/drizzle'
+import { vehicles, yachts } from '@/lib/drizzle'
 import { ReactNode } from 'react'
 
-export function YachtCard(props: typeof vehicles.$inferSelect) {
-	const name = `${props.yachtLength}m ${props.yachtBuilder}`
+export function YachtCard(props: typeof yachts.$inferSelect) {
+	const name = `${props.length}m ${props.shipyard} yacht ${props.name} (${props.location})`
 
 	return (
 		<div className='relative w-full shrink-0 gap-6 pr-4 md:gap-10 lg:flex-row'>
 			<div className='relative w-full overflow-hidden rounded-xl'>
+				<h3 className='absolute inset-8 z-20'>{name}</h3>
 				<div
 					className='aspect-video rounded-xl bg-cover bg-center'
-					style={{ backgroundImage: `url(https://${props.thumb})` }}
+					style={{ backgroundImage: `url(${props.pictures && props.pictures[0]})` }}
 				/>
 				<div className='absolute inset-0 z-10 bg-gradient-to-b from-gray-150 via-gray-150/20 to-transparent'></div>
 			</div>
-			<h3 className='absolute left-8 top-8 z-20'>{name}</h3>
 			<div className='flex-row justify-around lg:flex-col'>
-				<Numeric title='Guests:' number={props.yachtGuests || 0}>
+				<Numeric title='Guests:' number={props.guests || 0}>
 					<People />
 				</Numeric>
-				<Numeric title='Cabins:' number={Number(props.yachtGuests) / 2 || 0}>
+				<Numeric title='Cabins:' number={props.cabins || 0}>
 					<Beds />
 				</Numeric>
-				<Numeric title='Crew:' number={Number(props.yachtGuests) / 2 || 0}>
+				<Numeric title='Crew:' number={props.crew || 0}>
 					<Captain />
 				</Numeric>
 			</div>
 			<div className='min-w-80'>
-				<TextLine title='Year:' value={props.yachtYear} />
-				<TextLine title='Pax:' value={props.yachtGuests} />
-				<TextLine title='Speed:' value={props.yachtSpeed} />
-				<TextLine title='Builder:' value={props.yachtBuilder} />
-				<TextLine title='Lenght:' value={props.yachtLength} />
+				<TextLine title='Shipyard:' value={props.shipyard} />
+				<TextLine title='Year built:' value={props.year} />
+				<TextLine title='Length:' value={`${props.length} feet`} />
+				<TextLine title='Beam:' value={props.beam} />
+				<TextLine title='Draft:' value={props.draft} />
+				<TextLine title='Cruising speed:' value={props.cruisingSpeed} />
+				<TextLine title='Max speed:' value={props.maxSpeed} />
+				<TextLine title='Location:' value={props.location} />
 			</div>
 		</div>
 	)
@@ -61,7 +64,7 @@ function Numeric(props: NumericProps) {
 
 interface TextLineProps {
 	title: string
-	value: string | null
+	value: string | number | null
 }
 
 function TextLine(props: TextLineProps) {

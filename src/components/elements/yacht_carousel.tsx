@@ -1,13 +1,13 @@
 'use client'
 
-import { vehicles } from '@/lib/drizzle'
+import { vehicles, yachts } from '@/lib/drizzle'
 import { EmblaCarouselType } from 'embla-carousel'
 import useEmblaCarousel from 'embla-carousel-react'
 import { useCallback, useEffect, useState } from 'react'
 import { YachtCard } from './yacht_card'
 
 interface YachtCarouselProps {
-	vehicles: (typeof vehicles.$inferSelect)[]
+	vehicles: (typeof yachts.$inferSelect)[]
 }
 
 export function YachtCarousel(props: YachtCarouselProps) {
