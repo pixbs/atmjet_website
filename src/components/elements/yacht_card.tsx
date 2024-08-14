@@ -3,6 +3,7 @@ import Captain from '@/assets/svg/healthicons_security-worker.svg'
 import People from '@/assets/svg/ion_people.svg'
 import { vehicles, yachts } from '@/lib/drizzle'
 import { ReactNode } from 'react'
+import { ImagesCarousel } from './images_carousel'
 
 export function YachtCard(props: typeof yachts.$inferSelect) {
 	const name = `${props.length}m ${props.shipyard} yacht ${props.name} (${props.location})`
@@ -11,10 +12,12 @@ export function YachtCard(props: typeof yachts.$inferSelect) {
 		<div className='relative w-full shrink-0 gap-6 pr-4 md:gap-10 lg:flex-row'>
 			<div className='relative w-full overflow-hidden rounded-xl'>
 				<h3 className='absolute inset-8 z-20'>{name}</h3>
-				<div
+				<ImagesCarousel slides={props.pictures || []} />
+				{/* <div
 					className='aspect-video rounded-xl bg-cover bg-center'
 					style={{ backgroundImage: `url(${props.pictures && props.pictures[0]})` }}
 				/>
+				*/}
 				<div className='absolute inset-0 z-10 bg-gradient-to-b from-gray-150 via-gray-150/20 to-transparent'></div>
 			</div>
 			<div className='flex-row justify-around lg:flex-col'>

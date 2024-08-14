@@ -1,7 +1,17 @@
 import { sql } from '@vercel/postgres'
 import { config } from 'dotenv'
 import { int, year } from 'drizzle-orm/mysql-core'
-import { decimal, index, integer, numeric, pgTable, serial, text, timestamp, varchar } from 'drizzle-orm/pg-core'
+import {
+	decimal,
+	index,
+	integer,
+	numeric,
+	pgTable,
+	serial,
+	text,
+	timestamp,
+	varchar,
+} from 'drizzle-orm/pg-core'
 import { drizzle } from 'drizzle-orm/vercel-postgres'
 import build from 'next/dist/build'
 

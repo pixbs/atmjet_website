@@ -14,9 +14,7 @@ import { getTranslations } from 'next-intl/server'
 export default async function YachtsPage() {
 	const t = await getTranslations()
 
-	const yachts = await db
-		.select()
-		.from(yachtsTable)
+	const yachts = await db.select().from(yachtsTable)
 
 	const whyUsCards = ['card1', 'card2', 'card3', 'card4'].map((card) => ({
 		num: '',

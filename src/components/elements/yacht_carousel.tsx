@@ -27,8 +27,8 @@ export function YachtCarousel(props: YachtCarouselProps) {
 	}, [emblaApi, onScroll])
 
 	return (
-		<div className='embla overflow-clip' ref={emblaRef}>
-			<div className='embla__container flex-row'>
+		<div className='overflow-clip' ref={emblaRef}>
+			<div className='flex-row'>
 				{props.vehicles.map((vehicle) => (
 					<YachtCard {...vehicle} />
 				))}

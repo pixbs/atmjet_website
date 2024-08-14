@@ -8,5 +8,5 @@ export default defineConfig({
 	schema: './src/lib/drizzle.ts',
 	dbCredentials: {
 		url: process.env.POSTGRES_URL || '',
-	}
+	},
 })

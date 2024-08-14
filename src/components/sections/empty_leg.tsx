@@ -23,7 +23,7 @@ export async function EmptyLegSection() {
 		return airport[0].nameEng ?? 'N/A'
 	}
 	const realCards = await db.select().from(emptyLegs).orderBy(emptyLegs.order)
-	return(
+	return (
 		<section className='bg-gray-150'>
 			<div className='container gap-8 py-10 pt-10 lg:flex-row'>
 				<div className='top-40 min-w-40 flex-shrink-0 gap-4 self-start lg:sticky lg:w-72'>
@@ -33,14 +33,20 @@ export async function EmptyLegSection() {
 				<div className='gap-4'>
 					{realCards.map((card, index) => (
 						<EmptyLegCard
-							date={`${new Date(card.start).toLocaleDateString(`en-US`, { month: 'long', day: 'numeric', year: 'numeric' })}`} 
+							date={`${new Date(card.start).toLocaleDateString(`en-US`, { month: 'long', day: 'numeric', year: 'numeric' })}`}
 							price={`$${card.price?.toLocaleString() ?? 'N/A'}`}
-							initalPrice={'$'+((card.price ? card.price : 0) * 4).toLocaleString() ?? 'N/A'}
+							initalPrice={'$' + ((card.price ? card.price : 0) * 4).toLocaleString() ?? 'N/A'}
 							discountPercent={'-75%'}
 							from={card.from}
 							to={card.to}
-							fromTime={new Date(card.start).toLocaleTimeString(`en-US`, { hour: 'numeric', minute: 'numeric' })}
-							toTime={new Date(card.end).toLocaleTimeString(`en-US`, { hour: 'numeric', minute: 'numeric' })}
+							fromTime={new Date(card.start).toLocaleTimeString(`en-US`, {
+								hour: 'numeric',
+								minute: 'numeric',
+							})}
+							toTime={new Date(card.end).toLocaleTimeString(`en-US`, {
+								hour: 'numeric',
+								minute: 'numeric',
+							})}
 							fromAirport={card.from}
 							toAirport={card.to}
 							howLong={calucalateDuration(card.start, card.end)}
