@@ -1,7 +1,7 @@
 import { sql } from '@vercel/postgres'
 import { config } from 'dotenv'
-import { int } from 'drizzle-orm/mysql-core'
-import { decimal, index, integer, pgTable, serial, text, timestamp, varchar } from 'drizzle-orm/pg-core'
+import { int, year } from 'drizzle-orm/mysql-core'
+import { decimal, index, integer, numeric, pgTable, serial, text, timestamp, varchar } from 'drizzle-orm/pg-core'
 import { drizzle } from 'drizzle-orm/vercel-postgres'
 import build from 'next/dist/build'
 
@@ -98,20 +98,25 @@ export const vehicles = pgTable(
 
 export const yachts = pgTable('yachts', {
 	id: serial('id').primaryKey(),
-	length: integer('length').default(0),
-	builder: varchar('builder', { length: 255 }).default(''),
-	exterior: varchar('exterior', { length: 255 }).default(''),
-	interior: varchar('interior', { length: 255 }).default(''),
-	build: integer('build'),
-	model: varchar('model', { length: 255 }).default(''),
-	beam: varchar('beam', { length: 255 }).default(''),
-	grossTonnage: integer('gross_tonnage').default(0),
-	draft: varchar('draft', { length: 255 }).default(''),
-	crussingSpeed: integer('crussing_speed').default(0),
-	topSpeed: integer('top_speed').default(0),
-	thrust: varchar('thrust', { length: 255 }).default(''),
-	maxSpeed: integer('max_speed').default(0),
-	cruiserSpeed: integer('cruiser_speed').default(0),
+	name: text('name'),
+	shipyard: text('shipyard'),
+	year: integer('year'),
+	length: numeric('length'),
+	beam: numeric('beam'),
+	draft: numeric('draft'),
+	cabins: integer('cabins'),
+	guests: integer('guests'),
+	crew: integer('crew'),
+	cruisingSpeed: integer('cruising_speed'),
+	maxSpeed: integer('max_speed'),
+	location: text('location'),
+	pictures: text('pictures').array(),
+})
+
+export const users = pgTable('atmjet_admin__users', {
+	id: serial('id').primaryKey(),
+	username: varchar('username', { length: 256 }).notNull(),
+	password: text('password').notNull(),
 })
 
 export const db = drizzle(sql, { logger: true })
