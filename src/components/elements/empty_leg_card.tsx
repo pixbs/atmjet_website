@@ -1,17 +1,19 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { airports, db, emptyLegs } from '@/lib/drizzle'
+import { emptyLegs } from '@/lib/drizzle'
 import Link from 'next/link'
 import { Counter } from '../elements'
-import { ilike } from 'drizzle-orm'
 
-export function EmptyLegCard(props: typeof emptyLegs.$inferSelect) {
+type emptyLegs = typeof emptyLegs.$inferSelect
 
-	const findByICAO = async (icao: string) => {
-		const airport = await db.select().from(airports).where(ilike(airports.icaoCode, `%${icao}%`)).limit(1)
-		return airport[0].nameEng ?? 'N/A'
-	}
+interface EmptyLegCardProps extends emptyLegs {
+	fromAirport: string
+	toAirport: string
+
+}
+
+export async function EmptyLegCard(props: EmptyLegCardProps) {
 
 	return (
 		<motion.div
@@ -30,16 +32,16 @@ export function EmptyLegCard(props: typeof emptyLegs.$inferSelect) {
 				<Counter className='font-sans text-3xl font-black text-gray-900'>{`$${props.price?.toLocaleString() ?? 'N/A'}`}</Counter>
 				<p className='text-xs line-through'>{'$' + ((props.price ? props.price : 0) * 2.5).toLocaleString() ?? 'N/A'}</p>
 				<p className='rounded-lg bg-red-500 px-1 text-xs font-bold text-gray-900'>
-					'-40%'
+					-40%
 				</p>
 			</div>
-			<div className='flex-row'>
+			<div className='flex-row gap-4'>
 				<p>
-					{props.from}({findByICAO(props.from)})
+				{props.fromAirport}({props.from.toUpperCase()})
 				</p>
 				<p>{' -> '}</p>
 				<p>
-					{props.to}({findByICAO(props.to)})
+					{props.toAirport}({props.to.toUpperCase()})
 				</p>
 			</div>
 		</motion.div>
