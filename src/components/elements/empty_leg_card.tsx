@@ -1,7 +1,7 @@
 'use client'
 
-import { motion } from 'framer-motion'
 import { emptyLegs } from '@/lib/drizzle'
+import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { Counter } from '../elements'
 
@@ -32,7 +32,7 @@ export async function EmptyLegCard(props: EmptyLegCardProps) {
 				<Counter className='font-sans text-3xl font-black text-gray-900'>{`$${props.price?.toLocaleString() ?? 'N/A'}`}</Counter>
 				<p className='text-xs line-through'>{'$' + ((props.price ? props.price : 0) * 2.5).toLocaleString() ?? 'N/A'}</p>
 				<p className='rounded-lg bg-red-500 px-1 text-xs font-bold text-gray-900'>
-					-40%
+					-60%
 				</p>
 			</div>
 			<div className='flex-row gap-4'>

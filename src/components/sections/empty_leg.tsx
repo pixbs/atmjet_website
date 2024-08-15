@@ -1,7 +1,7 @@
 'use server'
 
 import { airports, db, emptyLegs } from '@/lib/drizzle'
-import { eq, ilike } from 'drizzle-orm'
+import { ilike } from 'drizzle-orm'
 import { getLocale, getTranslations } from 'next-intl/server'
 import Link from 'next/link'
 import { EmptyLegCard } from '../elements'
@@ -51,5 +51,7 @@ export async function EmptyLegSection() {
 
 export default async function findByICAO(icao: string) {
 	const airport = await db.select().from(airports).where(ilike(airports.icaoCode, `%${icao}%`)).limit(1)
-	return airport[0].cityEng ?? 'N/A'
+	const city = airport[0].cityEng ?? 'N/A'
+	const country = airport[0].countryEng ?? 'N/A'
+	return `${city}, ${country}`
 }
