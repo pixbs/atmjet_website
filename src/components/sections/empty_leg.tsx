@@ -51,5 +51,5 @@ export async function EmptyLegSection() {
 
 export default async function findByICAO(icao: string) {
 	const airport = await db.select().from(airports).where(ilike(airports.icaoCode, `%${icao}%`)).limit(1)
-	return airport[0].nameEng ?? 'N/A'
+	return airport[0].cityEng ?? 'N/A'
 }
