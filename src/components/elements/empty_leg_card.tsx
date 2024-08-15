@@ -1,78 +1,46 @@
 'use client'
 
 import { motion } from 'framer-motion'
+import { airports, db, emptyLegs } from '@/lib/drizzle'
 import Link from 'next/link'
 import { Counter } from '../elements'
+import { ilike } from 'drizzle-orm'
 
-interface CardProps {
-	date: string
-	price: string
-	initalPrice: string
-	discountPercent: string
-	from: string
-	to: string
-	fromTime: string
-	toTime: string
-	fromAirport: string
-	toAirport: string
-	howLong: string
-}
+export function EmptyLegCard(props: typeof emptyLegs.$inferSelect) {
 
-export function EmptyLegCard(props: CardProps) {
-	const {
-		date,
-		price,
-		initalPrice,
-		discountPercent,
-		from,
-		to,
-		fromTime,
-		toTime,
-		fromAirport,
-		toAirport,
-		howLong,
-	} = props
+	const findByICAO = async (icao: string) => {
+		const airport = await db.select().from(airports).where(ilike(airports.icaoCode, `%${icao}%`)).limit(1)
+		return airport[0].nameEng ?? 'N/A'
+	}
 
 	return (
 		<motion.div
-			className='card gap-3 bg-gray-100 p-6'
+			className='props gap-3 bg-gray-100 p-6'
 			initial={{ opacity: 0, y: -50 }}
 			transition={{ duration: 0.5 }}
 			whileInView={{ opacity: 1, y: 0 }}
 		>
 			<div className='flex-row justify-between'>
-				<p className='text-sm'>{date}</p>
+				<p className='text-sm'>{`${new Date(props.start).toLocaleDateString(`en-US`, { month: 'long', day: 'numeric', year: 'numeric' })}`}</p>
 				<Link href='?showBooking=Empty-legs' scroll={false}>
 					<button>inquire</button>
 				</Link>
 			</div>
 			<div className='flex-row items-start gap-2'>
-				<Counter className='font-sans text-3xl font-black text-gray-900'>{price}</Counter>
-				<p className='text-xs line-through'>{initalPrice}</p>
+				<Counter className='font-sans text-3xl font-black text-gray-900'>{`$${props.price?.toLocaleString() ?? 'N/A'}`}</Counter>
+				<p className='text-xs line-through'>{'$' + ((props.price ? props.price : 0) * 2.5).toLocaleString() ?? 'N/A'}</p>
 				<p className='rounded-lg bg-red-500 px-1 text-xs font-bold text-gray-900'>
-					{discountPercent}
+					'-40%'
 				</p>
 			</div>
 			<div className='flex-row'>
 				<p>
-					{from}({fromAirport})
+					{props.from}({findByICAO(props.from)})
 				</p>
 				<p>{' -> '}</p>
 				<p>
-					{to}({toAirport})
+					{props.to}({findByICAO(props.to)})
 				</p>
-			</div>
-			<div className='flex-row'>
-				<div>
-					<p>{fromTime}</p>
-					<p>{fromAirport}</p>
-				</div>
-				<p>{' -> '}</p>
-				<div>
-					<p>{toTime}</p>
-					<p>{toAirport}</p>
-				</div>
-				<p>{howLong}</p>
 			</div>
 		</motion.div>
 	)
