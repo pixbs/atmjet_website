@@ -1,7 +1,7 @@
 'use server'
 
 import { Counter, VehiclesCarousel } from '@/components/elements'
-import { ContactUsSection } from '@/components/sections'
+import { MakeBookingSection } from '@/components/sections'
 import { db, vehicles } from '@/lib/drizzle'
 import { sql } from 'drizzle-orm'
 import { getTranslations } from 'next-intl/server'
@@ -85,12 +85,13 @@ export default async function Aircraft() {
 					</div>
 				</div>
 			</section>
-			<ContactUsSection
+			<MakeBookingSection isCard/>
+			{/* <ContactUsSection
 				title={t('partners-contact-us.title')}
 				description={t('partners-contact-us.description')}
 				buttonText={t('partners-contact-us.button')}
 				imageSrc='/images/partners/contact_us.jpg'
-			/>
+			/> */}
 		</main>
 	)
 }
