@@ -19,7 +19,7 @@ export function ContactUsSection(props: ContactUsSectionProps) {
 				<div className='hero-darkening absolute inset-0' />
 				<div className='container min-h-svh content-center items-center justify-center lg:min-h-[50svh]'>
 					<h2 className='text-center'>{title}</h2>
-					<p className='pt-4'>{description}</p>
+					<p className='pt-4 text-center'>{description}</p>
 					<Link href='?showBooking=Contact_us' scroll={false}>
 						<button className='big mt-10'>{buttonText}</button>
 					</Link>

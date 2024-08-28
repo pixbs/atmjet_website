@@ -80,7 +80,7 @@ export default async function SalesDeptPage() {
 				]}
 				imageSrc='/images/jets_dep/jetsmarket_page_team_atmjet.jpg'
 			/>
-			<WhyUsSection title={t('sales-why-us.title')} cards={cards} images={images} />
+			<WhyUsSection title='ATM JET' description={t('sales-why-us.title')} cards={cards} images={images} />
 			<ContactUsSection
 				title={t('sales-contact-us.title')}
 				description={t('sales-contact-us.description')}

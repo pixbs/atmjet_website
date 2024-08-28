@@ -7,12 +7,12 @@
 		"title": "Exclusive key features",
 		"description": "Unlock exceptional benefits with our exclusive key features designed to enhance your travel experience:",
 		"card1": {
-			"title": "Essential medical equipment",
-			"description": "We will provide the aircraft with the necessary medical equipment. Send us the medical report or clinic contacts and our experienced doctors will coordinate the necessary equipment for the safe transport of the patient."
+			"title": "Find a medical aircraft",
+			"description": "We will provide an aircraft equipped with the necessary medical equipment. Please forward the requirements from the clinic and doctor to us, and we will find an aircraft that meets your specifications."
 		},
 		"card2": {
-			"title": "The highest-qualified doctors",
-			"description": "On our medical flights we work only with PhD doctors and nursing staff with more than 15 years of experience."
+			"title": "Provide doctors on board",
+			"description": "We will organise documents for the accompanying doctor or find doctors with experience in accompanying medical flights."
 		},
 		"card3": {
 			"title": "Emergency flight service",
@@ -20,11 +20,11 @@
 		},
 		"card4": {
 			"title": "Transplant delivery",
-			"description": "We are able to deliver organs from any country. Our aircrafts allow for the safe transfer of the transplant to the patient under suitable conditions, with the accompaniment of a doctor."
+			"description": "We are able to deliver organs from any country. Our access to a network of medical aircraft allows us to safely deliver the transplant to the patient in a suitable environment, accompanied by a doctor."
 		}
 	},
 	"medical-contact-us": {
-		"title": "Leave a contact for our ATM JET Chief Medical Officer",
-		"button": "Leave a contact"
+		"title": "Leave a request for a medical flight",
+		"button": "Leave a request"
 	}
 }

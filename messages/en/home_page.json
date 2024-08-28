@@ -35,7 +35,7 @@
 		"card4": {
 			"num": "",
 			"title": "Same-day departures",
-			"description": "Our fleet of over 50,000 aircraft operates 24/7, allowing customers to depart within 2 hours of booking."
+			"description": "We have 24/7 access to the largest aircraft database of over 25,000 aircraft, enabling our customers to fly within 5 hours of booking."
 		},
 		"card5": {
 			"num": "",
@@ -47,20 +47,20 @@
 		"title": "Exclusive key features",
 		"description": "Unlock exceptional benefits with our exclusive key features designed to enhance your travel experience:",
 		"card1": {
+			"title": "Pay any way you want, including crypto",
+			"description": "We accept a wide variety of payment methods: From all individual and corporate bank accounts, including cryptocurrency, making booking with us easy and convenient."
+		},
+		"card2": {
 			"title": "ATM JET CRM",
 			"description": "With our ATM Jet CRM, all you have to do is tell us your preferences once and we'll make sure everything is prepared just the way you like it every time you board."
 		},
-		"card2": {
-			"title": "Customized aircraft and crew",
-			"description": "We select the most appropriate aircraft and crew for each airport, in order to guarantee the highest standards of comfort for our clients."
-		},
 		"card3": {
-			"title": "Payment after the flight",
-			"description": "We are pleased to offer our loyal customers flexible post-flight payment systems."
+			"title": "Customized aircraft and crew",
+			"description": "We are pleased to offer our loyal customers flexible post-flight payment systems.We select the most appropriate aircraft and crew for each airport, in order to guarantee the highest standards of comfort for our clients"
 		},
 		"card4": {
-			"title": "Pay any way you want, including crypto",
-			"description": "We accept a wide variety of payment methods: From all individual and corporate bank accounts, including cryptocurrency, making booking with us easy and convenient."
+			"title": "Payment after the flight",
+			"description": "We select the most appropriate aircraft and crew for each airport, in order to guarantee the highest standards of comfort for our clients."
 		}
 	},
 	"options": {

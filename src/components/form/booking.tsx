@@ -61,7 +61,7 @@ export function BookingForm(props: BookingFormProps) {
 		<>
 			<div className='gap-2'>
 				<h2 className='text-center'>{t('title')}</h2>
-				<p className='text-center'>{t('description')}</p>
+				{/* <p className='text-center'>{t('description')}</p> */}
 			</div>
 			<FormProvider {...methods}>
 				<form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-6'>

@@ -1,8 +1,9 @@
 'use client'
 
-import { vehicles, yachts } from '@/lib/drizzle'
+import { yachts } from '@/lib/drizzle'
 import { EmblaCarouselType } from 'embla-carousel'
 import useEmblaCarousel from 'embla-carousel-react'
+import { WheelGesturesPlugin } from 'embla-carousel-wheel-gestures'
 import { useCallback, useEffect, useState } from 'react'
 import { YachtCard } from './yacht_card'
 
@@ -11,7 +12,7 @@ interface YachtCarouselProps {
 }
 
 export function YachtCarousel(props: YachtCarouselProps) {
-	const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, align: 'start' })
+	const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, align: 'start' }, [WheelGesturesPlugin()])
 	const [scrollProgress, setScrollProgress] = useState(0)
 
 	const onScroll = useCallback((emblaApi: EmblaCarouselType) => {
@@ -29,8 +30,8 @@ export function YachtCarousel(props: YachtCarouselProps) {
 	return (
 		<div className='overflow-clip' ref={emblaRef}>
 			<div className='flex-row'>
-				{props.vehicles.map((vehicle) => (
-					<YachtCard {...vehicle} />
+				{props.vehicles.map((vehicle, index) => (
+					<YachtCard {...vehicle} key={index} />
 				))}
 			</div>
 		</div>

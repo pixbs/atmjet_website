@@ -1,8 +1,7 @@
 import {
 	CargoRequestSection,
-	ContactUsSection,
 	SubpageHeroSection,
-	WhyUsSection,
+	WhyUsSection
 } from '@/components/sections'
 import { useTranslations } from 'next-intl'
 
@@ -29,12 +28,12 @@ export default function CargoPage() {
 			/>
 			<WhyUsSection title={t('cargo-why-us.title')} cards={cards} images={images} />
 			<CargoRequestSection />
-			<ContactUsSection
+			{/* <ContactUsSection
 				title={t('partners-contact-us.title')}
 				description={t('partners-contact-us.description')}
 				buttonText={t('partners-contact-us.button')}
 				imageSrc='/images/cargo_charter/contact_us.jpg'
-			/>
+			/> */}
 		</main>
 	)
 }

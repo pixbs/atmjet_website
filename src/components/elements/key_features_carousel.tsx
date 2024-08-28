@@ -1,11 +1,12 @@
 'use client'
 
+import { EmblaCarouselType } from 'embla-carousel'
 import useEmblaCarousel from 'embla-carousel-react'
+import { WheelGesturesPlugin } from 'embla-carousel-wheel-gestures'
 import { useCallback, useEffect, useState } from 'react'
-import { EmblaCarouselType, EmblaOptionsType } from 'embla-carousel'
 
 export function KeyFeaturesCarousel({ children }: { children: React.ReactNode }) {
-	const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, align: 'start' })
+	const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, align: 'start', }, [WheelGesturesPlugin()])
 	const [scrollProgress, setScrollProgress] = useState(0)
 
 	const onScroll = useCallback((emblaApi: EmblaCarouselType) => {

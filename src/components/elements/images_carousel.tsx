@@ -1,6 +1,8 @@
 import { EmblaOptionsType } from 'embla-carousel'
-import { DotButton, useDotButton } from './carousel_dot_button'
 import useEmblaCarousel from 'embla-carousel-react'
+import { WheelGesturesPlugin } from 'embla-carousel-wheel-gestures'
+import { DotButton, useDotButton } from './carousel_dot_button'
+
 
 type PropType = {
 	slides: string[]
@@ -8,7 +10,7 @@ type PropType = {
 }
 
 export function ImagesCarousel(props: PropType) {
-	const [emblaRef, emblaApi] = useEmblaCarousel(props.options)
+	const [emblaRef, emblaApi] = useEmblaCarousel(props.options, [WheelGesturesPlugin()])
 	const { selectedIndex, scrollSnaps, onDotButtonClick } = useDotButton(emblaApi)
 
 	return (

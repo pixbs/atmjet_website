@@ -1,7 +1,7 @@
 {
 	"partners-hero": {
 		"title": "Over ",
-		"num": "50",
+		"num": "20",
 		"title2": " partners trust us."
 	},
 	"instant-payment": {
@@ -38,7 +38,7 @@
 	},
 	"partners-contact-us": {
 		"title": "Contact us",
-		"description": "In a personal consultation, we will explain in detail why working with us will contribute to a profitable partnership for you.",
+		"description": "Please provide us with your enquiry so that we can offer you a range of group flight solutions that are likely to meet your expectations.",
 		"button": "Contact now"
 	}
 }

@@ -2,10 +2,11 @@
 
 import { EmblaCarouselType } from 'embla-carousel'
 import useEmblaCarousel from 'embla-carousel-react'
+import { WheelGesturesPlugin } from 'embla-carousel-wheel-gestures'
 import { useCallback, useEffect, useState } from 'react'
 
 export function TestimonialsCarousel({ children }: { children: React.ReactNode }) {
-	const [emblaRef, emblaApi] = useEmblaCarousel({ align: 'start' })
+	const [emblaRef, emblaApi] = useEmblaCarousel({ align: 'start' }, [WheelGesturesPlugin()])
 	const [scrollProgress, setScrollProgress] = useState(0)
 
 	const onScroll = useCallback((emblaApi: EmblaCarouselType) => {
