@@ -3,7 +3,6 @@ import useEmblaCarousel from 'embla-carousel-react'
 import { WheelGesturesPlugin } from 'embla-carousel-wheel-gestures'
 import { DotButton, useDotButton } from './carousel_dot_button'
 
-
 type PropType = {
 	slides: string[]
 	options?: EmblaOptionsType

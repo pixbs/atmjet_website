@@ -5,7 +5,7 @@ interface MakeBookingSectionProps {
 	isCard?: boolean
 }
 
-export function MakeBookingSection(props : MakeBookingSectionProps) {
+export function MakeBookingSection(props: MakeBookingSectionProps) {
 	const { isCard = false } = props
 	const t = useTranslations('form')
 	return (

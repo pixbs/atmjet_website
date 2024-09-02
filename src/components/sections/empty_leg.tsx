@@ -9,17 +9,16 @@ import { EmptyLegCard } from '../elements'
 export async function EmptyLegSection() {
 	const t = await getTranslations('empty-leg')
 	const locale = getLocale()
-	
 
 	const emptyLegsCards = await db.select().from(emptyLegs)
 
-    const cardsWithAirports = await Promise.all(
-        emptyLegsCards.map(async (card) => ({
-            ...card,
-            fromAirport: await findByICAO(card.from),
-            toAirport: await findByICAO(card.to),
-        }))
-    )
+	const cardsWithAirports = await Promise.all(
+		emptyLegsCards.map(async (card) => ({
+			...card,
+			fromAirport: await findByICAO(card.from),
+			toAirport: await findByICAO(card.to),
+		})),
+	)
 
 	console.log(emptyLegsCards)
 	return (
@@ -30,12 +29,9 @@ export async function EmptyLegSection() {
 					<p>{t('description')}</p>
 				</div>
 				<div className='gap-4'>
-                    {cardsWithAirports.map((card, index) => (
-                        <EmptyLegCard
-                            key={index}
-                            {...card}
-                        />
-                    ))}
+					{cardsWithAirports.map((card, index) => (
+						<EmptyLegCard key={index} {...card} />
+					))}
 					<div className='card mt-4 items-start gap-4 border-0 bg-gradient-to-b from-gray-200 from-15% to-[#14323D] p-6 md:bg-fixed'>
 						<h3>{t('telegram.title')}</h3>
 						<p className='text-gray-900'>{t('telegram.description')}</p>
@@ -50,7 +46,11 @@ export async function EmptyLegSection() {
 }
 
 export default async function findByICAO(icao: string) {
-	const airport = await db.select().from(airports).where(ilike(airports.icaoCode, `%${icao}%`)).limit(1)
+	const airport = await db
+		.select()
+		.from(airports)
+		.where(ilike(airports.icaoCode, `%${icao}%`))
+		.limit(1)
 	const city = airport[0].cityEng ?? 'N/A'
 	const country = airport[0].countryEng ?? 'N/A'
 	return `${city}, ${country}`

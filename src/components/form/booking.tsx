@@ -1,8 +1,8 @@
 'use client'
 
+import { sendMessage } from '@/app/telegramBot'
 import Checkmark from '@/assets/svg/checkmark.svg'
 import { zodResolver } from '@hookform/resolvers/zod'
-import axios from 'axios'
 import { useLocale, useTranslations } from 'next-intl'
 import { usePathname, useSearchParams } from 'next/navigation'
 import { useState } from 'react'
@@ -27,7 +27,7 @@ export function BookingForm(props: BookingFormProps) {
 	const pathname = usePathname()
 	const searchParams = useSearchParams()
 	const booking = searchParams.get('showBooking')
-	const direction = searchParams.get('direction')
+	const directions = JSON.parse(searchParams.get('direction') || '{}')
 
 	const methods = useForm({
 		resolver: zodResolver(schema),
@@ -38,14 +38,45 @@ export function BookingForm(props: BookingFormProps) {
 	const onSubmit = async (data: any) => {
 		console.log(data)
 
-		try {
-			await axios.post(
-				`https://${host}/api/post_data?name=${data.name}&phone_number=${data.phone_number}&email=${data.email}&locale=${locale}&from=${booking}&path=${host + pathname}&direction=${direction}`,
-			)
-			setSubmitted(true)
-		} catch (error) {
-			console.error(error)
-		}
+		let result = `<i>Directions:</i>`
+		directions.forEach(
+			(direction: { from: string; to: string; date: string; passengers: number }) => {
+				if (direction) {
+					result += `
+				<blockquote expandable>
+				<i>From:</i>
+				${direction.from}
+				<i>To:</i>
+				${direction.to}
+				<i>Date:</i>
+				${direction.date}
+				<i>Passengers:</i>
+				${direction.passengers}
+				</blockquote>
+				`
+				}
+			},
+		)
+
+		const message = `
+		<b>You got new request!</b>
+		<i>Name:</i> ${data.name}
+		<i>Locale:</i> ${locale}
+
+		<i>Phone:</i>
+		<code>${data.phone_number}</code>
+
+		<i>Email:</i>
+		${data.email}
+
+		${result}
+
+		<i>From:</i>
+		${booking}, https://${host + pathname}
+		`
+
+		const response = await sendMessage(message)
+		setSubmitted(response)
 	}
 
 	if (submitted) {

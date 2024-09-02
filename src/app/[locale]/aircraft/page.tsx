@@ -85,7 +85,7 @@ export default async function Aircraft() {
 					</div>
 				</div>
 			</section>
-			<MakeBookingSection isCard/>
+			<MakeBookingSection isCard />
 			{/* <ContactUsSection
 				title={t('partners-contact-us.title')}
 				description={t('partners-contact-us.description')}

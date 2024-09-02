@@ -1,8 +1,4 @@
-import {
-	CargoRequestSection,
-	SubpageHeroSection,
-	WhyUsSection
-} from '@/components/sections'
+import { CargoRequestSection, SubpageHeroSection, WhyUsSection } from '@/components/sections'
 import { useTranslations } from 'next-intl'
 
 export default function CargoPage() {

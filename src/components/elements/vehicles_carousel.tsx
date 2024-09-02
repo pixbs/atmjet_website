@@ -14,7 +14,9 @@ interface VehiclesCarouselProps {
 
 export function VehiclesCarousel(props: VehiclesCarouselProps) {
 	const { vehicles, useImgInsteadOfThumb } = props
-	const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, align: 'start' }, [WheelGesturesPlugin()])
+	const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, align: 'start' }, [
+		WheelGesturesPlugin(),
+	])
 	const [scrollProgress, setScrollProgress] = useState(0)
 
 	const onScroll = useCallback((emblaApi: EmblaCarouselType) => {
