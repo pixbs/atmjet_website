@@ -39,24 +39,28 @@ export function BookingForm(props: BookingFormProps) {
 		console.log(data)
 
 		let result = `<i>Directions:</i>`
-		directions.forEach(
-			(direction: { from: string; to: string; date: string; passengers: number }) => {
-				if (direction) {
-					result += `
-				<blockquote expandable>
-				<i>From:</i>
-				${direction.from}
-				<i>To:</i>
-				${direction.to}
-				<i>Date:</i>
-				${direction.date}
-				<i>Passengers:</i>
-				${direction.passengers}
-				</blockquote>
-				`
-				}
-			},
-		)
+		if (directions.length) {
+			directions.forEach(
+				(direction: { from: string; to: string; date: string; passengers: number }) => {
+					if (direction) {
+						result += `
+					<blockquote expandable>
+					<i>From:</i>
+					${direction.from}
+					<i>To:</i>
+					${direction.to}
+					<i>Date:</i>
+					${direction.date}
+					<i>Passengers:</i>
+					${direction.passengers}
+					</blockquote>
+					`
+					}
+				},
+			)
+		} else {
+			result += `<i>None</i>`
+		}
 
 		const message = `
 		<b>You got new request!</b>
