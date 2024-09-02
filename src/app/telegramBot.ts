@@ -13,6 +13,7 @@ if (!process.env.ALLOWED_USERS) {
 }
 
 export async function sendMessage(text: string) {
+	console.log('Sending message:', text)
 	if (!allowedUsers.length) {
 		throw new Error('No allowed users specified in the environment variable ALLOWED_USERS')
 	}
@@ -32,11 +33,13 @@ export async function sendMessage(text: string) {
 					}),
 				},
 			)
+			console.log('Message sent:', response.ok)
 			if (!response.ok) {
 				console.error('Failed to send message:', response.statusText)
 				return false
 			}
 		} catch (error) {
+			console.error('Failed to send message:', error)
 			throw new Error(error as string)
 		}
 	})
