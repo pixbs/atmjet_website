@@ -69,9 +69,17 @@
 		"button": "Learn more"
 	},
 	"privilege": {
-		"title": "Join the ATM JET Privilege",
-		"description": "Receive special club privileges contact the founder Artem Rumyantsev directly",
-		"button": "Contact founder"
+		"title": "Fly at wholesale prices.",
+		"description": "Avoid traditional broker commissions, fly at cost.",
+		"button": "Contact founder",
+		"card1": {
+			"title": "VIP Flight Management",
+			"description": "The founder of ATM Jet personally manages your VIP flights from start to finish, saving you time and resources."
+		},
+		"card2": {
+			"title": "Payment and transfer assistance.",
+			"description": "We have a variety of multi-currency accounts in different countries, including cryptocurrency accounts and clients who pay in different ways. We offer transit and exchange assistance to our members."
+		}
 	},
 	"testimonials": {
 		"title": "Testimonials",
