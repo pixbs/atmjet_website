@@ -5,7 +5,7 @@ import { ilike, or } from 'drizzle-orm'
 
 export async function getAirport(str: string, locale: string) {
 	if (str.toLowerCase().includes('saint')) {
-		str = str.replace('saint', 'st')
+		str = str.toLowerCase().replace('saint', 'st')
 	}
 	const query = await db
 		.select()
