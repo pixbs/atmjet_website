@@ -63,27 +63,25 @@ export function Direction(props: DirectionProps) {
 					render={({ field }) => (
 						<input
 							{...field}
-							type='text'
-							onFocus={(e) => (e.target.type = 'date')}
-							onBlur={(e) => (e.target.type = 'text')}
+							type='date'
 							placeholder={t('date')}
+							aria-placeholder={t('date')}
 							className='min-h-16 w-full flex-shrink-0 lg:h-full'
 						/>
 					)}
 				/>
 			</div>
 			{showReturn && (
-				<div className='w-full rounded-sm bg-gray-900'>
+				<div className='w-full rounded-sm bg-gray-900 relative'>
 					<Controller
 						control={control}
 						name={`direction.${index}.returnDate`}
 						render={({ field }) => (
 							<input
 								{...field}
-								type='text'
-								onFocus={(e) => (e.target.type = 'date')}
-								onBlur={(e) => (e.target.type = 'text')}
+								type='date'
 								placeholder={t('date')}
+								aria-placeholder={t('date')}
 								className='min-h-16 w-full flex-shrink-0 lg:h-full'
 							/>
 						)}
