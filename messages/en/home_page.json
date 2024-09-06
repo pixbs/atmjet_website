@@ -69,16 +69,24 @@
 		"button": "Learn more"
 	},
 	"privilege": {
-		"title": "Fly at wholesale prices.",
-		"description": "Avoid traditional broker commissions, fly at cost.",
-		"button": "Contact founder",
+		"title": "Join the ",
+		"title2": "ATM JET Gold",
 		"card1": {
-			"title": "VIP Flight Management",
-			"description": "The founder of ATM Jet personally manages your VIP flights from start to finish, saving you time and resources."
+			"title": "Fly at cost",
+			"description": "Eliminate the standard brokerage commission, which averages 3-9%, and fly for the cost of hiring an aircraft. Lowest prices"
 		},
 		"card2": {
 			"title": "Payment and transfer assistance.",
 			"description": "We have a variety of multi-currency accounts in different countries, including cryptocurrency accounts and clients who pay in different ways. We offer transit and exchange assistance to our members."
+		},
+		"card3": {
+			"title": "VIP Flight Management",
+			"description": "The founder of ATM Jet personally manages your VIP flights from start to finish, saving you time and resources."
+		},
+		"contact": {
+			"title": "Contact the founder",
+			"description": "Receive special club privileges contact the ATM JET founder directly",
+			"button": "Contact founder"
 		}
 	},
 	"testimonials": {
