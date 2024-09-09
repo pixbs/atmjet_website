@@ -7,6 +7,11 @@ export async function getAirport(str: string, locale: string) {
 	if (str.toLowerCase().includes('saint')) {
 		str = str.toLowerCase().replace('saint', 'st')
 	}
+
+	// TODO: remove this when we have a better solution
+	if (str.toLowerCase().includes('bilb') || str.toLowerCase().includes('биль')) {
+		str = 'BIO'
+	}
 	const query = await db
 		.select()
 		.from(airports)
@@ -21,9 +26,9 @@ export async function getAirport(str: string, locale: string) {
 				ilike(airports.iataCode, `%${str}%`),
 				ilike(airports.icaoCode, `%${str}%`),
 			),
+		
 		)
 		.limit(10)
-
 	if (locale === 'ru' || locale === 'uk') {
 		return query.map(
 			(item) =>
