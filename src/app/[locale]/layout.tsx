@@ -29,12 +29,6 @@ export default async function LocaleLayout({
 	return (
 		<html lang={locale}>
 			<body className={inter.className}>
-				<script
-					async
-					type='text/javascript'
-					src='https://piper.kommo.com/pixel/js/identifier/pixel_identifier.js'
-					id='kommo_pixel_identifier_js'
-				/>
 				<NextIntlClientProvider messages={messages}>
 					<Cookies />
 					<HeaderSection />

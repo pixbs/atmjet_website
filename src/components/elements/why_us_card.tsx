@@ -1,6 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
+import Image from 'next/image'
 import { Counter } from './counter'
 
 interface WhyUsCardProps {
@@ -16,13 +17,13 @@ export function WhyUsCard(props: WhyUsCardProps) {
 
 	return (
 		<motion.div
-			className='card sticky -mb-16 gap-4 overflow-hidden bg-gray-150 bg-opacity-90 p-8 pb-24 backdrop-blur-lg last:mb-0 last:pb-10 md:flex-row md:gap-16 md:py-0 md:last:pb-0'
+			className='card sticky -mb-16 gap-4 overflow-hidden bg-gray-150 bg-opacity-90 pb-24 backdrop-blur-lg last:mb-0 last:pb-10 md:flex-row md:gap-16 md:py-0 md:last:pb-0'
 			initial={{ opacity: 0, y: -50 }}
 			transition={{ duration: 0.5 }}
 			whileInView={{ opacity: 1, y: 0 }}
 			style={{ top: `${topPadding}px` }}
 		>
-			<div className='gap-4 md:w-full md:pb-24 md:pt-16'>
+			<div className='gap-4 md:w-full p-8 md:pb-24 md:pt-16'>
 				{!!num && (
 					<Counter className='bg-gold bg-clip-text font-serif text-6xl text-transparent md:bg-fixed'>
 						{num}
@@ -32,9 +33,13 @@ export function WhyUsCard(props: WhyUsCardProps) {
 				<p>{description}</p>
 			</div>
 			{!!imageSrc && (
-				<div
-					className='-mx-9 -mb-12 h-48 flex-shrink-0 bg-cover bg-center md:h-80 md:w-1/2 lg:min-h-full'
-					style={{ backgroundImage: `url(${imageSrc})` }}
+				<Image
+					src={imageSrc}
+					alt={title}
+					className='w-full object-cover object-center lg:w-1/2 aspect-video'
+					loading='lazy'
+					width={380}
+					height={380}
 				/>
 			)}
 		</motion.div>

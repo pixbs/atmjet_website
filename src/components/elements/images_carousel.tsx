@@ -16,11 +16,12 @@ export function ImagesCarousel(props: PropType) {
 		<div className='overflow-clip bg-red-950' ref={emblaRef}>
 			<div className='flex-row'>
 				{props.slides.map((slide, index) => (
-					<div
+					<img
 						key={index}
 						className='aspect-[14/10] w-full shrink-0 rounded-xl bg-cover bg-center'
+						loading='lazy'
 						style={{ backgroundImage: `url(${slide})` }}
-					></div>
+					/>
 				))}
 			</div>
 			<div className='absolute bottom-2 left-0 right-0 z-30 flex-row flex-wrap items-center justify-center gap-2'>

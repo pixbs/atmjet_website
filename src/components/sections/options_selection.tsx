@@ -1,3 +1,4 @@
+import Image from 'next/image'
 interface OptionsSelectionSectionProps {
 	title: string
 	card1: {
@@ -40,7 +41,14 @@ function OptionCard(props: OptionCardProps) {
 	const { title, description, list, imageSrc } = props
 	return (
 		<div className='card sticky w-full gap-4 overflow-hidden bg-gray-150'>
-			<div className='h-48 bg-cover bg-center' style={{ backgroundImage: imageSrc }} />
+			<Image 
+				src={imageSrc}
+				alt={title}
+				className='h-48 bg-cover bg-center' 
+				loading='lazy'
+				width={564}
+				height={100}
+			/>
 			<div className='gap-4 p-8'>
 				<h3 className='bg-gold bg-clip-text text-transparent'>{title}</h3>
 				<p>{description}</p>

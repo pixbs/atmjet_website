@@ -1,6 +1,7 @@
 import ArrowTopRight from '@/assets/svg/arrow-top-right.svg'
 import Logo from '@/assets/svg/logo.svg'
 import { useTranslations } from 'next-intl'
+import Image from 'next/image'
 import Link from 'next/link'
 import { LocaleSwitch } from '../elements'
 
@@ -12,8 +13,15 @@ export function FooterSection() {
 		<>
 			<section
 				className='bg-cover bg-top bg-no-repeat md:bg-fixed'
-				style={{ backgroundImage: 'url(/images/home_page/footer.jpg)' }}
 			>
+				<Image 
+					alt='Footer background image of a plane cabin with a view of two seats'
+					src='/images/home_page/footer.jpg'
+					layout='fill'
+					objectFit='cover'
+					objectPosition='top'
+					loading='lazy'
+				/>
 				<footer className='container !static !mb-0 !mt-24 gap-8 rounded-t-2xl bg-gray-100 bg-opacity-60 py-10 backdrop-blur-lg'>
 					<div className='flex-row content-between justify-between'>
 						<Logo className='h-8 text-gray-900' />
