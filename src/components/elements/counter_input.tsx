@@ -37,7 +37,13 @@ export function CounterInput(props: React.InputHTMLAttributes<HTMLInputElement>)
 		<div
 			className={`flex-row items-center rounded-sm bg-gray-900 px-4 py-2.5 text-sm font-normal text-gray-100 ${className}`}
 		>
-			<label className='pr-4'>{placeholder}</label>
+			<label 
+				className='pr-4'
+				htmlFor='passengers'
+			>
+				{placeholder}
+
+			</label>
 			<button
 				className={`size-8 rounded-lg border border-gray-700 p-0 ${value <= 1 ? 'cursor-not-allowed opacity-50' : ''}`}
 				onClick={decrement}
@@ -46,6 +52,7 @@ export function CounterInput(props: React.InputHTMLAttributes<HTMLInputElement>)
 			</button>
 			<input
 				className='w-10 border-none bg-transparent stroke-none p-0 py-1 text-center focus:stroke-none'
+				id='passengers'
 				value={value}
 				onChange={handleChange}
 				onBlur={onBlur}

@@ -11,7 +11,7 @@ const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
 	title: 'ATM JET - Flying private made simple',
-	description: '',
+	description: 'Renting a plane is the best solution for those who value comfort and time. ATM JET provides the opportunity to order a private plane for a flight to any point on the planet. We have been working for you for over 16 years and have vast experience in organizing business aviation flights.',
 }
 
 export default async function LocaleLayout({
