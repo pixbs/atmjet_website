@@ -21,7 +21,7 @@ export function HeroYachtsSection() {
 			<Image
 				className='absolute inset-0 z-0 h-full w-full object-cover'
 				loading='lazy'
-				src='/images/yachts/yacht_page_firstscreen_mainpic.jpg'
+				src='/images/yachts/yacht_page_firstscreen_mainpic.webp'
 				alt='yacht'
 				width={1920}
 				height={1080}

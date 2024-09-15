@@ -11,7 +11,7 @@ export function PersonalManagerSection() {
 			<div className='container'>
 				<div className='gap-10 overflow-hidden rounded-2xl bg-gray-150 lg:flex-row-reverse lg:items-center'>
 					<Image
-						src='/images/jets_dep/personal_manager.jpg'
+						src='/images/jets_dep/personal_manager.webp'
 						alt='personal manager'
 						width={1920}
 						height={1080}

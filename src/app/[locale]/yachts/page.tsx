@@ -23,10 +23,10 @@ export default async function YachtsPage() {
 	}))
 
 	const whyUsImages = [
-		'/images/yachts/yacht_page_over20years_management.jpg',
-		'/images/yachts/yacht_page_over20years_plan.jpg',
-		'/images/yachts/yacht_page_over20years_database.jpg',
-		'/images/yachts/yacht_page_over20years_luxury.jpg',
+		'/images/yachts/yacht_page_over20years_management.webp',
+		'/images/yachts/yacht_page_over20years_plan.webp',
+		'/images/yachts/yacht_page_over20years_database.webp',
+		'/images/yachts/yacht_page_over20years_luxury.webp',
 	]
 
 	const keyFeaturesCards = ['card1', 'card2', 'card3', 'card4'].map((card) => ({
@@ -35,10 +35,10 @@ export default async function YachtsPage() {
 	}))
 
 	const keyFeatures = [
-		'/images/yachts/yacht_page_over20years_management.jpg',
-		'/images/yachts/yacht_page_over20years_plan.jpg',
-		'/images/yachts/yacht_page_over20years_database.jpg',
-		'/images/yachts/yacht_page_over20years_luxury.jpg',
+		'/images/yachts/yacht_page_over20years_management.webp',
+		'/images/yachts/yacht_page_over20years_plan.webp',
+		'/images/yachts/yacht_page_over20years_database.webp',
+		'/images/yachts/yacht_page_over20years_luxury.webp',
 	]
 	return (
 		<main>
@@ -73,13 +73,13 @@ export default async function YachtsPage() {
 					title: t('yachts-options.card1.title'),
 					description: t('yachts-options.card1.description'),
 					list: t('yachts-options.card1.list').split(' \\n'),
-					imageSrc: '/images/yachts/yacht_page_yachtservices_legal.jpg',
+					imageSrc: '/images/yachts/yacht_page_yachtservices_legal.webp',
 				}}
 				card2={{
 					title: t('yachts-options.card2.title'),
 					description: t('yachts-options.card2.description'),
 					list: t('yachts-options.card2.list').split(' \\n'),
-					imageSrc: '/images/yachts/yacht_page_yachtservices_finance.jpg',
+					imageSrc: '/images/yachts/yacht_page_yachtservices_finance.webp',
 				}}
 			/>
 			<section>
@@ -87,7 +87,7 @@ export default async function YachtsPage() {
 					<h2 className='mx-auto max-w-xl text-center'>{t('yachts-why-us.title')}</h2>
 					<p className='mx-auto max-w-xl py-4 text-center'>{t('yachts-why-us.description')}</p>
 					<Image
-						src='/images/yachts/yacht_page_over20years_l.jpg'
+						src='/images/yachts/yacht_page_over20years_l.webp'
 						height={160}
 						width={160}
 						alt='Image of a yacht'
@@ -101,7 +101,7 @@ export default async function YachtsPage() {
 				title={t('yachts-contact-us.title')}
 				description={t('yachts-contact-us.description')}
 				buttonText={t('yachts-contact-us.button')}
-				imageSrc='/images/yachts/yacht_page_contactus.jpg'
+				imageSrc='/images/yachts/yacht_page_contactus.webp'
 			/>
 		</main>
 	)

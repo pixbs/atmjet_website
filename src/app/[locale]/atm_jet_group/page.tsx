@@ -23,7 +23,7 @@ export default function AtmJetGroupPage() {
 							title={t('group1.title')}
 							description={t('group1.description')}
 							button={t('group1.button')}
-							imageSrc='/images/atm_jet_group/group1.jpg'
+							imageSrc='/images/atm_jet_group/group1.webp'
 							href='/aircraft'
 						/>
 						<hr />
@@ -31,7 +31,7 @@ export default function AtmJetGroupPage() {
 							title={t('group2.title')}
 							description={t('group2.description')}
 							button={t('group2.button')}
-							imageSrc='/images/atm_jet_group/group2.jpg'
+							imageSrc='/images/atm_jet_group/group2.webp'
 							href='/sales_dept'
 						/>
 					</div>

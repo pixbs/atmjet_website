@@ -16,7 +16,7 @@ export function FooterSection() {
 			>
 				<Image 
 					alt='Footer background image of a plane cabin with a view of two seats'
-					src='/images/home_page/footer.jpg'
+					src='/images/home_page/footer.webp'
 					layout='fill'
 					objectFit='cover'
 					objectPosition='top'

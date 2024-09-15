@@ -19,9 +19,9 @@ export default async function SalesDeptPage() {
 		description: t(`sales-why-us.${card}.description`),
 	}))
 	const images = [
-		'/images/jets_dep/jetsmarket_page_specialmanagement_50flights.jpg',
-		'/images/jets_dep/jetsmarket_page_specialmanagement_experience.jpg',
-		'/images/jets_dep/jetsmarket_page_specialmanagement_yields.jpg',
+		'/images/jets_dep/jetsmarket_page_specialmanagement_50flights.webp',
+		'/images/jets_dep/jetsmarket_page_specialmanagement_experience.webp',
+		'/images/jets_dep/jetsmarket_page_specialmanagement_yields.webp',
 	]
 
 	const smallJets = (await db
@@ -53,13 +53,13 @@ export default async function SalesDeptPage() {
 					title: t('sales-options.card1.title'),
 					description: t('sales-options.card1.description'),
 					list: t('sales-options.card1.list').split(' \\n'),
-					imageSrc: '/images/jets_dep/jetsmarket_page_aircraftservices_legaldpt.jpg',
+					imageSrc: '/images/jets_dep/jetsmarket_page_aircraftservices_legaldpt.webp',
 				}}
 				card2={{
 					title: t('sales-options.card2.title'),
 					description: t('sales-options.card2.description'),
 					list: t('sales-options.card2.list').split(' \\n'),
-					imageSrc: '/images/jets_dep/jetsmarket_page_aircraftservices_financedpt.jpg',
+					imageSrc: '/images/jets_dep/jetsmarket_page_aircraftservices_financedpt.webp',
 				}}
 			/>
 			<AdvantagesSection
@@ -78,7 +78,7 @@ export default async function SalesDeptPage() {
 						description: t('aircraft-descriptor.card3.description'),
 					},
 				]}
-				imageSrc='/images/jets_dep/jetsmarket_page_team_atmjet.jpg'
+				imageSrc='/images/jets_dep/jetsmarket_page_team_atmjet.webp'
 			/>
 			<WhyUsSection
 				title='ATM JET'
@@ -90,7 +90,7 @@ export default async function SalesDeptPage() {
 				title={t('sales-contact-us.title')}
 				description={t('sales-contact-us.description')}
 				buttonText={t('sales-contact-us.button')}
-				imageSrc='/images/jets_dep/jetsmarket_page_team_contactus.jpg'
+				imageSrc='/images/jets_dep/jetsmarket_page_team_contactus.webp'
 			/>
 		</main>
 	)

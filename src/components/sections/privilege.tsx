@@ -83,7 +83,7 @@ function PrivilegeContact() {
 					width={300}
 					height={200}
 					alt='Image of Artem CEO of ATM JET'
-					src='/images/home_page/artem.jpg'
+					src='/images/home_page/artem.webp'
 					className='w-full object-cover object-center aspect-video'
 				/>
 				<div className='w-full justify-center p-6 md:p-10'>

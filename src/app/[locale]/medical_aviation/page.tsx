@@ -8,10 +8,10 @@ export default function Page() {
 		description: t(`medical-key-features.${card}.description`),
 	}))
 	const images = [
-		'/images/medical/slide1.jpg',
-		'/images/medical/slide4.jpg',
-		'/images/medical/slide2.jpg',
-		'/images/medical/slide3.jpg',
+		'/images/medical/slide1.webp',
+		'/images/medical/slide4.webp',
+		'/images/medical/slide2.webp',
+		'/images/medical/slide3.webp',
 	]
 
 	return (
@@ -19,7 +19,7 @@ export default function Page() {
 			<SubpageHeroSection
 				title={t('medical-hero.title')}
 				description={t('medical-hero.description')}
-				imageUrl='/images/medical/hero.jpg'
+				imageUrl='/images/medical/hero.webp'
 			/>
 			<KeyFeaturesSection
 				title={t('medical-key-features.title')}
@@ -30,7 +30,7 @@ export default function Page() {
 			<ContactUsSection
 				title={t('medical-contact-us.title')}
 				buttonText={t('medical-contact-us.button')}
-				imageSrc='/images/medical/contact-us.jpg'
+				imageSrc='/images/medical/contact-us.webp'
 			/>
 		</main>
 	)

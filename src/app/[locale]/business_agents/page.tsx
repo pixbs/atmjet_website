@@ -25,7 +25,7 @@ export default function businessAgentsPage() {
 							<p>{t('guide.description2')}</p>
 						</div>
 						<Image
-							src='/images/business_agencies/hero2.jpg'
+							src='/images/business_agencies/hero2.webp'
 							alt={t('business-agents-hero.title')}
 							className='h-80 w-full rounded-2xl bg-cover bg-center bg-no-repeat'
 							loading='lazy'
@@ -39,13 +39,13 @@ export default function businessAgentsPage() {
 				<div className='container gap-6 md:flex-row'>
 					<FileCard
 						title={t('documents.document1.title')}
-						imageUrl='/images/business_agencies/file1.jpg'
+						imageUrl='/images/business_agencies/file1.webp'
 						button={t('documents.document1.button')}
 						url={checklistUrl}
 					/>
 					<FileCard
 						title={t('documents.document2.title')}
-						imageUrl='/images/business_agencies/file2.jpg'
+						imageUrl='/images/business_agencies/file2.webp'
 						button={t('documents.document2.button')}
 						url='https://atmjet.ams3.cdn.digitaloceanspaces.com/ATM%20JET%20Presentation.pdf'
 					/>

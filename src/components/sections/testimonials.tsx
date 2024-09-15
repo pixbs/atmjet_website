@@ -5,11 +5,11 @@ export function TestimonialsSection() {
 	const t = useTranslations('testimonials')
 	const cards = ['card1', 'card2', 'card3', 'card4', 'card5']
 	const images = [
-		'/images/testimonials/sardar.jpg',
+		'/images/testimonials/sardar.webp',
 		'/images/testimonials/pele.png',
 		'/images/testimonials/nicole.png',
 		'/images/testimonials/anna_netrebko.png',
-		'/images/testimonials/jamiroquai.jpg',
+		'/images/testimonials/jamiroquai.webp',
 	]
 
 	return (

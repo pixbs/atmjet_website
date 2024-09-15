@@ -9,7 +9,7 @@ export function OptionsSection() {
 			<div className='container gap-6 lg:flex-row lg:content-stretch'>
 				<div
 					className='relative h-64 w-full items-start justify-center gap-6 overflow-hidden rounded-2xl bg-cover p-6'
-					style={{ backgroundImage: 'url(/images/home_page/For-Business-Agents-one.jpg)' }}
+					style={{ backgroundImage: 'url(/images/home_page/For-Business-Agents-one.webp)' }}
 				>
 					<Link href='/business_agents' className='z-10 gap-10'>
 						<h2 className='z-10'>{t('assistant')}</h2>
@@ -19,7 +19,7 @@ export function OptionsSection() {
 				</div>
 				<div
 					className='relative h-64 w-full items-start justify-center gap-6 overflow-hidden rounded-2xl bg-cover p-6'
-					style={{ backgroundImage: 'url(/images/home_page/2-for-business-agents.jpg)' }}
+					style={{ backgroundImage: 'url(/images/home_page/2-for-business-agents.webp)' }}
 				>
 					<Link href='/partners' className='z-10 gap-10'>
 						<h2 className='z-10'>{t('agencies')}</h2>

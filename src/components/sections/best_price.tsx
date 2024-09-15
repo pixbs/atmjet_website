@@ -16,7 +16,7 @@ export function BestPriceSection() {
 						</Link>
 					</div>
 					<Image
-						src='/images/business_agencies/insurance.jpg'
+						src='/images/business_agencies/insurance.webp'
 						alt='Best price'
 						className='h-80 w-full rounded-2xl object-cover object-center'
 						loading='lazy'

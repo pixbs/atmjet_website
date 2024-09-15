@@ -28,7 +28,7 @@ export function HeroSalesSection() {
 			</div>
 			<div className='hero-darkening absolute inset-0 z-10' />
 			<Image
-				src='/images/jets_dep/jetsmarket_page_firstscreen_mainpic.jpg'
+				src='/images/jets_dep/jetsmarket_page_firstscreen_mainpic.webp'
 				alt='Hero sales'
 				className='absolute inset-0 z-0 h-full w-full object-cover md:bg-fixed'
 				loading='lazy'

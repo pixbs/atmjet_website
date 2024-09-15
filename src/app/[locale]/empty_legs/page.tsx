@@ -33,7 +33,7 @@ export default function EmptyLegsPage() {
 				title={t('empty-leg-contact-us.title')}
 				description={t('empty-leg-contact-us.description')}
 				buttonText={t('empty-leg-contact-us.button')}
-				imageSrc='/images/home_page/key_features_tailoredp_references.jpg'
+				imageSrc='/images/home_page/key_features_tailoredp_references.webp'
 			/>
 		</main>
 	)

@@ -13,11 +13,11 @@ export default function CitizensPage() {
 	}))
 
 	const images = [
-		'/images/citizens/why_us_sanctions.jpg',
-		'/images/citizens/why_us_techstops.jpg',
-		'/images/citizens/why_us_foreignaircraft.jpg',
-		'/images/citizens/why_us_coordination.jpg',
-		'/images/citizens/why_us_anypayment.jpg',
+		'/images/citizens/why_us_sanctions.webp',
+		'/images/citizens/why_us_techstops.webp',
+		'/images/citizens/why_us_foreignaircraft.webp',
+		'/images/citizens/why_us_coordination.webp',
+		'/images/citizens/why_us_anypayment.webp',
 	]
 
 	return (
@@ -25,7 +25,7 @@ export default function CitizensPage() {
 			<SubpageHeroSection
 				title={t('citizens-hero.title')}
 				description={t('citizens-hero.description')}
-				imageUrl='/images/citizens/hero.jpg'
+				imageUrl='/images/citizens/hero.webp'
 			/>
 			<WhyUsSection title={t('citizens-why-us.title')} cards={cards} images={images} />
 			<section>

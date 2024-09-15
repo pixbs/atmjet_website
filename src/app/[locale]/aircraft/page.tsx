@@ -90,7 +90,7 @@ export default async function Aircraft() {
 				title={t('partners-contact-us.title')}
 				description={t('partners-contact-us.description')}
 				buttonText={t('partners-contact-us.button')}
-				imageSrc='/images/partners/contact_us.jpg'
+				imageSrc='/images/partners/contact_us.webp'
 			/> */}
 		</main>
 	)

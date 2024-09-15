@@ -4,7 +4,7 @@ import Image from 'next/image'
 import { useInView } from 'react-intersection-observer'
 
 export function TilesSection() {
-	const images = Array.from({ length: 8 }, (_, index) => `/images/tiles/slice_${index}.jpg`)
+	const images = Array.from({ length: 8 }, (_, index) => `/images/tiles/slice_${index}.webp`)
 
 	const imageVariants = {
 		hidden: { opacity: 0, scale: 0 },

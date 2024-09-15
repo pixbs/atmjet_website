@@ -10,9 +10,9 @@ export default function GroupCharterPage() {
 		description: t(`group-charters-cards.${card}.description`),
 	}))
 	const images = [
-		'/images/business_agencies/hero.jpg',
-		'/images/group_charter/card2.jpg',
-		'/images/group_charter/hero.jpg',
+		'/images/business_agencies/hero.webp',
+		'/images/group_charter/card2.webp',
+		'/images/group_charter/hero.webp',
 	]
 
 	return (
@@ -20,7 +20,7 @@ export default function GroupCharterPage() {
 			<SubpageHeroSection
 				title={t('group-charters-hero.title')}
 				description={t('group-charters-hero.description')}
-				imageUrl='/images/group_charter/hero.jpg'
+				imageUrl='/images/group_charter/hero.webp'
 			/>
 			<section>
 				<div className='container'>
@@ -40,7 +40,7 @@ export default function GroupCharterPage() {
 				title={t('partners-contact-us.title')}
 				description={t('partners-contact-us.description')}
 				buttonText={t('partners-contact-us.button')}
-				imageSrc='/images/partners/contact_us.jpg'
+				imageSrc='/images/partners/contact_us.webp'
 			/>
 		</main>
 	)

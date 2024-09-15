@@ -9,10 +9,10 @@ export default function CargoPage() {
 		description: t(`cargo-why-us.${card}.description`),
 	}))
 	const images = [
-		'/images/cargo_charter/why_us_global.jpg',
-		'/images/cargo_charter/why_us_personalized.jpg',
-		'/images/cargo_charter/why_us_security.jpg',
-		'/images/cargo_charter/why_us_guarantees.jpg',
+		'/images/cargo_charter/why_us_global.webp',
+		'/images/cargo_charter/why_us_personalized.webp',
+		'/images/cargo_charter/why_us_security.webp',
+		'/images/cargo_charter/why_us_guarantees.webp',
 	]
 
 	return (
@@ -20,7 +20,7 @@ export default function CargoPage() {
 			<SubpageHeroSection
 				title={t('cargo-hero.title')}
 				description={t('cargo-hero.description')}
-				imageUrl='/images/cargo_charter/hero.jpg'
+				imageUrl='/images/cargo_charter/hero.webp'
 			/>
 			<WhyUsSection title={t('cargo-why-us.title')} cards={cards} images={images} />
 			<CargoRequestSection />
@@ -28,7 +28,7 @@ export default function CargoPage() {
 				title={t('partners-contact-us.title')}
 				description={t('partners-contact-us.description')}
 				buttonText={t('partners-contact-us.button')}
-				imageSrc='/images/cargo_charter/contact_us.jpg'
+				imageSrc='/images/cargo_charter/contact_us.webp'
 			/> */}
 		</main>
 	)

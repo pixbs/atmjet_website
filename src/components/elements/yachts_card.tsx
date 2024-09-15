@@ -16,7 +16,7 @@ export function YachtsCard() {
 			whileInView={{ opacity: 1, y: 0 }}
 		>
 			<Image
-				src='/images/home_page/yachts.jpg'
+				src='/images/home_page/yachts.webp'
 				className='min-h-64 object-cover object-center'
 				loading='lazy'
 				alt={t('title')}
@@ -44,7 +44,7 @@ export function YachtsCard() {
 				whileInView={{ opacity: 1, y: 0 }}
 			>
 				<Image
-					src='/images/atm_jet_group/yachts.jpg'
+					src='/images/atm_jet_group/yachts.webp'
 					alt={t('call-to-action')}
 					className='mx-auto aspect-[3/1] w-full object-cover object-center'
 					loading='lazy'

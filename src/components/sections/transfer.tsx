@@ -13,7 +13,7 @@ export function TransferSection() {
 							className='relative -mx-8 -mt-8 h-48 items-center justify-center overflow-hidden rounded-t-2xl bg-cover bg-center md:m-0 md:w-full'
 						>
 							<Image 
-								src='/images/home_page/transfer.jpg'
+								src='/images/home_page/transfer.webp'
 								alt='Image of black car'
 								className='object-cover absolute'
 								layout='fill'

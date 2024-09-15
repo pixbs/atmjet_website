@@ -13,11 +13,11 @@ export default function PartnersPage() {
 	}))
 
 	const whyUsImages = [
-		'/images/home_page/why_us_years.jpg',
-		'/images/home_page/why_us_clients.jpg',
-		'/images/home_page/why_us_trusted_by_celeb.jpg',
-		'/images/home_page/why_us_same_day_departure.jpg',
-		'/images/home_page/why_us_excellence.jpg',
+		'/images/home_page/why_us_years.webp',
+		'/images/home_page/why_us_clients.webp',
+		'/images/home_page/why_us_trusted_by_celeb.webp',
+		'/images/home_page/why_us_same_day_departure.webp',
+		'/images/home_page/why_us_excellence.webp',
 	]
 
 	return (
@@ -32,7 +32,7 @@ export default function PartnersPage() {
 						{t('partners-hero.title2')}
 					</h1>
 					<Image
-						src='/images/partners/hero.jpg'
+						src='/images/partners/hero.webp'
 						alt={t('partners-hero.title')}
 						className='h-64 rounded-2xl bg-cover bg-center bg-no-repeat'
 						loading='lazy'
@@ -56,7 +56,7 @@ export default function PartnersPage() {
 				title={t('partners-contact-us.title')}
 				description={t('partners-contact-us.description')}
 				buttonText={t('partners-contact-us.button')}
-				imageSrc='/images/partners/contact_us.jpg'
+				imageSrc='/images/partners/contact_us.webp'
 			/>
 		</main>
 	)
