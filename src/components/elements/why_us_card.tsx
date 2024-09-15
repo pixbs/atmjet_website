@@ -23,7 +23,7 @@ export function WhyUsCard(props: WhyUsCardProps) {
 			whileInView={{ opacity: 1, y: 0 }}
 			style={{ top: `${topPadding}px` }}
 		>
-			<div className='gap-4 md:w-full p-8 md:pb-24 md:pt-16'>
+			<div className='gap-4 p-8 md:w-full md:pb-24 md:pt-16'>
 				{!!num && (
 					<Counter className='bg-gold bg-clip-text font-serif text-6xl text-transparent md:bg-fixed'>
 						{num}
@@ -36,7 +36,7 @@ export function WhyUsCard(props: WhyUsCardProps) {
 				<Image
 					src={imageSrc}
 					alt={title}
-					className='w-full object-cover object-right lg:w-1/2 aspect-video'
+					className='aspect-video w-full object-cover object-right lg:w-1/2'
 					loading='lazy'
 					width={380}
 					height={380}

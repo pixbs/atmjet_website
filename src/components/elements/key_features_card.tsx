@@ -21,9 +21,9 @@ export function KeyFeatureCard(props: KeyFeatureCardProps) {
 		>
 			<h3 className='z-10'>{title}</h3>
 			<p className='z-10'>{description}</p>
-			<Image 
+			<Image
 				src={imageSrc}
-				className='absolute inset-0 w-full h-full object-cover'
+				className='absolute inset-0 h-full w-full object-cover'
 				alt={title}
 				width={400}
 				height={500}

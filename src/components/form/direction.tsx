@@ -72,7 +72,7 @@ export function Direction(props: DirectionProps) {
 				/>
 			</div>
 			{showReturn && (
-				<div className='w-full rounded-sm bg-gray-900 relative'>
+				<div className='relative w-full rounded-sm bg-gray-900'>
 					<Controller
 						control={control}
 						name={`direction.${index}.returnDate`}

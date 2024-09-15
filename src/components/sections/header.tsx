@@ -6,6 +6,7 @@ import Logo from '@/assets/svg/logo.svg'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
+import { useLocale } from 'next-intl'
 import { Navbar } from './navbar'
 
 export function HeaderSection() {
@@ -14,6 +15,7 @@ export function HeaderSection() {
 	const [showHeader, setShowHeader] = useState(true)
 	const [lastScrollY, setLastScrollY] = useState(0)
 	const path = usePathname()
+	const locale = useLocale()
 
 	useEffect(() => {
 		document.body.style.overflow = 'auto'
@@ -58,14 +60,17 @@ export function HeaderSection() {
 			>
 				<div className={`container !my-8`}>
 					<header className='flex flex-row justify-between'>
-						<button className={isMenuOpen ? 'p-2' : 'bg-transparent p-2 text-gray-900'} aria-label='Open/Close menu button'>
+						<button
+							className={isMenuOpen ? 'p-2' : 'bg-transparent p-2 text-gray-900'}
+							aria-label='Open/Close menu button'
+						>
 							{isMenuOpen ? (
 								<Close className='h-8 animate-in spin-in' onClick={handleClick} />
 							) : (
 								<BurgerMenu className='h-8 animate-in spin-in' onClick={handleClick} />
 							)}
 						</button>
-						<Link href={'/'} aria-label='Logotype, leads to home page'>
+						<Link href={`/${locale}/`} aria-label='Logotype, leads to home page'>
 							<Logo className='h-8 text-gray-900' />
 						</Link>
 					</header>

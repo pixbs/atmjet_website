@@ -29,10 +29,10 @@ export function TilesSection() {
 						transition={{ duration: 0.5, delay: index * 0.2 }}
 						ref={ref} // Attach the ref to the element being observed
 					>
-						<Image 
+						<Image
 							src={image}
 							alt={`Tile ${index + 1}`}
-							className='object-cover' 
+							className='object-cover'
 							width={380}
 							height={380}
 						/>

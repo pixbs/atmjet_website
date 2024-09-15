@@ -21,7 +21,7 @@ export function ImagesCarousel(props: PropType) {
 						key={index}
 						src={slide}
 						alt={`Slide ${index}`}
-						className='w-full aspect-video shrink-0 rounded-xl object-cover object-center'
+						className='aspect-video w-full shrink-0 rounded-xl object-cover object-center'
 						loading='lazy'
 						width={720}
 						height={405}

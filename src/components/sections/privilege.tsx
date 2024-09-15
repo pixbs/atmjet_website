@@ -11,9 +11,9 @@ export function PrivilegeSection() {
 
 	const iconsStyle = 'h-11 w-11 shrink-0 md:h-11 md:w-11'
 	const icons = [
-		<Plane className={iconsStyle} alt='Icon of plane'/>,
-		<Car className={iconsStyle} alt='Icon of car'/>,
-		<Diamond className={iconsStyle} alt='Icon of diamond'/>,
+		<Plane className={iconsStyle} alt='Icon of plane' />,
+		<Car className={iconsStyle} alt='Icon of car' />,
+		<Diamond className={iconsStyle} alt='Icon of diamond' />,
 	]
 
 	return (
@@ -84,7 +84,7 @@ function PrivilegeContact() {
 					height={200}
 					alt='Image of Artem CEO of ATM JET'
 					src='/images/home_page/artem.webp'
-					className='w-full object-cover object-center aspect-video'
+					className='aspect-video w-full object-cover object-center'
 				/>
 				<div className='w-full justify-center p-6 md:p-10'>
 					<h3 className='bg-gold bg-clip-text font-serif text-transparent'>{t('title')}</h3>

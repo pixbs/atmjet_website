@@ -36,7 +36,7 @@ export async function EmptyLegSection() {
 						<h3>{t('telegram.title')}</h3>
 						<p className='text-gray-900'>{t('telegram.description')}</p>
 						<Link href='tg://resolve?domain=@atmjet1'>
-							<button className='mt-2 bg-blue-600 text-gray-900 big'>{t('telegram.button')}</button>
+							<button className='big mt-2 bg-blue-600 text-gray-900'>{t('telegram.button')}</button>
 						</Link>
 					</div>
 				</div>

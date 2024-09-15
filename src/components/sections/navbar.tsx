@@ -2,9 +2,11 @@ import ArrowTopRight from '@/assets/svg/arrow-top-right.svg'
 import { useTranslations } from 'next-intl'
 import Link from 'next/link'
 import { LocaleSwitch } from '../elements'
+import { useLocale } from 'next-intl'
 
 export function Navbar() {
 	const t = useTranslations()
+	const locale = useLocale()
 
 	return (
 		<section className='fixed inset-0 bottom-0 z-40 flex-col overflow-y-auto bg-gray-100 bg-opacity-80 backdrop-blur-xl duration-200 animate-in fade-in lg:bottom-auto'>
@@ -14,11 +16,11 @@ export function Navbar() {
 						<Link href='/' legacyBehavior passHref>
 							{t('navigation.home')}
 						</Link>
-						<Link href='/partners'>{t('navigation.partners')}</Link>
-						<Link href='/business_agents'>{t('navigation.business-agents')}</Link>
-						<Link href='/medical_aviation'>{t('navigation.medical-aviation')}</Link>
-						<Link href='/empty_legs'>{t('navigation.empty-legs')}</Link>
-						<Link href='/cargo_charter'>{t('navigation.cargo-charter')}</Link>
+						<Link href={`/${locale}/partners`}>{t('navigation.partners')}</Link>
+						<Link href={`/${locale}/business_agents`}>{t('navigation.business-agents')}</Link>
+						<Link href={`/${locale}/medical_aviation`}>{t('navigation.medical-aviation')}</Link>
+						<Link href={`/${locale}/empty_legs`}>{t('navigation.empty-legs')}</Link>
+						<Link href={`/${locale}/cargo_charter`}>{t('navigation.cargo-charter')}</Link>
 						<Link href='?showBooking=Header' scroll={false} className='hidden self-start lg:block'>
 							<button className='mt-4'>{t('footer.button')}</button>
 						</Link>
@@ -46,19 +48,19 @@ export function Navbar() {
 				</div>
 				<div className='w-full flex-col justify-between'>
 					<div className='[&>*]:duration-600 [&>*]:animate-in [&>*]:fade-in'>
-						<Link href={`/sales_dept`} className='text-right'>
+						<Link href={`/${locale}/sales_dept`} className='text-right'>
 							{t('navigation.sales-dept')}
 						</Link>
-						<Link href='/group_charters' className='text-right'>
+						<Link href={`/${locale}/group_charters`} className='text-right'>
 							{t('navigation.group-charters')}
 						</Link>
-						<Link href='/atm_jet_group' className='text-right'>
+						<Link href={`/${locale}/atm_jet_group`} className='text-right'>
 							{t('navigation.atm-jet-group')}
 						</Link>
-						<Link href='/aircraft' className='text-right'>
+						<Link href={`/${locale}/aircraft`} className='text-right'>
 							{t('navigation.aircraft')}
 						</Link>
-						<Link href={`/yachts`} className='text-right'>
+						<Link href={`/${locale}/yachts`} className='text-right'>
 							{t('navigation.yachts')}
 						</Link>
 					</div>

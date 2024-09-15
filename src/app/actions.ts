@@ -26,7 +26,6 @@ export async function getAirport(str: string, locale: string) {
 				ilike(airports.iataCode, `%${str}%`),
 				ilike(airports.icaoCode, `%${str}%`),
 			),
-		
 		)
 		.limit(10)
 	if (locale === 'ru' || locale === 'uk') {

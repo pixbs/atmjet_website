@@ -4,17 +4,17 @@ import { useTranslations } from 'next-intl'
 import Image from 'next/image'
 import Link from 'next/link'
 import { LocaleSwitch } from '../elements'
+import { useLocale } from 'next-intl'
 
 export function FooterSection() {
 	const t = useTranslations()
 	const year = new Date().getFullYear()
+	const locale = useLocale()
 
 	return (
 		<>
-			<section
-				className='bg-cover bg-top bg-no-repeat md:bg-fixed'
-			>
-				<Image 
+			<section className='bg-cover bg-top bg-no-repeat md:bg-fixed'>
+				<Image
 					alt='Footer background image of a plane cabin with a view of two seats'
 					src='/images/home_page/footer.webp'
 					layout='fill'
@@ -31,12 +31,12 @@ export function FooterSection() {
 					</div>
 					<div className='w-full flex-row justify-between'>
 						<div className='[&>*]:duration-600 [&>*]:animate-in [&>*]:fade-in'>
-							<Link href='/'>{t('navigation.home')}</Link>
-							<Link href='/partners'>{t('navigation.partners')}</Link>
-							<Link href='/business_agents'>{t('navigation.business-agents')}</Link>
-							<Link href='/medical_aviation'>{t('navigation.medical-aviation')}</Link>
-							<Link href='/empty_legs'>{t('navigation.empty-legs')}</Link>
-							<Link href='/cargo_charter'>{t('navigation.cargo-charter')}</Link>
+							<Link href={`/${locale}/`}>{t('navigation.home')}</Link>
+							<Link href={`/${locale}/partners`}>{t('navigation.partners')}</Link>
+							<Link href={`/${locale}/business_agents`}>{t('navigation.business-agents')}</Link>
+							<Link href={`/${locale}/medical_aviation`}>{t('navigation.medical-aviation')}</Link>
+							<Link href={`/${locale}/empty_legs`}>{t('navigation.empty-legs')}</Link>
+							<Link href={`/${locale}/cargo_charter`}>{t('navigation.cargo-charter')}</Link>
 						</div>
 						<div className='[&>*]:duration-600 [&>*]:animate-in [&>*]:fade-in'>
 							<Link href='tg://resolve?domain=@atmjet1' className='flex items-center'>
@@ -58,11 +58,11 @@ export function FooterSection() {
 					</div>
 					<div className='w-full flex-row justify-between'>
 						<div className='[&>*]:duration-600 [&>*]:animate-in [&>*]:fade-in'>
-							<Link href='/sales_dept'>{t('navigation.sales-dept')}</Link>
-							<Link href='/group_charters'>{t('navigation.group-charters')}</Link>
-							<Link href='/atm_jet_group'>{t('navigation.atm-jet-group')}</Link>
-							<Link href='/aircraft'>{t('navigation.aircraft')}</Link>
-							<Link href='/yachts'>{t('navigation.yachts')}</Link>
+							<Link href={`/${locale}/sales_dept`}>{t('navigation.sales-dept')}</Link>
+							<Link href={`/${locale}/group_charters`}>{t('navigation.group-charters')}</Link>
+							<Link href={`/${locale}/atm_jet_group`}>{t('navigation.atm-jet-group')}</Link>
+							<Link href={`/${locale}/aircraft`}>{t('navigation.aircraft')}</Link>
+							<Link href={`/${locale}/yachts`}>{t('navigation.yachts')}</Link>
 						</div>
 					</div>
 					<Link href='?showBooking=Footer' className='md:self-start' scroll={false}>

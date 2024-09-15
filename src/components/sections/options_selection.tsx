@@ -41,10 +41,10 @@ function OptionCard(props: OptionCardProps) {
 	const { title, description, list, imageSrc } = props
 	return (
 		<div className='card sticky w-full gap-4 overflow-hidden bg-gray-150'>
-			<Image 
+			<Image
 				src={imageSrc}
 				alt={title}
-				className='h-48 bg-cover bg-center' 
+				className='h-48 bg-cover bg-center'
 				loading='lazy'
 				width={564}
 				height={100}
