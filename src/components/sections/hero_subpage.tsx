@@ -13,7 +13,7 @@ export function SubpageHeroSection(props: SubpageHeroSectionProps) {
 			<div className='container gap-20 pt-32'>
 				<div className='gap-4'>
 					<h1 className='text-center'>{title}</h1>
-					<p className='text-center'>{description}</p>
+					<p className='text-balance text-center'>{description}</p>
 				</div>
 				<Image
 					src={imageUrl}

@@ -78,14 +78,14 @@ function PrivilegeContact() {
 					backgroundImage: 'url(/images/home_page/pattern.png)',
 				}}
 			>
-				<Image
+				{/* <Image
 					layout='responsive'
 					width={300}
 					height={200}
 					alt='Image of Artem CEO of ATM JET'
 					src='/images/home_page/artem.webp'
 					className='aspect-video w-full object-cover object-center'
-				/>
+				/> */}
 				<div className='w-full justify-center p-6 md:p-10'>
 					<h3 className='bg-gold bg-clip-text font-serif text-transparent'>{t('title')}</h3>
 					<p className='pt-4'>{t('description')}</p>
