@@ -28,6 +28,16 @@ const nextConfig = {
 
 		return config
 	},
+	images: {
+		remotePatterns: [
+			{
+				protocol: 'https',
+				hostname: 'atmjet.ams3.cdn.digitaloceanspaces.com',
+				port: '',
+				pathname: '/**',
+			},
+		],
+	},
 }
 
 export default withNextIntl(nextConfig)

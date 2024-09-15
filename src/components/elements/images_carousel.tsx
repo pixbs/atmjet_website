@@ -2,6 +2,7 @@ import { EmblaOptionsType } from 'embla-carousel'
 import useEmblaCarousel from 'embla-carousel-react'
 import { WheelGesturesPlugin } from 'embla-carousel-wheel-gestures'
 import { DotButton, useDotButton } from './carousel_dot_button'
+import Image from 'next/image'
 
 type PropType = {
 	slides: string[]
@@ -13,14 +14,17 @@ export function ImagesCarousel(props: PropType) {
 	const { selectedIndex, scrollSnaps, onDotButtonClick } = useDotButton(emblaApi)
 
 	return (
-		<div className='overflow-clip bg-red-950' ref={emblaRef}>
+		<div className='overflow-clip bg-gray-150' ref={emblaRef}>
 			<div className='flex-row'>
 				{props.slides.map((slide, index) => (
-					<img
+					<Image
 						key={index}
-						className='aspect-[14/10] w-full shrink-0 rounded-xl bg-cover bg-center'
+						src={slide}
+						alt={`Slide ${index}`}
+						className='w-full aspect-video shrink-0 rounded-xl object-cover object-center'
 						loading='lazy'
-						style={{ backgroundImage: `url(${slide})` }}
+						width={720}
+						height={405}
 					/>
 				))}
 			</div>

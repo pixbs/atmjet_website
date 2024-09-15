@@ -1,6 +1,7 @@
 'use client'
 import { motion } from 'framer-motion'
 import { useTranslations } from 'next-intl'
+import Image from 'next/image'
 import Link from 'next/link'
 
 export function YachtsCard() {
@@ -14,9 +15,13 @@ export function YachtsCard() {
 			transition={{ duration: 0.5 }}
 			whileInView={{ opacity: 1, y: 0 }}
 		>
-			<div
-				className='min-h-64 bg-cover bg-center'
-				style={{ backgroundImage: 'url(/images/home_page/yachts.jpg)' }}
+			<Image
+				src='/images/home_page/yachts.jpg'
+				className='min-h-64 object-cover object-center'
+				loading='lazy'
+				alt={t('title')}
+				width={1200}
+				height={255}
 			/>
 			<div className='gap-8 px-6 md:flex-row'>
 				{cards.map((card, index) => (
@@ -38,9 +43,13 @@ export function YachtsCard() {
 				transition={{ duration: 0.5 }}
 				whileInView={{ opacity: 1, y: 0 }}
 			>
-				<div
-					className='mx-auto aspect-[3/1] w-full bg-cover bg-center'
-					style={{ backgroundImage: 'url(/images/atm_jet_group/yachts.jpg)' }}
+				<Image
+					src='/images/atm_jet_group/yachts.jpg'
+					alt={t('call-to-action')}
+					className='mx-auto aspect-[3/1] w-full object-cover object-center'
+					loading='lazy'
+					width={1100}
+					height={400}
 				/>
 				<div className='gap-6 p-6'>
 					<h3>{t('call-to-action')}</h3>

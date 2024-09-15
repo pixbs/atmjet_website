@@ -1,5 +1,6 @@
 'use client'
 import { motion } from 'framer-motion'
+import Image from 'next/image'
 
 interface AdvantagesSectionProps {
 	title: string
@@ -36,7 +37,7 @@ export function AdvantagesSection(props: AdvantagesSectionProps) {
 }
 
 function AdvantagesCard(props: AdvantagesSectionProps) {
-	const { imageSrc, cards } = props
+	const { imageSrc, title, cards } = props
 
 	return (
 		<motion.div
@@ -45,9 +46,13 @@ function AdvantagesCard(props: AdvantagesSectionProps) {
 			transition={{ duration: 0.5 }}
 			whileInView={{ opacity: 1, y: 0 }}
 		>
-			<div
-				className='min-h-80 bg-cover bg-center'
-				style={{ backgroundImage: `url(${imageSrc})` }}
+			<Image
+				src={imageSrc}
+				alt={title}
+				className='aspect-[17/5] object-cover object-center'
+				loading='lazy'
+				width={1360}
+				height={400}
 			/>
 			<div className='gap-8 px-6 md:flex-row'>
 				{cards.map((card, index) => (

@@ -1,6 +1,7 @@
 import { FileCard } from '@/components/elements'
 import { BestPriceSection, TransferSection } from '@/components/sections'
 import { useLocale, useTranslations } from 'next-intl'
+import Image from 'next/image'
 
 export default function businessAgentsPage() {
 	const t = useTranslations()
@@ -23,9 +24,13 @@ export default function businessAgentsPage() {
 							<hr />
 							<p>{t('guide.description2')}</p>
 						</div>
-						<div
+						<Image
+							src='/images/business_agencies/hero2.jpg'
+							alt={t('business-agents-hero.title')}
 							className='h-80 w-full rounded-2xl bg-cover bg-center bg-no-repeat'
-							style={{ backgroundImage: 'url(/images/business_agencies/hero2.jpg)' }}
+							loading='lazy'
+							width={560}
+							height={320}
 						/>
 					</div>
 				</div>

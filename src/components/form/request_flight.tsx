@@ -100,13 +100,13 @@ export function RequestForm(props: RequestFormProps) {
 					<div className='flex-row gap-1 rounded-full border border-gray-500 p-0.5'>
 						<button
 							onClick={() => handeleRoundTrip(false)}
-							className={`${isRoundTrip ? 'bg-gray-100 text-gray-900' : 'bg-gray-300 text-gray-500'}`}
+							className={`${isRoundTrip ? 'bg-gray-100 text-gray-900' : 'bg-gray-300 text-gray-800'}`}
 						>
 							{t('multi-leg')}
 						</button>
 						<button
 							onClick={() => handeleRoundTrip(true)}
-							className={`${isRoundTrip ? 'bg-gray-300 text-gray-500' : 'bg-gray-100 text-gray-900'}`}
+							className={`${isRoundTrip ? 'bg-gray-300 text-gray-800' : 'bg-gray-100 text-gray-900'}`}
 						>
 							{t('round-trip')}
 						</button>

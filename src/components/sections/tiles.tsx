@@ -1,5 +1,6 @@
 'use client'
 import { motion } from 'framer-motion'
+import Image from 'next/image'
 import { useInView } from 'react-intersection-observer'
 
 export function TilesSection() {
@@ -28,7 +29,13 @@ export function TilesSection() {
 						transition={{ duration: 0.5, delay: index * 0.2 }}
 						ref={ref} // Attach the ref to the element being observed
 					>
-						<img src={image} alt='' className='object-cover' />
+						<Image 
+							src={image}
+							alt={`Tile ${index + 1}`}
+							className='object-cover' 
+							width={380}
+							height={380}
+						/>
 					</motion.div>
 				))}
 			</div>

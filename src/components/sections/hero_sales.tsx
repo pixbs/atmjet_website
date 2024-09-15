@@ -1,7 +1,7 @@
 import { useTranslations } from 'next-intl'
 import Link from 'next/link'
 import { Counter } from '../elements'
-
+import Image from 'next/image'
 export function HeroSalesSection() {
 	const t = useTranslations('sales-hero')
 
@@ -27,9 +27,13 @@ export function HeroSalesSection() {
 				<p className='absolute bottom-8 left-5 z-20 text-sm'>©ATM JET</p>
 			</div>
 			<div className='hero-darkening absolute inset-0 z-10' />
-			<div
-				className='absolute inset-0 z-0 h-full w-full bg-cover bg-center bg-no-repeat object-cover md:bg-fixed'
-				style={{ backgroundImage: `url(/images/jets_dep/jetsmarket_page_firstscreen_mainpic.jpg)` }}
+			<Image
+				src='/images/jets_dep/jetsmarket_page_firstscreen_mainpic.jpg'
+				alt='Hero sales'
+				className='absolute inset-0 z-0 h-full w-full object-cover md:bg-fixed'
+				loading='lazy'
+				width={1920}
+				height={1080}
 			/>
 		</section>
 	)

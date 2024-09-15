@@ -1,3 +1,4 @@
+import Image from 'next/image'
 interface SubpageHeroSectionProps {
 	title: string
 	description: string
@@ -14,9 +15,13 @@ export function SubpageHeroSection(props: SubpageHeroSectionProps) {
 					<h1 className='text-center'>{title}</h1>
 					<p className='text-center'>{description}</p>
 				</div>
-				<div
-					className='h-64 rounded-2xl bg-cover bg-center bg-no-repeat'
-					style={{ backgroundImage: `url(${imageUrl})` }}
+				<Image
+					src={imageUrl}
+					alt={title}
+					className='h-64 w-full rounded-2xl object-cover'
+					loading='lazy'
+					width={1920}
+					height={1080}
 				/>
 			</div>
 		</section>

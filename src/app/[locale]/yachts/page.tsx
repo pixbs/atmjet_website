@@ -7,9 +7,9 @@ import {
 	WeInspectSection,
 	WhyUsSection,
 } from '@/components/sections'
-import { db, vehicles, yachts as yachtsTable } from '@/lib/drizzle'
-import { sql } from 'drizzle-orm'
+import { db, yachts as yachtsTable } from '@/lib/drizzle'
 import { getTranslations } from 'next-intl/server'
+import Image from 'next/image'
 
 export default async function YachtsPage() {
 	const t = await getTranslations()
@@ -73,22 +73,26 @@ export default async function YachtsPage() {
 					title: t('yachts-options.card1.title'),
 					description: t('yachts-options.card1.description'),
 					list: t('yachts-options.card1.list').split(' \\n'),
-					imageSrc: 'url(/images/yachts/yacht_page_yachtservices_legal.jpg)',
+					imageSrc: '/images/yachts/yacht_page_yachtservices_legal.jpg',
 				}}
 				card2={{
 					title: t('yachts-options.card2.title'),
 					description: t('yachts-options.card2.description'),
 					list: t('yachts-options.card2.list').split(' \\n'),
-					imageSrc: 'url(/images/yachts/yacht_page_yachtservices_finance.jpg)',
+					imageSrc: '/images/yachts/yacht_page_yachtservices_finance.jpg',
 				}}
 			/>
 			<section>
 				<div className='container'>
 					<h2 className='mx-auto max-w-xl text-center'>{t('yachts-why-us.title')}</h2>
 					<p className='mx-auto max-w-xl py-4 text-center'>{t('yachts-why-us.description')}</p>
-					<div
-						className='my-10 h-40 rounded-xl bg-cover bg-center bg-no-repeat'
-						style={{ backgroundImage: 'url(/images/yachts/yacht_page_over20years_l.jpg)' }}
+					<Image
+						src='/images/yachts/yacht_page_over20years_l.jpg'
+						height={160}
+						width={160}
+						alt='Image of a yacht'
+						className='my-10 h-40 rounded-xl object-cover object-center'
+						loading='lazy'
 					/>
 				</div>
 			</section>

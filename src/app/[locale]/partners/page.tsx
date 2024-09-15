@@ -1,6 +1,7 @@
 import { Counter } from '@/components/elements'
 import { ContactUsSection, PersonalManagerSection, WhyUsSection } from '@/components/sections'
 import { useTranslations } from 'next-intl'
+import Image from 'next/image'
 
 export default function PartnersPage() {
 	const t = useTranslations()
@@ -30,9 +31,13 @@ export default function PartnersPage() {
 						</Counter>
 						{t('partners-hero.title2')}
 					</h1>
-					<div
+					<Image
+						src='/images/partners/hero.jpg'
+						alt={t('partners-hero.title')}
 						className='h-64 rounded-2xl bg-cover bg-center bg-no-repeat'
-						style={{ backgroundImage: 'url(/images/partners/hero.jpg)' }}
+						loading='lazy'
+						width={1200}
+						height={260}
 					/>
 					<div className='card gap-4 bg-gray-150 p-8 md:p-10'>
 						<h2>{t('instant-payment.title')}</h2>

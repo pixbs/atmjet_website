@@ -1,5 +1,6 @@
 import { useTranslations } from 'next-intl'
-import { TestimonialsCarousel, TestimonialsCard } from '../elements'
+import { TestimonialsCarousel } from '../elements'
+import Image from 'next/image'
 
 export function WeInspectSection() {
 	const t = useTranslations('we-incpect')
@@ -45,9 +46,13 @@ function WeInspectCard(props: WeInspectCardProps) {
 				<h3 className=''>{title}</h3>
 				<p className=''>{description}</p>
 			</div>
-			<div
-				className='h-52 w-full bg-cover bg-center'
-				style={{ backgroundImage: `url(${imageSrc})` }}
+			<Image
+				src={imageSrc}
+				alt={title}
+				width={560}
+				height={320}
+				className='h-52 w-full object-cover object-center'
+				loading='lazy'
 			/>
 		</div>
 	)

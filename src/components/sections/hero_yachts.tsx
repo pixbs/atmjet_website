@@ -1,5 +1,6 @@
 import { useTranslations } from 'next-intl'
 import Link from 'next/link'
+import Image from 'next/image'
 
 export function HeroYachtsSection() {
 	const t = useTranslations('yachts-hero')
@@ -17,9 +18,13 @@ export function HeroYachtsSection() {
 				<p className='absolute bottom-8 left-5 z-20 hidden text-sm md:block'>©ATM JET</p>
 			</div>
 			<div className='hero-darkening absolute inset-0 z-10' />
-			<div
-				className='absolute inset-0 z-0 h-full w-full bg-cover bg-center bg-no-repeat object-cover md:bg-fixed'
-				style={{ backgroundImage: `url(/images/yachts/yacht_page_firstscreen_mainpic.jpg)` }}
+			<Image
+				className='absolute inset-0 z-0 h-full w-full object-cover'
+				loading='lazy'
+				src='/images/yachts/yacht_page_firstscreen_mainpic.jpg'
+				alt='yacht'
+				width={1920}
+				height={1080}
 			/>
 		</section>
 	)

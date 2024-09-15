@@ -53,13 +53,13 @@ export default async function SalesDeptPage() {
 					title: t('sales-options.card1.title'),
 					description: t('sales-options.card1.description'),
 					list: t('sales-options.card1.list').split(' \\n'),
-					imageSrc: 'url(/images/jets_dep/jetsmarket_page_aircraftservices_legaldpt.jpg)',
+					imageSrc: '/images/jets_dep/jetsmarket_page_aircraftservices_legaldpt.jpg',
 				}}
 				card2={{
 					title: t('sales-options.card2.title'),
 					description: t('sales-options.card2.description'),
 					list: t('sales-options.card2.list').split(' \\n'),
-					imageSrc: 'url(/images/jets_dep/jetsmarket_page_aircraftservices_financedpt.jpg)',
+					imageSrc: '/images/jets_dep/jetsmarket_page_aircraftservices_financedpt.jpg',
 				}}
 			/>
 			<AdvantagesSection

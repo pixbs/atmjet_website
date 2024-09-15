@@ -1,5 +1,6 @@
 import { useTranslations } from 'next-intl'
 import Link from 'next/link'
+import Image from 'next/image'
 
 export function BestPriceSection() {
 	const t = useTranslations('best-price')
@@ -14,9 +15,13 @@ export function BestPriceSection() {
 							<button className='big'>{t('button')}</button>
 						</Link>
 					</div>
-					<div
-						className='h-80 w-full rounded-2xl bg-cover bg-center bg-no-repeat'
-						style={{ backgroundImage: 'url(/images/business_agencies/insurance.jpg)' }}
+					<Image
+						src='/images/business_agencies/insurance.jpg'
+						alt='Best price'
+						className='h-80 w-full rounded-2xl object-cover object-center'
+						loading='lazy'
+						width={600}
+						height={320}
 					/>
 				</div>
 			</div>

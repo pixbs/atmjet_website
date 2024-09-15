@@ -1,5 +1,5 @@
 import Link from 'next/link'
-
+import Image from 'next/image'
 interface FileCardProps {
 	url: string
 	title: string
@@ -12,9 +12,13 @@ export function FileCard(props: FileCardProps) {
 
 	return (
 		<div className='overflow-hidden rounded-2xl bg-gray-150 md:min-w-80'>
-			<div
-				className='h-56 w-full bg-cover bg-center bg-no-repeat'
-				style={{ backgroundImage: `url(${imageUrl})` }}
+			<Image
+				src={imageUrl}
+				alt={title}
+				width={560}
+				height={320}
+				className='h-56 w-full object-cover object-center'
+				loading='lazy'
 			/>
 			<div className='gap-6 p-6'>
 				<h3>{title}</h3>
