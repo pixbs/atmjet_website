@@ -6,6 +6,7 @@ import { getMessages } from 'next-intl/server'
 import { Inter } from 'next/font/google'
 import { headers } from 'next/headers'
 import { SpeedInsights } from "@vercel/speed-insights/next"
+import { Analytics } from "@vercel/analytics/react"
 import './globals.css'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -32,6 +33,7 @@ export default async function LocaleLayout({
 			<body className={inter.className}>
 				<NextIntlClientProvider messages={messages}>
 					<SpeedInsights />
+					<Analytics />
 					<Cookies />
 					<HeaderSection />
 					{children}
