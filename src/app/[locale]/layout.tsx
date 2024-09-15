@@ -33,14 +33,15 @@ export default async function LocaleLayout({
 		<html lang={locale}>
 			<body className={inter.className}>
 				<NextIntlClientProvider messages={messages}>
-					<SpeedInsights />
-					<Analytics />
+	
 					<Cookies />
 					<HeaderSection />
 					{children}
 					<FooterSection />
 					<BookingDialog host={host} />
 				</NextIntlClientProvider>
+				<SpeedInsights />
+				<Analytics />
 			</body>
 		</html>
 	)

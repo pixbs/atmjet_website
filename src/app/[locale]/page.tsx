@@ -48,7 +48,7 @@ export default function HomePage() {
 	return (
 		<Suspense fallback={<Preloader />}>
 			<main>
-				{/* <Preloader /> */}
+				<Preloader />
 				<AngleBar />
 				<HeroSection title={t('home-hero.title')} />
 				<MakeBookingSection />
