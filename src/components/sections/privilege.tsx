@@ -2,7 +2,6 @@ import Car from '@/assets/svg/car-gold.svg'
 import Diamond from '@/assets/svg/diamond-gold.svg'
 import Plane from '@/assets/svg/plane-gold.svg'
 import { useTranslations } from 'next-intl'
-import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
 
@@ -20,8 +19,8 @@ export function PrivilegeSection() {
 		<section className='bg-gray-150'>
 			<div className='container gap-10 lg:flex-row'>
 				<h2 className='top-40 flex-shrink-0 gap-6 self-start lg:sticky lg:w-72'>
-					Join the <br />
-					<span className='bg-gold bg-clip-text text-transparent'>ATM JET Gold</span>
+					{t('title')} <br />
+					<span className='bg-gold bg-clip-text text-transparent'>{t('title2')}</span>
 				</h2>
 				<div className='relative w-full gap-4 self-stretch overflow-clip'>
 					<div className='overflow-clip rounded-2xl'>
