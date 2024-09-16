@@ -21,6 +21,7 @@
 		"ultra-long-range-jets": "Наддалекі"
 	},
 	"vehicle": {
+		"description": "Літак {tailModel} летає під бортовим номером {tailNumber}. Управляється оператором {tailOperator}, літак {tailModel} був побудований у {tailYear} році. {tailModel} базується на {tailHomebase} і має пасажировмість {tailMaxpax} людей. ATM JET пропонує можливість замовити приватний літак {tailModel} для польоту в будь-яку точку планети. Ми працюємо для вас більше 16 років і маємо великий досвід у організації рейсів бізнес-авиації.",
 		"tail-number": "Номер:",
 		"tail-operator": "Оператор:",
 		"tail-vendor": "Вендор:",
@@ -32,6 +33,14 @@
 		"tail-homebase-country": "Країна стоянки:",
 		"tail-manufacturer": "Виробник:",
 		"tail-interiorrefit": "Переробка інтер'єру:",
-		"tail-exteriorrefit": "Переробка екстер'єру':"
+		"tail-exteriorrefit": "Переробка екстер'єру':",
+		"yacht-speed": "Швидкість:",
+		"yacht-maxspeed": "Макс. швидкість:",
+		"yacht-winter-areas": "Зимні районы:",
+		"yacht-summer-areas": "Літні районы:",
+		"yacht-guests": "Пасажири:",
+		"yacht-year": "Рік:",
+		"yacht-builder": "Виробник:",
+		"yacht-length": "Довжина:"
 	}
 }
