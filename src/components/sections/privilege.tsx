@@ -19,7 +19,7 @@ export function PrivilegeSection() {
 		<section className='bg-gray-150'>
 			<div className='container gap-10 lg:flex-row'>
 				<h2 className='top-40 flex-shrink-0 gap-6 self-start lg:sticky lg:w-72'>
-					{t('title')} <br />
+					<span className='lg:text-4xl'>{t('title')}</span> <br />
 					<span className='bg-gold bg-clip-text text-transparent'>{t('title2')}</span>
 				</h2>
 				<div className='relative w-full gap-4 self-stretch overflow-clip'>

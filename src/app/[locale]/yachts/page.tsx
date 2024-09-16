@@ -88,10 +88,10 @@ export default async function YachtsPage() {
 					<p className='mx-auto max-w-xl py-4 text-center'>{t('yachts-why-us.description')}</p>
 					<Image
 						src='/images/yachts/yacht_page_over20years_l.webp'
-						height={160}
-						width={160}
+						height={1920}
+						width={1080}
 						alt='Image of a yacht'
-						className='my-10 h-40 rounded-xl object-cover object-center'
+						className='my-10 w-full rounded-xl object-cover object-center'
 						loading='lazy'
 					/>
 				</div>
