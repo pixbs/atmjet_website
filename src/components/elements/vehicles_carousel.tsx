@@ -6,6 +6,7 @@ import useEmblaCarousel from 'embla-carousel-react'
 import { WheelGesturesPlugin } from 'embla-carousel-wheel-gestures'
 import { useCallback, useEffect, useState } from 'react'
 import { VehicleCard } from './vehicle_card'
+import { PrevButton, NextButton, usePrevNextButtons } from './carousel_arrows'
 
 interface VehiclesCarouselProps {
 	vehicles: (typeof vehicles.$inferSelect)[]
@@ -18,6 +19,9 @@ export function VehiclesCarousel(props: VehiclesCarouselProps) {
 		WheelGesturesPlugin(),
 	])
 	const [scrollProgress, setScrollProgress] = useState(0)
+
+	const { prevBtnDisabled, nextBtnDisabled, onPrevButtonClick, onNextButtonClick } =
+		usePrevNextButtons(emblaApi)
 
 	const onScroll = useCallback((emblaApi: EmblaCarouselType) => {
 		const progress = Math.max(0, Math.min(1, emblaApi.scrollProgress()))
@@ -32,12 +36,24 @@ export function VehiclesCarousel(props: VehiclesCarouselProps) {
 	}, [emblaApi, onScroll])
 
 	return (
-		<div className='embla overflow-clip' ref={emblaRef}>
-			<div className='embla__container flex-row'>
-				{props.vehicles.map((vehicle) => (
-					<VehicleCard {...vehicle} />
-				))}
+		<div className='relative'>
+			<div className='embla overflow-clip' ref={emblaRef}>
+				<div className='embla__container flex-row'>
+					{props.vehicles.map((vehicle) => (
+						<VehicleCard {...vehicle} />
+					))}
+				</div>
 			</div>
+			<PrevButton
+				onClick={onPrevButtonClick}
+				disabled={prevBtnDisabled}
+				className='absolute -left-4 top-1/2 -translate-y-1/2 lg:-translate-x-full'
+			/>
+			<NextButton
+				onClick={onNextButtonClick}
+				disabled={nextBtnDisabled}
+				className='absolute -right-4 top-1/2 -translate-y-1/2 lg:translate-x-full'
+			/>
 		</div>
 	)
 }

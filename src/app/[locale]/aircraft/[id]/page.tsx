@@ -59,7 +59,17 @@ export default async function VehiclePage(props: VehiclePageProps) {
 			<section>
 				<div className='container gap-4'>
 					<h1 className=''>{vehicle.tailModel}</h1>
-					<p>{t('description', { tailModel: vehicle.tailModel, tailNumber: vehicle.tailNumber, tailOperator: vehicle.tailOperator, tailVendor: vehicle.vendor, tailYear: vehicle.tailYear, tailHomebase: vehicle.tailHomebase, tailMaxpax: vehicle.tailMaxpax })}</p>
+					<p>
+						{t('description', {
+							tailModel: vehicle.tailModel,
+							tailNumber: vehicle.tailNumber,
+							tailOperator: vehicle.tailOperator,
+							tailVendor: vehicle.vendor,
+							tailYear: vehicle.tailYear,
+							tailHomebase: vehicle.tailHomebase,
+							tailMaxpax: vehicle.tailMaxpax,
+						})}
+					</p>
 				</div>
 			</section>
 			<MakeBookingSection />
