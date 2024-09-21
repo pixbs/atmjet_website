@@ -4,6 +4,7 @@ import { emptyLegs } from '@/lib/drizzle'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { Counter } from '../elements'
+import { useTranslations } from 'next-intl'
 
 type emptyLegs = typeof emptyLegs.$inferSelect
 
@@ -13,6 +14,8 @@ interface EmptyLegCardProps extends emptyLegs {
 }
 
 export async function EmptyLegCard(props: EmptyLegCardProps) {
+	const t = useTranslations('empty-leg')
+
 	return (
 		<motion.div
 			className='props gap-3 bg-gray-100 p-6'
@@ -23,7 +26,7 @@ export async function EmptyLegCard(props: EmptyLegCardProps) {
 			<div className='flex-row justify-between'>
 				<p className='text-sm'>{`${new Date(props.start).toLocaleDateString(`en-US`, { month: 'long', day: 'numeric', year: 'numeric' })}`}</p>
 				<Link href='?showBooking=Empty-legs' scroll={false}>
-					<button>inquire</button>
+					<button>{t('button')}</button>
 				</Link>
 			</div>
 			<div className='flex-row items-start gap-2'>
