@@ -38,8 +38,8 @@ export function WhyUsCard(props: WhyUsCardProps) {
 					alt={title}
 					className='aspect-video w-full object-cover object-right lg:w-1/2'
 					loading='lazy'
-					width={380}
-					height={380}
+					width={600}
+					height={600}
 				/>
 			)}
 		</motion.div>

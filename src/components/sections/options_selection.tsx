@@ -44,7 +44,7 @@ function OptionCard(props: OptionCardProps) {
 			<Image
 				src={imageSrc}
 				alt={title}
-				className='h-48 bg-cover bg-center'
+				className='h-48 object-cover object-center'
 				loading='lazy'
 				width={564}
 				height={100}

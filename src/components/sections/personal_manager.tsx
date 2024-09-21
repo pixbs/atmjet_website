@@ -15,7 +15,7 @@ export function PersonalManagerSection() {
 						alt='personal manager'
 						width={1920}
 						height={1080}
-						className='h-64 w-full bg-cover bg-center lg:h-96'
+						className='h-64 w-full object-cover object-center lg:h-96'
 						loading='lazy'
 					/>
 					<div className='w-full gap-4 px-6 pb-10 lg:items-start lg:py-10'>

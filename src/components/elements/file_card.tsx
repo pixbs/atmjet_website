@@ -22,7 +22,7 @@ export function FileCard(props: FileCardProps) {
 			/>
 			<div className='gap-6 p-6'>
 				<h3>{title}</h3>
-				<Link href={url} className='md:self-start'>
+				<Link href={url} className='md:self-start' target='_blank'>
 					<button>{button}</button>
 				</Link>
 			</div>

@@ -34,7 +34,7 @@ export default function PartnersPage() {
 					<Image
 						src='/images/partners/hero.webp'
 						alt={t('partners-hero.title')}
-						className='h-64 rounded-2xl bg-cover bg-center bg-no-repeat'
+						className='h-64 rounded-2xl object-cover object-center bobjectg-no-repeat'
 						loading='lazy'
 						width={1200}
 						height={260}
