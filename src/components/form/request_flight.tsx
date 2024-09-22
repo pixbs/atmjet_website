@@ -43,7 +43,9 @@ export function RequestForm(props: RequestFormProps) {
 	})
 
 	const onSubmit = (data: FormSchemaType) => {
-		router.push(`?showBooking=Flight_request&direction=${JSON.stringify(data.direction)}`, { scroll: false })
+		router.push(`?showBooking=Flight_request&direction=${JSON.stringify(data.direction)}`, {
+			scroll: false,
+		})
 	}
 
 	const handleAppend = () => {

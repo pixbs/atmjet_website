@@ -30,7 +30,7 @@ export function HeroSalesSection() {
 			<Image
 				src='/images/jets_dep/jetsmarket_page_firstscreen_mainpic.webp'
 				alt='Hero sales'
-				className='absolute inset-0 z-0 h-full w-full object-cover md:object-fixed'
+				className='md:object-fixed absolute inset-0 z-0 h-full w-full object-cover'
 				loading='lazy'
 				width={1920}
 				height={1080}

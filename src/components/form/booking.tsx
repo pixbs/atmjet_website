@@ -44,8 +44,6 @@ export function BookingForm(props: BookingFormProps) {
 		)
 	}
 
-
-
 	const { register, handleSubmit } = methods
 
 	const onSubmit = async (data: any) => {
