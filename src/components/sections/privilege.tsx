@@ -88,9 +88,14 @@ function PrivilegeContact() {
 				<div className='w-full justify-center p-6 md:p-10'>
 					<h3 className='bg-gold bg-clip-text font-serif text-transparent'>{t('title')}</h3>
 					<p className='pt-4'>{t('description')}</p>
-					<Link href='tg://resolve?domain=@atmjet1' className='p-0 pt-6'>
-						<button className='big bg-gold'>{t('button')}</button>
-					</Link>
+					<div className='flex-row gap-4 flex-wrap p-0 pt-6'>
+						<Link href='tg://resolve?domain=@atmjet1'>
+							<button className='big bg-gold'>{t('telegram')}</button>
+						</Link>
+						<Link href='whatsapp://send?phone=971585940112'>
+							<button className='big bg-gold'>{t('whatsapp')}</button>
+						</Link>
+					</div>
 				</div>
 			</div>
 		</div>

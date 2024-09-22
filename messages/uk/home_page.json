@@ -86,7 +86,8 @@
 		"contact": {
 			"title": "Зв'яжіться з менеджером з ключових клієнтів",
 			"description": "Залиште свої контактні дані і ми зв'яжемося розповісти Вам про всі переваги ATM Privelege",
-			"button": "Залишити заявку"
+			"telegram": "Telegram",
+			"whatsapp": "WhatsApp"
 		}
 	},
 	"testimonials": {

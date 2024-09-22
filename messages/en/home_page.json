@@ -86,7 +86,8 @@
 		"contact": {
 			"title": "Contact Key Account Manager",
 			"description": "Leave your contact details and we will get in touch to tell you all the benefits of ATM Privelege",
-			"button": "Leave a request"
+			"telegram": "Telegram",
+			"whatsapp": "WhatsApp"
 		}
 	},
 	"testimonials": {
