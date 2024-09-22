@@ -8,6 +8,7 @@ import { useState } from 'react'
 import { FormProvider, useFieldArray, useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { Direction, directionSchema } from './direction'
+import { useSearchParams } from 'next/navigation'
 
 const schema = z.object({
 	direction: z.array(directionSchema),
@@ -22,18 +23,19 @@ interface RequestFormProps {
 }
 
 export function RequestForm(props: RequestFormProps) {
+	const searchParams = useSearchParams()
+	const showConfirm = searchParams.get('confirm') === 'true'
+	const t = useTranslations('form')
+
 	const router = useRouter()
 	const { buttonText, buttonClassName, max = 4 } = props
-	const [submitted, setSubmitted] = useState(false)
 	const [isRoundTrip, setIsRoundTrip] = useState(false)
-	const t = useTranslations('form')
 	const methods = useForm<FormSchemaType>({
 		resolver: zodResolver(schema),
 		defaultValues: {
 			direction: [{ from: '', to: '', date: '', passengers: 1 }],
 		},
 	})
-
 	const { control, handleSubmit } = methods
 	const { fields, append, remove } = useFieldArray({
 		control,
@@ -41,9 +43,7 @@ export function RequestForm(props: RequestFormProps) {
 	})
 
 	const onSubmit = (data: FormSchemaType) => {
-		router.push(`?showBooking=Flight_request&direction=${JSON.stringify(data.direction)}`)
-		console.log(data)
-		setSubmitted(true)
+		router.push(`?showBooking=Flight_request&direction=${JSON.stringify(data.direction)}`, { scroll: false })
 	}
 
 	const handleAppend = () => {
@@ -62,7 +62,7 @@ export function RequestForm(props: RequestFormProps) {
 		setIsRoundTrip(!isRoundTrip)
 	}
 
-	if (submitted) {
+	if (showConfirm) {
 		return (
 			<>
 				<h2 className='text-center'>{t('confirm')}</h2>

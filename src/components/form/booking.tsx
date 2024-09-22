@@ -4,7 +4,7 @@ import { sendMessage } from '@/app/telegramBot'
 import Checkmark from '@/assets/svg/checkmark.svg'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useLocale, useTranslations } from 'next-intl'
-import { usePathname, useSearchParams } from 'next/navigation'
+import { usePathname, useSearchParams, useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { z } from 'zod'
@@ -20,18 +20,31 @@ interface BookingFormProps {
 }
 
 export function BookingForm(props: BookingFormProps) {
-	const { host } = props
+	const searchParams = useSearchParams()
+	const showConfirm = searchParams.get('confirm') === 'true'
 	const t = useTranslations('contact-form')
-	const [submitted, setSubmitted] = useState(false)
+
+	const { host } = props
 	const locale = useLocale()
 	const pathname = usePathname()
-	const searchParams = useSearchParams()
 	const booking = searchParams.get('showBooking')
-	const directions = JSON.parse(searchParams.get('direction') || '{}')
 
+	const directions = JSON.parse(searchParams.get('direction') || '{}')
+	const router = useRouter()
 	const methods = useForm({
 		resolver: zodResolver(schema),
 	})
+
+	if (showConfirm) {
+		return (
+			<>
+				<h2 className='text-center'>{t('confirm')}</h2>
+				<Checkmark className='mx-auto my-10 h-20 stroke-none text-orange-200 duration-500 animate-in fade-in-0 slide-in-from-top-4' />
+			</>
+		)
+	}
+
+
 
 	const { register, handleSubmit } = methods
 
@@ -78,18 +91,14 @@ export function BookingForm(props: BookingFormProps) {
 		<i>From:</i>
 		${booking}, https://${host + pathname}
 		`
-
-		const response = await sendMessage(message)
-		setSubmitted(response)
-	}
-
-	if (submitted) {
-		return (
-			<>
-				<h2 className='text-center'>{t('confirm')}</h2>
-				<Checkmark className='mx-auto my-10 h-20 stroke-none text-orange-200 duration-500 animate-in fade-in-0 slide-in-from-top-4' />
-			</>
-		)
+		try {
+			const response = await sendMessage(message)
+			console.log(response)
+		} catch (error) {
+			console.error(error)
+		} finally {
+			router.push(`?showBooking=true&confirm=true`, { scroll: false })
+		}
 	}
 
 	return (

@@ -55,11 +55,12 @@ export function BookingDialog(props: BookingDialogProps) {
 	}
 
 	const handleClose = () => {
+		const confirm = searchParams.get('confirm') === 'true'
 		document.body.style.overflow = 'auto'
 		if (dialogRef.current) {
 			dialogRef.current.style.display = 'none'
 		}
-		router.push(pathname, { scroll: false })
+		router.push(confirm ? '?confirm=true' : pathname, { scroll: false })
 
 		onClose?.()
 	}
