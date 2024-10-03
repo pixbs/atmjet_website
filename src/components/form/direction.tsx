@@ -36,24 +36,30 @@ export function Direction(props: DirectionProps) {
 				control={control}
 				name={`direction.${index}.from`}
 				render={({ field }) => (
-					<AutoComplete
-						value={field.value}
-						onChange={field.onChange}
-						placeholder={t('from')}
-						className='w-full rounded-t-xl lg:h-full lg:min-w-40 lg:rounded-sm lg:rounded-l-xl'
-					/>
+					<div className='relative'>
+						<label className='absolute left-4 top-4 z-10 text-xs font-semibold'>{t('from')}</label>
+						<AutoComplete
+							value={field.value}
+							onChange={field.onChange}
+							placeholder={t('from')}
+							className='w-full rounded-t-xl pt-8 lg:h-full lg:min-w-40 lg:rounded-sm lg:rounded-l-xl'
+						/>
+					</div>
 				)}
 			/>
 			<Controller
 				control={control}
 				name={`direction.${index}.to`}
 				render={({ field }) => (
-					<AutoComplete
-						value={field.value}
-						onChange={field.onChange}
-						placeholder={t('to')}
-						className='w-full lg:h-full lg:min-w-40'
-					/>
+					<div className='relative'>
+						<label className='absolute left-4 top-4 z-10 text-xs font-semibold'>{t('to')}</label>
+						<AutoComplete
+							value={field.value}
+							onChange={field.onChange}
+							placeholder={t('to')}
+							className='w-full pt-8 lg:h-full lg:min-w-40'
+						/>
+					</div>
 				)}
 			/>
 			<div className='w-full rounded-sm bg-gray-900'>
@@ -61,13 +67,18 @@ export function Direction(props: DirectionProps) {
 					control={control}
 					name={`direction.${index}.date`}
 					render={({ field }) => (
-						<input
-							{...field}
-							type='date'
-							placeholder={t('date')}
-							aria-placeholder={t('date')}
-							className='min-h-16 w-full flex-shrink-0 lg:h-full'
-						/>
+						<div className='relative'>
+							<label className='absolute left-4 top-4 z-10 text-xs font-semibold'>
+								{t('date')}
+							</label>
+							<input
+								{...field}
+								type='date'
+								placeholder={t('date')}
+								aria-placeholder={t('date')}
+								className='min-h-16 w-full flex-shrink-0 pt-7 pb-3 text-sm lg:h-full'
+							/>
+						</div>
 					)}
 				/>
 			</div>
