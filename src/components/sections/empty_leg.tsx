@@ -51,7 +51,10 @@ export default async function findByICAO(icao: string) {
 		.from(airports)
 		.where(ilike(airports.icaoCode, `%${icao}%`))
 		.limit(1)
-	const city = airport[0].cityEng ?? 'N/A'
-	const country = airport[0].countryEng ?? 'N/A'
+	const city = airport[0]?.cityEng ? airport[0].cityEng : ''
+	const country = airport[0]?.countryEng ? airport[0].countryEng : ''
+	if (city === '' && country === '') {
+		return ''
+	}
 	return `${city}, ${country}`
 }

@@ -76,7 +76,7 @@ export function Direction(props: DirectionProps) {
 								type='date'
 								placeholder={t('date')}
 								aria-placeholder={t('date')}
-								className='min-h-16 w-full flex-shrink-0 pt-7 pb-3 text-sm lg:h-full'
+								className='min-h-16 w-full flex-shrink-0 pb-3 pt-7 text-sm lg:h-full'
 							/>
 						</div>
 					)}
