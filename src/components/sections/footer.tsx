@@ -1,10 +1,9 @@
 import ArrowTopRight from '@/assets/svg/arrow-top-right.svg'
 import Logo from '@/assets/svg/logo.svg'
-import { useTranslations } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 import Image from 'next/image'
 import Link from 'next/link'
 import { LocaleSwitch } from '../elements'
-import { useLocale } from 'next-intl'
 
 export function FooterSection() {
 	const t = useTranslations()
@@ -39,7 +38,7 @@ export function FooterSection() {
 							<Link href={`/${locale}/cargo_charter`}>{t('navigation.cargo-charter')}</Link>
 						</div>
 						<div className='[&>*]:duration-600 [&>*]:animate-in [&>*]:fade-in'>
-							<Link href='tg://resolve?domain=@atmjet1' className='flex items-center'>
+							<Link href='tg:\\nesolve?domain=@atmjet1' className='flex items-center'>
 								{t('social-media.telegram')}
 								<ArrowTopRight className='size-10' />
 							</Link>

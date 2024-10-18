@@ -5,12 +5,12 @@
 		"headline2": "Aircraft",
 		"num1": "20+",
 		"num2": "500+",
-		"description": "We currently have access to over 500 aircraft for sale. With over 20 years of experience in the industry, we are well-positioned to assist you in completing your transaction in a profitable and secure.",
+		"description": "We offer access to over 500 aircraft for sale, ensuring a wide range of options for private and business aviation needs. With more than 20 years of expertise in the industry, ATM JET provides comprehensive support to make your aircraft purchase both secure and profitable.",
 		"button": "Contact us"
 	},
 	"personal-manager": {
 		"title": "Personal aviation manager",
-		"description": "We will provide a personalized aviation manager with extensive experience of over 20 years. He will assist you in determining the most suitable aircraft based on your requirements:",
+		"description": "We provide a dedicated aviation manager with over 20 years of industry experience. Your personal advisor will help you choose the ideal aircraft tailored to your specific needs, ensuring a seamless and informed buying process. With expert knowledge and personalized guidance, we ensure you receive the best solution based on your unique aviation requirements.",
 		"chips": "Your plans for using the aircraft; Price expectations; High residual value; Required parameters (range, passengers quantity, based airport); Best profitability"
 	},
 	"aircraft": {
@@ -37,11 +37,11 @@
 		},
 		"card2": {
 			"title": "Test flight evaluation",
-			"description": "The technician will conduct a test flight to evaluate the aircraft's performance."
+			"description": "Our certified technician will conduct a comprehensive test flight to assess the aircraft’s performance and ensure it meets the highest standards of safety and efficiency. "
 		},
 		"card3": {
 			"title": "Detailed inspection report",
-			"description": "Once the inspection is complete, we will provide a detailed report on the discrepancies found and the cost of correcting them."
+			"description": "After the inspection, we will provide a comprehensive report detailing any discrepancies found and the estimated cost of repairs."
 		}
 	},
 	"sales-why-us": {
@@ -54,7 +54,7 @@
 		"card2": {
 			"num": "",
 			"title": "Experienced fleet management",
-			"description": "Customised terms and conditions for the management of the purchased aircraft from ATM Jet."
+			"description": "Customised terms and conditions for the management of the purchased aircraft from ATM JET."
 		},
 		"card3": {
 			"num": "",

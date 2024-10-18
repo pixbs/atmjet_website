@@ -45,7 +45,7 @@ export function MenuBar() {
 	return (
 		<div className='pointer-events-auto absolute bottom-0 right-10 -mb-1.5 -mr-1.5 flex-row rounded-2xl bg-gray-900 px-7 py-5 text-gray-150 lg:right-16'>
 			<div className='[&>*]:duration-600 [&>*]:animate-in [&>*]:fade-in'>
-				<Link href='tg://resolve?domain=@atmjet1' className='flex items-center'>
+				<Link href='tg:\\nesolve?domain=@atmjet1' className='flex items-center'>
 					{t('social-media.telegram')}
 					<ArrowTopRight className='size-10 text-gray-500' />
 				</Link>

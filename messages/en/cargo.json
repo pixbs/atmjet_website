@@ -1,25 +1,25 @@
 {
 	"cargo-hero": {
 		"title": "Cargo charter",
-		"description": "We are aware of the importance of speed in this context. Place your trust in the professionals in the airfreight industry to safely and securely transport your cargo."
+		"description": "Recognizing the critical need for speed in logistics, place your trust in the seasoned professionals of the airfreight industry. We ensure your cargo is transported safely and securely, maintaining the highest standards of service."
 	},
 	"cargo-why-us": {
 		"title": "Why choose us?",
 		"card1": {
 			"title": "Global coverage",
-			"description": "Our access to cargo aircraft and extensive network of partners offer a wide range of delivery options to any destination."
+			"description": "Our extensive access to cargo aircraft and a global network of trusted partners enables us to offer a wide variety of delivery options to any destination worldwide. Whether it’s urgent air freight or specialized cargo, we provide flexible and efficient solutions tailored to meet your specific shipping needs."
 		},
 		"card2": {
 			"title": "Personalized approach",
-			"description": "Our logistics team will identify the most effective solution for any cargo or route, regardless of complexity."
+			"description": "Our expert logistics team specializes in finding the most efficient solutions for any cargo type or route, no matter how complex. With years of experience and industry knowledge, we ensure that every shipment is handled with precision and care, optimizing both speed and cost-effectiveness."
 		},
 		"card3": {
 			"title": "Security",
-			"description": "We adhere to the highest standards of security and confidentiality throughout the entire transport process."
+			"description": "We strictly adhere to the highest standards of security and confidentiality throughout the entire cargo transport process. From pickup to final delivery, we ensure that every shipment is protected with comprehensive safety protocols, ensuring both discretion and secure handling."
 		},
 		"card4": {
 			"title": "Guarantees",
-			"description": "We guarantee precise compliance with all deadlines and terms and conditions of cargo carriage. We offer a high level of service."
+			"description": "We guarantee strict adherence to all deadlines and terms of cargo transportation, ensuring that every shipment is delivered on time and according to specified conditions. Our commitment to a high level of service means we prioritize reliability and customer satisfaction in every aspect of our operations."
 		}
 	},
 	"cargo-form": {

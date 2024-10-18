@@ -12,7 +12,7 @@ export function FaqSection() {
 	return (
 		<section>
 			<div className='container lg:flex-row'>
-				<h2 className='md:min-w-80'>{t('title')}</h2>
+				<h2 className='md:min-w-80 max-w-10 shrink-0'>{t('title')}</h2>
 				<div className='pt-4'>
 					{accordions.map((accordion, index) => (
 						<div className='gap-6 border-b border-gray-300 py-6' key={index}>
@@ -24,7 +24,14 @@ export function FaqSection() {
 								className='cursor-pointer font-serif text-2xl text-gray-900'
 							>
 								<div className='flex flex-row overflow-hidden'>
-									<p>{t(`answer${index + 1}`)}</p>
+									<p>
+										{ t(`answer${index + 1}`).split(' \\n').map((answer, index) => (
+											<>
+												<span key={index}>{answer}</span>
+												<br key={index}/>
+											</>
+										))}
+									</p>
 								</div>
 							</Accordion>
 						</div>
@@ -37,7 +44,7 @@ export function FaqSection() {
 
 interface AccordionProps {
 	question: string
-	answer: string
+	answer: string[]
 }
 
 function Accordiontwo(props: AccordionProps) {

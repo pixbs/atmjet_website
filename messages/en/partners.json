@@ -6,7 +6,7 @@
 	},
 	"instant-payment": {
 		"title": "Instalment payments",
-		"description": "We offer instalment payments to regular partners. Payment is due after the client has already flown away.",
+		"description": "Regular partners benefit from our convenient installment payment options. Payments are due after the client’s flight, allowing you to manage your cash flow more effectively. Our post-flight billing system ensures you can provide top-tier services while enjoying financial flexibility.",
 		"button": "Make a request"
 	},
 	"we-offer": {
@@ -15,19 +15,19 @@
 		"description": "Unlock exclusive benefits and strong partnerships tailored for long-term cooperation at the highest level.",
 		"card1": {
 			"title": "White label partnership",
-			"description": "Work under your brand as an air carrier."
+			"description": "Strengthen your brand by operating as a private air carrier under your own name, while leveraging ATM JET’s expertise and resources. You gain access to over 25,000 aircraft worldwide, full operational support, and the flexibility to maintain your branding."
 		},
 		"card2": {
 			"title": "Pricing confidentiality",
-			"description": "Your pricing policy is kept confidential."
+			"description": "ATM JET guarantees the highest level of discretion, ensuring your pricing policies remain fully confidential. We protect your business strategies and allow you to maintain full control over your pricing structure, offering secure and transparent operations."
 		},
 		"card3": {
 			"title": "Affiliate program",
-			"description": "Earn increasing discounts with fulfilled orders."
+			"description": "Maximize your earnings with ATM JET’s affiliate program. The more bookings you complete, the greater your discounts and commissions. We reward successful partnerships by offering increasing incentives that align with your business growth, ensuring mutual benefit."
 		},
 		"card4": {
 			"title": "Payment flexibility",
-			"description": "Accepting any forms of payment and commission payments."
+			"description": "ATM JET provides flexible payment solutions tailored to your needs. We accept various forms of payment, including bank transfers, corporate accounts, and cryptocurrency. This flexibility extends to commission payments, simplifying financial management for our partners."
 		}
 	},
 	"personal-flight-manager": {
