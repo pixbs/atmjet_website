@@ -36,7 +36,7 @@ export function WhyUsCard(props: WhyUsCardProps) {
 				<Image
 					src={imageSrc}
 					alt={title}
-					className='aspect-video w-full object-cover object-right lg:w-1/2'
+					className='aspect-video w-full object-cover object-center lg:w-1/2'
 					loading='lazy'
 					width={600}
 					height={600}

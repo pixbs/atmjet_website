@@ -23,7 +23,7 @@ export function KeyFeatureCard(props: KeyFeatureCardProps) {
 			<p className='z-10'>{description}</p>
 			<Image
 				src={imageSrc}
-				className='absolute inset-0 h-full w-full object-cover'
+				className='absolute inset-0 h-full w-full object-cover object-center'
 				alt={title}
 				width={400}
 				height={500}
