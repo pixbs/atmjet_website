@@ -5,7 +5,6 @@ export function middleware(request: NextRequest) {
 	const localeMapping = {
 		en: 'en',
 		ru: 'ru',
-		uk: 'uk',
 	}
 	let modifiedRequest = request
 

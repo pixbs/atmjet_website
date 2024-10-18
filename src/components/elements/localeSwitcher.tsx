@@ -35,14 +35,14 @@ export function LocaleSwitch() {
 			>
 				{t('locale.ru')}
 			</Link>
-			<Link
+			{/* <Link
 				href={`/uk${url}`}
 				locale='uk'
 				scroll={false}
 				className={`text-base ${locale == 'uk' && 'opacity-50'}`}
 			>
 				{t('locale.uk')}
-			</Link>
+			</Link> */}
 		</>
 	)
 }
