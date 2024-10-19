@@ -27,10 +27,10 @@ export default function businessAgentsPage() {
 						<Image
 							src='/images/business_agencies/hero2.webp'
 							alt={t('business-agents-hero.title')}
-							className='h-80 w-full rounded-2xl object-center'
+							className='h-80 w-full rounded-2xl object-cover object-center'
 							loading='lazy'
-							width={560}
-							height={320}
+							width={1120}
+							height={640}
 						/>
 					</div>
 				</div>

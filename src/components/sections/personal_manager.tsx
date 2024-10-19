@@ -9,15 +9,17 @@ export function PersonalManagerSection() {
 	return (
 		<section>
 			<div className='container'>
-				<div className='gap-10 overflow-hidden rounded-2xl bg-gray-150 lg:flex-row-reverse lg:items-center'>
-					<Image
-						src='/images/jets_dep/personal_manager.webp'
-						alt='personal manager'
-						width={1920}
-						height={1080}
-						className='h-64 w-full object-cover object-center lg:h-96'
-						loading='lazy'
-					/>
+				<div className='items-center gap-10 overflow-hidden rounded-2xl bg-gray-150 lg:flex-row-reverse'>
+					<div className='relative aspect-video h-full w-full bg-red-50 lg:aspect-square'>
+						aaa
+						<Image
+							src='/images/jets_dep/personal_manager.webp'
+							alt='personal manager'
+							className='h-full object-cover object-top'
+							loading='lazy'
+							fill
+						/>
+					</div>
 					<div className='w-full gap-4 px-6 pb-10 lg:items-start lg:py-10'>
 						<h2 className='bg-gold bg-clip-text text-transparent'>{t('title')}</h2>
 						<p>{t('description')}</p>
