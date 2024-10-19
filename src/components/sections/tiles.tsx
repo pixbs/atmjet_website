@@ -13,7 +13,7 @@ export function TilesSection() {
 
 	const [ref, inView] = useInView({
 		triggerOnce: true, // Only trigger the animation once
-		threshold: 0.1, // Percentage of the element's visibility required to trigger the animation
+		threshold: 0.001, // Percentage of the element's visibility required to trigger the animation
 	})
 
 	return (
@@ -26,7 +26,7 @@ export function TilesSection() {
 						initial='hidden'
 						animate={inView ? 'visible' : 'hidden'} // Start animation only when in view
 						variants={imageVariants}
-						transition={{ duration: 0.5, delay: index * 0.2 }}
+						transition={{ duration: 0.4, delay: index * 0.1 }}
 						ref={ref} // Attach the ref to the element being observed
 					>
 						<Image

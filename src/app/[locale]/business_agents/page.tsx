@@ -47,7 +47,7 @@ export default function businessAgentsPage() {
 						title={t('documents.document2.title')}
 						imageUrl='/images/business_agencies/file2.webp'
 						button={t('documents.document2.button')}
-						url='https://atmjet.ams3.cdn.digitaloceanspaces.com/ATM%20JET%20Presentation.pdf'
+						url='https://atmjet.ams3.cdn.digitaloceanspaces.com/presentation/ATM%20JET%20Presentation.pdf'
 					/>
 				</div>
 			</section>
