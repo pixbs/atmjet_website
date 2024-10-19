@@ -24,9 +24,9 @@ export default function PartnersPage() {
 		<main>
 			<section>
 				<div className='container gap-20 pt-32'>
-					<h1 className='text-center'>
+					<h1 className='text-pretty text-center'>
 						{t('partners-hero.title')}
-						<Counter className='bg-gold bg-clip-text text-transparent'>
+						<Counter className='inline-block min-w-16 bg-gold bg-clip-text text-transparent'>
 							{t('partners-hero.num')}
 						</Counter>
 						{t('partners-hero.title2')}
