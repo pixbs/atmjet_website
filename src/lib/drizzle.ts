@@ -1,6 +1,5 @@
 import { sql } from '@vercel/postgres'
 import { config } from 'dotenv'
-import { int, year } from 'drizzle-orm/mysql-core'
 import {
 	decimal,
 	index,
@@ -13,7 +12,6 @@ import {
 	varchar,
 } from 'drizzle-orm/pg-core'
 import { drizzle } from 'drizzle-orm/vercel-postgres'
-import build from 'next/dist/build'
 
 config({ path: '.env.local' })
 
@@ -121,6 +119,19 @@ export const yachts = pgTable('yachts', {
 	maxSpeed: integer('max_speed'),
 	location: text('location'),
 	pictures: text('pictures').array(),
+})
+
+export const newAirports = pgTable('new_airports', {
+	id: serial('id').primaryKey(),
+	icao: text('icao'),
+	iata: text('iata'),
+	labelEn: text('label_en'),
+	labelRu: text('label_ru'),
+	cityEn: text('city_en'),
+	cityRu: text('city_ru'),
+	countryEn: text('country_en'),
+	countryRu: text('country_ru'),
+	wikidata: text('wikidata'),
 })
 
 export const users = pgTable('atmjet_admin__users', {
