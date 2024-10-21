@@ -1,7 +1,7 @@
 'use server'
 
-import { airports, db } from '@/lib/drizzle'
-import { ilike, or } from 'drizzle-orm'
+import { airports, db, vehicles } from '@/lib/drizzle'
+import { eq, ilike, not, or } from 'drizzle-orm'
 
 export async function getAirport(str: string, locale: string) {
 	if (str.toLowerCase().includes('saint')) {
@@ -38,4 +38,16 @@ export async function getAirport(str: string, locale: string) {
 			(item) => `${item.nameEng} ( ${item.iataCode} ) ${item.countryEng}, ${item.cityEng}`,
 		)
 	}
+}
+
+export async function getAircraft(offset: number) {
+	'use server'
+	const aircraft = await db
+		.select()
+		.from(vehicles)
+		.where(not(eq(vehicles.tailNumber, '')))
+		.offset(offset)
+		.limit(15)
+
+	return aircraft
 }

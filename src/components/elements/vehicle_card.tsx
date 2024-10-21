@@ -5,7 +5,7 @@ export function VehicleCard(props: typeof vehicles.$inferSelect) {
 	return (
 		<Link
 			key={props.id}
-			href={`/aircraft/${props.id}`}
+			href={`/aircraft/${props.tailNumber}`}
 			className='w-full shrink-0 pr-4 md:w-1/2 lg:w-1/3'
 		>
 			<div

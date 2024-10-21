@@ -12,11 +12,7 @@ interface VehiclePageProps {
 export default async function VehiclePage(props: VehiclePageProps) {
 	const t = await getTranslations('vehicle')
 	const { id } = props.params
-	const [vehicle] = await db
-		.select()
-		.from(vehicles)
-		.limit(1)
-		.where(eq(vehicles.id, parseInt(decodeURIComponent(id))))
+	const [vehicle] = await db.select().from(vehicles).limit(1).where(eq(vehicles.tailNumber, id))
 
 	const labels = [
 		t('tail-number'),

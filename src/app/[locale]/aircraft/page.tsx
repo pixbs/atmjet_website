@@ -2,6 +2,7 @@
 
 import { Counter, VehiclesCarousel } from '@/components/elements'
 import { MakeBookingSection } from '@/components/sections'
+import AllAircraft from '@/components/sections/all_aircraft'
 import { db, vehicles } from '@/lib/drizzle'
 import { sql } from 'drizzle-orm'
 import { getTranslations } from 'next-intl/server'
@@ -92,6 +93,7 @@ export default async function Aircraft() {
 				buttonText={t('partners-contact-us.button')}
 				imageSrc='/images/partners/contact_us.webp'
 			/> */}
+			<AllAircraft />
 		</main>
 	)
 }
