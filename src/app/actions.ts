@@ -43,6 +43,8 @@ import { eq, ilike, not, or } from 'drizzle-orm'
 export async function getAirport(str: string, locale: string) {
 	let query: (typeof newAirports.$inferSelect)[]
 	if (locale === 'ru') {
+		str = toTitleCase(str)
+		console.log(toTitleCase(str))
 		query = await db
 			.select()
 			.from(newAirports)
@@ -60,7 +62,7 @@ export async function getAirport(str: string, locale: string) {
 			return [str]
 		}
 		return [
-			str,
+			toTitleCase(str),
 			...query.map(
 				(item) =>
 					`${item.cityRu || item.cityEn || ''} ( ${item.icao || item.iata || ''} ) ${item.countryRu || item.countryEn || ''}, ${item.labelRu || item.labelEn || ''}`,
@@ -119,4 +121,10 @@ export async function getAircraft(offset: number) {
 		.limit(15)
 
 	return aircraft
+}
+
+function toTitleCase(s: string) {
+	return s.replace(/([^\s:\-])([^\s:\-]*)/g, function ($0, $1, $2) {
+		return $1.toUpperCase() + $2.toLowerCase()
+	})
 }
