@@ -1,5 +1,5 @@
-import Car from '@/assets/svg/car-gold.svg'
 import Diamond from '@/assets/svg/diamond-gold.svg'
+import Exchange from '@/assets/svg/exchange.svg'
 import Plane from '@/assets/svg/plane-gold.svg'
 import { useTranslations } from 'next-intl'
 import Link from 'next/link'
@@ -11,8 +11,9 @@ export function PrivilegeSection() {
 	const iconsStyle = 'h-11 w-11 shrink-0 md:h-11 md:w-11'
 	const icons = [
 		<Plane className={iconsStyle} alt='Icon of plane' />,
-		<Car className={iconsStyle} alt='Icon of car' />,
+		<Exchange className={iconsStyle} alt='Icon of exchange' />,
 		<Diamond className={iconsStyle} alt='Icon of diamond' />,
+		// <Car className={iconsStyle} alt='Icon of car' />,
 	]
 
 	return (

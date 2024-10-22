@@ -1,11 +1,27 @@
 import { FileCard } from '@/components/elements'
-import { BestPriceSection, TransferSection } from '@/components/sections'
+import { BestPriceSection, TransferSection, WhyUsSection } from '@/components/sections'
 import { useLocale, useTranslations } from 'next-intl'
 import Image from 'next/image'
 
 export default function businessAgentsPage() {
 	const t = useTranslations()
 	const locale = useLocale()
+
+	const tWhyUs = useTranslations('home-why-us')
+
+	const whyUsImages = [
+		'/images/home_page/why_us_years.webp',
+		'/images/home_page/why_us_clients.webp',
+		'/images/home_page/why_us_trusted_by_celeb.webp',
+		'/images/home_page/why_us_same_day_departure.webp',
+		'/images/home_page/why_us_excellence.webp',
+	]
+
+	const whyUsCards = ['card1', 'card2', 'card3', 'card4', 'card5'].map((card) => ({
+		num: tWhyUs(`${card}.num`),
+		title: tWhyUs(`${card}.title`),
+		description: tWhyUs(`${card}.description`),
+	}))
 
 	const checklistUrl =
 		locale === 'en'
@@ -29,12 +45,13 @@ export default function businessAgentsPage() {
 							alt={t('business-agents-hero.title')}
 							className='h-80 w-full rounded-2xl object-cover object-center'
 							loading='lazy'
-							width={1120}
-							height={640}
+							width={2240}
+							height={1280}
 						/>
 					</div>
 				</div>
 			</section>
+			<WhyUsSection title={tWhyUs('title')} cards={whyUsCards} images={whyUsImages} />
 			<section>
 				<div className='container gap-6 md:flex-row'>
 					<FileCard
@@ -51,8 +68,8 @@ export default function businessAgentsPage() {
 					/>
 				</div>
 			</section>
-			<BestPriceSection />
 			<TransferSection />
+			<BestPriceSection />
 		</main>
 	)
 }

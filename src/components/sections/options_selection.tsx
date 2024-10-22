@@ -46,8 +46,8 @@ function OptionCard(props: OptionCardProps) {
 				alt={title}
 				className='h-48 w-full object-cover object-center'
 				loading='lazy'
-				width={564}
-				height={100}
+				width={1128}
+				height={200}
 			/>
 			<div className='gap-4 p-8'>
 				<h3 className='bg-gold bg-clip-text text-transparent'>{title}</h3>

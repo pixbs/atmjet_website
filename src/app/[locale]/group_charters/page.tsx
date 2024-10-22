@@ -1,5 +1,5 @@
 import { WhyUsCard } from '@/components/elements'
-import { ContactUsSection, SubpageHeroSection } from '@/components/sections'
+import { ContactUsSection, MakeBookingSection, SubpageHeroSection } from '@/components/sections'
 import { useTranslations } from 'next-intl'
 
 export default function GroupCharterPage() {
@@ -22,6 +22,7 @@ export default function GroupCharterPage() {
 				description={t('group-charters-hero.description')}
 				imageUrl='/images/group_charter/hero.webp'
 			/>
+			<MakeBookingSection />
 			<section>
 				<div className='container'>
 					{cards.map((card, index) => (

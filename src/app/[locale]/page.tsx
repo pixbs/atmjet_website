@@ -33,7 +33,7 @@ export default function HomePage() {
 		'/images/home_page/why_us_excellence.webp',
 	]
 
-	const keyFeaturesCards = ['card1', 'card2', 'card3', 'card4'].map((card) => ({
+	const keyFeaturesCards = ['card1', 'card2', 'card3', 'card4', 'card5'].map((card) => ({
 		title: t(`key-features.${card}.title`),
 		description: t(`key-features.${card}.description`),
 	}))
@@ -43,6 +43,7 @@ export default function HomePage() {
 		'/images/home_page/key_features_cuztomized_aircraft.webp',
 		'/images/home_page/key_features_payment_after_flight.webp',
 		'/images/home_page/key_features_pay_anyway.webp',
+		'/images/home_page/key_features_shampain.jpg',
 	]
 
 	return (

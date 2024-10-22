@@ -61,6 +61,10 @@
 		"card4": {
 			"title": "Payment after the flight",
 			"description": "ATM JET offers flexible post-flight payment options to reward our loyal clients, providing convenience and ease in settling payments."
+		},
+		"card5": {
+			"title": "Best flight prices on popular destinations",
+			"description": "ATM JET offers the best prices on charter flights to the most popular resorts in Europe and Dubai. Travel to prestigious summer destinations like Saint-Tropez, Ibiza, and Monaco, or opt for elite winter resorts such as Courchevel, St. Moritz, and Zermatt. Whether it’s a summer getaway or a winter retreat, ATM JET guarantees seamless, stylish travel to the world’s top destinations."
 		}
 	},
 	"options": {
@@ -76,8 +80,8 @@
 			"description": "ATM JET eliminates the standard brokerage commission, which typically ranges from 3-9%, allowing you to fly at the direct cost of hiring an aircraft. We offer the lowest prices in the industry, ensuring cost-effective private jet travel without hidden fees."
 		},
 		"card2": {
-			"title": "Payment and transfer assistance.",
-			"description": "ATM JET offers multi-currency accounts in various countries, including cryptocurrency options, to accommodate diverse payment preferences. We provide comprehensive transit and currency exchange assistance to ensure seamless financial transactions for our clients, enhancing the convenience of your private jet experience."
+			"title": "We provide assistance with payments and transfers.",
+			"description": "We offer a range of multi-currency accounts in various countries, including cryptocurrency accounts, and serve a diverse customer base with varying payment methods. We provide our international customers with assistance with currency exchange and transit."
 		},
 		"card3": {
 			"title": "VIP Flight Management",
@@ -108,12 +112,12 @@
 			"title": "American pop / R&B-singer"
 		},
 		"card4": {
-			"description": "It's not easy to organize a family holiday, but with ATM Jet everything went perfectly! I was able to relax and enjoy the journey. Thanks, ATM JET, for a great holiday!",
+			"description": "It's not easy to organize a family holiday, but with ATM JET everything went perfectly! I was able to relax and enjoy the journey. Thanks, ATM JET, for a great holiday!",
 			"name": "Anna Netrebko",
 			"title": "World famous opera singer."
 		},
 		"card5": {
-			"description": "I decided to celebrate my anniversary with an unforgettable trip with ATM Jet. Thank you for the holiday and unforgettable impressions! ",
+			"description": "I decided to celebrate my anniversary with an unforgettable trip with ATM JET. Thank you for the holiday and unforgettable impressions! ",
 			"name": "Jamiroquai",
 			"title": "British group"
 		}

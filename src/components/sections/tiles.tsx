@@ -13,12 +13,12 @@ export function TilesSection() {
 
 	const [ref, inView] = useInView({
 		triggerOnce: true, // Only trigger the animation once
-		threshold: 0.001, // Percentage of the element's visibility required to trigger the animation
+		threshold: 0.5, // Percentage of the element's visibility required to trigger the animation
 	})
 
 	return (
 		<section>
-			<div className='container !grid grid-cols-2 md:grid-cols-3'>
+			<div className='container !grid grid-cols-2 md:grid-cols-3' ref={ref}>
 				{images.map((image, index) => (
 					<motion.div
 						key={index}
@@ -27,14 +27,13 @@ export function TilesSection() {
 						animate={inView ? 'visible' : 'hidden'} // Start animation only when in view
 						variants={imageVariants}
 						transition={{ duration: 0.4, delay: index * 0.1 }}
-						ref={ref} // Attach the ref to the element being observed
 					>
 						<Image
 							src={image}
 							alt={`Tile ${index + 1}`}
 							className='object-cover'
-							width={380}
-							height={380}
+							width={400}
+							height={400}
 						/>
 					</motion.div>
 				))}

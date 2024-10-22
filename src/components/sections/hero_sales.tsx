@@ -1,7 +1,7 @@
 import { useTranslations } from 'next-intl'
+import Image from 'next/image'
 import Link from 'next/link'
 import { Counter } from '../elements'
-import Image from 'next/image'
 export function HeroSalesSection() {
 	const t = useTranslations('sales-hero')
 
