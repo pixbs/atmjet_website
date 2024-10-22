@@ -4,8 +4,7 @@ import { sendMessage } from '@/app/telegramBot'
 import Checkmark from '@/assets/svg/checkmark.svg'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useLocale, useTranslations } from 'next-intl'
-import { usePathname, useSearchParams, useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { FormProvider, useForm } from 'react-hook-form'
 import { z } from 'zod'
 
@@ -17,6 +16,7 @@ const schema = z.object({
 
 interface BookingFormProps {
 	host: string
+	close: () => void
 }
 
 export function BookingForm(props: BookingFormProps) {
@@ -95,7 +95,8 @@ export function BookingForm(props: BookingFormProps) {
 		} catch (error) {
 			console.error(error)
 		} finally {
-			router.push(`?showBooking=true&confirm=true`, { scroll: false })
+			props.close()
+			// router.push(`?showBooking=true&confirm=true`, { scroll: false })
 		}
 	}
 

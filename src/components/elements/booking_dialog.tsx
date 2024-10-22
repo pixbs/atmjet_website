@@ -81,7 +81,7 @@ export function BookingDialog(props: BookingDialogProps) {
 				ref={contentRef}
 			>
 				<div className='max-w-screen-md gap-8 self-center'>
-					<BookingForm host={host} />
+					<BookingForm host={host} close={handleClose} />
 					<div className='[&>*]:duration-600 flex-row flex-wrap items-center justify-center gap-4 [&>*]:animate-in [&>*]:fade-in'>
 						<Link href='tg:\\nesolve?domain=@atmjet1' className='flex items-center text-base'>
 							{t('social-media.telegram')}
