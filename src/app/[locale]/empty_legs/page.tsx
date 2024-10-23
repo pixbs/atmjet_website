@@ -1,5 +1,6 @@
 import { Counter } from '@/components/elements'
-import { ContactUsSection, EmptyLegSection } from '@/components/sections'
+import { EmptyLegSection } from '@/components/sections'
+import NewContactUs from '@/components/sections/new_contact_us'
 import { useTranslations } from 'next-intl'
 import Image from 'next/image'
 
@@ -41,12 +42,7 @@ export default function EmptyLegsPage() {
 				</div>
 			</section>
 			<EmptyLegSection />
-			<ContactUsSection
-				title={t('empty-leg-contact-us.title')}
-				description={t('empty-leg-contact-us.description')}
-				buttonText={t('empty-leg-contact-us.button')}
-				imageSrc='/images/home_page/key_features_tailoredp_references.webp'
-			/>
+			<NewContactUs />
 		</main>
 	)
 }

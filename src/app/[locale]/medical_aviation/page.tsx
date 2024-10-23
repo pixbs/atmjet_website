@@ -1,4 +1,5 @@
-import { ContactUsSection, KeyFeaturesSection, SubpageHeroSection } from '@/components/sections'
+import { KeyFeaturesSection, SubpageHeroSection } from '@/components/sections'
+import NewContactUs from '@/components/sections/new_contact_us'
 import { useTranslations } from 'next-intl'
 
 export default function Page() {
@@ -27,11 +28,7 @@ export default function Page() {
 				cards={cards}
 				images={images}
 			/>
-			<ContactUsSection
-				title={t('medical-contact-us.title')}
-				buttonText={t('medical-contact-us.button')}
-				imageSrc='/images/medical/contact-us.webp'
-			/>
+			<NewContactUs />
 		</main>
 	)
 }

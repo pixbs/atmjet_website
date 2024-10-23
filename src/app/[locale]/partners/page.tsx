@@ -1,5 +1,6 @@
 import { Counter } from '@/components/elements'
-import { ContactUsSection, PersonalManagerSection, WhyUsSection } from '@/components/sections'
+import { PersonalManagerSection, WhyUsSection } from '@/components/sections'
+import NewContactUs from '@/components/sections/new_contact_us'
 import { useTranslations } from 'next-intl'
 import Image from 'next/image'
 
@@ -52,12 +53,7 @@ export default function PartnersPage() {
 				images={whyUsImages}
 			/>
 			<PersonalManagerSection />
-			<ContactUsSection
-				title={t('partners-contact-us.title')}
-				description={t('partners-contact-us.description')}
-				buttonText={t('partners-contact-us.button')}
-				imageSrc='/images/partners/contact_us.webp'
-			/>
+			<NewContactUs />
 		</main>
 	)
 }

@@ -1,12 +1,12 @@
 import { VehiclesCarousel } from '@/components/elements'
 import {
 	AdvantagesSection,
-	ContactUsSection,
 	HeroSalesSection,
 	OptionsSelectionSection,
 	PersonalManagerSection,
-	WhyUsSection,
+	WhyUsSection
 } from '@/components/sections'
+import NewContactUs from '@/components/sections/new_contact_us'
 import { db, vehicles } from '@/lib/drizzle'
 import { sql } from 'drizzle-orm'
 import { getTranslations } from 'next-intl/server'
@@ -86,12 +86,7 @@ export default async function SalesDeptPage() {
 				cards={cards}
 				images={images}
 			/>
-			<ContactUsSection
-				title={t('sales-contact-us.title')}
-				description={t('sales-contact-us.description')}
-				buttonText={t('sales-contact-us.button')}
-				imageSrc='/images/jets_dep/jetsmarket_page_team_contactus.webp'
-			/>
+			<NewContactUs />
 		</main>
 	)
 }

@@ -1,12 +1,12 @@
 import { YachtCarousel } from '@/components/elements'
 import {
-	ContactUsSection,
 	HeroYachtsSection,
 	KeyFeaturesSection,
 	OptionsSelectionSection,
 	WeInspectSection,
-	WhyUsSection,
+	WhyUsSection
 } from '@/components/sections'
+import NewContactUs from '@/components/sections/new_contact_us'
 import { db, yachts as yachtsTable } from '@/lib/drizzle'
 import { getTranslations } from 'next-intl/server'
 import Image from 'next/image'
@@ -97,12 +97,7 @@ export default async function YachtsPage() {
 				</div>
 			</section>
 			<WhyUsSection title={t('yachts-why-us.title')} cards={whyUsCards} images={whyUsImages} />
-			<ContactUsSection
-				title={t('yachts-contact-us.title')}
-				description={t('yachts-contact-us.description')}
-				buttonText={t('yachts-contact-us.button')}
-				imageSrc='/images/yachts/yacht_page_contactus.webp'
-			/>
+			<NewContactUs />
 		</main>
 	)
 }

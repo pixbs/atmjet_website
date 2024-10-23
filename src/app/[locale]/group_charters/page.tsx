@@ -1,5 +1,6 @@
 import { WhyUsCard } from '@/components/elements'
-import { ContactUsSection, MakeBookingSection, SubpageHeroSection } from '@/components/sections'
+import { MakeBookingSection, SubpageHeroSection } from '@/components/sections'
+import NewContactUs from '@/components/sections/new_contact_us'
 import { useTranslations } from 'next-intl'
 
 export default function GroupCharterPage() {
@@ -37,12 +38,7 @@ export default function GroupCharterPage() {
 					))}
 				</div>
 			</section>
-			<ContactUsSection
-				title={t('partners-contact-us.title')}
-				description={t('partners-contact-us.description')}
-				buttonText={t('partners-contact-us.button')}
-				imageSrc='/images/partners/contact_us.webp'
-			/>
+			<NewContactUs />
 		</main>
 	)
 }
