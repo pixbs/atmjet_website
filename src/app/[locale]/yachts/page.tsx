@@ -4,7 +4,7 @@ import {
 	KeyFeaturesSection,
 	OptionsSelectionSection,
 	WeInspectSection,
-	WhyUsSection
+	WhyUsSection,
 } from '@/components/sections'
 import NewContactUs from '@/components/sections/new_contact_us'
 import { db, yachts as yachtsTable } from '@/lib/drizzle'

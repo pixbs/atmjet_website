@@ -4,7 +4,7 @@ import {
 	HeroSalesSection,
 	OptionsSelectionSection,
 	PersonalManagerSection,
-	WhyUsSection
+	WhyUsSection,
 } from '@/components/sections'
 import NewContactUs from '@/components/sections/new_contact_us'
 import { db, vehicles } from '@/lib/drizzle'
