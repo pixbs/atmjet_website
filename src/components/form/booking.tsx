@@ -100,6 +100,8 @@ export function BookingForm(props: BookingFormProps) {
 		}
 	}
 
+	const Chips = locale == 'ru' ? ['Запрос на партнерство', 'пресс', 'другое'] : ['Partnership request', 'press', 'other']
+
 	return (
 		<>
 			<div className='gap-2'>
@@ -129,11 +131,33 @@ export function BookingForm(props: BookingFormProps) {
 						{...register('email')}
 						placeholder={t('email-placeholder')}
 					/>
+					<div className='flex-row flex-wrap gap-2 py-6  items-center'>
+						{Chips.map((tag) => (
+							<Chip key={tag} name='tags' id={tag} value={tag}>
+								{tag}
+							</Chip>
+						))}
+					</div>
 					<button type='submit' className='big self-center !px-24'>
 						{t('send')}
 					</button>
 				</form>
 			</FormProvider>
 		</>
+	)
+}
+
+function Chip(props: React.InputHTMLAttributes<HTMLInputElement>) {
+	const { children, ...inputProps } = props
+	return (
+		<div>
+			<input type='checkbox' className='peer sr-only' {...inputProps} />
+			<label
+				htmlFor={props.id}
+				className='border-gray-400 bg-background hover:border-gray-800 peer-checked:border-transparent peer-checked:bg-gold peer-checked:text-gray-100 rounded-full border px-5 py-2 font-semibold uppercase transition-colors ease-in-out'
+			>
+				{children}
+			</label>
+		</div>
 	)
 }

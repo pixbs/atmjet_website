@@ -2,13 +2,13 @@
 
 import ArrowTR from '@/assets/svg/arrow-tr.svg'
 import { motion } from 'framer-motion'
-import { useTranslations } from 'next-intl'
+import { useLocale } from 'next-intl'
 import Link from 'next/link'
 import { useInView } from 'react-intersection-observer'
 import { BookingForm } from '../form'
 
 export default function NewContactUs() {
-	const t = useTranslations()
+	const locale = useLocale()
 	const handleClose = () => {
 		console.log('done')
 	}
@@ -37,7 +37,7 @@ export default function NewContactUs() {
 								+971 (585) 940-112
 							</h3>
 						</Link>
-						<p>Telephone line is open 24/7</p>
+						<p>{locale == 'ru' ? "Телефонная линия открыта 24/7" : "Telephone line is open 24/7"}</p>
 					</motion.div>
 					<motion.div
 						className='w-full'
@@ -51,7 +51,7 @@ export default function NewContactUs() {
 						>
 							<h3>Telegram</h3>
 							<p className='text-gray-900'>
-								Manage your enquiries and bookings on go via private chat with our team
+								{locale === 'ru' ? "Управляйте своими запросами и бронированиями на ходу через приватный чат с нашей командой": "Manage your enquiries and bookings on go via private chat with our team"}
 							</p>
 							<ArrowTR className='mt-5 h-5 stroke-none text-white peer-hover:translate-x-10' />
 						</Link>
