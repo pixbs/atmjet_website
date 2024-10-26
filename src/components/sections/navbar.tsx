@@ -25,12 +25,12 @@ export function Navbar() {
 						</Link>
 					</div>
 					<div className='[&>*]:duration-600 [&>*]:animate-in [&>*]:fade-in'>
-						<Link href='tg:\\nesolve?domain=@atmjet1' className='flex items-center'>
+						<Link href='https://t.me/melentev1' className='flex items-center'>
 							{t('social-media.telegram')}
 							<ArrowTopRight className='size-10' />
 						</Link>
 						<Link
-							href='https://m.sitehelp.me/whatsappOfficial?siteId=kdjz1r9wpcb00x6o5ksiqxahidz566ll&clientId=kG1xsAPIwQrDwTJfGPC3vMikfU3QrfWo&url=whatsapp%3A%2F%2Fsend%3Fphone%3D971585940112'
+							href='https://wa.me/+79602312584'
 							className='flex items-center'
 						>
 							{t('social-media.whats-app')}

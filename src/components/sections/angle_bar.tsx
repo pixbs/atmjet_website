@@ -45,12 +45,12 @@ export function MenuBar() {
 	return (
 		<div className='pointer-events-auto absolute bottom-0 right-10 -mb-1.5 -mr-1.5 flex-row rounded-2xl bg-gray-900 px-7 py-5 text-gray-150 lg:right-16'>
 			<div className='[&>*]:duration-600 [&>*]:animate-in [&>*]:fade-in'>
-				<Link href='tg:\\nesolve?domain=@atmjet1' className='flex items-center'>
+				<Link href='https://t.me/melentev1' className='flex items-center'>
 					{t('social-media.telegram')}
 					<ArrowTopRight className='size-10 text-gray-500' />
 				</Link>
 				<Link
-					href='https://m.sitehelp.me/whatsappOfficial?siteId=kdjz1r9wpcb00x6o5ksiqxahidz566ll&clientId=kG1xsAPIwQrDwTJfGPC3vMikfU3QrfWo&url=whatsapp%3A%2F%2Fsend%3Fphone%3D971585940112'
+					href='https://wa.me/+79602312584'
 					className='flex items-center'
 				>
 					{t('social-media.whats-app')}

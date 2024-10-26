@@ -1,3 +1,4 @@
+import { useLocale } from 'next-intl'
 import Link from 'next/link'
 
 interface GroupCardProps {
@@ -10,6 +11,7 @@ interface GroupCardProps {
 
 export function GroupCard(props: GroupCardProps) {
 	const { title, description, button, imageSrc, href } = props
+	const locale = useLocale()
 
 	return (
 		<div
@@ -19,7 +21,7 @@ export function GroupCard(props: GroupCardProps) {
 			<div className='z-10'>
 				<h2>{title}</h2>
 				<p className='pt-3'>{description}</p>
-				<Link href={href}>
+				<Link href={`/${locale}/${href}`}>
 					<button className='mt-6'>{button}</button>
 				</Link>
 			</div>

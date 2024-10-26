@@ -35,7 +35,7 @@ export async function EmptyLegSection() {
 					<div className='card mt-4 items-start gap-4 border-0 bg-gradient-to-b from-gray-200 from-15% to-[#14323D] p-6 md:bg-fixed'>
 						<h3>{t('telegram.title')}</h3>
 						<p className='text-gray-900'>{t('telegram.description')}</p>
-						<Link href='tg:\\nesolve?domain=@atmjet1'>
+						<Link href='https://t.me/melentev1'>
 							<button className='big mt-2 bg-blue-600 text-gray-900'>{t('telegram.button')}</button>
 						</Link>
 					</div>
