@@ -25,13 +25,16 @@ export default function PartnersPage() {
 		<main>
 			<section>
 				<div className='container gap-20 pt-32'>
-					<h1 className='text-pretty text-center'>
-						{t('partners-hero.title')}
-						<Counter className='inline-block min-w-16 bg-gold bg-clip-text text-transparent'>
-							{t('partners-hero.num')}
-						</Counter>
-						{t('partners-hero.title2')}
-					</h1>
+					<div className='gap-10'>
+						<h1 className='text-pretty text-center'>
+							{t('partners-hero.title')}
+							<Counter className='inline-block min-w-16 bg-gold bg-clip-text text-transparent'>
+								{t('partners-hero.num')}
+							</Counter>
+							{t('partners-hero.title2')}
+						</h1>
+						<p className='text-pretty text-center'>{t('partners-hero.description')}</p>
+					</div>
 					<Image
 						src='/images/partners/hero.webp'
 						alt={t('partners-hero.title')}

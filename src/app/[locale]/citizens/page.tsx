@@ -8,8 +8,8 @@ export default function CitizensPage() {
 
 	const cards = ['card1', 'card2', 'card3', 'card4', 'card5'].map((card) => ({
 		num: '',
-		title: t(`citizens-why-us.${card}.title`),
-		description: '',
+		title: '',
+		description: t(`citizens-why-us.${card}.title`),
 	}))
 
 	const images = [
