@@ -1,4 +1,5 @@
 import { MakeBookingSection } from '@/components/sections'
+import NewContactUs from '@/components/sections/new_contact_us'
 import { db, vehicles } from '@/lib/drizzle'
 import { eq } from 'drizzle-orm'
 import { getTranslations } from 'next-intl/server'
@@ -78,6 +79,7 @@ export default async function VehiclePage(props: VehiclePageProps) {
 					</div>
 				</div>
 			</section>
+			<NewContactUs />
 		</main>
 	)
 }

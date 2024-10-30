@@ -6,6 +6,7 @@ import AllAircraft from '@/components/sections/all_aircraft'
 import { db, vehicles } from '@/lib/drizzle'
 import { sql } from 'drizzle-orm'
 import { getTranslations } from 'next-intl/server'
+import Image from 'next/image'
 import Link from 'next/link'
 
 export default async function Aircraft() {
@@ -61,12 +62,17 @@ export default async function Aircraft() {
 			</section>
 			<section>
 				<div className='container gap-10'>
-					<div className='card items-center gap-4 bg-gray-150 p-8 md:p-10'>
+					<div className='card gap-4 p-12 md:p-24 relative overflow-clip'>
 						<h2>{t('aircraft-contact-us.title')}</h2>
-						<p className='text-center md:max-w-screen-sm'>{t('aircraft-contact-us.description')}</p>
+						<p className='md:w-1/2'>{t('aircraft-contact-us.description')}</p>
 						<Link href='?showBooking=Contact_us_aircraft' className='mt-4' scroll={false}>
 							<button>{t('aircraft-contact-us.button')}</button>
 						</Link>
+						<div className='option-darkening absolute inset-0 -z-10' />
+						<div className='option-darkening absolute inset-0 -z-10' />
+						<div className='option-darkening absolute inset-0 -z-10' />
+						<div className='bg-gray-100 absolute inset-0 -z-10 opacity-80 md:hidden'/>
+						<Image src='/images/aircraft/aircraft.png' alt='aircraft' fill className='rounded-xl -z-20 object-cover fixed'/>
 					</div>
 				</div>
 			</section>
