@@ -10,7 +10,7 @@ export function MakeBookingSection(props: MakeBookingSectionProps) {
 	const t = useTranslations('form')
 	return (
 		<section>
-			<div className='container'>
+			<div className='container py-12'>
 				<div className={`gap-8 ${isCard && 'rounded-2xl bg-gray-200 p-8'}`}>
 					<h2>{t('title')}</h2>
 					<RequestForm />

@@ -49,10 +49,7 @@ export function MenuBar() {
 					{t('social-media.telegram')}
 					<ArrowTopRight className='size-10 text-gray-500' />
 				</Link>
-				<Link
-					href='https://wa.me/+79602312584'
-					className='flex items-center'
-				>
+				<Link href='https://wa.me/+79602312584' className='flex items-center'>
 					{t('social-media.whats-app')}
 					<ArrowTopRight className='size-10 text-gray-500' />
 				</Link>

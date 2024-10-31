@@ -1,3 +1,4 @@
+import Diamond from '@/assets/svg/diamond-gold.svg'
 import { FileCard } from '@/components/elements'
 import { BestPriceSection, TransferSection, WhyUsSection } from '@/components/sections'
 import { useLocale, useTranslations } from 'next-intl'
@@ -28,6 +29,11 @@ export default function businessAgentsPage() {
 			? 'https://atmjet.ams3.cdn.digitaloceanspaces.com/Checklist%20for%20ordering%20%20a%20private%20jet%20for%20an%20executive%20EN.pdf'
 			: 'https://atmjet.ams3.cdn.digitaloceanspaces.com/Checklist%20for%20ordering%20%20a%20private%20jet%20for%20an%20executive%20RU.pdf'
 
+	const presentationUrl =
+		locale === 'en'
+			? 'https://atmjet.ams3.cdn.digitaloceanspaces.com/presentation/ATM%20JET%20Presentation.pdf'
+			: 'https://atmjet.ams3.cdn.digitaloceanspaces.com/presentation/ATM%20JET%20Presentation%20RU.pdf'
+
 	return (
 		<main>
 			<section>
@@ -36,9 +42,15 @@ export default function businessAgentsPage() {
 					<div className='gap-10 lg:flex-row'>
 						<div className='w-full gap-6'>
 							<h2>{t('guide.title')}</h2>
-							<p>{t('guide.description')}</p>
+							<div className='flex-row gap-4'>
+								<Diamond className='h-11 w-11 shrink-0 md:h-11 md:w-11' alt='Icon of diamond' />
+								<p>{t('guide.description')}</p>
+							</div>
 							<hr />
-							<p>{t('guide.description2')}</p>
+							<div className='flex-row gap-4'>
+								<Diamond className='h-11 w-11 shrink-0 md:h-11 md:w-11' alt='Icon of diamond' />
+								<p>{t('guide.description2')}</p>
+							</div>
 						</div>
 						<Image
 							src='/images/business_agencies/hero2.webp'
@@ -64,7 +76,7 @@ export default function businessAgentsPage() {
 						title={t('documents.document2.title')}
 						imageUrl='/images/business_agencies/file2.webp'
 						button={t('documents.document2.button')}
-						url='https://atmjet.ams3.cdn.digitaloceanspaces.com/presentation/ATM%20JET%20Presentation.pdf'
+						url={presentationUrl}
 					/>
 				</div>
 			</section>

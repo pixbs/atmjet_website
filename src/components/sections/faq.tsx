@@ -26,7 +26,7 @@ export function FaqSection() {
 								<div className='flex flex-row overflow-hidden'>
 									<p>
 										{t(`answer${index + 1}`)
-											.split(' \\n')
+											.split('\\n')
 											.map((answer, index) => (
 												<>
 													<span key={index}>{answer}</span>

@@ -62,7 +62,7 @@ export default async function Aircraft() {
 			</section>
 			<section>
 				<div className='container gap-10'>
-					<div className='card gap-4 p-12 md:p-24 relative overflow-clip'>
+					<div className='card relative gap-4 overflow-clip p-12 md:p-24'>
 						<h2>{t('aircraft-contact-us.title')}</h2>
 						<p className='md:w-1/2'>{t('aircraft-contact-us.description')}</p>
 						<Link href='?showBooking=Contact_us_aircraft' className='mt-4' scroll={false}>
@@ -71,8 +71,13 @@ export default async function Aircraft() {
 						<div className='option-darkening absolute inset-0 -z-10' />
 						<div className='option-darkening absolute inset-0 -z-10' />
 						<div className='option-darkening absolute inset-0 -z-10' />
-						<div className='bg-gray-100 absolute inset-0 -z-10 opacity-80 md:hidden'/>
-						<Image src='/images/aircraft/aircraft.png' alt='aircraft' fill className='rounded-xl -z-20 object-cover fixed'/>
+						<div className='absolute inset-0 -z-10 bg-gray-100 opacity-80 md:hidden' />
+						<Image
+							src='/images/aircraft/aircraft.png'
+							alt='aircraft'
+							fill
+							className='fixed -z-20 rounded-xl object-cover'
+						/>
 					</div>
 				</div>
 			</section>

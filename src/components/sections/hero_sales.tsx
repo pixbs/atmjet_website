@@ -20,7 +20,16 @@ export function HeroSalesSection() {
 					</Counter>{' '}
 					{t('headline2')}
 				</h1>
-				<p className='max-w-xs pt-4 text-gray-900'>{t('description')}</p>
+				<p className='max-w-xs pt-4 text-gray-900'>
+					{t('description')
+						.split('\\n')
+						.map((text, index) => (
+							<>
+								<span key={index}>{text}</span>
+								<br key={index} />
+							</>
+						))}
+				</p>
 				<Link href='?showBooking=Hero_sales' scroll={false}>
 					<button className='big mt-8'>{t('button')}</button>
 				</Link>

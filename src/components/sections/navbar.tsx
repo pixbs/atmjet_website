@@ -29,10 +29,7 @@ export function Navbar() {
 							{t('social-media.telegram')}
 							<ArrowTopRight className='size-10' />
 						</Link>
-						<Link
-							href='https://wa.me/+79602312584'
-							className='flex items-center'
-						>
+						<Link href='https://wa.me/+79602312584' className='flex items-center'>
 							{t('social-media.whats-app')}
 							<ArrowTopRight className='size-10' />
 						</Link>

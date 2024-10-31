@@ -65,7 +65,14 @@ export default async function VehiclePage(props: VehiclePageProps) {
 							tailYear: vehicle.tailYear,
 							tailHomebase: vehicle.tailHomebase,
 							tailMaxpax: vehicle.tailMaxpax,
-						})}
+						})
+							.split('\\n')
+							.map((line, index) => (
+								<>
+									<span key={index}>{line}</span>
+									<br key={index} />
+								</>
+							))}
 					</p>
 				</div>
 			</section>

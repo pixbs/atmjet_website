@@ -27,11 +27,10 @@ export default function PartnersPage() {
 		'/images/home_page/why_us_excellence.webp',
 	]
 	const weOfferImages = [
-		'/images/home_page/why_us_years.webp',
-		'/images/home_page/why_us_clients.webp',
-		'/images/home_page/why_us_trusted_by_celeb.webp',
-		'/images/home_page/why_us_same_day_departure.webp',
-		'/images/home_page/why_us_excellence.webp',
+		'/images/empty_legs/hero.png',
+		'/images/atm_jet_group/group1.webp',
+		'/images/business_agencies/hero2.webp',
+		'/images/citizens/why_us_anypayment.webp',
 	]
 
 	return (

@@ -8,7 +8,7 @@ export default function AtmJetGroupPage() {
 	return (
 		<main>
 			<section>
-				<div className='container items-center pt-32 gap-4'>
+				<div className='container items-center gap-4 pt-32'>
 					<p className='rounded-full border border-gray-300 px-4 py-1 text-sm'>
 						{t('atm-jet-hero.chip')}
 					</p>

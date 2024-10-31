@@ -33,7 +33,7 @@ export function OptionsSection() {
 						<h2 className='z-10'>{t('agencies')}</h2>
 						<button>{t('button')}</button>
 					</Link>
-					<div className='bg-gray-100 absolute inset-0 -z-10 opacity-60'/>
+					<div className='absolute inset-0 -z-10 bg-gray-100 opacity-60' />
 					<div className='option-darkening absolute inset-0 -z-10' />
 					<Image
 						src='/images/home_page/2-for-business-agents.webp'
