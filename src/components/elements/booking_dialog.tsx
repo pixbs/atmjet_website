@@ -1,6 +1,7 @@
 'use client'
 
 import ArrowTopRight from '@/assets/svg/arrow-top-right.svg'
+import Close from '@/assets/svg/close.svg'
 import { useTranslations } from 'next-intl'
 import Link from 'next/link'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
@@ -77,10 +78,11 @@ export function BookingDialog(props: BookingDialogProps) {
 			onClick={handleClickOutside}
 		>
 			<div
-				className='container mx-auto rounded-2xl bg-gray-150 stroke-gray-800 stroke-1 !p-10'
+				className='container mx-auto rounded-2xl bg-gray-150 stroke-gray-800 stroke-1 !p-14 relative'
 				ref={contentRef}
 			>
 				<div className='max-w-screen-md gap-8 self-center'>
+					<Close className='absolute top-12 right-12 size-10 hover:opacity-80 cursor-pointer' onClick={handleClose} />
 					<BookingForm host={host} close={handleClose} />
 					<div className='[&>*]:duration-600 flex-row flex-wrap items-center justify-center gap-4 [&>*]:animate-in [&>*]:fade-in'>
 						<Link href='https://t.me/melentev1' className='flex items-center text-base'>
