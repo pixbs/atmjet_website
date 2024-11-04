@@ -34,7 +34,7 @@ export function KeyFeaturesCarousel({ children }: { children: React.ReactNode })
 					<div className='embla__container flex-row'>{children}</div>
 				</div>
 			</div>
-			<div className='absolute right-4 top-4 flex-row gap-2'>
+			<div className='md:absolute right-4 top-4 flex-row gap-2'>
 				<PrevButton onClick={onPrevButtonClick} disabled={prevBtnDisabled} />
 				<NextButton onClick={onNextButtonClick} disabled={nextBtnDisabled} />
 			</div>
