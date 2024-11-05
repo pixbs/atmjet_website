@@ -53,8 +53,8 @@ export function Navbar() {
 						<Link href={`/${locale}/atm_jet_group`} className='text-right'>
 							{t('navigation.atm-jet-group')}
 						</Link>
-						<Link href={`/${locale}/aircraft`} className='text-right'>
-							{t('navigation.aircraft')}
+						<Link href={`/${locale}/aircrafts`} className='text-right'>
+							{t('navigation.aircrafts')}
 						</Link>
 						<Link href={`/${locale}/yachts`} className='text-right'>
 							{t('navigation.yachts')}

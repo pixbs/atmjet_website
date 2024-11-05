@@ -1,17 +1,17 @@
 import { Preloader } from '@/components/elements'
 import {
-	AngleBar,
-	EmptyLegSection,
-	FaqSection,
-	HeroSection,
-	KeyFeaturesSection,
-	MakeBookingSection,
-	OptionsSection,
-	PrivilegeSection,
-	TilesSection,
-	TransferSection,
-	WhyUsSection,
-	YachtsSection,
+    AngleBar,
+    EmptyLegSection,
+    FaqSection,
+    HeroSection,
+    KeyFeaturesSection,
+    MakeBookingSection,
+    OptionsSection,
+    PrivilegeSection,
+    TilesSection,
+    TransferSection,
+    WhyUsSection,
+    YachtsSection,
 } from '@/components/sections'
 import { useTranslations } from 'next-intl'
 import { Suspense } from 'react'
@@ -40,7 +40,7 @@ export default function HomePage() {
 
 	const keyFeaturesImages = [
 		'/images/home_page/key_features_tailoredp_references.webp',
-		'/images/home_page/key_features_cuztomized_aircraft.webp',
+		'/images/home_page/key_features_cuztomized_aircrafts.webp',
 		'/images/home_page/key_features_payment_after_flight.webp',
 		'/images/home_page/key_features_pay_anyway.webp',
 		'/images/home_page/key_features_shampain.jpg',
