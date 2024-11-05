@@ -27,10 +27,10 @@ export default function PartnersPage() {
 		'/images/home_page/why_us_excellence.webp',
 	]
 	const weOfferImages = [
-		'/images/empty_legs/hero.png',
-		'/images/atm_jet_group/group1.webp',
-		'/images/business_agencies/hero2.webp',
-		'/images/citizens/why_us_anypayment.webp',
+		'/images/partners/white-label.webp',
+		'/images/business_agencies/insurance2.webp',
+		'/images/partners/label.webp',
+		'/images/partners/payment.jpg',
 	]
 
 	return (

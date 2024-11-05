@@ -18,8 +18,6 @@ export default async function VehiclePage(props: VehiclePageProps) {
 	const labels = [
 		t('tail-number'),
 		t('tail-operator'),
-		t('tail-vendor'),
-		t('tail-weight'),
 		t('tail-year'),
 		t('tail-maxpax'),
 		t('tail-homebase'),
@@ -33,8 +31,6 @@ export default async function VehiclePage(props: VehiclePageProps) {
 	const values = [
 		vehicle.tailNumber,
 		vehicle.tailOperator,
-		vehicle.vendor,
-		vehicle.weight,
 		vehicle.tailYear,
 		vehicle.tailMaxpax,
 		vehicle.tailHomebase,
