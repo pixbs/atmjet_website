@@ -24,7 +24,7 @@ export default function AtmJetGroupPage() {
 							description={t('group1.description')}
 							button={t('group1.button')}
 							imageSrc='/images/atm_jet_group/group1.webp'
-							href='/aircraft'
+							href='/aircrafts'
 						/>
 						<hr />
 						<GroupCard

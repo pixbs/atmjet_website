@@ -1,13 +1,13 @@
 {
-	"aircraft-hero": {
+	"aircrafts-hero": {
 		"title": "We have access to over ",
 		"num": "50,000",
-		"title2": " aircraft",
+		"title2": " aircrafts",
 		"description": "Our group of companies has been working since 2004 to combine the highest level of freedom and comfort in the air and at sea."
 	},
-	"aircraft-contact-us": {
+	"aircrafts-contact-us": {
 		"title": "Contact us",
-		"description": "Please contact us to request a selection of the five most suitable aircraft models, along with an explanation of the benefits of each model to suit your requirements.",
+		"description": "Please contact us to request a selection of the five most suitable aircrafts models, along with an explanation of the benefits of each model to suit your requirements.",
 		"button": "Contact now"
 	},
 	"our-fleet": {
@@ -21,7 +21,7 @@
 		"ultra-long-range-jets": "Ultra-long-range"
 	},
 	"vehicle": {
-		"description": "Aircraft {tailModel} flies under the tail number {tailNumber}. \\nOperated by {tailOperator}, the aircraft {tailModel} was built in {tailYear}. {tailModel} is based at {tailHomebase} and has a passenger capacity of {tailMaxpax} people. \\nATM JET offers the opportunity to order a private aircraft {tailModel} for a flight to any point on the planet. \\nWe have been working for you for over 16 years and have extensive experience in organizing business aviation flights.",
+		"description": "Aircrafts {tailModel} flies under the tail number {tailNumber}. \\nOperated by {tailOperator}, the aircrafts {tailModel} was built in {tailYear}. {tailModel} is based at {tailHomebase} and has a passenger capacity of {tailMaxpax} people. \\nATM JET offers the opportunity to order a private aircrafts {tailModel} for a flight to any point on the planet. \\nWe have been working for you for over 16 years and have extensive experience in organizing business aviation flights.",
 		"tail-number": "Number:",
 		"tail-operator": "Operator:",
 		"tail-vendor": "Vendor:",

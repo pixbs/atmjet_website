@@ -1,30 +1,30 @@
 'use client'
 
-import { getAircraft } from '@/app/actions'
+import { getAircrafts } from '@/app/actions'
 import { vehicles } from '@/lib/drizzle'
 import { useEffect, useState } from 'react'
 import { VehicleCard } from '../elements'
 
-export default function AllAircraft() {
-	const [aircraft, setAircraft] = useState<(typeof vehicles.$inferSelect)[]>([])
+export default function AllAircrafts() {
+	const [aircrafts, setAircrafts] = useState<(typeof vehicles.$inferSelect)[]>([])
 
 	useEffect(() => {
-		getAircraft(0).then(setAircraft)
+		getAircrafts(0).then(setAircrafts)
 	}, [])
 
 	return (
 		<section>
 			<div className='container gap-10'>
 				<div className='flex-row flex-wrap gap-y-10'>
-					{aircraft.map((aircraft) => (
-						<VehicleCard key={aircraft.id} {...aircraft} />
+					{aircrafts.map((aircrafts) => (
+						<VehicleCard key={aircrafts.id} {...aircrafts} />
 					))}
 				</div>
 				<button
 					className='big self-center'
 					onClick={() =>
-						getAircraft(aircraft.length).then((newAircraft) =>
-							setAircraft([...aircraft, ...newAircraft]),
+						getAircrafts(aircrafts.length).then((newAircrafts) =>
+							setAircrafts([...aircrafts, ...newAircrafts]),
 						)
 					}
 				>

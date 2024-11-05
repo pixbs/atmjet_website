@@ -7,8 +7,8 @@
 		"title": "Exclusive key features",
 		"description": "Unlock exceptional benefits with our exclusive key features designed to enhance your travel experience:",
 		"card1": {
-			"title": "Find a medical aircraft",
-			"description": "We will provide an aircraft equipped with the necessary medical equipment. Please forward the requirements from the clinic and doctor to us, and we will find an aircraft that meets your specifications."
+			"title": "Find a medical aircrafts",
+			"description": "We will provide an aircrafts equipped with the necessary medical equipment. Please forward the requirements from the clinic and doctor to us, and we will find an aircrafts that meets your specifications."
 		},
 		"card2": {
 			"title": "Provide doctors on board",
@@ -20,7 +20,7 @@
 		},
 		"card4": {
 			"title": "Transplant delivery",
-			"description": "We are able to deliver organs from any country. Our access to a network of medical aircraft allows us to safely deliver the transplant to the patient in a suitable environment, accompanied by a doctor."
+			"description": "We are able to deliver organs from any country. Our access to a network of medical aircrafts allows us to safely deliver the transplant to the patient in a suitable environment, accompanied by a doctor."
 		}
 	},
 	"medical-contact-us": {

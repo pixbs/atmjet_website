@@ -18,7 +18,7 @@ export default function CitizensPage() {
 	const images = [
 		'/images/citizens/why_us_sanctions.webp',
 		'/images/citizens/why_us_techstops.webp',
-		'/images/citizens/why_us_foreignaircraft.webp',
+		'/images/citizens/why_us_foreignaircrafts.webp',
 		'/images/citizens/why_us_coordination.webp',
 		'/images/citizens/why_us_anypayment.webp',
 	]

@@ -111,16 +111,16 @@ export async function getAirport(str: string, locale: string) {
 	}
 }
 
-export async function getAircraft(offset: number) {
+export async function getAircrafts(offset: number) {
 	'use server'
-	const aircraft = await db
+	const aircrafts = await db
 		.select()
 		.from(vehicles)
 		.where(not(eq(vehicles.tailNumber, '')))
 		.offset(offset)
 		.limit(15)
 
-	return aircraft
+	return aircrafts
 }
 
 function toTitleCase(s: string) {
