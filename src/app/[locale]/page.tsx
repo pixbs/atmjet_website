@@ -13,8 +13,41 @@ import {
 	WhyUsSection,
 	YachtsSection,
 } from '@/components/sections'
+import type { Metadata } from 'next'
 import { useTranslations } from 'next-intl'
+import { getLocale } from 'next-intl/server'
 import { Suspense } from 'react'
+
+export async function generateMetadata() {
+	const locale = await getLocale()
+	const baseURL =
+		process.env.VERCEL_PROJECT_PRODUCTION_URL || process.env.VERCEL_URL || 'localhost:3000'
+
+	const title =
+		locale === 'ru'
+			? 'Аренда частного самолета, заказать самолет в Москве и любой точке мира'
+			: 'Private Jet Charter, Hire a Private Jet Worldwide'
+	const description =
+		locale === 'ru'
+			? 'Арендовать частный самолет в течение нескольких часов.✈ заказать частный самолет в Москве, других городах и странах.'
+			: 'Hire a private jet within a few hours.✈ Book a private jet London, and other cities and countries.'
+
+	const metadata: Metadata = {
+		title: title,
+		description: description,
+		openGraph: {
+			videos: [
+				{
+					url: `https://${baseURL}/video/background_full.mp4`,
+					type: 'video/mp4',
+					width: 1920,
+					height: 1080,
+				},
+			],
+		},
+	}
+	return metadata
+}
 
 export default function HomePage() {
 	const t = useTranslations()

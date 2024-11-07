@@ -11,6 +11,45 @@ interface VehiclePageProps {
 	}
 }
 
+export async function generateMetadata(props: VehiclePageProps) {
+	const { id } = props.params
+	const names = id ? id.split('-') : []
+	const tailNumber = `${names[0]}-${names[1]}`
+	const t = await getTranslations('vehicle')
+	const [vehicle] = await db
+		.select()
+		.from(vehicles)
+		.limit(1)
+		.where(eq(vehicles.tailNumber, tailNumber.toUpperCase()))
+
+	const description = t('description', {
+		tailModel: vehicle.tailModel,
+		tailNumber: vehicle.tailNumber,
+		tailOperator: vehicle.tailOperator,
+		tailVendor: vehicle.vendor,
+		tailYear: vehicle.tailYear,
+		tailHomebase: vehicle.tailHomebase,
+		tailMaxpax: vehicle.tailMaxpax,
+	})
+		.split('\\n')
+		.join()
+	const metadata = {
+		title: `ATM JET | ${vehicle.tailModel}`,
+		description: description,
+		openGraph: {
+			images: [
+				{
+					url: `http://${vehicle.image}`,
+					width: 800,
+					height: 600,
+					alt: vehicle.tailModel,
+				},
+			],
+		},
+	}
+	return metadata
+}
+
 export default async function VehiclePage(props: VehiclePageProps) {
 	const { id } = props.params
 	const names = id ? id.split('-') : []
