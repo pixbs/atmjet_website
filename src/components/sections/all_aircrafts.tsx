@@ -2,11 +2,13 @@
 
 import { getAircrafts } from '@/app/actions'
 import { vehicles } from '@/lib/drizzle'
+import { useLocale } from 'next-intl'
 import { useEffect, useState } from 'react'
 import { VehicleCard } from '../elements'
 
 export default function AllAircrafts() {
 	const [aircrafts, setAircrafts] = useState<(typeof vehicles.$inferSelect)[]>([])
+	const locale = useLocale()
 
 	useEffect(() => {
 		getAircrafts(0).then(setAircrafts)
@@ -28,7 +30,7 @@ export default function AllAircrafts() {
 						)
 					}
 				>
-					Load more
+					{locale === 'ru' ? 'Показать еще' : 'Show more'}
 				</button>
 			</div>
 		</section>
