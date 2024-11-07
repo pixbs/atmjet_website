@@ -1,17 +1,17 @@
 import { Preloader } from '@/components/elements'
 import {
-    AngleBar,
-    EmptyLegSection,
-    FaqSection,
-    HeroSection,
-    KeyFeaturesSection,
-    MakeBookingSection,
-    OptionsSection,
-    PrivilegeSection,
-    TilesSection,
-    TransferSection,
-    WhyUsSection,
-    YachtsSection,
+	AngleBar,
+	EmptyLegSection,
+	FaqSection,
+	HeroSection,
+	KeyFeaturesSection,
+	MakeBookingSection,
+	OptionsSection,
+	PrivilegeSection,
+	TilesSection,
+	TransferSection,
+	WhyUsSection,
+	YachtsSection,
 } from '@/components/sections'
 import { useTranslations } from 'next-intl'
 import { Suspense } from 'react'

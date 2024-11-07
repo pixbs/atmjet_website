@@ -38,6 +38,25 @@ const nextConfig = {
 			},
 		],
 	},
+	async redirects() {
+		return [
+			{
+				source: '/:slug/jets',
+				destination: '/',
+				permanent: true,
+			},
+			{
+				source: '/:slug/planes',
+				destination: '/:slug/aircrafts',
+				permanent: true,
+			},
+			{
+				source: '/:slug/planes/:id',
+				destination: '/:slug/aircrafts/:id',
+				permanent: true,
+			},
+		]
+	},
 }
 
 export default withNextIntl(nextConfig)

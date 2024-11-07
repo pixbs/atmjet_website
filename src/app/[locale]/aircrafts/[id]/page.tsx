@@ -3,6 +3,7 @@ import NewContactUs from '@/components/sections/new_contact_us'
 import { db, vehicles } from '@/lib/drizzle'
 import { eq } from 'drizzle-orm'
 import { getTranslations } from 'next-intl/server'
+import { redirect } from 'next/navigation'
 
 interface VehiclePageProps {
 	params: {
@@ -11,10 +12,18 @@ interface VehiclePageProps {
 }
 
 export default async function VehiclePage(props: VehiclePageProps) {
-	const t = await getTranslations('vehicle')
 	const { id } = props.params
-	const [vehicle] = await db.select().from(vehicles).limit(1).where(eq(vehicles.tailNumber, id))
+	const names = id ? id.split('-') : []
+	const tailNumber = `${names[0]}-${names[1]}`
+	const tailModel = names.slice(2).join(' ')
+	const [vehicle] = await db
+		.select()
+		.from(vehicles)
+		.limit(1)
+		.where(eq(vehicles.tailNumber, tailNumber.toUpperCase()))
+	if (!vehicle) redirect('/aircrafts')
 
+	const t = await getTranslations('vehicle')
 	const labels = [
 		t('tail-number'),
 		t('tail-operator'),
