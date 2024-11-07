@@ -18,14 +18,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
 		'/yachts',
 	]
 	return url.map((path) => ({
-		url: `${baseURL}${path}`,
+		url: `https://${baseURL}${path}`,
 		lastModified: new Date().toISOString(),
 		changeFrequency: 'daily',
 		priority: 0.8,
 		alternates: {
 			languages: {
-				ru: `${baseURL}/ru${path}`,
-				en: `${baseURL}/en${path}`,
+				ru: `https://${baseURL}/ru${path}`,
+				en: `https://${baseURL}/en${path}`,
 			},
 		},
 	}))

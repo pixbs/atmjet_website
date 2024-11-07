@@ -10,14 +10,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 		.from(vehicles)
 		.where(not(eq(vehicles.tailNumber, '')))
 	return aircrafts.map((vehicle) => ({
-		url: `${baseURL}/aircrafts/${vehicle.tailNumber}`,
+		url: `https://${baseURL}/aircrafts/${vehicle.tailNumber}`,
 		lastModified: new Date().toISOString(),
 		changeFrequency: 'daily',
 		priority: 0.5,
 		alternates: {
 			languages: {
-				ru: `${baseURL}/ru/aircrafts/${vehicle.tailNumber}`,
-				en: `${baseURL}/en/aircrafts/${vehicle.tailNumber}`,
+				ru: `https://${baseURL}/ru/aircrafts/${vehicle.tailNumber}`,
+				en: `https://${baseURL}/en/aircrafts/${vehicle.tailNumber}`,
 			},
 		},
 	}))
