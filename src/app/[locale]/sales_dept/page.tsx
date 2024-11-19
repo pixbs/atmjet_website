@@ -33,20 +33,23 @@ export default async function SalesDeptPage() {
           	ELSE CAST(${vehicles.tailYear} AS INT) 
         	END DESC NULLS LAST`,
 		)
-		.limit(15)) as (typeof vehicles.$inferSelect)[]
+		.limit(15)
+		.catch(() => [])) as (typeof vehicles.$inferSelect)[]
 
 	return (
 		<main>
 			<HeroSalesSection />
 			<PersonalManagerSection />
-			<section>
-				<div className='container'>
-					<div className='card gap-8 rounded-2xl bg-gray-150 p-8 !pr-0 md:gap-10 md:p-10'>
-						<h2>{t('aircrafts.title')}</h2>
-						<VehiclesCarousel vehicles={smallJets} />
+			{smallJets.length > 0 && (
+				<section>
+					<div className='container'>
+						<div className='card gap-8 rounded-2xl bg-gray-150 p-8 !pr-0 md:gap-10 md:p-10'>
+							<h2>{t('aircrafts.title')}</h2>
+							<VehiclesCarousel vehicles={smallJets} />
+						</div>
 					</div>
-				</div>
-			</section>
+				</section>
+			)}
 			<OptionsSelectionSection
 				title={t('sales-options.title')}
 				card1={{

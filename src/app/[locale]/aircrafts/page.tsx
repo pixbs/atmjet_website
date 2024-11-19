@@ -11,8 +11,13 @@ import Link from 'next/link'
 
 export default async function Aircrafts() {
 	const t = await getTranslations()
-	const vehiclesList = await db.select().from(vehicles).limit(10)
-	const smallJets = (await db
+	const vehiclesList =
+		(await db
+			.select()
+			.from(vehicles)
+			.limit(10)
+			.catch(() => [])) || []
+	const smallJets = ((await db
 		.select()
 		.from(vehicles)
 		.where(
@@ -22,29 +27,34 @@ export default async function Aircrafts() {
               ELSE false 
             END`,
 		)
-		.limit(15)) as (typeof vehicles.$inferSelect)[]
-	const midJets = (await db
-		.select()
-		.from(vehicles)
-		.where(
-			sql`CASE 
+		.limit(15)
+		.catch(() => [])) || []) as (typeof vehicles.$inferSelect)[]
+	const midJets =
+		(((await db
+			.select()
+			.from(vehicles)
+			.where(
+				sql`CASE 
               WHEN trim(${vehicles.tailMaxpax}) ~ '^[0-9]+$' 
               THEN (${vehicles.tailMaxpax}::integer > 6 AND ${vehicles.tailMaxpax}::integer < 11) 
               ELSE false 
             END`,
-		)
-		.limit(15)) as (typeof vehicles.$inferSelect)[]
-	const heavyJets = (await db
-		.select()
-		.from(vehicles)
-		.where(
-			sql`CASE 
+			)
+			.limit(15)
+			.catch(() => [])) || []) as (typeof vehicles.$inferSelect)[]) || []
+	const heavyJets =
+		(((await db
+			.select()
+			.from(vehicles)
+			.where(
+				sql`CASE 
               WHEN trim(${vehicles.tailMaxpax}) ~ '^[0-9]+$' 
               THEN (${vehicles.tailMaxpax}::integer > 10) 
               ELSE false 
             END`,
-		)
-		.limit(15)) as (typeof vehicles.$inferSelect)[]
+			)
+			.limit(15)
+			.catch(() => [])) || []) as (typeof vehicles.$inferSelect)[]) || []
 
 	return (
 		<main>
@@ -81,22 +91,24 @@ export default async function Aircrafts() {
 					</div>
 				</div>
 			</section>
-			<section>
-				<div className='container gap-10'>
-					<div className='gap-4'>
-						<h2>{t('our-fleet.light-jets')}</h2>
-						<VehiclesCarousel vehicles={smallJets} />
+			{vehiclesList.length > 0 && (
+				<section>
+					<div className='container gap-10'>
+						<div className='gap-4'>
+							<h2>{t('our-fleet.light-jets')}</h2>
+							<VehiclesCarousel vehicles={smallJets} />
+						</div>
+						<div className='gap-4'>
+							<h2>{t('our-fleet.midsize-jets')}</h2>
+							<VehiclesCarousel vehicles={midJets} />
+						</div>
+						<div className='gap-4'>
+							<h2>{t('our-fleet.heavy-jets')}</h2>
+							<VehiclesCarousel vehicles={heavyJets} />
+						</div>
 					</div>
-					<div className='gap-4'>
-						<h2>{t('our-fleet.midsize-jets')}</h2>
-						<VehiclesCarousel vehicles={midJets} />
-					</div>
-					<div className='gap-4'>
-						<h2>{t('our-fleet.heavy-jets')}</h2>
-						<VehiclesCarousel vehicles={heavyJets} />
-					</div>
-				</div>
-			</section>
+				</section>
+			)}
 			<MakeBookingSection isCard />
 			{/* <ContactUsSection
 				title={t('partners-contact-us.title')}

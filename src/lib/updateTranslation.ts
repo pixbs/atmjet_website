@@ -94,7 +94,11 @@ export async function updateMissingRussianTranslations() {
 
 			// Update the database if there are any changes
 			if (Object.keys(updates).length > 0) {
-				await db.update(newAirports).set(updates).where(eq(newAirports.id, airport.id)).execute()
+				;(await db
+					.update(newAirports)
+					.set(updates)
+					.where(eq(newAirports.id, airport.id))
+					.execute()) || []
 
 				console.log(`Updated airport ID ${airport.id} with new translations.`)
 			}

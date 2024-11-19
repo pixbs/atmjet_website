@@ -113,12 +113,14 @@ export async function getAirport(str: string, locale: string) {
 
 export async function getAircrafts(offset: number) {
 	'use server'
-	const aircrafts = await db
-		.select()
-		.from(vehicles)
-		.where(not(eq(vehicles.tailNumber, '')))
-		.offset(offset)
-		.limit(15)
+	const aircrafts =
+		(await db
+			.select()
+			.from(vehicles)
+			.where(not(eq(vehicles.tailNumber, '')))
+			.offset(offset)
+			.limit(15)
+			.catch(() => [])) || []
 
 	return aircrafts
 }

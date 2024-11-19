@@ -10,15 +10,32 @@ export async function EmptyLegSection() {
 	const t = await getTranslations('empty-leg')
 	const locale = getLocale()
 
-	const emptyLegsCards = await db.select().from(emptyLegs)
+	const emptyLegsCards =
+		(await db
+			.select()
+			.from(emptyLegs)
+			.catch(() => [])) || []
 
-	const cardsWithAirports = await Promise.all(
-		emptyLegsCards.map(async (card) => ({
-			...card,
-			fromAirport: await findByICAO(card.from),
-			toAirport: await findByICAO(card.to),
-		})),
-	)
+	const cardsWithAirports = (
+		await Promise.all(
+			emptyLegsCards.map(async (card) => {
+				try {
+					const fromAirport = await findByICAO(card.from)
+					const toAirport = await findByICAO(card.to)
+					if (!fromAirport || !toAirport) {
+						throw new Error('Airport not found')
+					}
+					return {
+						...card,
+						fromAirport,
+						toAirport,
+					}
+				} catch {
+					return null
+				}
+			}),
+		)
+	).filter((card) => card !== null)
 
 	console.log(emptyLegsCards)
 	return (

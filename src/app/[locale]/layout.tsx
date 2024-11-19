@@ -16,7 +16,10 @@ export async function generateMetadata() {
 		process.env.VERCEL_PROJECT_PRODUCTION_URL || process.env.VERCEL_URL || 'localhost:3000'
 
 	const title = 'ATM JET - Flying private made simple'
-	const description = locale === 'ru' ? 'Аренда самолета - лучшее решение для тех, кто ценит комфорт и время. ATM JET предоставляет возможность заказать частный самолет для перелета в любую точку планеты. Мы работаем для вас уже более 16 лет и имеем огромный опыт в организации полетов бизнес-авиации.' : 'Renting a plane is the best solution for those who value comfort and time. ATM JET provides the opportunity to order a private plane for a flight to any point on the planet. We have been working for you for over 16 years and have vast experience in organizing business aviation flights.'
+	const description =
+		locale === 'ru'
+			? 'Аренда самолета - лучшее решение для тех, кто ценит комфорт и время. ATM JET предоставляет возможность заказать частный самолет для перелета в любую точку планеты. Мы работаем для вас уже более 16 лет и имеем огромный опыт в организации полетов бизнес-авиации.'
+			: 'Renting a plane is the best solution for those who value comfort and time. ATM JET provides the opportunity to order a private plane for a flight to any point on the planet. We have been working for you for over 16 years and have vast experience in organizing business aviation flights.'
 	const metadata = {
 		title: title,
 		description: description,

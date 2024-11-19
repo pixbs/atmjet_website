@@ -14,7 +14,11 @@ import Image from 'next/image'
 export default async function YachtsPage() {
 	const t = await getTranslations()
 
-	const yachts = await db.select().from(yachtsTable)
+	const yachts =
+		(await db
+			.select()
+			.from(yachtsTable)
+			.catch(() => [])) || []
 
 	const whyUsCards = ['card1', 'card2', 'card3', 'card4'].map((card) => ({
 		num: '',
