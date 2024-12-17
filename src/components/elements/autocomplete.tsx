@@ -1,15 +1,25 @@
 'use client'
-import { getAirport } from '@/app/actions'
+import getAirports from '@/utils/getAiport'
+import { debounce } from 'lodash'
 import { useLocale } from 'next-intl'
-import { InputHTMLAttributes, useState } from 'react'
+import { InputHTMLAttributes, useMemo, useState } from 'react'
 
 export function AutoComplete(props: InputHTMLAttributes<HTMLInputElement>) {
 	const { value, onChange, ...inputProps } = props
 	const [autocomplete, setAutocomplete] = useState<string[]>([])
 	const locale = useLocale()
 
+	const debounceSearch = useMemo(
+		() =>
+			debounce(async (searchTerm: string) => {
+				const results = await getAirports(searchTerm, locale)
+				setAutocomplete(results)
+			}, 300),
+		[locale],
+	)
+
 	const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-		const res = await getAirport(e.target.value, locale)
+		const res = await getAirports(e.target.value, locale)
 		setAutocomplete(res)
 	}
 
@@ -22,7 +32,7 @@ export function AutoComplete(props: InputHTMLAttributes<HTMLInputElement>) {
 					if (onChange) {
 						onChange(e)
 					}
-					handleChange(e)
+					debounceSearch(e.target.value)
 				}}
 				onBlur={() => {
 					setTimeout(() => {
@@ -32,7 +42,7 @@ export function AutoComplete(props: InputHTMLAttributes<HTMLInputElement>) {
 				{...inputProps}
 			/>
 			{autocomplete.length > 1 && (
-				<ul className='absolute bottom-0 z-10 mt-4 max-h-40 w-80 shrink-0 translate-y-full overflow-y-auto rounded-xl border bg-gray-900 shadow-lg'>
+				<ul className='absolute bottom-0 z-50 mt-4 max-h-40 w-80 shrink-0 translate-y-full overflow-y-auto rounded-xl border bg-gray-900 shadow-lg'>
 					{autocomplete.map(
 						(suggestion, index) =>
 							index > 0 && (

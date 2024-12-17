@@ -1,4 +1,4 @@
-import { sql } from '@vercel/postgres'
+import { sql as vercelSql } from '@vercel/postgres'
 import { config } from 'dotenv'
 import {
 	decimal,
@@ -121,18 +121,40 @@ export const yachts = pgTable('yachts', {
 	pictures: text('pictures').array(),
 })
 
-export const newAirports = pgTable('new_airports', {
-	id: serial('id').primaryKey(),
-	icao: text('icao'),
-	iata: text('iata'),
-	labelEn: text('label_en'),
-	labelRu: text('label_ru'),
-	cityEn: text('city_en'),
-	cityRu: text('city_ru'),
-	countryEn: text('country_en'),
-	countryRu: text('country_ru'),
-	wikidata: text('wikidata'),
-})
+export const newAirports = pgTable(
+	'new_airports',
+	{
+		id: serial('id').primaryKey(),
+		icao: text('icao'),
+		iata: text('iata'),
+		labelEn: text('label_en'),
+		labelRu: text('label_ru'),
+		cityEn: text('city_en'),
+		cityRu: text('city_ru'),
+		countryEn: text('country_en'),
+		countryRu: text('country_ru'),
+		passengers: text('passengers_per_year'),
+		typeEn: text('type_en'),
+		typeRu: text('type_ru'),
+		aliesEn: text('alies_en'),
+		aliesRu: text('alies_ru'),
+		wikidata: text('wikidata'),
+	},
+	(table) => {
+		return {
+			icaoIdx: index('icao_idx').on(table.icao),
+			iataIdx: index('iata_idx').on(table.iata),
+			cityEnIdx: index('idx_airports_city_en').on(table.cityEn),
+			cityRuIdx: index('idx_airports_city_ru').on(table.cityRu),
+			labelEnIdx: index('idx_airports_label_en').on(table.labelEn),
+			labelRuIdx: index('idx_airports_label_ru').on(table.labelRu),
+			countryEnIdx: index('idx_airports_country_en').on(table.countryEn),
+			countryRuIdx: index('idx_airports_country_ru').on(table.countryRu),
+			aliesEnIdx: index('idx_airports_alies_en').on(table.aliesEn),
+			aliesRuIdx: index('idx_airports_alies_ru').on(table.aliesRu),
+		}
+	},
+)
 
 export const users = pgTable('atmjet_admin__users', {
 	id: serial('id').primaryKey(),
@@ -140,4 +162,4 @@ export const users = pgTable('atmjet_admin__users', {
 	password: text('password').notNull(),
 })
 
-export const db = drizzle(sql, { logger: true })
+export const db = drizzle(vercelSql, { logger: true })
