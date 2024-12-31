@@ -3,10 +3,10 @@
 import BurgerMenu from '@/assets/svg/burger-menu.svg'
 import Close from '@/assets/svg/close.svg'
 import Logo from '@/assets/svg/logo.svg'
+import { useLocale } from 'next-intl'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { useLocale } from 'next-intl'
 import { Navbar } from './navbar'
 
 export function HeaderSection() {
@@ -37,7 +37,9 @@ export function HeaderSection() {
 				setIsScrolled(false)
 			}
 
-			if (currentScrollY > lastScrollY) {
+			if (currentScrollY === 0) {
+				setShowHeader(true) // At top of page
+			} else if (currentScrollY > lastScrollY) {
 				setShowHeader(false) // Scrolling down
 			} else {
 				setShowHeader(true) // Scrolling up
