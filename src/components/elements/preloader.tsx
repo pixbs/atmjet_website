@@ -35,7 +35,7 @@ export function Preloader({ isStatic = false }: PreloaderProps) {
 		<>
 			<motion.div
 				className='fixed inset-0 z-[998] items-center justify-center bg-gray-150'
-				initial={isStatic ? backgroundAnimation.hidden : backgroundAnimation.visible}
+				initial={isStatic ? backgroundAnimation.visible : backgroundAnimation.hidden}
 				animate={isStatic || backgroundAnimation.visible}
 				transition={{ duration: 0.5, delay: 2 }}
 			></motion.div>
