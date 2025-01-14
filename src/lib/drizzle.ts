@@ -1,5 +1,6 @@
 import { sql as vercelSql } from '@vercel/postgres'
 import { config } from 'dotenv'
+import { relations } from 'drizzle-orm'
 import {
 	decimal,
 	index,
@@ -155,6 +156,59 @@ export const newAirports = pgTable(
 		}
 	},
 )
+
+export const person = pgTable('contact', {
+	id: serial('id').primaryKey(),
+	name: text('name'),
+	phone: text('phone'),
+	email: text('email'),
+})
+
+export const newYachts = pgTable(
+	'new_yachts',
+	{
+		id: serial('id').primaryKey(),
+		name: text('name'),
+		slug: text('slug'),
+		descriptionEn: text('description'),
+		descriptionRu: text('description_ru'),
+		manufacturer: text('manufacturer'),
+		owner: text('owner'),
+		contact: integer('contact_id'),
+		bussinesPrice: numeric('bussines_price'),
+		customerPrice: numeric('customer_price'),
+		currency: text('currency'),
+		captain: integer('captain_id'),
+		location: text('location'),
+		length: numeric('length'),
+		guestsDay: numeric('guests_day'),
+		guestsNight: numeric('guests_night'),
+		cabins: text('cabins'),
+		bathrooms: text('bathrooms'),
+		refit: numeric('refit'),
+		minHours: numeric('min_hours'),
+		included: text('included'),
+		photos: text('photos').array(),
+	},
+	(table) => {
+		return {
+			contactIdx: index('contact_idx').on(table.contact),
+			captainIdx: index('captain_idx').on(table.captain),
+			yachtNameIdx: index('yacht_name_idx').on(table.name),
+		}
+	},
+)
+
+export const newYachtsRelations = relations(newYachts, ({ one }) => ({
+	contact: one(person, {
+		fields: [newYachts.contact],
+		references: [person.id],
+	}),
+	captain: one(person, {
+		fields: [newYachts.captain],
+		references: [person.id],
+	}),
+}))
 
 export const users = pgTable('atmjet_admin__users', {
 	id: serial('id').primaryKey(),

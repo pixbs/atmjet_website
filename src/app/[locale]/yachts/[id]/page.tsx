@@ -1,84 +1,109 @@
-import { MakeBookingSection } from '@/components/sections'
-import { db, vehicles } from '@/lib/drizzle'
-import { eq } from 'drizzle-orm'
+import NewContactUs from '@/components/sections/new_contact_us'
+import { db, newYachts } from '@/lib/drizzle'
+import { ilike, or } from 'drizzle-orm'
 import { getTranslations } from 'next-intl/server'
+import { redirect } from 'next/navigation'
+import Gallery from './gallery'
 
-interface VehiclePageProps {
+interface YachtsProps {
 	params: {
 		id: string
 	}
 }
 
-export default async function VehiclePage(props: VehiclePageProps) {
+export default async function Yachts(props: YachtsProps) {
 	const t = await getTranslations('vehicle')
 	const { id } = props.params
-	const [vehicle] = await db
+	const [yacht] = await db
 		.select()
-		.from(vehicles)
+		.from(newYachts)
 		.limit(1)
-		.where(eq(vehicles.id, parseInt(decodeURIComponent(id))))
+		.where(or(ilike(newYachts.slug, `%${id}%`)))
 
-	const labels = [
-		t('yacht-maxspeed'),
-		t('yacht-speed'),
-		t('yacht-winter-areas'),
-		t('yacht-summer-areas'),
-		t('yacht-guests'),
-		t('yacht-year'),
-		t('yacht-builder'),
-		t('yacht-length'),
-	]
-
-	const values = [
-		vehicle.yachtMaxspeed,
-		vehicle.yachtSpeed,
-		vehicle.yachtWinter_areas,
-		vehicle.yachtSummer_areas,
-		vehicle.yachtGuests,
-		vehicle.yachtYear,
-		vehicle.yachtBuilder,
-		vehicle.yachtLength,
-	]
+	const price = (Number(yacht.customerPrice) ?? 0) * (Number(yacht.minHours) ?? 1)
+	if (!yacht) return redirect('/yachts')
 
 	return (
 		<main>
-			<section
-				className='h-[80svh] bg-cover bg-center bg-no-repeat bg-origin-content pb-96 md:bg-fixed'
-				style={{ backgroundImage: `url(http://${vehicle.image})` }}
-			>
-				<div className='hero-darkening absolute inset-0 z-10' />
-			</section>
-			<section>
-				<div className='container'>
-					<h1 className='text-center'>{vehicle.tailModel}</h1>
-				</div>
-			</section>
-			<MakeBookingSection />
-			<section>
-				<div className='container md:flex-row'>
-					<div className='card w-full bg-gray-150 p-8 md:p-10'>
-						{labels.map((label, index) => (
-							<ContextLine key={index} label={label} value={values[index]} />
-						))}
+			<section className='border-b border-gray-300'>
+				{yacht.photos && yacht.photos[0] && (
+					<div
+						className='relative left-0 top-0 -z-[1] mb-[-80px] h-[40vh] w-full overflow-hidden bg-cover bg-fixed bg-center'
+						style={{ backgroundImage: `url(${yacht.photos[0]})` }}
+					>
+						<div className='absolute inset-0 z-10 bg-gradient-to-b from-gray-100 to-transparent' />
+						<div className='absolute inset-0 z-10 bg-gradient-to-t from-gray-100 to-transparent' />
+					</div>
+				)}
+				<div className='container !grid !grid-cols-2 !gap-10'>
+					{yacht.photos && yacht.photos[0] && (
+						<Gallery
+							images={yacht.photos}
+							alt={`${yacht.manufacturer} ${yacht.name}`}
+							selected={1}
+						/>
+					)}
+					<div className='gap-8 rounded-3xl border border-gray-300 bg-gray-150 p-10'>
+						<h1>{`${yacht.manufacturer} "${yacht.name}"`}</h1>
+						<form className='flex flex-col gap-8'>
+							<div className='flex flex-col gap-[2px] overflow-hidden rounded-2xl'>
+								<Input
+									name='from'
+									id='from'
+									className='cursor-not-allowed'
+									label='From'
+									disabled
+									value={String(yacht.location)}
+								/>
+								<Input name='date' id='date' type='date' label='Date' />
+								<div className='flex-row gap-[2px]'>
+									<Input
+										name='hours'
+										id='hours'
+										type='number'
+										label='Hours'
+										min={yacht.minHours || 1}
+										defaultValue={yacht.minHours || 1}
+									/>
+									<Input
+										name='guests'
+										id='guests'
+										type='number'
+										label='Guests'
+										min={1}
+										max={yacht.guestsDay || 10}
+										defaultValue={yacht.minHours || 1}
+									/>
+								</div>
+							</div>
+							<button className='self-start px-8 py-6'>
+								Request for ~{price.toLocaleString()} {yacht.currency}
+							</button>
+						</form>
+						<p>*price will be clarified after request</p>
 					</div>
 				</div>
 			</section>
+			<NewContactUs />
 		</main>
 	)
 }
 
-interface ContextLineProps {
-	label: string
-	value: string | number | null
+interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+	label?: string
 }
 
-function ContextLine(props: ContextLineProps) {
-	const { label, value } = props
-
+function Input(props: InputProps) {
+	const { className, ...rest } = props
 	return (
-		<div className='h-10 flex-row items-center justify-between border-b border-gray-300'>
-			<p className='w-full'>{label}</p>
-			<p className='w-full'>{value}</p>
+		<div className={`relative w-full bg-gray-900 text-gray-100 ${className}`}>
+			<label
+				htmlFor={rest.name}
+				className='absolute left-7 top-4 text-xs font-semibold text-gray-500'
+			>
+				{props.label}
+			</label>
+			<input className='px-7 pb-4 pt-9' name={props.id || props.name} {...rest} />
 		</div>
 	)
 }

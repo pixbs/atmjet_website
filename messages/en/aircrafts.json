@@ -21,7 +21,7 @@
 		"ultra-long-range-jets": "Ultra-long-range"
 	},
 	"vehicle": {
-		"description": "Aircrafts {tailModel} flies under the tail number {tailNumber}. \\nOperated by {tailOperator}, the aircrafts {tailModel} was built in {tailYear}. {tailModel} is based at {tailHomebase} and has a passenger capacity of {tailMaxpax} people. \\nATM JET offers the opportunity to order a private aircrafts {tailModel} for a flight to any point on the planet. \\nWe have been working for you for over 16 years and have extensive experience in organizing business aviation flights.",
+		"description": "Aircrafts {tailModel} flies under the tail number {tailNumber}. \\nOperated by {tailOperator}, the aircrafts {tailModel} was built in {tailYear}. {tailModel} is based at {tailHomebase} and has a passenger capacity of {tailMaxpax} people. \\nATM JET offers the opportunity to order a private aircrafts {tailModel} for a flight to any point on the planet. \\nWe have been working for you for over 20 years and have extensive experience in organizing business aviation flights.",
 		"tail-number": "Number:",
 		"tail-operator": "Operator:",
 		"tail-vendor": "Vendor:",
