@@ -2,10 +2,57 @@ import Line from '@/components/animated/line'
 import NewContactUs from '@/components/sections/new_contact_us'
 import { db, newYachts } from '@/lib/drizzle'
 import { ilike, or } from 'drizzle-orm'
-import { getTranslations } from 'next-intl/server'
+import { getLocale } from 'next-intl/server'
+import { headers } from 'next/headers'
 import Image from 'next/image'
 import { redirect } from 'next/navigation'
 import Gallery from './gallery'
+
+const statsLabel = [
+		{
+			en: 'pax day/night',
+			ru: 'пассажиры день/ночь',
+		},
+		{
+			en: 'lenght ft/m',
+			ru: 'длина футы/метры',
+		},
+		{
+			en: 'cabins',
+			ru: 'каюты',
+		},
+		{
+			en: 'bathrooms',
+			ru: 'ванные',
+		},
+		{
+			en: 'min rental hours',
+			ru: 'минимальное время аренды',
+		},
+		{
+			en: 'refit',
+			ru: 'ремонт',
+		},
+		{
+			en: 'Included in the price:',
+			ru: 'Включено в стоимость:',
+		}
+]
+
+const inputLabel = {
+	en: {
+		from: 'From',
+		date: 'Date',
+		hours: 'Hours',
+		guests: 'Guests',
+	},
+	ru: {
+		from: 'Откуда',
+		date: 'Дата',
+		hours: 'Часы',
+		guests: 'Гости',
+	},
+}
 
 interface YachtsProps {
 	params: {
@@ -14,7 +61,7 @@ interface YachtsProps {
 }
 
 export default async function Yachts(props: YachtsProps) {
-	const t = await getTranslations('vehicle')
+	const locale = await getLocale() as 'en' | 'ru'
 	const { id } = props.params
 	const [yacht] = await db
 		.select()
@@ -30,27 +77,27 @@ export default async function Yachts(props: YachtsProps) {
 		.map((str) => str.trim() + '.')
 	const stats = [
 		{
-			label: 'pax day/night',
+			label: statsLabel[0][locale],
 			value: `${yacht.guestsDay} / ${yacht.guestsNight}`,
 		},
 		{
-			label: 'lenght ft/m',
+			label: statsLabel[1][locale],
 			value: `${yacht.length} / ${Math.round(Number(yacht.length) * 0.3048)}`,
 		},
 		{
-			label: 'cabins',
+			label: statsLabel[2][locale],
 			value: yacht.cabins,
 		},
 		{
-			label: 'bathrooms',
+			label: statsLabel[3][locale],
 			value: yacht.bathrooms,
 		},
 		{
-			label: 'min rental hours',
+			label: statsLabel[4][locale],
 			value: `${yacht.minHours} hours`,
 		},
 		{
-			label: 'refit',
+			label: statsLabel[5][locale],
 			value: yacht.refit,
 		},
 	]
@@ -77,23 +124,23 @@ export default async function Yachts(props: YachtsProps) {
 					)}
 					<div className='gap-8 rounded-3xl border border-gray-300 bg-gray-150 p-6 py-10 md:p-10'>
 						<h1>{`${yacht.manufacturer} "${yacht.name}"`}</h1>
-						<form className='flex flex-col gap-8'>
+						<form className='flex flex-col gap-8' action={formAction}>
 							<div className='flex flex-col gap-[2px] overflow-hidden rounded-2xl'>
 								<Input
 									name='from'
 									id='from'
 									className='cursor-not-allowed bg-gray-800 text-gray-500'
-									label='From'
+									label={inputLabel[locale].from}
 									disabled
 									value={String(yacht.location)}
 								/>
-								<Input name='date' id='date' type='date' label='Date' />
+								<Input name='date' id='date' type='date' label={inputLabel[locale].date} />
 								<div className='gap-[2px] md:flex-row'>
 									<Input
 										name='hours'
 										id='hours'
 										type='number'
-										label='Hours'
+										label={inputLabel[locale].hours}
 										min={yacht.minHours || 1}
 										defaultValue={yacht.minHours || 1}
 									/>
@@ -101,7 +148,7 @@ export default async function Yachts(props: YachtsProps) {
 										name='guests'
 										id='guests'
 										type='number'
-										label='Guests'
+										label={inputLabel[locale].guests}
 										min={1}
 										max={yacht.guestsDay || 10}
 										defaultValue={yacht.minHours || 1}
@@ -111,7 +158,7 @@ export default async function Yachts(props: YachtsProps) {
 							<div className='grid items-center gap-4 md:grid-cols-2'>
 								<button className='self-start px-8 py-6'>Request {yacht.name}</button>
 								<p>
-									~{price.toLocaleString()} {yacht.currency}/Hour
+									~{price.toLocaleString()} {yacht.currency}/{locale === 'en' ? 'Hour' : 'Час'}
 								</p>
 							</div>
 						</form>
@@ -132,7 +179,7 @@ export default async function Yachts(props: YachtsProps) {
 							/>
 						</div>
 						<div className='top-[20vh] gap-10 rounded-3xl border border-gray-300 bg-gray-150 px-6 py-10 md:sticky md:self-start md:px-10 md:py-12 md:pb-14'>
-							<h2>Key stats</h2>
+							<h2>{locale === 'en' ? 'Key stats' : 'Основые факты'}</h2>
 							<div className='gap-6 sm:grid sm:grid-cols-2 md:gap-8'>
 								{stats.map((stat, index) => (
 									<>
@@ -144,7 +191,7 @@ export default async function Yachts(props: YachtsProps) {
 									</>
 								))}
 								<div className='col-span-full'>
-									<p>Included in the price:</p>
+									<p>{statsLabel[6][locale]}</p>
 									<h3>{yacht.included}</h3>
 								</div>
 							</div>
@@ -152,7 +199,7 @@ export default async function Yachts(props: YachtsProps) {
 					</div>
 					<div className='relative items-start gap-6 md:grid md:grid-cols-2 md:gap-10'>
 						<div className='top-[20vh] gap-6 rounded-3xl border border-gray-300 bg-gray-150 p-6 py-10 pb-16 md:sticky md:gap-10 md:self-start md:p-10'>
-							<h2>About {yacht.name}</h2>
+							<h2>{locale === 'en' ? 'About' : 'Об'} {yacht.name}</h2>
 							<div className='flex flex-col gap-4'>
 								{description?.map((paragraph, index) => <p key={index}>{paragraph}</p>)}
 							</div>
@@ -198,4 +245,11 @@ function Input(props: InputProps) {
 			<input className={`px-7 pb-4 pt-9 ${className}`} name={props.id || props.name} {...rest} />
 		</div>
 	)
+}
+
+async function formAction(formData: FormData) {
+	'use server'
+	const headersList = await headers()
+	const ip = headersList.get('x-forwarded-for')
+	redirect('?showBooking=Yachts')
 }
