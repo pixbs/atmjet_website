@@ -93,7 +93,7 @@ function PrivilegeContact() {
 						<Link href='https://t.me/melentev1'>
 							<button className='big bg-gold'>{t('telegram')}</button>
 						</Link>
-						<Link href='https://wa.me/+79602312584'>
+						<Link href='https://wa.me/971504589926'>
 							<button className='big bg-gold'>{t('whatsapp')}</button>
 						</Link>
 					</div>

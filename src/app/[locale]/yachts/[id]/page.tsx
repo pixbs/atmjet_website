@@ -22,6 +22,7 @@ export default async function Yachts(props: YachtsProps) {
 		.limit(1)
 		.where(or(ilike(newYachts.slug, `%${id}%`)))
 
+	if (!yacht || !yacht.photos) return redirect('/yachts')
 	const price = (Number(yacht.customerPrice) ?? 0) * (Number(yacht.minHours) ?? 1)
 	const description = yacht.descriptionEn
 		?.split('.')
@@ -54,11 +55,9 @@ export default async function Yachts(props: YachtsProps) {
 		},
 	]
 
-	if (!yacht || !yacht.photos) return redirect('/yachts')
-
 	return (
 		<main>
-			<section className='pb-32'>
+			<section className='md:pb-24'>
 				{yacht.photos && yacht.photos[0] && (
 					<div
 						className='relative left-0 top-0 -z-[1] mb-[-80px] h-[40vh] w-full overflow-hidden bg-cover bg-fixed bg-center'
@@ -76,14 +75,14 @@ export default async function Yachts(props: YachtsProps) {
 							selected={1}
 						/>
 					)}
-					<div className='gap-8 rounded-3xl border border-gray-300 bg-gray-150 p-10'>
+					<div className='gap-8 rounded-3xl border border-gray-300 bg-gray-150 p-6 py-10 md:p-10'>
 						<h1>{`${yacht.manufacturer} "${yacht.name}"`}</h1>
 						<form className='flex flex-col gap-8'>
 							<div className='flex flex-col gap-[2px] overflow-hidden rounded-2xl'>
 								<Input
 									name='from'
 									id='from'
-									className='cursor-not-allowed'
+									className='cursor-not-allowed bg-gray-800 text-gray-500'
 									label='From'
 									disabled
 									value={String(yacht.location)}
@@ -109,16 +108,18 @@ export default async function Yachts(props: YachtsProps) {
 									/>
 								</div>
 							</div>
-							<button className='self-start px-8 py-6'>
-								Request for ~{price.toLocaleString()} {yacht.currency}
-							</button>
+							<div className='grid items-center gap-4 md:grid-cols-2'>
+								<button className='self-start px-8 py-6'>Request {yacht.name}</button>
+								<p>
+									~{price.toLocaleString()} {yacht.currency}/Hour
+								</p>
+							</div>
 						</form>
-						<p>*price will be clarified after request</p>
 					</div>
 				</div>
 			</section>
 			<Line />
-			<section className='py-20 pb-32'>
+			<section className='md:py-16 md:pb-24'>
 				<div className='container gap-12'>
 					<div className='gap-10 md:grid md:grid-cols-2'>
 						<div className='overflow-clip'>
@@ -130,30 +131,30 @@ export default async function Yachts(props: YachtsProps) {
 								height={400}
 							/>
 						</div>
-						<div className='gap-10 rounded-3xl border border-gray-300 bg-gray-150 p-10'>
-							<h2>About {yacht.name}</h2>
-							<div className='flex flex-col gap-4'>
-								{description?.map((paragraph, index) => <p key={index}>{paragraph}</p>)}
-							</div>
-						</div>
-					</div>
-					<div className='relative gap-10 md:grid md:grid-cols-2'>
-						<div className='top-[20vh] gap-10 rounded-3xl border border-gray-300 bg-gray-150 px-10 py-12 pb-14 md:sticky md:self-start'>
+						<div className='top-[20vh] gap-10 rounded-3xl border border-gray-300 bg-gray-150 px-6 py-10 md:sticky md:self-start md:px-10 md:py-12 md:pb-14'>
 							<h2>Key stats</h2>
-							<div className='gap-8 sm:grid sm:grid-cols-2'>
+							<div className='gap-6 sm:grid sm:grid-cols-2 md:gap-8'>
 								{stats.map((stat, index) => (
 									<>
 										<div key={index}>
 											<h3>{stat.value}</h3>
 											<p>{stat.label}</p>
 										</div>
-										{index % 2 === 1 && <Line className='col-span-full' />}
+										<Line className={`col-span-full ${index % 2 === 0 && 'md:hidden'}`} />
 									</>
 								))}
 								<div className='col-span-full'>
 									<p>Included in the price:</p>
 									<h3>{yacht.included}</h3>
 								</div>
+							</div>
+						</div>
+					</div>
+					<div className='relative items-start gap-6 md:grid md:grid-cols-2 md:gap-10'>
+						<div className='top-[20vh] gap-6 rounded-3xl border border-gray-300 bg-gray-150 p-6 py-10 pb-16 md:sticky md:gap-10 md:self-start md:p-10'>
+							<h2>About {yacht.name}</h2>
+							<div className='flex flex-col gap-4'>
+								{description?.map((paragraph, index) => <p key={index}>{paragraph}</p>)}
 							</div>
 						</div>
 						<div className='gap-10'>
@@ -187,14 +188,14 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
 function Input(props: InputProps) {
 	const { className, ...rest } = props
 	return (
-		<div className={`relative w-full bg-gray-900 text-gray-100 ${className}`}>
+		<div className={`relative w-full bg-gray-900 text-gray-100`}>
 			<label
 				htmlFor={rest.name}
 				className='absolute left-7 top-4 text-xs font-semibold text-gray-500'
 			>
 				{props.label}
 			</label>
-			<input className='px-7 pb-4 pt-9' name={props.id || props.name} {...rest} />
+			<input className={`px-7 pb-4 pt-9 ${className}`} name={props.id || props.name} {...rest} />
 		</div>
 	)
 }

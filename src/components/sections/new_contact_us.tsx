@@ -49,7 +49,7 @@ export default function NewContactUs() {
 						transition={{ duration: 0.5, ease: 'easeOut', delay: 0.3 }}
 					>
 						<Link
-							href='https://wa.me/+79602312584'
+							href='https://wa.me/971504589926'
 							className='card peer flex flex-col items-start gap-4 border-0 bg-gradient-to-b from-gray-100 from-15% to-[#0e2a15] p-10 transition-all ease-out hover:border-gray-900 hover:from-25% md:bg-fixed'
 						>
 							<h3>Whatsapp</h3>
@@ -84,7 +84,7 @@ export default function NewContactUs() {
 						</Link>
 						<Link href='tel:+971(585)940-112'>
 							<h3 className='transition-opacity duration-300 ease-in-out hover:opacity-40'>
-								+971 (585) 940-112
+								+971 (50) 458-99-26
 							</h3>
 						</Link>
 						<p>
