@@ -1,7 +1,9 @@
+import Line from '@/components/animated/line'
 import NewContactUs from '@/components/sections/new_contact_us'
 import { db, newYachts } from '@/lib/drizzle'
 import { ilike, or } from 'drizzle-orm'
 import { getTranslations } from 'next-intl/server'
+import Image from 'next/image'
 import { redirect } from 'next/navigation'
 import Gallery from './gallery'
 
@@ -21,11 +23,42 @@ export default async function Yachts(props: YachtsProps) {
 		.where(or(ilike(newYachts.slug, `%${id}%`)))
 
 	const price = (Number(yacht.customerPrice) ?? 0) * (Number(yacht.minHours) ?? 1)
-	if (!yacht) return redirect('/yachts')
+	const description = yacht.descriptionEn
+		?.split('.')
+		.slice(0, -1)
+		.map((str) => str.trim() + '.')
+	const stats = [
+		{
+			label: 'pax day/night',
+			value: `${yacht.guestsDay} / ${yacht.guestsNight}`,
+		},
+		{
+			label: 'lenght ft/m',
+			value: `${yacht.length} / ${Math.round(Number(yacht.length) * 0.3048)}`,
+		},
+		{
+			label: 'cabins',
+			value: yacht.cabins,
+		},
+		{
+			label: 'bathrooms',
+			value: yacht.bathrooms,
+		},
+		{
+			label: 'min rental hours',
+			value: `${yacht.minHours} hours`,
+		},
+		{
+			label: 'refit',
+			value: yacht.refit,
+		},
+	]
+
+	if (!yacht || !yacht.photos) return redirect('/yachts')
 
 	return (
 		<main>
-			<section className='border-b border-gray-300'>
+			<section className='pb-32'>
 				{yacht.photos && yacht.photos[0] && (
 					<div
 						className='relative left-0 top-0 -z-[1] mb-[-80px] h-[40vh] w-full overflow-hidden bg-cover bg-fixed bg-center'
@@ -35,7 +68,7 @@ export default async function Yachts(props: YachtsProps) {
 						<div className='absolute inset-0 z-10 bg-gradient-to-t from-gray-100 to-transparent' />
 					</div>
 				)}
-				<div className='container !grid !grid-cols-2 !gap-10'>
+				<div className='container !gap-10 lg:grid lg:grid-cols-2'>
 					{yacht.photos && yacht.photos[0] && (
 						<Gallery
 							images={yacht.photos}
@@ -56,7 +89,7 @@ export default async function Yachts(props: YachtsProps) {
 									value={String(yacht.location)}
 								/>
 								<Input name='date' id='date' type='date' label='Date' />
-								<div className='flex-row gap-[2px]'>
+								<div className='gap-[2px] md:flex-row'>
 									<Input
 										name='hours'
 										id='hours'
@@ -84,6 +117,64 @@ export default async function Yachts(props: YachtsProps) {
 					</div>
 				</div>
 			</section>
+			<Line />
+			<section className='py-20 pb-32'>
+				<div className='container gap-12'>
+					<div className='gap-10 md:grid md:grid-cols-2'>
+						<div className='overflow-clip'>
+							<Image
+								src={yacht.photos[yacht.photos.length - 1]}
+								className='sticky top-[20vh] rounded-3xl border border-gray-300 bg-gray-150'
+								alt={`${yacht.manufacturer} ${yacht.name}`}
+								width={600}
+								height={400}
+							/>
+						</div>
+						<div className='gap-10 rounded-3xl border border-gray-300 bg-gray-150 p-10'>
+							<h2>About {yacht.name}</h2>
+							<div className='flex flex-col gap-4'>
+								{description?.map((paragraph, index) => <p key={index}>{paragraph}</p>)}
+							</div>
+						</div>
+					</div>
+					<div className='relative gap-10 md:grid md:grid-cols-2'>
+						<div className='top-[20vh] gap-10 rounded-3xl border border-gray-300 bg-gray-150 px-10 py-12 pb-14 md:sticky md:self-start'>
+							<h2>Key stats</h2>
+							<div className='gap-8 sm:grid sm:grid-cols-2'>
+								{stats.map((stat, index) => (
+									<>
+										<div key={index}>
+											<h3>{stat.value}</h3>
+											<p>{stat.label}</p>
+										</div>
+										{index % 2 === 1 && <Line className='col-span-full' />}
+									</>
+								))}
+								<div className='col-span-full'>
+									<p>Included in the price:</p>
+									<h3>{yacht.included}</h3>
+								</div>
+							</div>
+						</div>
+						<div className='gap-10'>
+							{yacht.photos
+								.slice(2, -1)
+								.slice(2)
+								.map((photo, index) => (
+									<Image
+										key={index}
+										src={photo}
+										className='rounded-3xl border border-gray-300 bg-gray-150'
+										alt={`${yacht.manufacturer} ${yacht.name}`}
+										width={600}
+										height={400}
+									/>
+								))}
+						</div>
+					</div>
+				</div>
+			</section>
+			<Line />
 			<NewContactUs />
 		</main>
 	)
