@@ -80,7 +80,7 @@ export default function HomePage() {
 	]
 
 	return (
-		<Suspense fallback={<Preloader />}>
+		<Suspense fallback={<Preloader isStatic />}>
 			<main>
 				<Preloader />
 				<AngleBar />

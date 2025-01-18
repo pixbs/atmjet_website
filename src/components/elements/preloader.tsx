@@ -19,6 +19,11 @@ export function Preloader({ isStatic = false }: PreloaderProps) {
 			height: '0%',
 			display: 'none',
 		},
+		static: {
+			opacity: 1,
+			height: '100%',
+			display: 'flex',
+		},
 	}
 	const logoAnimation = {
 		hidden: {
@@ -35,8 +40,8 @@ export function Preloader({ isStatic = false }: PreloaderProps) {
 		<>
 			<motion.div
 				className='fixed inset-0 z-[998] items-center justify-center bg-gray-150'
-				initial={isStatic ? backgroundAnimation.visible : backgroundAnimation.hidden}
-				animate={isStatic || backgroundAnimation.visible}
+				initial={isStatic ? backgroundAnimation.static : backgroundAnimation.hidden}
+				animate={isStatic ? backgroundAnimation.static : backgroundAnimation.visible}
 				transition={{ duration: 0.5, delay: 2 }}
 			></motion.div>
 			<motion.div
