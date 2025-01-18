@@ -44,20 +44,20 @@ export function Navbar() {
 				</div>
 				<div className='w-full flex-col justify-between'>
 					<div className='[&>*]:duration-600 [&>*]:animate-in [&>*]:fade-in'>
-						<Link href={`/${locale}/sales_dept`} className='text-right'>
-							{t('navigation.sales-dept')}
-						</Link>
-						<Link href={`/${locale}/sales_yachts`} className='text-right'>
-							{t('navigation.sales-yachts')}
-						</Link>
-						<Link href={`/${locale}/group_charters`} className='text-right'>
-							{t('navigation.group-charters')}
-						</Link>
 						<Link href={`/${locale}/atm_jet_group`} className='text-right'>
 							{t('navigation.atm-jet-group')}
 						</Link>
 						<Link href={`/${locale}/aircrafts`} className='text-right'>
 							{t('navigation.aircrafts')}
+						</Link>
+						<Link href={`/${locale}/group_charters`} className='text-right'>
+							{t('navigation.group-charters')}
+						</Link>
+						<Link href={`/${locale}/sales_dept`} className='text-right'>
+							{t('navigation.sales-dept')}
+						</Link>
+						<Link href={`/${locale}/sales_yachts`} className='text-right'>
+							{t('navigation.sales-yachts')}
 						</Link>
 						<Link href={`/${locale}/yachts`} className='text-right'>
 							{t('navigation.yachts')}

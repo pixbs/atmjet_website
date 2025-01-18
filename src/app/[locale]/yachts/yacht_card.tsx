@@ -57,7 +57,9 @@ export default function YachtCard({
 					<Image
 						src={photos[0]}
 						alt={name || ''}
-						fill
+						width={800}
+						height={450}
+						
 						className='transition-transform duration-300 ease-out group-hover:scale-125'
 					/>
 				)}

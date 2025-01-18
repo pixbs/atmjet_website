@@ -17,17 +17,14 @@ export default async function Yachts() {
 		<main>
 			<HeroYachtsSection />
 			<section className='gap-10 md:py-16 md:pb-24'>
-				<h2>
-					{locale === 'en'
-						? 'Yachts available for rent in Dubai'
-						: 'Яхты доступные в аренду в Дубае'}
-				</h2>
 				<div className='container gap-10 md:grid md:grid-cols-2'>
+					<h2 className='col-span-full self-center text-center'>
+						{locale === 'en'
+							? 'Yachts available for rent in Dubai'
+							: 'Яхты доступные в аренду в Дубае'}
+					</h2>
 					{yachts.map((yacht) => (
-						<>
 							<YachtCard {...yacht} slug={`yachts/${yacht.slug}`} key={yacht.id} />
-							<YachtCard {...yacht} slug={`yachts/${yacht.slug}`} key={yacht.id} />
-						</>
 					))}
 				</div>
 			</section>
