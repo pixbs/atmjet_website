@@ -9,34 +9,34 @@ import { redirect } from 'next/navigation'
 import Gallery from './gallery'
 
 const statsLabel = [
-		{
-			en: 'pax day/night',
-			ru: 'пассажиры день/ночь',
-		},
-		{
-			en: 'lenght ft/m',
-			ru: 'длина футы/метры',
-		},
-		{
-			en: 'cabins',
-			ru: 'каюты',
-		},
-		{
-			en: 'bathrooms',
-			ru: 'ванные',
-		},
-		{
-			en: 'min rental hours',
-			ru: 'минимальное время аренды',
-		},
-		{
-			en: 'refit',
-			ru: 'ремонт',
-		},
-		{
-			en: 'Included in the price:',
-			ru: 'Включено в стоимость:',
-		}
+	{
+		en: 'pax day/night',
+		ru: 'пассажиры день/ночь',
+	},
+	{
+		en: 'lenght ft/m',
+		ru: 'длина футы/метры',
+	},
+	{
+		en: 'cabins',
+		ru: 'каюты',
+	},
+	{
+		en: 'bathrooms',
+		ru: 'ванные',
+	},
+	{
+		en: 'min rental hours',
+		ru: 'минимальное время аренды',
+	},
+	{
+		en: 'refit',
+		ru: 'ремонт',
+	},
+	{
+		en: 'Included in the price:',
+		ru: 'Включено в стоимость:',
+	},
 ]
 
 const inputLabel = {
@@ -61,7 +61,7 @@ interface YachtsProps {
 }
 
 export default async function Yachts(props: YachtsProps) {
-	const locale = await getLocale() as 'en' | 'ru'
+	const locale = (await getLocale()) as 'en' | 'ru'
 	const { id } = props.params
 	const [yacht] = await db
 		.select()
@@ -199,7 +199,9 @@ export default async function Yachts(props: YachtsProps) {
 					</div>
 					<div className='relative items-start gap-6 md:grid md:grid-cols-2 md:gap-10'>
 						<div className='top-[20vh] gap-6 rounded-3xl border border-gray-300 bg-gray-150 p-6 py-10 pb-16 md:sticky md:gap-10 md:self-start md:p-10'>
-							<h2>{locale === 'en' ? 'About' : 'Об'} {yacht.name}</h2>
+							<h2>
+								{locale === 'en' ? 'About' : 'Об'} {yacht.name}
+							</h2>
 							<div className='flex flex-col gap-4'>
 								{description?.map((paragraph, index) => <p key={index}>{paragraph}</p>)}
 							</div>

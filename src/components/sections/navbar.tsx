@@ -47,6 +47,9 @@ export function Navbar() {
 						<Link href={`/${locale}/sales_dept`} className='text-right'>
 							{t('navigation.sales-dept')}
 						</Link>
+						<Link href={`/${locale}/sales_yachts`} className='text-right'>
+							{t('navigation.sales-yachts')}
+						</Link>
 						<Link href={`/${locale}/group_charters`} className='text-right'>
 							{t('navigation.group-charters')}
 						</Link>

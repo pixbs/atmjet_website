@@ -24,7 +24,8 @@
 		"atm-jet-group": "ATM JET group",
 		"aircrafts": "Aircrafts",
 		"yachts": "Yachts",
-		"sales-dept": "Buying and selling aircraft"
+		"sales-dept": "Buying and selling aircraft",
+		"sales-yachts": "Buying and selling yachts"
 	},
 	"cookies": {
 		"message": "We use cookies to enhance your browsing experience, serve personalized ads or content, and analyze our traffic. By clicking \"Accept\", you consent to our use of cookies. For more information, please read our",
