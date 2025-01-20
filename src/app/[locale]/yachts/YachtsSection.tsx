@@ -15,20 +15,21 @@ function YachtsSection({ yachts }: YachtsSectionProps) {
 	const sortBy = searchParams.get('sort')
 	const order = searchParams.get('order')
 	const router = useRouter()
+	const sortedYachts = [...yachts]
 	switch (sortBy) {
 		case 'price':
-			yachts.sort((a, b) => (Number(a.customerPrice) ?? 0) - (Number(b.customerPrice) ?? 0))
+			sortedYachts.sort((a, b) => (Number(a.customerPrice) ?? 0) - (Number(b.customerPrice) ?? 0))
 			break
 		case 'length':
-			yachts.sort((a, b) => (Number(a.length) ?? 0) - (Number(b.length) ?? 0))
+			sortedYachts.sort((a, b) => (Number(a.length) ?? 0) - (Number(b.length) ?? 0))
 			break
 		case 'guests':
-			yachts.sort((a, b) => (Number(a.guestsDay) ?? 0) - (Number(b.guestsDay) ?? 0))
+			sortedYachts.sort((a, b) => (Number(a.guestsDay) ?? 0) - (Number(b.guestsDay) ?? 0))
 			break
 		default:
 			break
 	}
-	if (order === 'desc') yachts.reverse()
+	if (order === 'desc') sortedYachts.reverse()
 
 	const createQueryString = useCallback(
 		(name: string, value: string) => {
@@ -43,13 +44,13 @@ function YachtsSection({ yachts }: YachtsSectionProps) {
 	const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
 		const sort = e.target.value
 		const querySting = createQueryString('sort', sort)
-		router.push('/yachts?' + querySting, { scroll: false })
+		router.replace(`?${querySting}`, { scroll: false })
 	}
 
 	const handleOrderChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
 		const order = e.target.value
 		const querySting = createQueryString('order', order)
-		router.push('/yachts?' + querySting, { scroll: false })
+		router.replace(`?${querySting}`, { scroll: false })
 	}
 
 	const locale = useLocale() as 'en' | 'ru'
@@ -91,7 +92,7 @@ function YachtsSection({ yachts }: YachtsSectionProps) {
 						</Select>
 					</div>
 				</div>
-				{yachts.map((yacht) => (
+				{sortedYachts.map((yacht) => (
 					<YachtCard {...yacht} slug={`yachts/${yacht.slug}`} key={yacht.id} />
 				))}
 			</div>
