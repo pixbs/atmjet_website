@@ -5,8 +5,13 @@ import { db, newYachts } from '@/lib/drizzle'
 import { getLocale } from 'next-intl/server'
 import YachtCard from './yacht_card'
 
-export default async function Yachts() {
+interface YachtProps {
+	searchParams?: { [key: string]: string | string[] | undefined }
+}
+
+export default async function Yachts({ searchParams }: YachtProps) {
 	const locale = (await getLocale()) as 'en' | 'ru'
+	const query = searchParams?.query
 
 	const yachts =
 		(await db
@@ -23,9 +28,10 @@ export default async function Yachts() {
 						{locale === 'en'
 							? 'Yachts available for rent in Dubai'
 							: 'Яхты доступные в аренду в Дубае'}
+						{query}
 					</h2>
 					{yachts.map((yacht) => (
-							<YachtCard {...yacht} slug={`yachts/${yacht.slug}`} key={yacht.id} />
+						<YachtCard {...yacht} slug={`yachts/${yacht.slug}`} key={yacht.id} />
 					))}
 				</div>
 			</section>

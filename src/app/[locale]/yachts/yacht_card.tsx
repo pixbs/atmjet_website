@@ -1,3 +1,9 @@
+import Bathrooms from '@/assets/icons/bathrooms.svg'
+import Cabins from '@/assets/icons/cabins.svg'
+import Hours from '@/assets/icons/clock.svg'
+import Guests from '@/assets/icons/guests.svg'
+import Length from '@/assets/icons/length.svg'
+import Refit from '@/assets/icons/tools.svg'
 import Line from '@/components/animated/line'
 import { newYachts } from '@/lib/drizzle'
 import { useLocale } from 'next-intl'
@@ -34,17 +40,26 @@ export default function YachtCard({
 			ru: `${cabins} каюты`,
 		},
 		{
-			en: `${bathrooms} bathrooms`,
-			ru: `${bathrooms} ванные`,
-		},
-		{
 			en: `min ${minHours} hours`,
 			ru: `мин ${pluralizeHours(minHours)}`,
+		},
+		{
+			en: `${bathrooms} bathrooms`,
+			ru: `${bathrooms} ванные`,
 		},
 		{
 			en: `${refit} refit`,
 			ru: `${refit} ремонт`,
 		},
+	]
+	const iconClass = 'w-6 h-6 text-gray-300 mr-2'
+	const icons = [
+		<Guests className={iconClass} />,
+		<Length className={iconClass} />,
+		<Cabins className={iconClass} />,
+		<Hours className={iconClass} />,
+		<Bathrooms className={iconClass} />,
+		<Refit className={iconClass} />,
 	]
 
 	return (
@@ -59,7 +74,6 @@ export default function YachtCard({
 						alt={name || ''}
 						width={800}
 						height={450}
-						
 						className='transition-transform duration-300 ease-out group-hover:scale-125'
 					/>
 				)}
@@ -72,9 +86,10 @@ export default function YachtCard({
 					{customerPrice} {currency} / {locale === 'en' ? 'per hour' : 'за час'}
 				</span>
 				<Line />
-				<div className='grid grid-cols-2 gap-2 md:grid-cols-3'>
+				<div className='grid grid-cols-2 gap-2 lg:grid-cols-3'>
 					{statsLabel.map((stat, i) => (
-						<div key={i}>
+						<div key={i} className={`flex-row items-center gap-2 ${i > 3 ? 'hidden lg:flex' : ''}`}>
+							{icons[i]}
 							<span>{stat[locale]}</span>
 						</div>
 					))}

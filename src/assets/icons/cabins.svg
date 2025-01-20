@@ -1,0 +1,8 @@
+<svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+  <path d="M21 18v2" stroke="currentColor" vector-effect="non-scaling-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path clip-rule="evenodd" d="M12 13h9.702c.717 0 1.298.581 1.298 1.298v2.739a.963.963 0 0 1-.963.963H12v-5Z" stroke="currentColor" vector-effect="non-scaling-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M12 7c0-1.105 1.063-2 2.375-2h4.75c1.312 0 2.375.895 2.375 2v3.74" stroke="currentColor" vector-effect="non-scaling-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path clip-rule="evenodd" d="M2.298 13H12v5H1.649A.65.65 0 0 1 1 17.351v-3.053C1 13.581 1.581 13 2.298 13v0Z" stroke="currentColor" vector-effect="non-scaling-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M2.5 10.74V7c0-1.105 1.063-2 2.375-2h4.75C10.937 5 12 5.895 12 7M3 18v2" stroke="currentColor" vector-effect="non-scaling-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M2 13.035v-.936C2 10.939 2.939 10 4.098 10h5.804c1.159 0 2.098.939 2.098 2.098V13M12 13v-.902c0-1.159.939-2.098 2.098-2.098h5.804c1.159 0 2.098.939 2.098 2.098v.936M12 7v13" stroke="currentColor" vector-effect="non-scaling-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

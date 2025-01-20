@@ -1,3 +1,9 @@
+import Bathrooms from '@/assets/icons/bathrooms.svg'
+import Cabins from '@/assets/icons/cabins.svg'
+import Hours from '@/assets/icons/clock.svg'
+import Guests from '@/assets/icons/guests.svg'
+import Length from '@/assets/icons/length.svg'
+import Refit from '@/assets/icons/tools.svg'
 import Line from '@/components/animated/line'
 import NewContactUs from '@/components/sections/new_contact_us'
 import { db, newYachts } from '@/lib/drizzle'
@@ -102,6 +108,16 @@ export default async function Yachts(props: YachtsProps) {
 		},
 	]
 
+	const iconClass = 'size-10 color-gray text-gray-300 shrink-0'
+	const icons = [
+		<Guests className={iconClass} />,
+		<Length className={iconClass} />,
+		<Cabins className={iconClass} />,
+		<Bathrooms className={iconClass} />,
+		<Hours className={iconClass} />,
+		<Refit className={iconClass} />,
+	]
+
 	return (
 		<main>
 			<section className='md:pb-24'>
@@ -183,11 +199,17 @@ export default async function Yachts(props: YachtsProps) {
 							<div className='gap-6 sm:grid sm:grid-cols-2 md:gap-8'>
 								{stats.map((stat, index) => (
 									<>
-										<div key={index}>
-											<h3>{stat.value}</h3>
-											<p>{stat.label}</p>
+										<div key={index} className='flex-row items-center gap-4'>
+											{icons[index]}
+											<div>
+												<h3>{stat.value}</h3>
+												<p>{stat.label}</p>
+											</div>
 										</div>
-										<Line className={`col-span-full ${index % 2 === 0 && 'md:hidden'}`} />
+										<Line
+											className={`col-span-full ${index % 2 === 0 && 'md:hidden'}`}
+											key={`line-${index}`}
+										/>
 									</>
 								))}
 								<div className='col-span-full'>
