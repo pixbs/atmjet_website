@@ -256,17 +256,13 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
 	label?: string
 }
 
-function Input(props: InputProps) {
-	const { className, ...rest } = props
+function Input({ className, label, id, name, ...rest }: InputProps) {
 	return (
 		<div className={`relative w-full bg-gray-900 text-gray-100`}>
-			<label
-				htmlFor={rest.name}
-				className='absolute left-7 top-4 text-xs font-semibold text-gray-500'
-			>
-				{props.label}
+			<label htmlFor={name} className='absolute left-7 top-4 text-xs font-semibold text-gray-500'>
+				{label}
 			</label>
-			<input className={`px-7 pb-4 pt-9 ${className}`} name={props.id || props.name} {...rest} />
+			<input className={`px-7 pb-4 pt-9 ${className}`} name={id || name} {...rest} />
 		</div>
 	)
 }
