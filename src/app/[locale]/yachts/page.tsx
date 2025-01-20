@@ -12,6 +12,7 @@ export default async function Yachts() {
 		(await db
 			.select()
 			.from(newYachts)
+			.orderBy(newYachts.id)
 			.catch(() => [])) || []
 	return (
 		<main>
