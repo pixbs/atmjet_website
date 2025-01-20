@@ -1,12 +1,13 @@
 import Line from '@/components/animated/line'
+import { HeroYachtsSection } from '@/components/sections'
 import NewContactUs from '@/components/sections/new_contact_us'
 import { db, newYachts } from '@/lib/drizzle'
-import { getLocale } from 'next-intl/server'
+import { getLocale, getTranslations } from 'next-intl/server'
 import YachtsSection from './YachtsSection'
-import { HeroYachtsSection } from '@/components/sections'
 
 export default async function Yachts() {
 	const locale = (await getLocale()) as 'en' | 'ru'
+	const t = await getTranslations('yachts-charter-hero')
 
 	const yachts =
 		(await db
@@ -16,11 +17,10 @@ export default async function Yachts() {
 			.catch(() => [])) || []
 	return (
 		<main>
-			<HeroYachtsSection />
+			<HeroYachtsSection title={t('title')} description2={t('description2')} />
 			<YachtsSection yachts={yachts} />
 			<Line />
 			<NewContactUs />
 		</main>
 	)
 }
-;``

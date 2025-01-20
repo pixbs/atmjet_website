@@ -216,4 +216,4 @@ export const users = pgTable('atmjet_admin__users', {
 	password: text('password').notNull(),
 })
 
-export const db = drizzle(vercelSql, { logger: true })
+export const db = drizzle(vercelSql)
