@@ -124,7 +124,7 @@ export default async function Yachts(props: YachtsProps) {
 				{yacht.photos && yacht.photos[0] && (
 					<div
 						className='relative left-0 top-0 -z-[1] mb-[-80px] h-[40vh] w-full overflow-hidden bg-cover bg-fixed bg-center'
-						style={{ backgroundImage: `url(${yacht.photos[0]})` }}
+						style={{ backgroundImage: `url("${yacht.photos[0]}")` }}
 					>
 						<div className='absolute inset-0 z-10 bg-gradient-to-b from-gray-100 to-transparent' />
 						<div className='absolute inset-0 z-10 bg-gradient-to-t from-gray-100 to-transparent' />

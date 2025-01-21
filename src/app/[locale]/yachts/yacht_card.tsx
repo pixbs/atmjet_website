@@ -80,7 +80,7 @@ export default function YachtCard({
 			</div>
 			<div className='gap-3 p-6 pb-8'>
 				<h3>
-					{manufacturer} "{name}"
+					{manufacturer} {name ? `"${name}"` : ''}
 				</h3>
 				<span className='self-start rounded-md bg-gold px-2 py-0.5 font-bold text-gray-150'>
 					{customerPrice} {currency} / {locale === 'en' ? 'per hour' : 'за час'}
