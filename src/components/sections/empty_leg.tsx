@@ -36,8 +36,6 @@ export async function EmptyLegSection() {
 			}),
 		)
 	).filter((card) => card !== null)
-
-	console.log(emptyLegsCards)
 	return (
 		<section className='bg-gray-150'>
 			<div className='container gap-8 py-10 pt-10 lg:flex-row'>

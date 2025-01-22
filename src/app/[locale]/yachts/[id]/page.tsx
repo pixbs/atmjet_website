@@ -76,7 +76,6 @@ export default async function Yachts(props: YachtsProps) {
 		.where(or(ilike(newYachts.slug, `%${id}%`)))
 
 	if (!yacht || !yacht.photos) return redirect('/yachts')
-	const price = (Number(yacht.customerPrice) ?? 0) * (Number(yacht.minHours) ?? 1)
 	const description = yacht.descriptionEn
 		?.split('.')
 		.slice(0, -1)
@@ -174,7 +173,7 @@ export default async function Yachts(props: YachtsProps) {
 							<div className='grid items-center gap-4 md:grid-cols-2'>
 								<button className='self-start px-8 py-6'>Request {yacht.name}</button>
 								<p>
-									~{price.toLocaleString()} {yacht.currency}/{locale === 'en' ? 'Hour' : 'Час'}
+									{(yacht.customerPrice || 1000).toLocaleString()} {yacht.currency}/{locale === 'en' ? 'Hour' : 'Час'}
 								</p>
 							</div>
 						</form>
@@ -271,5 +270,11 @@ async function formAction(formData: FormData) {
 	'use server'
 	const headersList = await headers()
 	const ip = headersList.get('x-forwarded-for')
-	redirect('?showBooking=Yachts')
+	const direction = {
+		from: formData.get('from') as string,
+		date: formData.get('date') as string,
+		guests: formData.get('guests') as string,
+		hours: formData.get('hours') as string,
+	}
+	redirect(`?showBooking=Yachts&direction=[${JSON.stringify(direction)}]`)
 }

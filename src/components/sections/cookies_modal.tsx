@@ -14,9 +14,6 @@ export function CookiesModal({ closeModal }: { closeModal: () => void }) {
 
 	const [marketingConsent, setMarketingConsent] = useState<boolean>(marketingCookies)
 	const [personalConsent, setPersonalConsent] = useState<boolean>(personalCookies)
-	console.log(
-		`marketing: ${marketingConsent} : ${marketingCookies}, personal: ${personalConsent} : ${personalCookies}`,
-	)
 
 	const handleClickOutside = (event: React.MouseEvent) => {
 		if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
@@ -25,7 +22,6 @@ export function CookiesModal({ closeModal }: { closeModal: () => void }) {
 	}
 
 	const handleSubmit = () => {
-		console.log(personalConsent, marketingConsent)
 		setCookie('marketing-consent', marketingConsent, { maxAge: 60 * 525960 })
 		setCookie('personal-consent', personalConsent, { maxAge: 60 * 525960 })
 		setCookie('cookie-consent', true, { maxAge: 60 * 525960 })

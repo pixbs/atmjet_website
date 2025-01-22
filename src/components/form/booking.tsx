@@ -47,32 +47,6 @@ export function BookingForm(props: BookingFormProps) {
 	const { register, handleSubmit } = methods
 
 	const onSubmit = async (data: any) => {
-		console.log(data)
-
-		let result = `<i>Directions:</i>`
-		if (directions.length) {
-			directions.forEach(
-				(direction: { from: string; to: string; date: string; passengers: number }) => {
-					if (direction) {
-						result += `
-					<blockquote expandable>
-					<i>From:</i>
-					${direction.from}
-					<i>To:</i>
-					${direction.to}
-					<i>Date:</i>
-					${direction.date}
-					<i>Passengers:</i>
-					${direction.passengers}
-					</blockquote>
-					`
-					}
-				},
-			)
-		} else {
-			result += `<i>None</i>`
-		}
-
 		const message = `
 		<b>You got new request!</b>
 		<i>Name:</i> ${data.name}
@@ -84,20 +58,66 @@ export function BookingForm(props: BookingFormProps) {
 		<i>Email:</i>
 		${data.email}
 
-		${result}
+		${createDirection(directions)}
 
 		<i>From:</i>
 		${booking}, https://${host + pathname}
 		`
 		try {
 			const response = await sendMessage(message)
-			console.log(response)
 		} catch (error) {
 			console.error(error)
 		} finally {
 			props.close()
 			// router.push(`?showBooking=true&confirm=true`, { scroll: false })
 		}
+	}
+	interface Direction {
+		from?: string
+		to?: string
+		date?: string
+		passengers?: number
+		guests?: number
+		hours?: number
+	}
+
+	const createDirection = (direction: Direction[]) => {
+		let result = ''
+		if (!directions.length) return
+		directions.forEach((direction: Direction) => {
+			result += `
+			<i>Direction</i>
+			<blockquote expandable>
+			`
+			if (direction.from) {
+				result += `<i>From:</i>${direction.from}
+				`
+			}
+			if (direction.to) {
+				result += `<i>To:</i>${direction.to}
+				`
+			}
+			if (direction.date) {
+				result += `<i>Date:</i> ${direction.date}
+				`
+			}
+			if (direction.passengers) {
+				result += `<i>Passengers:</i> ${direction.passengers}
+				`
+			}
+			if (direction.guests) {
+				result += `<i>Guests:</i> ${direction.guests}
+				`
+			}
+			if (direction.hours) {
+				result += `<i>Hours:</i> ${direction.hours}
+				`
+			}
+			result += `</blockquote>
+			`
+		})
+		if (result === '') return 'No directions'
+		return result
 	}
 
 	const Chips =

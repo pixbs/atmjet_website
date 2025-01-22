@@ -17,7 +17,7 @@ export default async function Yachts() {
 			.catch(() => [])) || []
 	return (
 		<main>
-			<HeroYachtsSection title={t('title')} description2={t('description2')} />
+			<HeroYachtsSection title={t('title')} description2={t('description2')} isButtonHidden />
 			<YachtsSection yachts={yachts} />
 			<Line />
 			<NewContactUs />

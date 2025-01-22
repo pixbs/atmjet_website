@@ -66,11 +66,6 @@ export function BookingDialog(props: BookingDialogProps) {
 		onClose?.()
 	}
 
-	const handleConfirm = () => {
-		onConfirm?.()
-		handleClose()
-	}
-
 	return (
 		<section
 			className='fixed inset-0 z-50 overflow-y-auto bg-gray-150 bg-opacity-40 backdrop-blur-sm duration-300 animate-in fade-in-0'

@@ -29,7 +29,6 @@ export async function getAirport(str: string, locale: string) {
 	let query: (typeof newAirports.$inferSelect)[]
 	if (locale === 'ru') {
 		str = toTitleCase(str)
-		console.log(toTitleCase(str))
 		query = await db
 			.select()
 			.from(newAirports)

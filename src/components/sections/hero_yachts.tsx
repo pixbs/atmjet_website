@@ -8,6 +8,7 @@ interface HeroYachtsSectionProps {
 	description?: string
 	description2?: string
 	button?: string
+	isButtonHidden?: boolean
 }
 
 export function HeroYachtsSection(props: HeroYachtsSectionProps) {
@@ -18,6 +19,7 @@ export function HeroYachtsSection(props: HeroYachtsSectionProps) {
 		description = t('description'),
 		description2 = t('description2'),
 		button = t('button'),
+		isButtonHidden = false,
 	} = props
 
 	return (
@@ -27,9 +29,11 @@ export function HeroYachtsSection(props: HeroYachtsSectionProps) {
 				<h1 className='duration-1000 animate-in fade-in slide-in-from-top-10'>{title}</h1>
 				<p className='max-w-lg pt-4 text-gray-900'>{description}</p>
 				<p className='max-w-lg pt-4 text-gray-900'>{description2}</p>
-				<Link href='?showBooking=Hero_yachts' scroll={false}>
-					<button className='big mt-8'>{button}</button>
-				</Link>
+				{isButtonHidden || (
+					<Link href='?showBooking=Hero_yachts' scroll={false}>
+						<button className='big mt-8'>{button}</button>
+					</Link>
+				)}
 				<p className='absolute bottom-8 left-5 z-20 hidden text-sm md:block'>©ATM JET</p>
 			</div>
 			<div className='hero-darkening absolute inset-0 z-10' />

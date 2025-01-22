@@ -14,7 +14,6 @@ export function LocaleSwitch() {
 	if (basePathname === '/en' || basePathname === '/ru' || basePathname === '/uk') {
 		basePathname = '/'
 	}
-	console.log(basePathname)
 	const url = `${basePathname}?${searchParams}`
 
 	return (
