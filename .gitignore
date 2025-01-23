@@ -21,6 +21,8 @@ bun.lockb
 # misc
 .DS_Store
 *.pem
+*.zip
+*.rar
 
 .env.local
 .env

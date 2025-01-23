@@ -173,7 +173,8 @@ export default async function Yachts(props: YachtsProps) {
 							<div className='grid items-center gap-4 md:grid-cols-2'>
 								<button className='self-start px-8 py-6'>Request {yacht.name}</button>
 								<p>
-									{(yacht.customerPrice || 1000).toLocaleString()} {yacht.currency}/{locale === 'en' ? 'Hour' : 'Час'}
+									{(yacht.customerPrice || 1000).toLocaleString()} {yacht.currency}/
+									{locale === 'en' ? 'Hour' : 'Час'}
 								</p>
 							</div>
 						</form>
