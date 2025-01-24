@@ -2,6 +2,7 @@
 
 import { newYachts } from '@/lib/drizzle'
 import { useLocale } from 'next-intl'
+import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useCallback } from 'react'
 import YachtCard from './yacht_card'
@@ -51,6 +52,20 @@ function YachtsSection({ yachts }: YachtsSectionProps) {
 	)
 
 	const locale = useLocale() as 'en' | 'ru'
+
+	const yachtCards = sortedYachts.map((yacht) => (
+		<YachtCard {...yacht} slug={`yachts/${yacht.slug}`} key={yacht.id} />
+	))
+
+	const empty = (
+		<div className='col-span-full items-center gap-6 rounded-3xl border border-gray-300 bg-gray-150 p-6 md:p-10'>
+			<h3>No yachts found</h3>
+			<Link href='/yachts'>
+				<button className='btn btn-primary'>Reset filters</button>
+			</Link>
+		</div>
+	)
+
 	return (
 		<section className='gap-10 md:py-16 md:pb-24'>
 			<div className='container gap-10 md:grid md:grid-cols-2'>
@@ -59,9 +74,7 @@ function YachtsSection({ yachts }: YachtsSectionProps) {
 						? 'Yachts available for rent in Dubai'
 						: 'Яхты доступные в аренду в Дубае'}
 				</h2>
-				{sortedYachts.map((yacht) => (
-					<YachtCard {...yacht} slug={`yachts/${yacht.slug}`} key={yacht.id} />
-				))}
+				{sortedYachts.length ? yachtCards : empty}
 			</div>
 		</section>
 	)
