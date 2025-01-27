@@ -65,21 +65,21 @@ function FilterSection({
 					</h3>
 					<div className='grid gap-[2px] overflow-hidden rounded-2xl md:grid-cols-3 md:gap-4 md:rounded-none'>
 						<Range
-							defaultValue={guests || guestsRange?.max}
+							defaultValue={guests || 20}
 							label={locale === 'en' ? 'Guests (up to)' : 'Гости (до)'}
 							name='guests'
 							id='guests'
 							{...guestsRange}
 						/>
 						<Range
-							defaultValue={price || priceRange?.max}
+							defaultValue={price || 1200}
 							label={locale === 'en' ? 'Price (up to)' : 'Цена (до)'}
 							name='price'
 							id='price'
 							{...priceRange}
 						/>
 						<Range
-							defaultValue={length || lenghtRange?.max}
+							defaultValue={length || 62}
 							label={locale === 'en' ? 'Length/ft (up to)' : 'Длина/фт (до)'}
 							name='length'
 							id='length'
@@ -160,23 +160,26 @@ function Range({ className, label, name, id, ...rest }: RangeProps) {
 	}
 	return (
 		<div className='relative w-full overflow-hidden bg-gray-900 text-gray-100 md:rounded-md'>
-			<label htmlFor={name} className='absolute left-7 top-4 text-xs font-semibold text-gray-500'>
+			<label
+				htmlFor={name}
+				className='pointer-events-none absolute left-6 top-3 text-xs font-semibold text-gray-500'
+			>
 				{label}
 			</label>
 			<div className='w-full bg-gold px-6' />
 			<input
 				type='range'
-				className={`h-2 w-full cursor-pointer appearance-none rounded-lg pt-11 accent-gray-500 focus:outline-none focus:ring-0 ${className}`}
+				className={`w-full cursor-pointer appearance-none !bg-none py-0 accent-gray-500 focus:outline-none focus:ring-0 ${className}`}
 				name={id || name}
 				onChange={onChange}
 				{...rest}
 			/>
-			<div className='absolute inset-x-6 top-10 h-2 flex-row'>
+			<div className='pointer-events-none absolute inset-x-6 inset-y-0 flex-row items-center'>
 				<div className='h-2 rounded-full bg-gold' style={{ width: `${progress}%` }} />
 				<div className='h-2 flex-1 rounded-full bg-gray-600' />
 			</div>
 
-			<p className='flex flex-row justify-between px-6 pb-2 text-sm'>
+			<p className='pointer-events-none absolute inset-x-6 bottom-2 flex flex-row justify-between text-sm'>
 				<span>{rest.min}</span>
 				<span className='font-bold'>{value}</span>
 				<span>{rest.max}</span>
