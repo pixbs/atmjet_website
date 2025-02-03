@@ -46,7 +46,7 @@ export default async function Yachts() {
 
 	const findMaxLenght =
 		yachts.filter((yacht) => yacht.length).sort((a, b) => Number(b.length) - Number(a.length))[0]
-			.length || undefined
+			.length || 0
 
 	const findMinGuests =
 		Math.round(
@@ -55,7 +55,7 @@ export default async function Yachts() {
 					.filter((yacht) => yacht.guestsDay)
 					.sort((a, b) => Number(a.guestsDay) - Number(b.guestsDay))[0].guestsDay,
 			) / 5,
-		) * 5 || undefined
+		) * 5 || 0
 
 	const findMaxGuests =
 		Math.round(
@@ -64,14 +64,14 @@ export default async function Yachts() {
 					.filter((yacht) => yacht.guestsDay)
 					.sort((a, b) => Number(b.guestsDay) - Number(a.guestsDay))[0].guestsDay,
 			) / 10,
-		) * 10 || undefined
+		) * 10 || 0
 
 	return (
 		<main>
 			<HeroYachtsSection title={t('title')} description2={t('description2')} isButtonHidden />
 			<FilterSection
 				price={{ min: findMinPrice, max: findMaxPrice, step: 250 }}
-				lenght={{ min: findMinLenght, max: findMaxLenght, step: 10 }}
+				lenght={{ min: findMinLenght, max: Number(findMaxLenght), step: 10 }}
 				guests={{ min: findMinGuests, max: findMaxGuests, step: 1 }}
 			/>
 			<Line />

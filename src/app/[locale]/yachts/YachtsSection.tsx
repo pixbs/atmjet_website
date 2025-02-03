@@ -3,8 +3,7 @@
 import { newYachts } from '@/lib/drizzle'
 import { useLocale } from 'next-intl'
 import Link from 'next/link'
-import { useRouter, useSearchParams } from 'next/navigation'
-import { useCallback } from 'react'
+import { useSearchParams } from 'next/navigation'
 import YachtCard from './yacht_card'
 
 interface YachtsSectionProps {
@@ -15,15 +14,27 @@ function YachtsSection({ yachts }: YachtsSectionProps) {
 	const searchParams = useSearchParams()
 	const sortBy = searchParams.get('sort')
 	const order = searchParams.get('order')
-	const price = searchParams.get('price')
-	const length = searchParams.get('length')
-	const guests = searchParams.get('guests')
-	const router = useRouter()
+	const price = [
+		Number(searchParams.get('priceMin')) || 0,
+		Number(searchParams.get('priceMax')) || 1200,
+	]
+	const length = [
+		Number(searchParams.get('lengthMin')) || 0,
+		Number(searchParams.get('lengthMax')) || 62,
+	]
+	const guests = [
+		Number(searchParams.get('guestsMin')) || 0,
+		Number(searchParams.get('guestsMax')) || 20,
+	]
+
 	const sortedYachts = yachts.filter(
 		(yacht) =>
-			(Number(yacht.customerPrice) || 0) <= (Number(price) || 1000000) &&
-			(Number(yacht.length) || 0) <= (Number(length) || 100) &&
-			(Number(yacht.guestsDay) || 0) <= (Number(guests) || 100),
+			(Number(yacht.guestsDay) || 0) >= guests[0] &&
+			(Number(yacht.guestsDay) || 0) <= guests[1] &&
+			(Number(yacht.length) || 0) >= length[0] &&
+			(Number(yacht.length) || 0) <= length[1] &&
+			(Number(yacht.customerPrice) || 0) >= price[0] &&
+			(Number(yacht.customerPrice) || 0) <= price[1],
 	)
 
 	switch (sortBy) {
@@ -40,16 +51,6 @@ function YachtsSection({ yachts }: YachtsSectionProps) {
 			break
 	}
 	if (order === 'desc') sortedYachts.reverse()
-
-	const createQueryString = useCallback(
-		(name: string, value: string) => {
-			const params = new URLSearchParams(searchParams.toString())
-			params.set(name, value)
-
-			return params.toString()
-		},
-		[searchParams],
-	)
 
 	const locale = useLocale() as 'en' | 'ru'
 

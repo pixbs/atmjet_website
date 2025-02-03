@@ -1,13 +1,15 @@
 'use client'
 
+import { Slider } from '@/components/ui/slider'
 import { useLocale } from 'next-intl'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useCallback, useState } from 'react'
+import DualRange from './dual_range'
 
 interface FilterSectionProps {
-	lenght?: React.InputHTMLAttributes<HTMLInputElement>
-	guests?: React.InputHTMLAttributes<HTMLInputElement>
-	price?: React.InputHTMLAttributes<HTMLInputElement>
+	lenght?: React.ComponentProps<typeof Slider>
+	guests?: React.ComponentProps<typeof Slider>
+	price?: React.ComponentProps<typeof Slider>
 }
 
 function FilterSection({
@@ -20,9 +22,19 @@ function FilterSection({
 	const searchParams = useSearchParams()
 	const sortBy = searchParams.get('sort')
 	const order = searchParams.get('order')
-	const price = searchParams.get('price')
-	const length = searchParams.get('length')
-	const guests = searchParams.get('guests')
+	const [length, setLength] = useState([
+		Number(searchParams.get('lengthMin')) || 0,
+		Number(searchParams.get('lengthMax')) || 62,
+	])
+	const [price, setPrice] = useState([
+		Number(searchParams.get('priceMin')) || 0,
+		Number(searchParams.get('priceMax')) || 1200,
+	])
+
+	const [guests, setGuests] = useState([
+		Number(searchParams.get('guestsMin')) || 0,
+		Number(searchParams.get('guestsMax')) || 20,
+	])
 	const router = useRouter()
 
 	const createQueryString = useCallback(
@@ -38,14 +50,18 @@ function FilterSection({
 	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault()
 		const formData = new FormData(e.currentTarget)
+		console.log(JSON.stringify(Object.fromEntries(formData.entries())))
 		const filters = {
-			length: formData.get('length'),
-			guests: formData.get('guests'),
-			price: formData.get('price'),
+			lengthMin: length[0],
+			lengthMax: length[1],
+			guestsMin: guests[0],
+			guestsMax: guests[1],
+			priceMin: price[0],
+			priceMax: price[1],
 			sort: formData.get('sort'),
 			order: formData.get('order'),
+			yearBuilt: formData.get('year-built'),
 		}
-		console.log(filters)
 		const params = new URLSearchParams()
 		Object.entries(filters).forEach(([key, value]) => {
 			if (value) params.set(key, value as string)
@@ -64,23 +80,28 @@ function FilterSection({
 						{locale === 'en' ? 'Filter yachts' : 'Фильтровать яхты'}
 					</h3>
 					<div className='grid gap-[2px] overflow-hidden rounded-2xl md:grid-cols-3 md:gap-4 md:rounded-none'>
-						<Range
-							defaultValue={guests || 20}
-							label={locale === 'en' ? 'Guests (up to)' : 'Гости (до)'}
+						<DualRange
+							value={guests}
+							onValueChange={setGuests}
+							label={locale === 'en' ? 'Guests' : 'Гости'}
 							name='guests'
 							id='guests'
 							{...guestsRange}
 						/>
-						<Range
-							defaultValue={price || 1200}
-							label={locale === 'en' ? 'Price (up to)' : 'Цена (до)'}
+						<DualRange
+							value={price}
+							onValueChange={setPrice}
+							label={locale === 'en' ? 'Price' : 'Цена'}
 							name='price'
+							unit='AED'
 							id='price'
 							{...priceRange}
 						/>
-						<Range
-							defaultValue={length || 62}
-							label={locale === 'en' ? 'Length/ft (up to)' : 'Длина/фт (до)'}
+						<DualRange
+							value={length}
+							onValueChange={setLength}
+							label={locale === 'en' ? 'Length' : 'Длина'}
+							unit='/ft'
 							name='length'
 							id='length'
 							{...lenghtRange}
