@@ -3,7 +3,7 @@ import { Slider } from '@/components/ui/slider'
 
 interface DualRangeProps extends React.ComponentProps<typeof Slider> {
 	label?: string
-    unit?: string
+	unit?: string
 }
 
 function DualRange(props: DualRangeProps) {
@@ -12,14 +12,14 @@ function DualRange(props: DualRangeProps) {
 	return (
 		<div className='relative rounded-lg bg-white p-4'>
 			{label && (
-				<label className='pointer-events-none absolute left-6 right-6 flex justify-between top-3 text-xs font-semibold text-gray-500'>
-                    <span>
-                        {label}
-                    </span>
-                    <span className='font-bold text-gray-150'>
-                        {/*@ts-expect-error */}
-                        {props.value[0].toLocaleString()}{unit} - {props.value[1].toLocaleString()}{unit}
-                    </span>
+				<label className='pointer-events-none absolute left-6 right-6 top-3 flex justify-between text-xs font-semibold text-gray-500'>
+					<span>{label}</span>
+					<span className='font-bold text-gray-150'>
+						{/*@ts-expect-error */}
+						{props.value[0].toLocaleString()}
+						{unit} - {props.value[1].toLocaleString()}
+						{unit}
+					</span>
 				</label>
 			)}
 			<Slider className='h-10 pt-6' {...rest} />

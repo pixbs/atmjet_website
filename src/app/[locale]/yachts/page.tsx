@@ -68,7 +68,12 @@ export default async function Yachts() {
 
 	return (
 		<main>
-			<HeroYachtsSection title={t('title')} description={t('description')} description2={t('description2')} isButtonHidden />
+			<HeroYachtsSection
+				title={t('title')}
+				description={t('description')}
+				description2={t('description2')}
+				isButtonHidden
+			/>
 			<FilterSection
 				price={{ min: findMinPrice, max: findMaxPrice, step: 250 }}
 				lenght={{ min: findMinLenght, max: Number(findMaxLenght), step: 10 }}

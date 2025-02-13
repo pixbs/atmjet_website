@@ -177,7 +177,7 @@ function Chip(props: React.InputHTMLAttributes<HTMLInputElement>) {
 			<input type='checkbox' className='peer sr-only' {...inputProps} />
 			<label
 				htmlFor={props.id}
-				className='bg-background rounded-full border border-gray-400 px-5 py-2 font-semibold uppercase transition-colors ease-in-out hover:border-gray-800 peer-checked:border-transparent peer-checked:bg-gold peer-checked:text-gray-100'
+				className='rounded-full border border-gray-400 bg-background px-5 py-2 font-semibold uppercase transition-colors ease-in-out hover:border-gray-800 peer-checked:border-transparent peer-checked:bg-gold peer-checked:text-gray-100'
 			>
 				{children}
 			</label>
