@@ -17,6 +17,7 @@ function DualRange(props: DualRangeProps) {
 					<span className='font-bold text-gray-150'>
 						{/*@ts-expect-error */}
 						{props.value[0].toLocaleString()}
+						{/*@ts-expect-error */}
 						{unit} - {props.value[1].toLocaleString()}
 						{unit}
 					</span>
