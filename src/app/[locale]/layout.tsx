@@ -1,5 +1,6 @@
 import { BookingDialog } from '@/components/elements'
 import { Cookies, FooterSection, HeaderSection } from '@/components/sections'
+import { GoogleTagManager } from '@next/third-parties/google'
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import { NextIntlClientProvider } from 'next-intl'
@@ -40,6 +41,7 @@ export default async function LocaleLayout({
 
 	return (
 		<html lang={locale}>
+			<GoogleTagManager gtmId='GTM-WF4PPKMZ' />
 			<body className={inter.className}>
 				<NextIntlClientProvider messages={messages}>
 					<Cookies />
