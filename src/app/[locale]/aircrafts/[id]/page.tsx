@@ -70,12 +70,12 @@ async function Aircraft({ params }: AircraftProps) {
 		},
 		{
 			label: statsLabel[2][locale],
-			value: `${aircraft.aircraftTypeCabinHeight}m`,
+			value: `${aircraft.aircraftTypeCabinHeight || 0}m`,
 			icon: <Length className={iconClass} />,
 		},
 		{
 			label: statsLabel[3][locale],
-			value: `${aircraft.aircraftTypeCabinHeight}m/${aircraft.aircraftTypeCabinWidth}m`,
+			value: `${aircraft.aircraftTypeCabinHeight || 0}m/${aircraft.aircraftTypeCabinWidth || 0}m`,
 			icon: <Length className={iconClass} />,
 		},
 	]
