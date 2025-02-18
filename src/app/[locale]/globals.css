@@ -98,7 +98,8 @@ hr {
 }
 
 .darkening {
-	background: linear-gradient(
+	background:
+		linear-gradient(
 			0deg,
 			rgba(23, 22, 20, 0) 15%,
 			rgba(23, 22, 20, 0.01) 25.02%,
@@ -177,7 +178,8 @@ hr {
 }
 
 .hero-darkening {
-	background: linear-gradient(
+	background:
+		linear-gradient(
 			0deg,
 			rgba(26, 26, 26, 0) 66.34%,
 			rgba(26, 26, 26, 0.01) 68.35%,

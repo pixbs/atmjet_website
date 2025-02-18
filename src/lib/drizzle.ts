@@ -2,11 +2,13 @@ import { sql as vercelSql } from '@vercel/postgres'
 import { config } from 'dotenv'
 import { relations } from 'drizzle-orm'
 import {
+	boolean,
 	decimal,
 	index,
 	integer,
 	numeric,
 	pgTable,
+	real,
 	serial,
 	text,
 	timestamp,
@@ -215,5 +217,89 @@ export const users = pgTable('atmjet_admin__users', {
 	username: varchar('username', { length: 256 }).notNull(),
 	password: text('password').notNull(),
 })
+
+export const aircrafts = pgTable('aircrafts', {
+	id: serial('id').primaryKey().notNull().unique(),
+	slug: text('slug').notNull().unique(),
+
+	registrationNumber: text('registration_number'),
+	yearOfProduction: integer('year_of_production'),
+	passengersMax: integer('passengers_max'),
+	serialNumber: text('serial_number'),
+	hoursFlown: integer('hours_flown'),
+	cycles: integer('cycles'),
+	verifiedAt: text('verified_at'),
+	techOperator: text('tech_operator'),
+
+	isCargo: boolean('is_cargo').default(false),
+	isForSale: boolean('is_for_sale').default(false),
+	isForLease: boolean('is_for_lease').default(false),
+	isForCharter: boolean('is_for_charter').default(false),
+
+	pdfAttachment: text('pdf_attachment'),
+	pdfAttachmentName: text('pdf_attachment_name'),
+
+	companySlug: text('company_slug'),
+	companyName: text('company_name'),
+
+	extensionRefurbishment: boolean('extension_refurbishment').default(false),
+	extensionView360: text('extension_view_360'),
+	extensionCabinCrew: boolean('extension_cabin_crew').default(false),
+	extensionDivanSeats: integer('extension_divan_seats'),
+	extensionLavatory: boolean('extension_lavatory').default(false),
+	extensionBeds: integer('extension_beds'),
+	extensionHotMeal: boolean('extension_hot_meal').default(false),
+	extensionWirelessInternet: boolean('extension_wireless_internet').default(false),
+	extensionPetsAllowed: boolean('extension_pets_allowed').default(false),
+	extensionCabinHeight: text('extension_cabin_height'),
+	extensionCabinLength: text('extension_cabin_length'),
+	extensionCabinWidth: text('extension_cabin_width'),
+	extensionLuggageVolume: text('extension_luggage_volume'),
+	extensionShower: boolean('extension_shower').default(false),
+	extensionSatellitePhone: boolean('extension_satellite_phone').default(false),
+	extensionSleepingPlaces: integer('extension_sleeping_places'),
+	extensionDescription: text('extension_description'),
+	extensionSpecEquipment: text('extension_spec_equipment'),
+
+	airportIata: text('airport_iata'),
+	airportIcao: text('airport_icao'),
+	airportName: text('airport_name'),
+
+	aircraftTypeSlug: text('aircraft_type_slug'),
+	aircraftTypeName: text('aircraft_type_name'),
+	aircraftTypeSpeedTypical: real('aircraft_type_speed_typical'),
+	aircraftTypeRangeMaximum: integer('aircraft_type_range_maximum'),
+	aircraftTypeCabinHeight: real('aircraft_type_cabin_height'),
+	aircraftTypeCabinLength: real('aircraft_type_cabin_length'),
+	aircraftTypeCabinWidth: real('aircraft_type_cabin_width'),
+	aircraftTypePaxMaximum: integer('aircraft_type_pax_maximum'),
+	aircraftTypeAircraftClassName: text('aircraft_type_aircraft_class_name'),
+})
+
+export const aircraftImagesTable = pgTable('aircraft_images', {
+	id: serial('id').primaryKey().notNull(),
+	aircraftId: integer('aircraft_id')
+		.notNull()
+		.references(() => aircrafts.id, { onDelete: 'cascade' }),
+	type: text('type', { enum: ['exterior', 'cabin', 'cockpit'] }).notNull(),
+	url: text('url').notNull(),
+})
+
+export const migrationStatusTable = pgTable('migration_status', {
+	id: serial('id').primaryKey().notNull(),
+	lastProcessedPage: integer('last_processed_page'),
+	lastProcessedSlug: text('last_processed_slug'),
+})
+
+export const aircraftsRelations = relations(aircrafts, ({ many }) => ({
+	images: many(aircraftImagesTable),
+}))
+
+export const aircraftImagesRelations = relations(aircraftImagesTable, ({ one }) => ({
+	aircraft: one(aircrafts, {
+		fields: [aircraftImagesTable.aircraftId],
+		references: [aircrafts.id],
+	}),
+}))
 
 export const db = drizzle(vercelSql)

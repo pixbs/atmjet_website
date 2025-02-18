@@ -1,5 +1,6 @@
 'use client'
 import { Slider } from '@/components/ui/slider'
+import React from 'react'
 
 interface DualRangeProps extends React.ComponentProps<typeof Slider> {
 	label?: string

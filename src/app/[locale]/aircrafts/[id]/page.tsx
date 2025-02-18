@@ -1,152 +1,177 @@
-import { MakeBookingSection } from '@/components/sections'
+import Guests from '@/assets/icons/guests.svg'
+import Length from '@/assets/icons/length.svg'
+import Refit from '@/assets/icons/tools.svg'
+import Line from '@/components/animated/line'
 import NewContactUs from '@/components/sections/new_contact_us'
-import { db, vehicles } from '@/lib/drizzle'
-import { eq } from 'drizzle-orm'
-import { getTranslations } from 'next-intl/server'
-import { redirect } from 'next/navigation'
+import { aircraftImagesTable, aircrafts, db } from '@/lib/drizzle'
+import { eq, ilike } from 'drizzle-orm'
+import { getLocale, getTranslations } from 'next-intl/server'
+import Image from 'next/image'
+import VehiclePage from './old'
 
-interface VehiclePageProps {
+interface AircraftProps {
 	params: {
 		id: string
 	}
 }
 
-export async function generateMetadata(props: VehiclePageProps) {
-	const { id } = props.params
-	const names = id ? id.split('-') : []
-	const tailNumber = `${names[0]}-${names[1]}`
-	const t = await getTranslations('vehicle')
-	const [vehicle] = await db
-		.select()
-		.from(vehicles)
-		.limit(1)
-		.where(eq(vehicles.tailNumber, tailNumber.toUpperCase()))
+const statsLabel = [
+	{
+		en: 'max pax',
+		ru: 'макc пассажиров',
+	},
+	{
+		en: 'type',
+		ru: 'тип',
+	},
+	{
+		en: 'cabin height',
+		ru: 'высота салона',
+	},
+	{
+		en: 'lenght/width',
+		ru: 'длина/ширина',
+	},
+]
 
-	const description = t('description', {
-		tailModel: vehicle.tailModel,
-		tailNumber: vehicle.tailNumber,
-		tailOperator: vehicle.tailOperator,
-		tailVendor: vehicle.vendor,
-		tailYear: vehicle.tailYear,
-		tailHomebase: vehicle.tailHomebase,
-		tailMaxpax: vehicle.tailMaxpax,
-	})
-		.split('\\n')
-		.join()
-	const metadata = {
-		title: `ATM JET | ${vehicle.tailModel}`,
-		description: description,
-		openGraph: {
-			images: [
-				{
-					url: `http://${vehicle.image}`,
-					width: 800,
-					height: 600,
-					alt: vehicle.tailModel,
-				},
-			],
-		},
+async function Aircraft({ params }: AircraftProps) {
+	const names = params.id ? params.id.split('-') : []
+	const registrationNumber = `${names[0]}-${names[1]}`
+	const t = await getTranslations('vehicle')
+	const locale = (await getLocale()) as 'en' | 'ru'
+	const aircraft = (
+		await db
+			.select()
+			.from(aircrafts)
+			.limit(1)
+			.where(ilike(aircrafts.registrationNumber, `${registrationNumber.toUpperCase()}`))
+	)[0]
+
+	if (!aircraft) {
+		return VehiclePage({ params })
 	}
-	return metadata
-}
 
-export default async function VehiclePage(props: VehiclePageProps) {
-	const { id } = props.params
-	const names = id ? id.split('-') : []
-	const tailNumber = `${names[0]}-${names[1]}`
-	const tailModel = names.slice(2).join(' ')
-	const [vehicle] = await db
+	const images = await db
 		.select()
-		.from(vehicles)
-		.limit(1)
-		.where(eq(vehicles.tailNumber, tailNumber.toUpperCase()))
-	if (!vehicle) redirect('/aircrafts')
+		.from(aircraftImagesTable)
+		.where(eq(aircraftImagesTable.aircraftId, aircraft.id))
 
-	const t = await getTranslations('vehicle')
-	const labels = [
-		t('tail-number'),
-		t('tail-operator'),
-		t('tail-year'),
-		t('tail-maxpax'),
-		t('tail-homebase'),
-		t('tail-homebase-city'),
-		t('tail-homebase-country'),
-		t('tail-manufacturer'),
-		t('tail-interiorrefit'),
-		t('tail-exteriorrefit'),
-	]
-
-	const values = [
-		vehicle.tailNumber,
-		vehicle.tailOperator,
-		vehicle.tailYear,
-		vehicle.tailMaxpax,
-		vehicle.tailHomebase,
-		vehicle.tailHomebase_city,
-		vehicle.tailHomebase_country,
-		vehicle.tailManufacturer,
-		vehicle.tailInteriorrefit,
-		vehicle.tailExteriorrefit,
+	const iconClass = 'size-10 color-gray text-gray-300 shrink-0'
+	const stats = [
+		{
+			label: statsLabel[0][locale],
+			value: aircraft.passengersMax,
+			icon: <Guests className={iconClass} />,
+		},
+		{
+			label: statsLabel[1][locale],
+			value: aircraft.aircraftTypeAircraftClassName,
+			icon: <Refit className={iconClass} />,
+		},
+		{
+			label: statsLabel[2][locale],
+			value: `${aircraft.aircraftTypeCabinHeight}m`,
+			icon: <Length className={iconClass} />,
+		},
+		{
+			label: statsLabel[3][locale],
+			value: `${aircraft.aircraftTypeCabinHeight}m/${aircraft.aircraftTypeCabinWidth}m`,
+			icon: <Length className={iconClass} />,
+		},
 	]
 
 	return (
 		<main>
-			<section
-				className='h-[80svh] bg-cover bg-center bg-no-repeat bg-origin-content pb-96 md:bg-fixed'
-				style={{ backgroundImage: `url(http://${vehicle.image})` }}
-			>
-				<div className='hero-darkening absolute inset-0 z-10' />
-			</section>
-			<section>
-				<div className='container gap-4'>
-					<h1 className=''>{vehicle.tailModel}</h1>
-					<p>
-						{t('description', {
-							tailModel: vehicle.tailModel,
-							tailNumber: vehicle.tailNumber,
-							tailOperator: vehicle.tailOperator,
-							tailVendor: vehicle.vendor,
-							tailYear: vehicle.tailYear,
-							tailHomebase: vehicle.tailHomebase,
-							tailMaxpax: vehicle.tailMaxpax,
-						})
-							.split('\\n')
-							.map((line, index) => (
-								<>
-									<span key={index}>{line}</span>
-									<br key={index} />
-								</>
-							))}
-					</p>
+			<section className='md:pb-24'>
+				<div
+					className='relative left-0 top-0 -z-[1] mb-[-80px] h-[40vh] w-full overflow-hidden bg-cover bg-center'
+					style={{ backgroundImage: `url("${images[0].url}")` }}
+				>
+					<div className='absolute inset-0 z-10 bg-gradient-to-b from-gray-100 to-transparent' />
+					<div className='absolute inset-0 z-10 bg-gradient-to-t from-gray-100 to-transparent' />
 				</div>
-			</section>
-			<MakeBookingSection />
-			<section>
-				<div className='container md:flex-row'>
-					<div className='card w-full bg-gray-150 p-8 md:p-10'>
-						{labels.map((label, index) => (
-							<ContextLine key={index} label={label} value={values[index]} />
-						))}
+				<div className='container gap-12'>
+					<div className='gap-10 md:grid md:grid-cols-2'>
+						{aircraft.extensionView360 ? (
+							<iframe
+								src={aircraft.extensionView360}
+								allowFullScreen
+								allow='autoplay; fullscreen; web-share; xr-spatial-tracking;'
+								className='h-full min-h-80 w-full overflow-hidden rounded-3xl border border-gray-300'
+							/>
+						) : (
+							<Image
+								width={600}
+								height={600}
+								alt={`${aircraft.aircraftTypeName} ${aircraft.registrationNumber}`}
+								src={images[1].url}
+								className='rounded-3xl border-gray-400'
+							/>
+						)}
+						<div className='top-[20vh] gap-6 rounded-3xl border border-gray-300 bg-gray-150 p-6 py-10 pb-16 md:sticky md:gap-10 md:self-start md:p-10'>
+							<h2>{`${aircraft.aircraftTypeName} ${aircraft.registrationNumber}`}</h2>
+							<p>
+								{t('description', {
+									tailModel: aircraft.aircraftTypeName,
+									tailNumber: aircraft.registrationNumber,
+									tailOperator: aircraft.companyName,
+									tailYear: aircraft.yearOfProduction,
+									tailHomebase: aircraft.airportIcao,
+									tailMaxpax: aircraft.passengersMax,
+								})
+									.split('\\n')
+									.map((line, index) => (
+										<>
+											<span key={index}>{line}</span>
+											<br key={`${index}-break`} />
+											<br key={`${index}-second-break`} />
+										</>
+									))}
+							</p>
+						</div>
+					</div>
+					<div className='gap-10 md:grid md:grid-cols-2'>
+						<div className='top-[20vh] gap-10 rounded-3xl border border-gray-300 bg-gray-150 px-6 py-10 md:sticky md:self-start md:px-10 md:py-12 md:pb-14'>
+							<h2>{locale === 'en' ? 'Key stats' : 'Основые факты'}</h2>
+							<div className='gap-6 sm:grid sm:grid-cols-2 md:gap-8'>
+								{stats.map((stat, index) => (
+									<>
+										<div key={`stat-${index}`} className='flex-row items-center gap-4'>
+											{stat.icon}
+											<div>
+												<h3>{stat.value}</h3>
+												<p>{stat.label}</p>
+											</div>
+										</div>
+										{stats.length - 1 !== index && (
+											<Line
+												className={`col-span-full ${index % 2 === 0 && 'md:hidden'}`}
+												key={`lines-${index}`}
+											/>
+										)}
+									</>
+								))}
+							</div>
+						</div>
+						<div className='gap-10'>
+							{images.reverse().map((image, index) => (
+								<Image
+									key={`image-${index}`}
+									src={image.url}
+									className='rounded-3xl border border-gray-300 bg-gray-150'
+									alt={`${aircraft.aircraftTypeName} ${aircraft.registrationNumber}`}
+									width={600}
+									height={400}
+								/>
+							))}
+						</div>
 					</div>
 				</div>
 			</section>
+			<Line />
 			<NewContactUs />
 		</main>
 	)
 }
 
-interface ContextLineProps {
-	label: string
-	value: string | number | null
-}
-
-function ContextLine(props: ContextLineProps) {
-	const { label, value } = props
-
-	return (
-		<div className='h-10 flex-row items-center justify-between border-b border-gray-300'>
-			<p className='w-full'>{label}</p>
-			<p className='w-full'>{value}</p>
-		</div>
-	)
-}
+export default Aircraft
