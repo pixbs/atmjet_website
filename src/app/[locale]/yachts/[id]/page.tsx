@@ -5,6 +5,7 @@ import Guests from '@/assets/icons/guests.svg'
 import Length from '@/assets/icons/length.svg'
 import Refit from '@/assets/icons/tools.svg'
 import Line from '@/components/animated/line'
+import Gallery from '@/components/elements/gallery'
 import NewContactUs from '@/components/sections/new_contact_us'
 import { db, newYachts } from '@/lib/drizzle'
 import { ilike, or } from 'drizzle-orm'
@@ -12,7 +13,6 @@ import { getLocale } from 'next-intl/server'
 import { headers } from 'next/headers'
 import Image from 'next/image'
 import { redirect } from 'next/navigation'
-import Gallery from './gallery'
 
 const statsLabel = [
 	{
