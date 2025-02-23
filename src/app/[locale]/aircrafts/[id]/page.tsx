@@ -91,7 +91,7 @@ async function Aircraft({ params }: AircraftProps) {
 		},
 		{
 			show: !!aircraft.aircraftTypeCabinLength,
-			label: statsLabel.height[locale],
+			label: statsLabel.length[locale],
 			value: `${aircraft.aircraftTypeCabinLength || 0}m/${aircraft.aircraftTypeCabinWidth || 0}m`,
 			icon: <Length className={iconClass} />,
 		},
@@ -249,5 +249,5 @@ async function formAction(formData: FormData) {
 		to: formData.get('to') as string,
 		date: formData.get('date') as string,
 	}
-	redirect(`?showBooking=Yachts&direction=[${JSON.stringify(direction)}]`)
+	redirect(`?showBooking=Yachts&direction=[${encodeURIComponent(JSON.stringify(direction))}]`)
 }

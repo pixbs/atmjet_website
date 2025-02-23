@@ -47,23 +47,25 @@ function Autocomplete({ className, label, id, name, ...rest }: InputProps) {
 				onBlur={handleBlur}
 				{...rest}
 			/>
-			<ul className='absolute bottom-0 z-[999] mt-4 max-h-40 w-80 shrink-0 translate-y-full overflow-y-auto rounded-xl border bg-gray-900 shadow-lg'>
-				{autocomplete.map(
-					(suggestion, index) =>
-						index > 0 && (
-							<li
-								key={index}
-								className='cursor-pointer px-4 py-2 text-gray-100 hover:bg-gray-800'
-								onClick={() => {
-									setInputValue(suggestion)
-									setAutocomplete([])
-								}}
-							>
-								{suggestion}
-							</li>
-						),
-				)}
-			</ul>
+			{autocomplete.length > 0 && (
+				<ul className='absolute bottom-0 z-[999] mt-4 max-h-40 w-80 shrink-0 translate-y-full overflow-y-auto rounded-xl border bg-gray-900 shadow-lg'>
+					{autocomplete.map(
+						(suggestion, index) =>
+							index > 0 && (
+								<li
+									key={index}
+									className='cursor-pointer px-4 py-2 text-gray-100 hover:bg-gray-800'
+									onClick={() => {
+										setInputValue(suggestion)
+										setAutocomplete([])
+									}}
+								>
+									{suggestion}
+								</li>
+							),
+					)}
+				</ul>
+			)}
 		</div>
 	)
 }
