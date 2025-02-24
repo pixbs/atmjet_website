@@ -1,61 +1,13 @@
-'use server'
-
-import { Counter, VehiclesCarousel } from '@/components/elements'
-import { MakeBookingSection } from '@/components/sections'
-import AllAircrafts from '@/components/sections/all_aircrafts'
-import { db, vehicles } from '@/lib/drizzle'
-import { sql } from 'drizzle-orm'
-import { getTranslations } from 'next-intl/server'
+import Line from '@/components/animated/line'
+import { Counter } from '@/components/elements'
+import NewContactUs from '@/components/sections/new_contact_us'
+import { useTranslations } from 'next-intl'
 import Image from 'next/image'
 import Link from 'next/link'
+import AircraftsList from './aircrafts_list'
 
-export default async function Aircrafts() {
-	const t = await getTranslations()
-	const vehiclesList =
-		(await db
-			.select()
-			.from(vehicles)
-			.limit(10)
-			.catch(() => [])) || []
-	const smallJets = ((await db
-		.select()
-		.from(vehicles)
-		.where(
-			sql`CASE 
-              WHEN trim(${vehicles.tailMaxpax}) ~ '^[0-9]+$' 
-              THEN (${vehicles.tailMaxpax}::integer > 1 AND ${vehicles.tailMaxpax}::integer < 7) 
-              ELSE false 
-            END`,
-		)
-		.limit(15)
-		.catch(() => [])) || []) as (typeof vehicles.$inferSelect)[]
-	const midJets =
-		(((await db
-			.select()
-			.from(vehicles)
-			.where(
-				sql`CASE 
-              WHEN trim(${vehicles.tailMaxpax}) ~ '^[0-9]+$' 
-              THEN (${vehicles.tailMaxpax}::integer > 6 AND ${vehicles.tailMaxpax}::integer < 11) 
-              ELSE false 
-            END`,
-			)
-			.limit(15)
-			.catch(() => [])) || []) as (typeof vehicles.$inferSelect)[]) || []
-	const heavyJets =
-		(((await db
-			.select()
-			.from(vehicles)
-			.where(
-				sql`CASE 
-              WHEN trim(${vehicles.tailMaxpax}) ~ '^[0-9]+$' 
-              THEN (${vehicles.tailMaxpax}::integer > 10) 
-              ELSE false 
-            END`,
-			)
-			.limit(15)
-			.catch(() => [])) || []) as (typeof vehicles.$inferSelect)[]) || []
-
+function AircraftsPage() {
+	const t = useTranslations()
 	return (
 		<main>
 			<section>
@@ -70,6 +22,7 @@ export default async function Aircrafts() {
 					</div>
 				</div>
 			</section>
+			<Line />
 			<section>
 				<div className='container gap-10'>
 					<div className='card relative gap-4 overflow-clip p-12 md:p-24'>
@@ -91,32 +44,11 @@ export default async function Aircrafts() {
 					</div>
 				</div>
 			</section>
-			{vehiclesList.length > 0 && (
-				<section>
-					<div className='container gap-10'>
-						<div className='gap-4'>
-							<h2>{t('our-fleet.light-jets')}</h2>
-							<VehiclesCarousel vehicles={smallJets} />
-						</div>
-						<div className='gap-4'>
-							<h2>{t('our-fleet.midsize-jets')}</h2>
-							<VehiclesCarousel vehicles={midJets} />
-						</div>
-						<div className='gap-4'>
-							<h2>{t('our-fleet.heavy-jets')}</h2>
-							<VehiclesCarousel vehicles={heavyJets} />
-						</div>
-					</div>
-				</section>
-			)}
-			<MakeBookingSection isCard />
-			{/* <ContactUsSection
-				title={t('partners-contact-us.title')}
-				description={t('partners-contact-us.description')}
-				buttonText={t('partners-contact-us.button')}
-				imageSrc='/images/partners/contact_us.webp'
-			/> */}
-			<AllAircrafts />
+			<AircraftsList />
+			<Line />
+			<NewContactUs />
 		</main>
 	)
 }
+
+export default AircraftsPage
