@@ -4,7 +4,6 @@ import Select from '@/components/form/select'
 import { aircrafts as aircraftScheme } from '@/lib/drizzle'
 import { useLocale } from 'next-intl'
 import { useEffect, useState } from 'react'
-import DualRange from '../yachts/dual_range'
 import { getAircraftCovers, getAircrafts } from './actions'
 import AircraftCard from './aircraft_card'
 
@@ -41,7 +40,7 @@ function AircraftsList() {
 						<h3 className='col-span-full'>
 							{locale === 'en' ? 'Filter aircraft' : 'Фильтровать самолеты'}
 						</h3>
-						<div className='grid gap-[2px] overflow-hidden rounded-2xl md:grid-cols-3 md:gap-4 md:rounded-none'>
+						<div className='grid gap-[2px] overflow-hidden rounded-2xl md:grid-cols-2 md:gap-4 md:rounded-none'>
 							{/* <Select
                             name='type'
                             className='w-full'
@@ -58,7 +57,7 @@ function AircraftsList() {
                             <option value='Ultra long range'>{locale === 'en' ? 'Ultra long range' : 'Ультра дальнего действия'}</option>
                             <option value='VIP airliner'>{locale === 'en' ? 'VIP airliner' : 'VIP пассажирский'}</option>
                         </Select> */}
-							<DualRange
+							{/* <DualRange
 								value={passangers}
 								onValueChange={setPassangers}
 								min={0}
@@ -66,7 +65,7 @@ function AircraftsList() {
 								label={locale === 'en' ? 'Passangers' : 'Пассажиры'}
 								name='passangers'
 								id='passangers'
-							/>
+							/> */}
 							<Select
 								name='sort'
 								className='w-full'

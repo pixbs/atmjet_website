@@ -126,7 +126,7 @@ async function Aircraft({ params }: AircraftProps) {
 					<Gallery
 						images={images.map((image) => image.url)}
 						alt={`${aircraft.aircraftTypeName} ${aircraft.registrationNumber}`}
-						selected={1}
+						selected={images.length > 1 ? 1 : 0}
 					/>
 					<div className='gap-8 rounded-3xl border border-gray-300 bg-gray-150 p-6 py-10 md:p-10'>
 						<h1>{`${aircraft.aircraftTypeName} ${aircraft.registrationNumber}`}</h1>
@@ -166,7 +166,7 @@ async function Aircraft({ params }: AircraftProps) {
 								width={600}
 								height={600}
 								alt={`${aircraft.aircraftTypeName} ${aircraft.registrationNumber}`}
-								src={images[1].url}
+								src={images[1]?.url || images[0].url}
 								className='rounded-3xl border-gray-400'
 							/>
 						)}
