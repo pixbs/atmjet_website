@@ -76,7 +76,7 @@ export default async function Yachts(props: YachtsProps) {
 		.where(or(ilike(newYachts.slug, `%${id}%`)))
 
 	if (!yacht || !yacht.photos) return redirect('/yachts')
-	const description = yacht.descriptionEn
+	const description = (locale === 'en' ? yacht.descriptionEn : yacht.descriptionRu)
 		?.split('.')
 		.slice(0, -1)
 		.map((str) => str.trim() + '.')
@@ -214,7 +214,7 @@ export default async function Yachts(props: YachtsProps) {
 								))}
 								<div className='col-span-full'>
 									<p>{statsLabel[6][locale]}</p>
-									<h3>{yacht.included}</h3>
+									<h3>{locale === 'ru' ? yacht.includedRu : yacht.includedEn}</h3>
 								</div>
 							</div>
 						</div>

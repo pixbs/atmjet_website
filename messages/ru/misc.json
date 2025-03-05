@@ -1,11 +1,11 @@
 {
 	"locale": {
-		"en": "Анг",
+		"en": "Eng",
 		"ru": "Рус",
 		"uk": "Укр",
-		"english": "Английский",
+		"english": "English",
 		"russian": "Русский",
-		"ukrainian": "Украинский"
+		"ukrainian": "Українська"
 	},
 	"social-media": {
 		"telegram": "Telegram",

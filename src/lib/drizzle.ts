@@ -189,7 +189,8 @@ export const newYachts = pgTable(
 		bathrooms: text('bathrooms'),
 		refit: numeric('refit'),
 		minHours: numeric('min_hours'),
-		included: text('included'),
+		includedRu: text('included'),
+		includedEn: text('included_en'),
 		photos: text('photos').array(),
 	},
 	(table) => {
