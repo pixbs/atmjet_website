@@ -14,18 +14,58 @@ function YachtsSection({ yachts }: YachtsSectionProps) {
 	const searchParams = useSearchParams()
 	const sortBy = searchParams.get('sort')
 	const order = searchParams.get('order')
-	const price = [
-		Number(searchParams.get('priceMin')) || 0,
-		Number(searchParams.get('priceMax')) || 1200,
-	]
-	const length = [
-		Number(searchParams.get('lengthMin')) || 0,
-		Number(searchParams.get('lengthMax')) || 62,
-	]
-	const guests = [
-		Number(searchParams.get('guestsMin')) || 0,
-		Number(searchParams.get('guestsMax')) || 20,
-	]
+	let price = [0, 1200]
+	let length = [0, 10000000]
+	let guests = [0, 20]
+
+	switch (searchParams.get('price')) {
+		case '1200':
+			price = [0, 1200]
+			break
+		case '3500':
+			price = [0, 3500]
+			break
+		case 'Lux':
+			price = [3500, 10000000]
+			break
+		case 'All':
+			price = [0, 10000000]
+			break
+		default:
+			break
+	}
+
+	switch (searchParams.get('length')) {
+		case 'all':
+			length = [0, 10000000]
+			break
+		case '20':
+			length = [0, 20]
+			break
+		case '40':
+			length = [20, 40]
+			break
+		case '60':
+			length = [40, 60]
+			break
+	}
+
+	switch (searchParams.get('guests')) {
+		case '15':
+			guests = [0, 15]
+			break
+		case '30':
+			guests = [15, 30]
+			break
+		case '60':
+			guests = [30, 60]
+			break
+		case '60+':
+			guests = [60, 10000000]
+		case 'All':
+			guests = [0, 10000000]
+			break
+	}
 
 	const sortedYachts = yachts.filter(
 		(yacht) =>
