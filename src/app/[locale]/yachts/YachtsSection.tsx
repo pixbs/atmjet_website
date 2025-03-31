@@ -14,9 +14,9 @@ function YachtsSection({ yachts }: YachtsSectionProps) {
 	const searchParams = useSearchParams()
 	const sortBy = searchParams.get('sort')
 	const order = searchParams.get('order')
-	let price = [0, 1200]
+	let price = [0, 10000000]
 	let length = [0, 10000000]
-	let guests = [0, 20]
+	let guests = [0, 10000000]
 
 	switch (searchParams.get('price')) {
 		case '1200':

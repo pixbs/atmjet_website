@@ -89,7 +89,7 @@ function FilterSection({
 							name='guests'
 							id='guests'
 							className='w-full'
-							defaultValue='15'
+							defaultValue='All'
 						>
 							<option value='15'>{locale === 'en' ? 'To 15 guests' : 'До 15 гостей'}</option>
 							<option value='30'>
@@ -115,7 +115,7 @@ function FilterSection({
 							name='price'
 							id='price'
 							className='w-full'
-							defaultValue='1200'
+							defaultValue='All'
 						>
 							<option value='1200'>{locale === 'en' ? 'To 1200 AED' : 'До 1200 AED'}</option>
 							<option value='3500'>{locale === 'en' ? 'To 3500 AED' : 'До 3500 AED'}</option>
@@ -134,11 +134,11 @@ function FilterSection({
 						<Select
 							name='lenght'
 							className='w-full'
-							defaultValue='all'
+							defaultValue='All'
 							label={locale === 'en' ? 'Length ft' : 'Длина футы'}
 							id='lenght'
 						>
-							<option value='all'>{locale === 'en' ? 'All' : 'Все'}</option>
+							<option value='All'>{locale === 'en' ? 'All' : 'Все'}</option>
 							<option value='20'>{locale === 'en' ? 'To 20 ft' : 'До 20 фт'}</option>
 							<option value='40'>{locale === 'en' ? 'From 20 to 40 ft' : 'От 20 до 40 фт'}</option>
 							<option value='60'>{locale === 'en' ? 'From 40 to 60 ft' : 'От 40 до 60 фт'}</option>
