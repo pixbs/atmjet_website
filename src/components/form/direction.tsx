@@ -25,10 +25,7 @@ interface DirectionProps {
 export function Direction(props: DirectionProps) {
 	const t = useTranslations('form')
 	const { index, showReturn = false } = props
-	const {
-		control,
-		formState: { errors },
-	} = useFormContext()
+	const { control } = useFormContext()
 
 	return (
 		<div className='w-full content-stretch items-stretch justify-stretch gap-0.5 rounded-xl lg:flex-row'>

@@ -140,9 +140,13 @@
 		"title": "Залиште свої дані",
 		"description": "Введіть додатковий текст",
 		"name": "Ім'я",
+		"name-placeholder": "Введіть ваше ім'я",
 		"phone-number": "Номер телефону",
+		"phone-placeholder": "+1 234 567 89 10",
 		"email": "Email",
+		"email-placeholder": "example@example.com",
 		"send": "Відправити",
-		"confirm": "Успішно відправлено"
+		"confirm": "Успішно відправлено",
+		"no-results": "Немає результатів"
 	}
 }

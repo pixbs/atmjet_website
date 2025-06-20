@@ -35,7 +35,7 @@
 		"card4": {
 			"num": "",
 			"title": "Same-day departures",
-			"description": "With 24/7 access to a global database of over 25,000 aircrafts, ATM JET guarantees private jet availability within just 5 hours of booking. Whether for business or leisure, our extensive fleet ensures flexible and fast travel options to meet any client’s needs."
+			"description": "With 24/7 access to a global database of over 25,000 aircrafts, ATM JET guarantees private jet availability within just 5 hours of booking. Whether for business or leisure, our extensive fleet ensures flexible and fast travel options to meet any client's needs."
 		},
 		"card5": {
 			"num": "",
@@ -52,7 +52,7 @@
 		},
 		"card2": {
 			"title": "ATM JET CRM",
-			"description": "With ATM JET’s personalized CRM system, simply share your preferences once, and we’ll ensure every detail is tailored to your liking for all future flights. Experience seamless, custom service every time you board your private jet."
+			"description": "With ATM JET's personalized CRM system, simply share your preferences once, and we'll ensure every detail is tailored to your liking for all future flights. Experience seamless, custom service every time you board your private jet."
 		},
 		"card3": {
 			"title": "Customized aircrafts and crew",
@@ -64,7 +64,7 @@
 		},
 		"card5": {
 			"title": "Best flight prices on popular destinations",
-			"description": "ATM JET offers the best prices on charter flights to the most popular resorts in Europe and Dubai. Travel to prestigious summer destinations like Saint-Tropez, Ibiza, and Monaco, or opt for elite winter resorts such as Courchevel, St. Moritz, and Zermatt. Whether it’s a summer getaway or a winter retreat, ATM JET guarantees seamless, stylish travel to the world’s top destinations."
+			"description": "ATM JET offers the best prices on charter flights to the most popular resorts in Europe and Dubai. Travel to prestigious summer destinations like Saint-Tropez, Ibiza, and Monaco, or opt for elite winter resorts such as Courchevel, St. Moritz, and Zermatt. Whether it's a summer getaway or a winter retreat, ATM JET guarantees seamless, stylish travel to the world's top destinations."
 		}
 	},
 	"options": {
@@ -134,7 +134,7 @@
 		"question2": "How much does it cost to rent a plane, the price?",
 		"answer2": "The cost of a private jet is calculated taking into account such factors as:‍ \\n - Class, type of aircrafts \\n - Jet basing \\n - Preferable route \\n - Features of the airports hosting the flight \\n - Other individual wishes of the client, etc.",
 		"question3": "Can I change the conditions of the booked flight?",
-		"answer3": "YES, AND YOU CAN RELY ON:‍ \\n - Individual approach \\n - Provision of an airplane of any class \\n - Worthy service on board \\n - Operational route adjustment and making changes according to your wishes, full confidentiality. \\n One of the main tasks of business aviation is to provide high-quality services and provide several related services. We focus exclusively on customer requests. \\n  The ATM JET business aviation center is ready to fulfill a whole range of tasks to create optimal conditions for the flight.",
+		"answer3": "YES, AND YOU CAN RELY ON:‍ \\n - Individual approach \\n - Provision of an airplane of any class \\n - Worthy service on board \\n - Operational route adjustment and making changes according to your wishes, full confidentiality. \\n One of the main tasks of business aviation is to provide high-quality services and provide several related services. We focus exclusively on customer requests. \\n  The ATM JET business aviation center is ready to fulfill a whole range of tasks to create optimal conditions for the flight.",
 		"question4": "How safe are individual private flights?",
 		"answer4": "A private plane and its lease should have personal security and confidentiality. ATM JET fully guarantees their compliance. \\n Information about the flight is available only to the client and a limited circle of our employees who are responsible for not disclosing the data known to them. In addition, renting an airplane excludes the possibility of the presence on board of undesirable people for you. \\n Your \"neighbors\" during the flight will be only passengers invited by you, flight attendants, and the crew of the aircrafts. \\n This is especially essential for representatives of show business and dignitaries. For transportation of passengers within the limits of rent of a private airplane our company uses modern and reliable transport. Absolutely all air assets are undergoing technical and service maintenance in a timely manner.",
 		"question5": "What are the rules for transporting pets on private planes?",
@@ -150,6 +150,7 @@
 		"email": "Email",
 		"email-placeholder": "example@example.com",
 		"send": "Send",
-		"confirm": "Successfully sent"
+		"confirm": "Successfully sent",
+		"no-results": "No results"
 	}
 }

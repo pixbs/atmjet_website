@@ -150,6 +150,7 @@
 		"email": "Email",
 		"email-placeholder": "example@example.com",
 		"send": "Отправить",
-		"confirm": "Успешно отправлено"
+		"confirm": "Успешно отправлено",
+		"no-results": "Нет результатов"
 	}
 }

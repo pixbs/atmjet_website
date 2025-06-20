@@ -279,3 +279,18 @@ input[type='range']::-webkit-slider-runnable-track {
 input[type='range']::-moz-range-track {
 	@apply h-20 w-full cursor-pointer rounded-full bg-none;
 } */
+
+/* override phone input styling */
+.react-tel-input {
+	@apply w-full; /* ensure it spans full width */
+}
+.react-tel-input .form-control {
+	@apply w-full rounded-none border-b border-gray-600 bg-transparent py-4 pl-14 text-gray-900 placeholder:text-gray-600;
+	border-left: none !important;
+	border-top: none !important;
+	border-right: none !important;
+}
+.react-tel-input .flag-dropdown {
+	background: transparent !important;
+	border: none !important;
+}

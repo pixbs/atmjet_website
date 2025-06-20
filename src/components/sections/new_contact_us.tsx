@@ -39,7 +39,7 @@ export default function NewContactUs() {
 									? 'Управляйте своими запросами и бронированиями на ходу через приватный чат с нашей командой'
 									: 'Manage your enquiries and bookings on go via private chat with our team'}
 							</p>
-							<ArrowTR className='mt-5 h-5 stroke-none text-white peer-hover:translate-x-10' />
+							<ArrowTR className='mt-5 h-5 stroke-none text-gray-900 peer-hover:translate-x-10' />
 						</Link>
 					</motion.div>
 					<motion.div
@@ -58,7 +58,7 @@ export default function NewContactUs() {
 									? 'Получайте мгновенную поддержку и ответы на ваши вопросы непосредственно от нашей команды'
 									: 'Get instant support and answers to your questions directly from our team'}
 							</p>
-							<ArrowTR className='mt-5 h-5 stroke-none text-white peer-hover:translate-x-10' />
+							<ArrowTR className='mt-5 h-5 stroke-none text-gray-900 peer-hover:translate-x-10' />
 						</Link>
 					</motion.div>
 				</div>
