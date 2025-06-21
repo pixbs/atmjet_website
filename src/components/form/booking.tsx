@@ -7,7 +7,14 @@ import { useLocale, useTranslations } from 'next-intl'
 import { usePathname, useSearchParams } from 'next/navigation'
 import { FormProvider, useForm } from 'react-hook-form'
 import { z } from 'zod'
-import React, { ChangeEvent, useEffect, useMemo, useRef, useState } from 'react'
+import React, {
+	ChangeEvent,
+	useEffect,
+	useMemo,
+	useRef,
+	useState,
+	useId, 
+} from 'react'
 import flags from 'react-phone-number-input/flags'
 import { AsYouType } from 'libphonenumber-js'
 import { COUNTRIES, type Country } from '@/countries'
@@ -32,9 +39,8 @@ type FormData = z.infer<typeof schema>
 
 const Flag = ({ iso, className }: { iso: keyof typeof flags; className?: string }) => {
 	const C = flags[iso]
-
 	return C ? (
-    // @ts-ignore
+		/* @ts-ignore */
 		<C className={className ?? 'h-4 w-4 rounded-sm'} />
 	) : (
 		<span className={`inline-block ${className ?? 'h-4 w-4 rounded-sm'} bg-neutral-900`} />
@@ -105,13 +111,11 @@ export const BookingForm = ({ host, close }: { host: string; close: () => void }
 	const showConfirm = searchParams.get('confirm') === 'true'
 	const phonePlaceholder = `${selectedCountry.code} 123 456 789`
 
-	// Formatter for localized country names
 	const regionNames = useMemo(() => {
 		try {
 			return new Intl.DisplayNames([locale], { type: 'region' })
 		} catch {
-			// Fallback to English if locale is not supported
-			return new Intl.DisplayNames(['en'], { type: 'region' })
+			return new Intl.DisplayNames(['en'], { type: 'region' }) // fallback
 		}
 	}, [locale])
 
@@ -159,39 +163,37 @@ export const BookingForm = ({ host, close }: { host: string; close: () => void }
 			e.preventDefault()
 	}
 
-const formatDirectionsMd = (
-  list: {
-    from?: string | null
-    to?: string | null
-    date?: string | null
-    returnDate?: string | null
-    passengers?: number | string | null
-    guests?: number | string | null
-    hours?: number | string | null    
-  }[]
-) =>
-  list.length
-    ? list
-        .map((d, i) => {
-          const rows: string[] = []
+	const formatDirectionsMd = (
+		list: {
+			from?: string | null
+			to?: string | null
+			date?: string | null
+			returnDate?: string | null
+			passengers?: number | string | null
+			guests?: number | string | null
+			hours?: number | string | null
+		}[],
+	) =>
+		list.length
+			? list
+					.map((d, i) => {
+						const rows: string[] = []
+						const add = (label: string, value: unknown) => {
+							if (value !== null && value !== undefined && value !== '')
+								rows.push(`*${label}:* ${mdEscape(String(value))}`)
+						}
+						add('From', d.from)
+						add('To', d.to)
+						add('Date', d.date)
+						add('Return', d.returnDate)
+						add('Passengers', d.passengers)
+						add('Guests', d.guests)
+						add('Hours', d.hours)
+						return `*${i + 1}\\. Direction*` + '\n' + rows.join('\n')
+					})
+					.join('\n\n')
+			: '*No directions*'
 
-          const add = (label: string, value: unknown) => {
-            if (value !== null && value !== undefined && value !== '')
-              rows.push(`*${label}:* ${mdEscape(String(value))}`)
-          }
-
-          add('From',        d.from)
-          add('To',          d.to)
-          add('Date',        d.date)
-          add('Return',      d.returnDate)
-          add('Passengers',  d.passengers)
-          add('Guests',      d.guests)
-          add('Hours',       d.hours)         
-
-          return `*${i + 1}\\. Direction*` + '\n' + rows.join('\n')
-        })
-        .join('\n\n')
-    : '*No directions*'
 	const onSubmit = async (data: FormData) => {
 		const url = `https://${host}${pathname}`
 		const msg = [
@@ -210,6 +212,7 @@ const formatDirectionsMd = (
 			'',
 			`🔗 From ${mdEscape(url)}`,
 		].join('\n')
+
 		try {
 			await sendMessage(msg, 'MarkdownV2')
 		} finally {
@@ -241,6 +244,7 @@ const formatDirectionsMd = (
 	return (
 		<>
 			<h2 className='text-center text-gray-900'>{t('title')}</h2>
+
 			<FormProvider {...methods}>
 				<form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-6' noValidate>
 					<div className='flex flex-col gap-1'>
@@ -346,6 +350,7 @@ const formatDirectionsMd = (
 											className='w-full bg-transparent py-3 pl-12 pr-4 text-sm text-gray-300 placeholder-gray-400 focus:outline-none'
 										/>
 									</div>
+
 									<ul className='max-h-60 overflow-y-auto'>
 										{filteredCountries.map((c, i) => (
 											<li
@@ -362,6 +367,7 @@ const formatDirectionsMd = (
 												<span className='text-sm font-semibold'>{c.code}</span>
 											</li>
 										))}
+
 										{!filteredCountries.length && (
 											<li className='px-4 py-3 text-sm text-gray-500'>{t('no-results')}</li>
 										)}
@@ -393,7 +399,7 @@ const formatDirectionsMd = (
 
 					<div className='flex flex-row flex-wrap gap-2 py-6'>
 						{chips.map((tag) => (
-							<Chip key={tag} id={tag} value={tag} register={register('tags')}>
+							<Chip key={tag} value={tag} register={register('tags')}>
 								{tag}
 							</Chip>
 						))}
@@ -408,20 +414,26 @@ const formatDirectionsMd = (
 	)
 }
 
-interface ChipProps extends React.InputHTMLAttributes<HTMLInputElement> {
+interface ChipProps {
+	value: string
 	register: ReturnType<ReturnType<typeof useForm>['register']>
+	children: React.ReactNode
 }
 
-const Chip = ({ register, children, ...rest }: ChipProps) => (
-	<div>
-		<input type='checkbox' className='peer sr-only' {...register} {...rest} />
-		<label
-			htmlFor={rest.id}
-			className='rounded-full border border-gray-400 bg-background px-5 py-2 font-semibold uppercase transition-colors hover:border-gray-800 peer-checked:border-transparent peer-checked:bg-gold peer-checked:text-gray-100'
-		>
-			{children}
-		</label>
-	</div>
-)
+const Chip = ({ register, value, children }: ChipProps) => {
+	const uid = useId()
+
+	return (
+		<div>
+			<input id={uid} type='checkbox' className='peer sr-only' value={value} {...register} />
+			<label
+				htmlFor={uid}
+				className='rounded-full border border-gray-400 bg-background px-5 py-2 font-semibold uppercase transition-colors hover:border-gray-800 peer-checked:border-transparent peer-checked:bg-gold peer-checked:text-gray-100'
+			>
+				{children}
+			</label>
+		</div>
+	)
+}
 
 export default BookingForm
