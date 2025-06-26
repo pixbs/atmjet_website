@@ -7,6 +7,8 @@
 		"from": "From",
 		"to": "To",
 		"date": "Date",
+		"when": "When",
+		"returnDate": "Return",
 		"passengers": "passengers",
 		"request-quote": "Request Quote",
 		"delete-leg": "Delete leg",
