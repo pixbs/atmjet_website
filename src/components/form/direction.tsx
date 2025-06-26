@@ -66,13 +66,13 @@ export function Direction(props: DirectionProps) {
 					render={({ field }) => (
 						<div className='relative'>
 							<label className='absolute left-4 top-4 z-10 text-xs font-semibold'>
-								{t('date')}
+								{showReturn ? t('when') : t('date')}
 							</label>
 							<input
 								{...field}
 								type='date'
-								placeholder={t('date')}
-								aria-placeholder={t('date')}
+								placeholder={showReturn ? t('when') : t('date')}
+								aria-placeholder={showReturn ? t('when') : t('date')}
 								className='min-h-16 w-full flex-shrink-0 pb-3 pt-7 text-sm lg:h-full'
 							/>
 						</div>
@@ -85,13 +85,18 @@ export function Direction(props: DirectionProps) {
 						control={control}
 						name={`direction.${index}.returnDate`}
 						render={({ field }) => (
+							<div className='relative'>
+							<label className='absolute left-4 top-4 z-10 text-xs font-semibold'>
+								{t('returnDate')}
+							</label>
 							<input
 								{...field}
 								type='date'
-								placeholder={t('date')}
-								aria-placeholder={t('date')}
-								className='min-h-16 w-full flex-shrink-0 lg:h-full'
+								placeholder={t('returnDate')}
+								aria-placeholder={t('returnDate')}
+								className='min-h-16 w-full flex-shrink-0 pb-3 pt-7 text-sm lg:h-full'
 							/>
+						</div>
 						)}
 					/>
 				</div>
