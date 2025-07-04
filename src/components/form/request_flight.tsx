@@ -55,12 +55,14 @@ export function RequestForm(props: RequestFormProps) {
 		remove(index)
 	}
 
-	const handeleRoundTrip = (state: boolean) => {
-		if (!isRoundTrip) {
-			remove()
-			handleAppend()
+	const handeleRoundTrip = (round: boolean) => {
+		if (round) {
+			if (fields.length > 1) {
+				// remove indices 1 ... n 
+				remove(Array.from({ length: fields.length - 1 }, (_, i) => i + 1))
+			}
 		}
-		setIsRoundTrip(!isRoundTrip)
+		setIsRoundTrip(round)
 	}
 
 	// if (showConfirm) {
@@ -100,12 +102,14 @@ export function RequestForm(props: RequestFormProps) {
 				<div className='flex-row flex-wrap justify-between gap-4'>
 					<div className='flex-row gap-1 rounded-full border border-gray-500 p-0.5'>
 						<button
+							type='button'
 							onClick={() => handeleRoundTrip(false)}
 							className={`${isRoundTrip ? 'bg-gray-100 text-gray-900' : 'bg-gray-300 text-gray-800'}`}
 						>
 							{t('multi-leg')}
 						</button>
 						<button
+							type='button'
 							onClick={() => handeleRoundTrip(true)}
 							className={`${isRoundTrip ? 'bg-gray-300 text-gray-800' : 'bg-gray-100 text-gray-900'}`}
 						>
