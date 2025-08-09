@@ -49,25 +49,21 @@ const statsLabel = {
 
 async function Aircraft({ params }: AircraftProps) {
 	const names = params.id ? params.id.split('-') : []
-	const registrationNumber = `${names[0]}-${names[1]}`
+	const registrationNumber = names[1] ? `${names[0]}-${names[1]}` : names[0]
+
 	const t = await getTranslations('vehicle')
 	const locale = (await getLocale()) as 'en' | 'ru'
-	const aircraft = (
-		await db
-			.select()
-			.from(aircrafts)
-			.limit(1)
-			.where(ilike(aircrafts.registrationNumber, `${registrationNumber.toUpperCase()}`))
-	)[0]
 
-	if (!aircraft) {
+	const aircraft = await db.query.aircrafts.findFirst({
+		where: ilike(aircrafts.registrationNumber, registrationNumber.toUpperCase()),
+		with: { images: true },
+	})
+
+	if (!aircraft || aircraft.images.length === 0) {
 		return VehiclePage({ params })
 	}
 
-	const images = await db
-		.select()
-		.from(aircraftImagesTable)
-		.where(eq(aircraftImagesTable.aircraftId, aircraft.id))
+  const images = aircraft.images
 
 	const iconClass = 'size-10 color-gray text-gray-300 shrink-0'
 	const stats = [
@@ -166,7 +162,7 @@ async function Aircraft({ params }: AircraftProps) {
 								width={600}
 								height={600}
 								alt={`${aircraft.aircraftTypeName} ${aircraft.registrationNumber}`}
-								src={images[1]?.url || images[0].url}
+								src={images[1]?.url || images[0]?.url}
 								className='rounded-3xl border-gray-400'
 							/>
 						)}
@@ -222,7 +218,7 @@ async function Aircraft({ params }: AircraftProps) {
 							{images.reverse().map((image, index) => (
 								<Image
 									key={`image-${index}`}
-									src={image.url}
+									src={image?.url ?? ''}
 									className='rounded-3xl border border-gray-300 bg-gray-150'
 									alt={`${aircraft.aircraftTypeName} ${aircraft.registrationNumber}`}
 									width={600}

@@ -303,4 +303,21 @@ export const aircraftImagesRelations = relations(aircraftImagesTable, ({ one }) 
 	}),
 }))
 
-export const db = drizzle(vercelSql)
+const schema = {
+	airports,
+	emptyLegs,
+	cityList,
+	vehicles,
+	yachts,
+	newAirports,
+	person,
+	newYachts,
+	users,
+	aircrafts: aircrafts,
+	aircraftsRelations,
+	aircraftImages: aircraftImagesTable,
+	aircraftImagesRelations,
+	migrationStatus: migrationStatusTable,
+}
+
+export const db = drizzle(vercelSql, { schema: { ...schema } })
