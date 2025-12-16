@@ -5,7 +5,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 		process.env.VERCEL_PROJECT_PRODUCTION_URL || process.env.VERCEL_URL || 'localhost:3000'
 	const url = [
 		'/',
-		'/aircrafts',
+		'/aircraft',
 		'/atm_jet_group',
 		'/business_agents',
 		'/cargo_charter',

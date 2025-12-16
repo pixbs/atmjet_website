@@ -60,7 +60,7 @@ export default async function VehiclePage(props: VehiclePageProps) {
 		.from(vehicles)
 		.limit(1)
 		.where(eq(vehicles.tailNumber, tailNumber.toUpperCase()))
-	if (!vehicle) redirect('/aircrafts')
+	if (!vehicle) redirect('/aircraft')
 
 	const t = await getTranslations('vehicle')
 	const labels = [

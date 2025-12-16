@@ -57,7 +57,7 @@ export function FooterSection() {
 							<Link href={`/${locale}/sales_yachts`}>{t('navigation.sales-yachts')}</Link>
 							<Link href={`/${locale}/group_charters`}>{t('navigation.group-charters')}</Link>
 							<Link href={`/${locale}/atm_jet_group`}>{t('navigation.atm-jet-group')}</Link>
-							<Link href={`/${locale}/aircrafts`}>{t('navigation.aircrafts')}</Link>
+							<Link href={`/${locale}/aircraft`}>{t('navigation.aircraft')}</Link>
 							<Link href={`/${locale}/yachts`}>{t('navigation.yachts')}</Link>
 						</div>
 					</div>

@@ -37,7 +37,7 @@
 		"card4": {
 			"num": "",
 			"title": "Same-day departures",
-			"description": "With 24/7 access to a global database of over 25,000 aircrafts, ATM JET guarantees private jet availability within just 5 hours of booking. Whether for business or leisure, our extensive fleet ensures flexible and fast travel options to meet any client's needs."
+			"description": "With 24/7 access to a global database of over 25,000 aircraft, ATM JET guarantees private jet availability within just 5 hours of booking. Whether for business or leisure, our extensive fleet ensures flexible and fast travel options to meet any client's needs."
 		},
 		"card5": {
 			"num": "",
@@ -57,8 +57,8 @@
 			"description": "With ATM JET's personalized CRM system, simply share your preferences once, and we'll ensure every detail is tailored to your liking for all future flights. Experience seamless, custom service every time you board your private jet."
 		},
 		"card3": {
-			"title": "Customized aircrafts and crew",
-			"description": "ATM JET carefully selects the ideal aircrafts and experienced crew for each airport, ensuring maximum comfort and safety for every flight. Our commitment to high standards guarantees a seamless, luxurious experience tailored to your travel needs."
+			"title": "Customized aircraft and crew",
+			"description": "ATM JET carefully selects the ideal aircraft and experienced crew for each airport, ensuring maximum comfort and safety for every flight. Our commitment to high standards guarantees a seamless, luxurious experience tailored to your travel needs."
 		},
 		"card4": {
 			"title": "Payment after the flight",
@@ -79,7 +79,7 @@
 		"title2": "ATM JET Privelege",
 		"card1": {
 			"title": "Fly at cost",
-			"description": "ATM JET eliminates the standard brokerage commission, which typically ranges from 3-9%, allowing you to fly at the direct cost of hiring an aircrafts. We offer the lowest prices in the industry, ensuring cost-effective private jet travel without hidden fees."
+			"description": "ATM JET eliminates the standard brokerage commission, which typically ranges from 3-9%, allowing you to fly at the direct cost of hiring an aircraft. We offer the lowest prices in the industry, ensuring cost-effective private jet travel without hidden fees."
 		},
 		"card2": {
 			"title": "We provide assistance with payments and transfers.",
@@ -132,13 +132,13 @@
 	"faq": {
 		"title": "Frequently asked questions",
 		"question1": "How do I order a plane and what documents are needed for this?",
-		"answer1": "Fill out the booking form and then the personal manager will call you to negotiate the cost of the flight. \\n The package of documents corresponds to the standard one for air travel, the only supplement will be a contract for the provision of a private flight. \\n We will send you a commercial offer with available aircrafts on the chosen route. Next, you choose the option that takes into account all your wishes and we sign the lease of the aircrafts. \\n  Payment is made in the way that suits you: bank transfer, cash, credit card.",
+		"answer1": "Fill out the booking form and then the personal manager will call you to negotiate the cost of the flight. \\n The package of documents corresponds to the standard one for air travel, the only supplement will be a contract for the provision of a private flight. \\n We will send you a commercial offer with available aircraft on the chosen route. Next, you choose the option that takes into account all your wishes and we sign the lease of the aircraft. \\n  Payment is made in the way that suits you: bank transfer, cash, credit card.",
 		"question2": "How much does it cost to rent a plane, the price?",
-		"answer2": "The cost of a private jet is calculated taking into account such factors as:‍ \\n - Class, type of aircrafts \\n - Jet basing \\n - Preferable route \\n - Features of the airports hosting the flight \\n - Other individual wishes of the client, etc.",
+		"answer2": "The cost of a private jet is calculated taking into account such factors as:‍ \\n - Class, type of aircraft \\n - Jet basing \\n - Preferable route \\n - Features of the airports hosting the flight \\n - Other individual wishes of the client, etc.",
 		"question3": "Can I change the conditions of the booked flight?",
 		"answer3": "YES, AND YOU CAN RELY ON:‍ \\n - Individual approach \\n - Provision of an airplane of any class \\n - Worthy service on board \\n - Operational route adjustment and making changes according to your wishes, full confidentiality. \\n One of the main tasks of business aviation is to provide high-quality services and provide several related services. We focus exclusively on customer requests. \\n  The ATM JET business aviation center is ready to fulfill a whole range of tasks to create optimal conditions for the flight.",
 		"question4": "How safe are individual private flights?",
-		"answer4": "A private plane and its lease should have personal security and confidentiality. ATM JET fully guarantees their compliance. \\n Information about the flight is available only to the client and a limited circle of our employees who are responsible for not disclosing the data known to them. In addition, renting an airplane excludes the possibility of the presence on board of undesirable people for you. \\n Your \"neighbors\" during the flight will be only passengers invited by you, flight attendants, and the crew of the aircrafts. \\n This is especially essential for representatives of show business and dignitaries. For transportation of passengers within the limits of rent of a private airplane our company uses modern and reliable transport. Absolutely all air assets are undergoing technical and service maintenance in a timely manner.",
+		"answer4": "A private plane and its lease should have personal security and confidentiality. ATM JET fully guarantees their compliance. \\n Information about the flight is available only to the client and a limited circle of our employees who are responsible for not disclosing the data known to them. In addition, renting an airplane excludes the possibility of the presence on board of undesirable people for you. \\n Your \"neighbors\" during the flight will be only passengers invited by you, flight attendants, and the crew of the aircraft. \\n This is especially essential for representatives of show business and dignitaries. For transportation of passengers within the limits of rent of a private airplane our company uses modern and reliable transport. Absolutely all air assets are undergoing technical and service maintenance in a timely manner.",
 		"question5": "What are the rules for transporting pets on private planes?",
 		"answer5": "Please let us know when placing an order and our company will prepare everything you need beforehand. \\n Also for the transportation of pets in a private airplane, a veterinary certificate of Form No. 1 is required."
 	},

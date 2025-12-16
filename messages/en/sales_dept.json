@@ -2,26 +2,26 @@
 	"sales-hero": {
 		"overline": "Sales dept.",
 		"headline1": "Years",
-		"headline2": "Aircrafts",
+		"headline2": "Aircraft",
 		"num1": "20+",
 		"num2": "500+",
-		"description": "We offer access to over 500 aircrafts for sale, ensuring a wide range of options for private and business aviation needs. \\nWith more than 20 years of expertise in the industry, ATM JET provides comprehensive support to make your aircrafts purchase both secure and profitable.",
+		"description": "We offer access to over 500 aircraft for sale, ensuring a wide range of options for private and business aviation needs. \\nWith more than 20 years of expertise in the industry, ATM JET provides comprehensive support to make your aircraft purchase both secure and profitable.",
 		"button": "Contact us"
 	},
 	"personal-manager": {
 		"title": "Personal aviation manager",
-		"description": "We provide a dedicated aviation manager with over 20 years of industry experience. Your personal advisor will help you choose the ideal aircrafts tailored to your specific needs, ensuring a seamless and informed buying process. With expert knowledge and personalized guidance, we ensure you receive the best solution based on your unique aviation requirements.",
-		"chips": "Your plans for using the aircrafts; Price expectations; High residual value; Required parameters (range, passengers quantity, based airport); Best profitability"
+		"description": "We provide a dedicated aviation manager with over 20 years of industry experience. Your personal advisor will help you choose the ideal aircraft tailored to your specific needs, ensuring a seamless and informed buying process. With expert knowledge and personalized guidance, we ensure you receive the best solution based on your unique aviation requirements.",
+		"chips": "Your plans for using the aircraft; Price expectations; High residual value; Required parameters (range, passengers quantity, based airport); Best profitability"
 	},
-	"aircrafts": {
-		"title": "Most-flown business aircrafts:"
+	"aircraft": {
+		"title": "Most-flown business aircraft:"
 	},
 	"sales-options": {
-		"title": "Comprehensive aircarft services",
+		"title": "Comprehensive aircraft services",
 		"card1": {
 			"title": "Legal department",
 			"description": "The legal department is committed to ensuring the complete security of the transaction from start to finish. We will prepare the following:",
-			"list": "Proposal of intent with guarantees and commitments \\nBank lien verification of the aircrafts \\nPurchase agreement \\nChange of ownership structure in the aircrafts registration decision \\nExport certificates, airworthiness certificate \\nOther necessary documents"
+			"list": "Proposal of intent with guarantees and commitments \\nBank lien verification of the aircraft \\nPurchase agreement \\nChange of ownership structure in the aircraft registration decision \\nExport certificates, airworthiness certificate \\nOther necessary documents"
 		},
 		"card2": {
 			"title": "Finance department",
@@ -29,15 +29,15 @@
 			"list": "Select the most advantageous tax jurisdiction for the transaction \\nSelect the most suitable insurance \\nProject the cost of ownership \\nCalculate the projected rental income"
 		}
 	},
-	"aircrafts-descriptor": {
-		"title": "Each aircrafts is assessed by a team of mechanics licensed by the manufacturer of the desired aircrafts.",
+"aircraft-descriptor": {
+		"title": "Each aircraft is assessed by a team of mechanics licensed by the manufacturer of the desired aircraft.",
 		"card1": {
 			"title": "ABC check verification",
 			"description": "Mechanics review the reports for each ABC inspection and verify that the observations have been resolved."
 		},
 		"card2": {
 			"title": "Test flight evaluation",
-			"description": "Our certified technician will conduct a comprehensive test flight to assess the aircrafts’s performance and ensure it meets the highest standards of safety and efficiency. "
+			"description": "Our certified technician will conduct a comprehensive test flight to assess the aircraft's performance and ensure it meets the highest standards of safety and efficiency. "
 		},
 		"card3": {
 			"title": "Detailed inspection report",
@@ -54,7 +54,7 @@
 		"card2": {
 			"num": "",
 			"title": "Experienced fleet management",
-			"description": "Customised terms and conditions for the management of the purchased aircrafts from ATM JET."
+			"description": "Customised terms and conditions for the management of the purchased aircraft from ATM JET."
 		},
 		"card3": {
 			"num": "",
@@ -64,7 +64,7 @@
 	},
 	"sales-contact-us": {
 		"title": "Contact us",
-		"description": "Contact us to find out how much yield you can get on your aircrafts with us.",
+		"description": "Contact us to find out how much yield you can get on your aircraft with us.",
 		"button": "Contact us"
 	}
 }

@@ -24,7 +24,7 @@ async function AircraftCard({
 
 	return (
 		<Link
-			href={`/aircrafts/${slug}` || '/aircrafts'}
+			href={`/aircraft/${slug}` || '/aircraft'}
 			className='group overflow-hidden rounded-2xl border border-gray-300 bg-gray-150 p-0'
 		>
 			<div className='relative aspect-video overflow-hidden'>

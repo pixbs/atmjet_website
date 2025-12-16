@@ -53,12 +53,22 @@ const nextConfig = {
 			},
 			{
 				source: '/:slug/planes',
-				destination: '/:slug/aircrafts',
+				destination: '/:slug/aircraft',
 				permanent: true,
 			},
 			{
 				source: '/:slug/planes/:id',
-				destination: '/:slug/aircrafts/:id',
+				destination: '/:slug/aircraft/:id',
+				permanent: true,
+			},
+			{
+				source: '/:slug/aircrafts',
+				destination: '/:slug/aircraft',
+				permanent: true,
+			},
+			{
+				source: '/:slug/aircrafts/:id',
+				destination: '/:slug/aircraft/:id',
 				permanent: true,
 			},
 		]
