@@ -1,67 +1,62 @@
-# Payload Blank Template
+# ATM JET website
 
-This template comes configured with the bare minimum to get started on anything you need.
+Public website of ATM JET (private jet charter, yachts, cargo), rebuilt from scratch on **Payload 3**, **Next.js 16** and **Bun**. This repository is the fresh boilerplate plus the complete scope of the rewrite; the legacy site is preserved on the `legacy` branch and the `legacy/v1` tag and is described in [`docs/legacy-inventory.md`](docs/legacy-inventory.md).
+
+## Stack
+
+| Layer     | Choice                                                                                    |
+| --------- | ----------------------------------------------------------------------------------------- |
+| CMS / API | Payload 3 (Postgres adapter, migrations only), admin at `/admin`                          |
+| Frontend  | Next.js 16 App Router, React 19, server components first                                  |
+| Styling   | Tailwind CSS v4 (tokens in `@theme`), `class-variance-authority`, `cn()`                  |
+| Animation | `motion` (the only animation library)                                                     |
+| i18n      | Payload localisation (`en`, `ru`, `uk`) + next-intl routing                               |
+| Tooling   | Bun, TypeScript, ESLint 9, Prettier, lefthook, commitlint                                 |
+| Tests     | Vitest (unit + integration, coverage ratchet), Playwright (e2e, visual, a11y), Lighthouse |
+| Hosting   | Vercel (build: `bun run ci`), Neon Postgres, S3-compatible media storage                  |
 
 ## Quick start
 
-This template can be deployed directly from our Cloud hosting and it will setup MongoDB and cloud S3 object storage for media.
+```bash
+bun install                 # also installs the git hooks
+cp .env.example .env        # set DATABASE_URL and PAYLOAD_SECRET
+docker compose up -d        # local Postgres 17 (or point DATABASE_URL at any Postgres 16+)
+bun run migrate             # apply Payload migrations
+bun run dev                 # http://localhost:3000, admin at /admin
+```
 
-## Quick Start - local setup
+## Scripts
 
-To spin up this template locally, follow these steps:
+| Script                                                                | Purpose                                                |
+| --------------------------------------------------------------------- | ------------------------------------------------------ |
+| `bun run dev` / `bun run build` / `bun run start`                     | develop, build, serve                                  |
+| `bun run ci`                                                          | migrate and build (Vercel build command)               |
+| `bun run lint` / `lint:fix` / `format` / `format:check` / `typecheck` | static checks                                          |
+| `bun run migrate` / `migrate:create <name>` / `migrate:status`        | Payload migrations (`push` is disabled)                |
+| `bun run generate:types` / `generate:importmap`                       | regenerate Payload artefacts after config changes      |
+| `bun run test:int`                                                    | unit and integration tests with coverage thresholds    |
+| `bun run test:e2e` / `test:visual` / `test:a11y` / `test:lighthouse`  | browser tiers (dev server or `PLAYWRIGHT_BASE_URL`)    |
+| `bun run test:visual:update`                                          | regenerate visual baselines (Linux only)               |
+| `bun run check:conventions`                                           | self-test of the branch, commit and attribution checks |
 
-### Clone
+## Repository layout
 
-After you click the `Deploy` button above, you'll want to have standalone copy of this repo on your machine. If you've already cloned this repo, skip to [Development](#development).
+```
+src/app/(frontend)   public site (server components, Tailwind, motion provider)
+src/app/(payload)    Payload admin and API routes (generated)
+src/collections      Payload collections            src/lib        shared helpers
+src/migrations       committed migrations           tests/         unit | int | e2e | visual | a11y
+docs/                ADRs, legacy inventory, backlog, runbooks, GitHub settings checklist
+scripts/ci           convention checks (hooks + CI) scripts/db     database runbook helpers
+```
 
-### Development
+## Working on the project
 
-1. First [clone the repo](#clone) if you have not done so already
-2. `cd my-project && cp .env.example .env` to copy the example environment variables. You'll need to add the `MONGODB_URL` from your Cloud project to your `.env` if you want to use S3 storage and the MongoDB database that was created for you.
+- Read [`AGENTS.md`](AGENTS.md) (rules for humans and AI agents) and [`CONTRIBUTING.md`](CONTRIBUTING.md) (workflow, stacked pull requests, definition of done).
+- The scope lives in GitHub issues (epics with sub-issues) mirrored in [`docs/backlog.md`](docs/backlog.md); every ported feature references [`docs/legacy-inventory.md`](docs/legacy-inventory.md) and must match the legacy site pixel for pixel.
+- Decisions are recorded in [`docs/adr/`](docs/adr/README.md).
+- Required checks on every pull request: `conventions` (branch, commits, PR title, no AI attribution) and `ci` (static checks, migrations, tests, build).
 
-3. `pnpm install && pnpm dev` to install dependencies and start the dev server
-4. open `http://localhost:3000` to open the app in your browser
+## License
 
-That's it! Changes made in `./src` will be reflected in your app. Follow the on-screen instructions to login and create your first admin user. Then check out [Production](#production) once you're ready to build and serve your app, and [Deployment](#deployment) when you're ready to go live.
-
-#### Docker (Optional)
-
-If you prefer to use Docker for local development instead of a local MongoDB instance, the provided docker-compose.yml file can be used.
-
-To do so, follow these steps:
-
-- Modify the `MONGODB_URL` in your `.env` file to `mongodb://127.0.0.1/<dbname>`
-- Modify the `docker-compose.yml` file's `MONGODB_URL` to match the above `<dbname>`
-- Run `docker-compose up` to start the database, optionally pass `-d` to run in the background.
-
-## How it works
-
-The Payload config is tailored specifically to the needs of most websites. It is pre-configured in the following ways:
-
-### Collections
-
-See the [Collections](https://payloadcms.com/docs/configuration/collections) docs for details on how to extend this functionality.
-
-- #### Users (Authentication)
-
-  Users are auth-enabled collections that have access to the admin panel.
-
-  For additional help, see the official [Auth Example](https://github.com/payloadcms/payload/tree/3.x/examples/auth) or the [Authentication](https://payloadcms.com/docs/authentication/overview#authentication-overview) docs.
-
-- #### Media
-
-  This is the uploads enabled collection. It features pre-configured sizes, focal point and manual resizing to help you manage your pictures.
-
-### Docker
-
-Alternatively, you can use [Docker](https://www.docker.com) to spin up this template locally. To do so, follow these steps:
-
-1. Follow [steps 1 and 2 from above](#development), the docker-compose file will automatically use the `.env` file in your project root
-1. Next run `docker-compose up`
-1. Follow [steps 4 and 5 from above](#development) to login and create your first admin user
-
-That's it! The Docker instance will help you get up and running quickly while also standardizing the development environment across your teams.
-
-## Questions
-
-If you have any issues or questions, reach out to us on [Discord](https://discord.com/invite/payload) or start a [GitHub discussion](https://github.com/payloadcms/payload/discussions).
+Proprietary. See [`LICENSE`](LICENSE).
