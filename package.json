@@ -28,18 +28,25 @@
     "typecheck": "next typegen && tsc --noEmit"
   },
   "dependencies": {
+    "@payloadcms/db-postgres": "3.89.0",
     "@payloadcms/next": "3.89.0",
     "@payloadcms/richtext-lexical": "3.89.0",
     "@payloadcms/ui": "3.89.0",
+    "@tailwindcss/postcss": "^4.3.3",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
     "cross-env": "^7.0.3",
     "dotenv": "16.4.7",
     "graphql": "^16.8.1",
+    "motion": "^13.2.0",
     "next": "16.3.5",
     "payload": "3.89.0",
+    "postcss": "^8.5.28",
     "react": "19.2.6",
     "react-dom": "19.2.6",
     "sharp": "0.34.2",
-    "@payloadcms/db-postgres": "3.89.0"
+    "tailwind-merge": "^3.6.0",
+    "tailwindcss": "^4.3.3"
   },
   "devDependencies": {
     "@playwright/test": "1.58.2",
@@ -50,8 +57,10 @@
     "@vitejs/plugin-react": "4.5.2",
     "eslint": "^9.16.0",
     "eslint-config-next": "16.3.5",
+    "eslint-plugin-better-tailwindcss": "^4.7.0",
     "jsdom": "28.0.0",
     "prettier": "^3.4.2",
+    "prettier-plugin-tailwindcss": "^0.8.1",
     "tsx": "4.22.4",
     "typescript": "5.7.3",
     "vite-tsconfig-paths": "6.0.5",
