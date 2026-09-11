@@ -37,5 +37,13 @@
     "editor.codeActionsOnSave": {
       "source.fixAll.eslint": "explicit"
     }
+  },
+  "tailwindCSS.experimental.classRegex": [
+    ["cn\\(([^)]*)\\)", "[\"'`]([^\"'`]*)[\"'`]"],
+    ["cva\\(((?:[^()]|\\([^()]*\\))*)\\)", "[\"'`]([^\"'`]*)[\"'`]"]
+  ],
+  "tailwindCSS.classAttributes": ["class", "className", "ngClass"],
+  "files.associations": {
+    "*.css": "tailwindcss"
   }
 }
