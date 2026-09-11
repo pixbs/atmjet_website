@@ -1,0 +1,14 @@
+* text=auto eol=lf
+
+# Binary assets (visual baselines, media)
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.gif binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.mp4 binary
+*.webm binary
+*.pdf binary
