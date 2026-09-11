@@ -1,0 +1,130 @@
+# Heavy tier (docs/adr/0004-testing-and-ci-strategy.md): browser tests, visual parity,
+# accessibility and Lighthouse against a deployed URL. Runs for Vercel preview
+# deployments of pull requests labelled "run-e2e", on every master push (staging),
+# nightly and on demand. Advisory on pull requests; the master run is the gate.
+name: e2e
+
+on:
+  deployment_status:
+  push:
+    branches: [master]
+  schedule:
+    - cron: '17 3 * * *'
+  workflow_dispatch:
+    inputs:
+      base_url:
+        description: Target URL (defaults to the STAGING_URL repository variable)
+        required: false
+        type: string
+
+permissions:
+  contents: read
+  pull-requests: read
+  deployments: read
+
+concurrency:
+  group: e2e-${{ github.event.deployment.sha || github.sha }}
+  cancel-in-progress: true
+
+env:
+  NEXT_TELEMETRY_DISABLED: '1'
+  DO_NOT_TRACK: '1'
+  LEFTHOOK: '0'
+
+jobs:
+  gate:
+    name: gate
+    if: github.event_name != 'deployment_status' || (github.event.deployment_status.state == 'success' && startsWith(github.event.deployment.environment, 'Preview'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      run: ${{ steps.gate.outputs.run }}
+      base_url: ${{ steps.gate.outputs.base_url }}
+      sha: ${{ steps.gate.outputs.sha }}
+    steps:
+      - id: gate
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        env:
+          STAGING_URL: ${{ vars.STAGING_URL }}
+          INPUT_BASE_URL: ${{ inputs.base_url }}
+        with:
+          script: |
+            if (context.eventName !== 'deployment_status') {
+              const baseUrl = process.env.INPUT_BASE_URL || process.env.STAGING_URL
+              core.setOutput('run', String(Boolean(baseUrl)))
+              core.setOutput('base_url', baseUrl || '')
+              core.setOutput('sha', context.sha)
+              if (!baseUrl) core.warning('No target URL: set the STAGING_URL repository variable or pass base_url.')
+              return
+            }
+            const sha = context.payload.deployment.sha
+            const { data: prs } = await github.rest.repos.listPullRequestsAssociatedWithCommit({
+              ...context.repo,
+              commit_sha: sha,
+            })
+            const labelled = prs.some((pr) => pr.labels.some((label) => label.name === 'run-e2e'))
+            core.setOutput('run', String(labelled))
+            core.setOutput('base_url', context.payload.deployment_status.environment_url || context.payload.deployment_status.target_url || '')
+            core.setOutput('sha', sha)
+            if (!labelled) core.notice('Preview deployment without the run-e2e label; skipping.')
+
+  browser:
+    name: browser tests
+    needs: gate
+    if: needs.gate.outputs.run == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      CI: 'true'
+      PLAYWRIGHT_BASE_URL: ${{ needs.gate.outputs.base_url }}
+      VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ needs.gate.outputs.sha }}
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: .node-version
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with:
+          bun-version-file: .bun-version
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.bun/install/cache
+          key: bun-${{ runner.os }}-${{ hashFiles('bun.lock') }}
+          restore-keys: bun-${{ runner.os }}-
+      - run: bun install --frozen-lockfile
+      - run: bunx playwright install --with-deps chromium
+      - name: End-to-end
+        run: bun run test:e2e
+      - name: Visual parity
+        run: bun run test:visual
+      - name: Accessibility (advisory)
+        continue-on-error: true
+        run: bun run test:a11y
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: always()
+        with:
+          name: playwright-report-${{ needs.gate.outputs.sha }}
+          path: |
+            playwright-report
+            test-results
+          retention-days: 14
+
+  lighthouse:
+    name: lighthouse
+    needs: gate
+    if: needs.gate.outputs.run == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ needs.gate.outputs.sha }}
+      - uses: treosh/lighthouse-ci-action@3e7e23fb74242897f95c0ba9cabad3d0227b9b18 # 12.6.2
+        with:
+          urls: |
+            ${{ needs.gate.outputs.base_url }}/
+          configPath: ./lighthouserc.json
+          uploadArtifacts: true
+          temporaryPublicStorage: false
