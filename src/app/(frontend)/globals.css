@@ -1,0 +1,35 @@
+/*
+ * Frontend stylesheet. Imported ONLY by src/app/(frontend)/layout.tsx so that
+ * Tailwind's preflight and utilities never reach the Payload admin (/admin).
+ *
+ * Layout of this file (docs/adr/0006-styling-and-motion.md):
+ *   1. Tailwind
+ *   2. Design tokens (@theme): the only place where colours, fonts, radii live.
+ *      Components use utilities generated from these tokens; arbitrary values
+ *      such as bg-[#14323d] are linted against.
+ *   3. Parity base layer: the legacy global element rules, ported verbatim (E3.2).
+ *      It is the single place where element selectors and @apply are allowed.
+ */
+@import 'tailwindcss';
+
+@theme {
+  /* Fonts are provided by next/font as CSS variables in the frontend layout (E3.5). */
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-display-serif), ui-serif, Georgia, serif;
+
+  /* Placeholders. E3.1 replaces them 1:1 with the legacy palette
+     (inverted gray ramp 100..900, gold gradient stops, radii). */
+  --color-surface: #1a1a1a;
+  --color-on-surface: #ffffff;
+  --color-brand: #dfab53;
+}
+
+/*
+ * Parity base layer (E3.2).
+ * The legacy site styled elements globally: div { display: flex; flex-direction: column },
+ * section, button (.big/.middle/.dark), input (.dark), a, h1-h4, hr, .container, .card,
+ * .darkening, .hero-darkening, .option-darkening. Those rules are the pixel-parity
+ * contract and are ported here, unchanged and commented, by E3.2.
+ */
+@layer base {
+}
