@@ -1,0 +1,10 @@
+# Default owner for everything in the repository.
+*               @pixbs
+
+# Governance, CI and architecture decisions require the owner's review.
+/.github/       @pixbs
+/.claude/       @pixbs
+/AGENTS.md      @pixbs
+/CLAUDE.md      @pixbs
+/docs/adr/      @pixbs
+/scripts/ci/    @pixbs

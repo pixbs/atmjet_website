@@ -1,0 +1,65 @@
+name: Port a legacy feature
+description: Recreate a page, section, element, form or behaviour of the legacy site with visual parity.
+title: 'feat: '
+labels: ['type:feature']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        One issue = one pull request. Read `AGENTS.md` first. Reference the legacy code by file path and by the anchor in `docs/legacy-inventory.md`.
+  - type: input
+    id: legacy-reference
+    attributes:
+      label: Legacy reference
+      description: Anchor in docs/legacy-inventory.md and the legacy file paths (at tag legacy/v1).
+      placeholder: 'docs/legacy-inventory.md#section-emptylegsection ; src/components/sections/empty_leg.tsx'
+    validations:
+      required: true
+  - type: textarea
+    id: parity
+    attributes:
+      label: What must look identical
+      description: Layout, spacing, typography, colours, images, animations, responsive behaviour, states (hover, open, empty).
+    validations:
+      required: true
+  - type: textarea
+    id: sources
+    attributes:
+      label: Data and i18n sources
+      description: Payload collections/globals/blocks involved, legacy tables, message namespaces and hard-coded strings to extract.
+  - type: dropdown
+    id: rendering
+    attributes:
+      label: Rendering plan
+      options:
+        - Server component (no client code)
+        - Server component with a client island for interactivity
+        - Needs decision
+    validations:
+      required: true
+  - type: textarea
+    id: bugs
+    attributes:
+      label: Known legacy bugs to fix while porting
+      description: Only behaviour bugs tagged fix-while-porting in the inventory; parity decisions need their own decision issue.
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+    validations:
+      required: true
+  - type: checkboxes
+    id: tests
+    attributes:
+      label: Tests to add
+      options:
+        - label: Unit tests (tests/unit)
+        - label: Integration tests for collections, hooks or access (tests/int)
+        - label: End-to-end flow (tests/e2e)
+        - label: Visual parity screenshot (tests/visual)
+        - label: Accessibility check (tests/a11y)
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies and stack position
+      description: Issues that must land first; whether this PR stacks on another branch.
