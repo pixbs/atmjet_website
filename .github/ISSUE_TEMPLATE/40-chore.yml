@@ -1,0 +1,32 @@
+name: Chore
+description: Infrastructure, tooling, documentation or maintenance work.
+title: 'chore: '
+labels: ['type:chore']
+body:
+  - type: textarea
+    id: goal
+    attributes:
+      label: Goal
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope and steps
+    validations:
+      required: true
+  - type: textarea
+    id: verification
+    attributes:
+      label: How it is verified
+    validations:
+      required: true
+  - type: dropdown
+    id: owner
+    attributes:
+      label: Who can do it
+      options:
+        - Anyone (agent or human)
+        - Repository owner only (settings, secrets, external accounts)
+    validations:
+      required: true

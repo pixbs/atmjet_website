@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Contributing guide
+    url: https://github.com/pixbs/atmjet_website/blob/master/CONTRIBUTING.md
+    about: Branching, commits, stacked pull requests, test tiers and the definition of done.
+  - name: Legacy site inventory
+    url: https://github.com/pixbs/atmjet_website/blob/master/docs/legacy-inventory.md
+    about: The exhaustive map of the legacy site that every ported feature must match.
+  - name: Backlog
+    url: https://github.com/pixbs/atmjet_website/blob/master/docs/backlog.md
+    about: Epics and issues of the rewrite.

@@ -1,0 +1,13 @@
+{
+  "name": "legacy and archive tags (immutable)",
+  "target": "tag",
+  "enforcement": "active",
+  "bypass_actors": [],
+  "conditions": {
+    "ref_name": {
+      "include": ["refs/tags/legacy/**", "refs/tags/archive/**"],
+      "exclude": []
+    }
+  },
+  "rules": [{ "type": "deletion" }, { "type": "non_fast_forward" }, { "type": "update" }]
+}

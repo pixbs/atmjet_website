@@ -1,0 +1,82 @@
+# Labels as code. Synced to the repository by .github/workflows/labels.yml (never deletes unknown labels).
+- name: epic
+  color: '3e4b9e'
+  description: Groups related issues as sub-issues
+- name: type:feature
+  color: '0e8a16'
+  description: New or ported functionality
+- name: type:bug
+  color: 'd73a4a'
+  description: Something is broken
+- name: type:chore
+  color: 'c5def5'
+  description: Tooling, infrastructure, maintenance
+- name: type:docs
+  color: '0075ca'
+  description: Documentation
+- name: type:data-migration
+  color: 'b60205'
+  description: Zero-data-loss migration step
+- name: type:infra
+  color: '5319e7'
+  description: Hosting, database, storage, environments
+- name: type:test
+  color: '1d76db'
+  description: Testing and quality assurance
+- name: area:payload
+  color: 'bfd4f2'
+  description: Payload collections, globals, blocks, admin
+- name: area:frontend
+  color: 'c2e0c6'
+  description: Public site UI
+- name: area:data
+  color: 'f9d0c4'
+  description: Legacy data and migration
+- name: area:i18n
+  color: 'fef2c0'
+  description: Localisation and content
+- name: area:seo
+  color: 'd4c5f9'
+  description: Metadata, sitemaps, redirects, performance
+- name: area:forms
+  color: 'e99695'
+  description: Forms and integrations (Telegram, CRM)
+- name: area:ci
+  color: 'bfdadc'
+  description: Workflows, hooks, conventions
+- name: area:infra
+  color: 'c5def5'
+  description: Vercel, Neon, S3, environments
+- name: area:security
+  color: 'b60205'
+  description: Credentials, access, hardening
+- name: area:testing
+  color: '1d76db'
+  description: Test harnesses and baselines
+- name: area:design
+  color: 'fbca04'
+  description: Tokens, styling, motion
+- name: needs-decision
+  color: 'fbca04'
+  description: Blocked on a product or design decision
+- name: blocked
+  color: 'b60205'
+  description: Blocked by another issue or an external dependency
+- name: owner-action
+  color: 'f9d0c4'
+  description: Requires the repository owner (settings, secrets, external accounts)
+- name: run-e2e
+  color: '006b75'
+  description: Run the browser test tier on this pull request's preview deployment
+- name: priority:p0
+  color: 'b60205'
+  description: Blocker
+- name: priority:p1
+  color: 'd93f0b'
+  description: High
+- name: priority:p2
+  color: 'fbca04'
+  description: Normal
+- name: priority:p3
+  color: 'c2e0c6'
+  description: Low

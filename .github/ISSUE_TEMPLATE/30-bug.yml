@@ -1,0 +1,38 @@
+name: Bug report
+description: Something is broken in the new site.
+title: 'fix: '
+labels: ['type:bug']
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: What happens
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open ...
+        2. Click ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behaviour
+      description: If the legacy site behaves differently, link the inventory anchor.
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      placeholder: 'URL, browser, viewport, locale'
+  - type: checkboxes
+    id: tests
+    attributes:
+      label: Regression test
+      options:
+        - label: A test reproducing the bug will be added with the fix
