@@ -1,0 +1,26 @@
+# Local git hooks (docs/adr/0005-ai-agent-policy.md, CONTRIBUTING.md).
+# Installed by `bun install` (package.json "prepare") or `bunx lefthook install`.
+# CI runs the same checks on the whole PR; hooks only keep the feedback loop short.
+min_version: 2.0.0
+
+pre-commit:
+  jobs:
+    - name: prettier
+      glob: '*.{ts,tsx,js,mjs,cjs,json,md,mdx,yml,yaml,css}'
+      run: bunx prettier --write {staged_files}
+      stage_fixed: true
+    - name: eslint
+      glob: '*.{ts,tsx,js,mjs}'
+      run: bunx eslint --max-warnings=0 {staged_files}
+
+commit-msg:
+  jobs:
+    - name: commitlint
+      run: bunx commitlint --edit {1}
+
+pre-push:
+  jobs:
+    - name: branch-name
+      run: bash scripts/ci/check-branch-name.sh
+    - name: typecheck
+      run: bun run typecheck
