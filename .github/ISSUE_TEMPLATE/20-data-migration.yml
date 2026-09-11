@@ -1,0 +1,54 @@
+name: Data migration step
+description: A zero-data-loss migration step from the legacy database into Payload collections.
+title: 'feat(data): '
+labels: ['type:data-migration', 'area:data']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        The legacy database is never modified. Every step is idempotent, resumable and reconciled (`docs/adr/0002-database-migration-strategy.md`).
+  - type: textarea
+    id: source
+    attributes:
+      label: Source tables and columns
+      description: Legacy tables (schema `legacy`), the columns read, filters (for example `tail_number <> ''`).
+    validations:
+      required: true
+  - type: textarea
+    id: target
+    attributes:
+      label: Target collections and field mapping
+      description: Payload collections, field-by-field mapping, provenance fields, natural key used for idempotent upserts.
+    validations:
+      required: true
+  - type: textarea
+    id: transformations
+    attributes:
+      label: Transformation rules
+      description: Normalisation (registrations, URLs, numeric precision, array order, time zones), dedupe rules, slug generation.
+  - type: textarea
+    id: verification
+    attributes:
+      label: Verification plan
+      description: Row counts, EXCEPT diffs, checksums, sampled deep compare, URL resolution checks.
+    validations:
+      required: true
+  - type: textarea
+    id: rollback
+    attributes:
+      label: Rollback
+      description: How the step is reverted without touching the legacy schema.
+    validations:
+      required: true
+  - type: checkboxes
+    id: tests
+    attributes:
+      label: Tests to add
+      options:
+        - label: Unit tests for every transform
+        - label: Reconciliation tests against the legacy fixture
+  - type: textarea
+    id: signoff
+    attributes:
+      label: Sign-off
+      description: Who confirms the counts and samples before the step is considered done.
