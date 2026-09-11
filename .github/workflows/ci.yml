@@ -1,0 +1,127 @@
+# Fast tier (docs/adr/0004-testing-and-ci-strategy.md): runs on every push to a pull
+# request (not per commit) and on master. Required status check: "ci".
+name: ci
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+  push:
+    branches: [master]
+
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  NEXT_TELEMETRY_DISABLED: '1'
+  DO_NOT_TRACK: '1'
+  LEFTHOOK: '0'
+
+jobs:
+  static:
+    name: static checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: .node-version
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with:
+          bun-version-file: .bun-version
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.bun/install/cache
+          key: bun-${{ runner.os }}-${{ hashFiles('bun.lock') }}
+          restore-keys: bun-${{ runner.os }}-
+      - run: bun install --frozen-lockfile
+      - run: bun run format:check
+      - run: bun run lint
+      - run: bun run typecheck
+      - name: Generated files are up to date
+        run: |
+          bun run generate:types
+          bun run generate:importmap
+          git diff --exit-code -- src/payload-types.ts 'src/app/(payload)/admin/importMap.js'
+      - name: Convention scripts self-test
+        run: bun run check:conventions
+
+  test-and-build:
+    name: tests and build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: payload
+          POSTGRES_PASSWORD: payload
+          POSTGRES_DB: atmjet_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U payload -d atmjet_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://payload:payload@localhost:5432/atmjet_test
+      PAYLOAD_SECRET: ci-only-not-a-secret-0123456789
+      NEXT_PUBLIC_SITE_URL: http://localhost:3000
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: .node-version
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with:
+          bun-version-file: .bun-version
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.bun/install/cache
+          key: bun-${{ runner.os }}-${{ hashFiles('bun.lock') }}
+          restore-keys: bun-${{ runner.os }}-
+      - run: bun install --frozen-lockfile
+      - name: Apply migrations
+        run: bun run migrate
+      - name: Schema and migrations are in sync
+        run: |
+          bun run payload migrate:create ci_drift_check --skip-empty
+          if [ -n "$(git status --porcelain src/migrations)" ]; then
+            echo "::error::The Payload config changed without a migration. Run 'bun run migrate:create <name>' and commit the result."
+            git status --porcelain src/migrations
+            exit 1
+          fi
+      - name: Unit and integration tests with coverage
+        run: bun run test:int
+      - name: Production build
+        run: bun run build
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: always()
+        with:
+          name: coverage
+          path: coverage
+          retention-days: 7
+
+  ci:
+    name: ci
+    if: always()
+    needs: [static, test-and-build]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Aggregate results
+        env:
+          RESULTS: ${{ toJSON(needs) }}
+        run: |
+          failed=0
+          for job in static test-and-build; do
+            result="$(echo "$RESULTS" | jq -r --arg job "$job" '.[$job].result')"
+            echo "$job: $result"
+            [ "$result" = "success" ] || failed=1
+          done
+          exit "$failed"
