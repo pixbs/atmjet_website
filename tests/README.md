@@ -34,6 +34,16 @@ Five tiers (ADR-0004), all run by `bun run test`; every change ships the tiers i
 
 `playwright.config.ts` defines the `e2e`, `visual` and `a11y` projects. They start `bun run dev` themselves, or target a deployment when `PLAYWRIGHT_BASE_URL` is set (with the Vercel bypass header from `VERCEL_AUTOMATION_BYPASS_SECRET`). Chromium comes from `bunx playwright install chromium` or `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH`.
 
+### Accessibility
+
+`tests/a11y` runs axe with the WCAG 2.1 A/AA rules through `expectNoA11yViolations(page, { allow, advisory })` (`tests/a11y/axe.ts`). Every violation blocks, except the advisory rules (`ADVISORY_RULES`, today `color-contrast`, until the design decisions on the gold-on-white contrast of the legacy palette are made), which are attached to the report and printed, and the exemptions a spec passes in `allow` with the axe rule id, an optional selector and the reason with its inventory anchor. Exemptions are listed here when they are added:
+
+| Rule     | Selector | Reason |
+| -------- | -------- | ------ |
+| none yet |          |        |
+
+One a11y spec per page as pages land, on the e2e fixtures and page objects. The tier is blocking locally and advisory in the `e2e` workflow until the pages are ported.
+
 ### End-to-end conventions
 
 - Specs import `test` and `expect` from `tests/e2e/fixtures.ts`. Fixtures: `siteLocale` (an option, default `en`; Playwright's own `locale` is the browser locale), `home` and `admin` page objects; every new page adds a page object under `tests/e2e/pages` whose locators describe what a visitor sees (roles and names), not the markup.
