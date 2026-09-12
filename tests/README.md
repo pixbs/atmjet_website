@@ -33,3 +33,10 @@ Five tiers (ADR-0004), all run by `bun run test`; every change ships the tiers i
 ## Browser tiers
 
 `playwright.config.ts` defines the `e2e`, `visual` and `a11y` projects. They start `bun run dev` themselves, or target a deployment when `PLAYWRIGHT_BASE_URL` is set (with the Vercel bypass header from `VERCEL_AUTOMATION_BYPASS_SECRET`). Chromium comes from `bunx playwright install chromium` or `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH`.
+
+### End-to-end conventions
+
+- Specs import `test` and `expect` from `tests/e2e/fixtures.ts`. Fixtures: `siteLocale` (an option, default `en`; Playwright's own `locale` is the browser locale), `home` and `admin` page objects; every new page adds a page object under `tests/e2e/pages` whose locators describe what a visitor sees (roles and names), not the markup.
+- `forEachLocale(define)` runs a block of specs once per enabled locale (`tests/e2e/routes.ts`); page objects build their paths with `pathFor`, so specs keep working when the locale routing lands.
+- Every page spec asserts server rendering through `request` (the content must be in the HTML the server sends, ADR-0007) and the visible content through the page object.
+- Admin specs run serially and log in through `AdminPage.login`; the account comes from `tests/helpers/seedUser.ts`.
