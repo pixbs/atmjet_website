@@ -6,6 +6,8 @@ export class StyleguidePage {
   readonly heading: Locator
   readonly cardHeading: Locator
   readonly middleButton: Locator
+  readonly revealedCard: Locator
+  readonly counter: Locator
 
   constructor(
     readonly page: Page,
@@ -14,6 +16,10 @@ export class StyleguidePage {
     this.heading = page.getByRole('heading', { level: 1, name: 'Heading one' })
     this.cardHeading = page.getByRole('heading', { level: 4, name: 'Card' })
     this.middleButton = page.getByRole('button', { name: 'Middle', exact: true })
+    this.revealedCard = page
+      .getByRole('heading', { level: 4, name: 'Revealed on scroll' })
+      .locator('..')
+    this.counter = page.getByText(/^[\d,]+\+$/)
   }
 
   get path(): string {
