@@ -79,10 +79,10 @@ jobs:
         env:
           BASE_URL: ${{ inputs.base_url }}
         run: |
-          branch=test/37-legacy-visual-baselines
+          branch="test/37-legacy-visual-baselines-$GITHUB_RUN_NUMBER"
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          if git fetch origin "$branch" 2>/dev/null; then git checkout "$branch"; else git checkout -b "$branch" origin/master; fi
+          git checkout -b "$branch" origin/master
           mkdir -p tests/visual/legacy
           cp legacy-baselines/manifest.json tests/visual/legacy/manifest.json
           git add tests/visual/legacy/manifest.json
