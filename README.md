@@ -22,6 +22,7 @@ bun install                 # also installs the git hooks
 cp .env.example .env        # set DATABASE_URL and PAYLOAD_SECRET
 docker compose up -d        # local Postgres 17 (or point DATABASE_URL at any Postgres 16+)
 bun run migrate             # apply Payload migrations
+bun run seed                # local admin account and placeholder media (idempotent)
 bun run dev                 # http://localhost:3000, admin at /admin
 ```
 
