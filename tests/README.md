@@ -14,6 +14,8 @@ Five tiers (ADR-0004), all run by `bun run test`; every change ships the tiers i
 
 `tests/unit/**/*.test.ts`. Import the function under test directly; no Payload, no network, no file system beyond fixtures. Fixtures live next to the test or under `tests/fixtures`.
 
+The design tokens are unit tested too: `tests/helpers/tailwind.ts` compiles `src/app/(frontend)/globals.css` with Tailwind's own compiler, and `tests/unit/theme-tokens.test.ts` checks every token against the legacy values in `tests/fixtures/legacy-tokens.ts` and asserts that the cleared Tailwind defaults generate nothing.
+
 ## Integration tests
 
 `tests/int/**/*.int.spec.ts` run against the database in `DATABASE_URL` (`.env`; the `ci` workflow provides Postgres 17 and runs the migrations first). Conventions:
