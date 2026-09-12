@@ -90,6 +90,8 @@ jobs:
       - run: bun install --frozen-lockfile
       - name: Apply migrations
         run: bun run migrate
+      - name: Seed fixture data
+        run: bun run seed
       - name: Schema and migrations are in sync
         run: |
           bun run payload migrate:create ci_drift_check --skip-empty
