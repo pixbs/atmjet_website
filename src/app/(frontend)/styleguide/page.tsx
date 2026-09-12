@@ -4,6 +4,7 @@ import React from 'react'
 import { Counter } from '@/components/motion/counter'
 import { Line } from '@/components/motion/line'
 import { Reveal } from '@/components/motion/reveal'
+import { Button, buttonVariants } from '@/components/ui/button'
 
 /**
  * Fixture page for the parity base layer (issue #48). It renders every global rule the
@@ -73,22 +74,16 @@ export default function StyleguidePage() {
       <section id="buttons" className="container items-start gap-4">
         <h3>Buttons</h3>
         <div className="flex-row items-center gap-4">
-          <button type="button">Default</button>
-          <button type="button" className="big">
-            Big
-          </button>
-          <button type="button" className="middle">
-            Middle
-          </button>
-          <button type="button" className="middle dark">
+          <Button>Default</Button>
+          <Button size="big">Big</Button>
+          <Button size="middle">Middle</Button>
+          <Button size="middle" tone="dark">
             Middle dark
-          </button>
-          <span className="button">Span as button</span>
+          </Button>
+          <span className={buttonVariants()}>Span as button</span>
         </div>
         <div className="flex-row items-center gap-4">
-          <button type="button" className="bg-gold">
-            Gold
-          </button>
+          <Button tone="gold">Gold</Button>
           <span className="bg-gold bg-clip-text text-transparent">Gold text</span>
         </div>
       </section>

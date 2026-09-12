@@ -71,4 +71,5 @@ Local database: `docker compose up -d` (Postgres 17) or any Postgres 16+; copy `
 - `docs/legacy-inventory.md`: what the legacy site is (routes, sections, elements, forms, data, assets, bugs).
 - `docs/backlog.md`: epics and issues.
 - `docs/adr/`: decisions on branching, database migration, i18n, testing, the AI policy, styling and motion, rendering.
+- `docs/conventions/components.md`: where components live, server and client split, `cva`/`cn`, props and the tests each one ships.
 - `CONTRIBUTING.md`, `docs/github-settings.md`, `docs/runbooks/`.
