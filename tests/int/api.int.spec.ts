@@ -1,20 +1,27 @@
-import { getPayload, Payload } from 'payload'
-import config from '@/payload.config'
+import { afterAll, beforeAll, describe, expect, it } from 'vitest'
+import { createUser } from '../factories'
+import { createRegistry, type TestRegistry } from '../helpers/payload'
 
-import { describe, it, beforeAll, expect } from 'vitest'
+let registry: TestRegistry
 
-let payload: Payload
+beforeAll(async () => {
+  registry = await createRegistry()
+})
 
-describe('API', () => {
-  beforeAll(async () => {
-    const payloadConfig = await config
-    payload = await getPayload({ config: payloadConfig })
+afterAll(() => registry.cleanup())
+
+describe('Local API', () => {
+  it('creates and reads a user', async () => {
+    const user = await createUser(registry)
+    const found = await registry.payload.findByID({ collection: 'users', id: user.id })
+
+    expect(found.email).toBe(user.email)
   })
 
-  it('fetches users', async () => {
-    const users = await payload.find({
-      collection: 'users',
-    })
-    expect(users).toBeDefined()
+  it('lists users', async () => {
+    await createUser(registry)
+    const users = await registry.payload.find({ collection: 'users' })
+
+    expect(users.totalDocs).toBeGreaterThan(0)
   })
 })
