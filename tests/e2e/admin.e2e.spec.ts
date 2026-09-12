@@ -1,42 +1,37 @@
-import { expect, test, type Page } from '@playwright/test'
-
-import { login } from '../helpers/login'
 import { cleanupTestUser, seedTestUser, testUser } from '../helpers/seedUser'
+import { expect, test } from './fixtures'
 
 test.describe('Admin panel', () => {
-  let page: Page
+  test.describe.configure({ mode: 'serial' })
 
-  test.beforeAll(async ({ browser }) => {
+  test.beforeAll(async () => {
     await seedTestUser()
-
-    const context = await browser.newContext()
-    page = await context.newPage()
-
-    await login({ page, user: testUser })
   })
 
   test.afterAll(async () => {
     await cleanupTestUser()
   })
 
-  test('opens the dashboard', async () => {
+  test.beforeEach(async ({ admin }) => {
+    await admin.login(testUser)
+  })
+
+  test('opens the dashboard', async ({ admin, page }) => {
     await page.goto('/admin')
 
     await expect(page).toHaveURL(/\/admin\/?$/)
-    await expect(page.locator('span[title="Dashboard"]').first()).toBeVisible()
+    await expect(admin.dashboardTitle).toBeVisible()
   })
 
-  test('opens the users list view', async () => {
-    await page.goto('/admin/collections/users')
+  test('opens the users list view', async ({ admin, page }) => {
+    await admin.gotoCollection('users')
 
-    await expect(page).toHaveURL(/\/admin\/collections\/users(\?.*)?$/)
     await expect(page.locator('h1', { hasText: 'Users' }).first()).toBeVisible()
   })
 
-  test('opens the create view', async () => {
-    await page.goto('/admin/collections/users/create')
+  test('opens the create view', async ({ admin, page }) => {
+    await admin.gotoCreate('users')
 
-    await expect(page).toHaveURL(/\/admin\/collections\/users\/[a-zA-Z0-9-_]+/)
     await expect(page.locator('input[name="email"]')).toBeVisible()
   })
 })
