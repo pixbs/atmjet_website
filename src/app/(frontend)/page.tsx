@@ -21,7 +21,7 @@ export default async function HomePage() {
       </h1>
       <div className="flex items-center gap-3">
         <a
-          className="rounded-sm bg-on-surface px-3 py-1 text-surface"
+          className="rounded-sm bg-white px-3 py-1 text-graphite-900"
           href={payloadConfig.routes.admin}
           rel="noopener noreferrer"
           target="_blank"
@@ -29,7 +29,7 @@ export default async function HomePage() {
           Go to admin panel
         </a>
         <a
-          className="rounded-sm border border-on-surface px-3 py-1"
+          className="rounded-sm border border-white px-3 py-1"
           href="https://payloadcms.com/docs"
           rel="noopener noreferrer"
           target="_blank"
