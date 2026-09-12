@@ -87,18 +87,86 @@ export function escapeClassName(className: string): string {
   return /^\d/.test(escaped) ? `\\3${escaped[0]} ${escaped.slice(1)}` : escaped
 }
 
+/**
+ * One rule with its declarations, or undefined when the stylesheet does not contain it. The
+ * selector has to start a line, so `div` does not match `.card div`; a selector list is
+ * matched as written on one line (`h1, h2, h3, h4`).
+ */
+export function ruleFor(css: string, selector: string): string | undefined {
+  // Prettier breaks selector lists over several lines; compare them on one line.
+  css = css.replace(/,\s*\n\s*/g, ', ')
+  const pattern = new RegExp(`(?:^|\\n)\\s*${selector.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')} \\{`)
+  const match = pattern.exec(css)
+  if (!match) return undefined
+
+  const start = match.index + match[0].length - `${selector} {`.length
+  return blockAt(css, css.indexOf('{', start), start)
+}
+
+/**
+ * Every rule with that selector, in source order. The Tailwind preflight also styles `a`,
+ * `hr` and `::placeholder`, so the parity rule for those is not the first one.
+ */
+export function rulesFor(css: string, selector: string): string[] {
+  const flat = css.replace(/,\s*\n\s*/g, ', ')
+  const rules: string[] = []
+  let rest = flat
+
+  for (;;) {
+    const rule = ruleFor(rest, selector)
+    if (!rule) return rules
+
+    rules.push(rule)
+    rest = rest.slice(rest.indexOf(rule) + rule.length)
+  }
+}
+
 /** The declaration block of one utility, or undefined when the theme does not generate it. */
 export function utilityRule(css: string, className: string): string | undefined {
-  const selector = `.${escapeClassName(className)} {`
-  const start = css.indexOf(selector)
-  if (start === -1) return undefined
+  return ruleFor(css, `.${escapeClassName(className)}`)
+}
 
+/** The text of every top-level `@layer <name>` block, concatenated. */
+export function layerCss(css: string, name: string): string {
+  const blocks: string[] = []
+
+  for (const match of css.matchAll(/@layer\s+([\w\s,]+?)\s*\{/g)) {
+    const names = match[1].split(',').map((entry) => entry.trim())
+    if (!names.includes(name)) continue
+
+    const open = match.index + match[0].length - 1
+    blocks.push(blockAt(css, open, open) ?? '')
+  }
+
+  return blocks.join('\n')
+}
+
+/**
+ * The stylesheet without its cascade layers: what is left outranks every layer, which is how
+ * the parity class rules reproduce the legacy cascade (docs/adr/0006-styling-and-motion.md).
+ */
+export function unlayeredCss(css: string): string {
+  let rest = css
+
+  for (;;) {
+    const match = /@layer\s+[\w\s,]+?\s*\{/.exec(rest)
+    if (!match) return rest
+
+    const open = match.index + match[0].length - 1
+    const block = blockAt(rest, open, open) ?? ''
+    rest = rest.slice(0, match.index) + rest.slice(open + block.length)
+  }
+}
+
+/** The balanced `{ ... }` block that starts at `open`, taken from `from`. */
+function blockAt(css: string, open: number, from: number): string | undefined {
   let depth = 0
-  for (let index = css.indexOf('{', start); index < css.length; index += 1) {
+
+  for (let index = open; index < css.length; index += 1) {
     if (css[index] === '{') depth += 1
     else if (css[index] === '}') {
       depth -= 1
-      if (depth === 0) return css.slice(start, index + 1)
+      if (depth === 0) return css.slice(from, index + 1)
     }
   }
 
