@@ -1,0 +1,96 @@
+# Records the legacy production site as the visual parity contract (issue #37, ADR-0004).
+# Agent sessions cannot reach the production host, so the capture runs on a runner: the bundle is
+# attached to the legacy/v1 release (created at the legacy commit when missing) and the manifest is
+# pushed to a branch for a pull request. Run it only while production still serves the legacy site.
+name: legacy baselines
+
+on:
+  workflow_dispatch:
+    inputs:
+      base_url:
+        description: Legacy production URL
+        type: string
+        default: https://atmjet.com
+      publish:
+        description: Attach the bundle to the legacy/v1 release and push the manifest branch
+        type: boolean
+        default: true
+
+permissions:
+  contents: write
+
+concurrency:
+  group: legacy-baselines
+  cancel-in-progress: false
+
+env:
+  NEXT_TELEMETRY_DISABLED: 1
+  DO_NOT_TRACK: 1
+  LEFTHOOK: '0'
+  LEGACY_SHA: 8b8f375892e030f570cbe9f500f208df589e8976
+
+jobs:
+  capture:
+    name: capture
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: .node-version
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with:
+          bun-version-file: .bun-version
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.bun/install/cache
+          key: bun-${{ runner.os }}-${{ hashFiles('bun.lock') }}
+          restore-keys: bun-${{ runner.os }}-
+      - run: bun install --frozen-lockfile
+      - run: bunx playwright install --with-deps chromium
+      - name: Capture the legacy site
+        env:
+          BASE_URL: ${{ inputs.base_url }}
+        run: bun run scripts/baselines/capture-legacy.ts --base-url "$BASE_URL" --out legacy-baselines
+      - name: Bundle
+        run: |
+          (cd legacy-baselines && zip -qr ../legacy-baselines.zip .)
+          du -sh legacy-baselines legacy-baselines.zip
+          jq '[.entries[] | .status] | group_by(.) | map({(.[0]): length}) | add' legacy-baselines/manifest.json
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: legacy-baselines
+          path: legacy-baselines.zip
+          retention-days: 90
+      - name: Attach the bundle to the legacy/v1 release
+        if: inputs.publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if ! gh release view legacy/v1 >/dev/null 2>&1; then
+            gh release create legacy/v1 --target "$LEGACY_SHA" \
+              --title "Legacy site (final state before the rewrite)" \
+              --notes "Final state of the legacy Next.js 14 site: branch legacy, commit $LEGACY_SHA. Assets: the visual baseline bundle captured from production (issue #37)."
+          fi
+          gh release upload legacy/v1 legacy-baselines.zip legacy-baselines/manifest.json --clobber
+      - name: Push the manifest branch
+        if: inputs.publish
+        env:
+          BASE_URL: ${{ inputs.base_url }}
+        run: |
+          branch=test/37-legacy-visual-baselines
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git fetch origin "$branch" 2>/dev/null; then git checkout "$branch"; else git checkout -b "$branch" origin/master; fi
+          mkdir -p tests/visual/legacy
+          cp legacy-baselines/manifest.json tests/visual/legacy/manifest.json
+          git add tests/visual/legacy/manifest.json
+          if git diff --cached --quiet; then
+            echo "manifest unchanged"
+          else
+            git commit -m "test: record the legacy visual baseline manifest" \
+              -m "Captured from $BASE_URL by the legacy baselines workflow (run $GITHUB_RUN_ID); the bundle is attached to the legacy/v1 release." \
+              -m "Refs #37"
+            git push origin "$branch"
+          fi

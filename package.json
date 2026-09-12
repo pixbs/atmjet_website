@@ -31,7 +31,8 @@
     "test:lighthouse": "lhci autorun --config=lighthouserc.json",
     "test:visual": "cross-env NODE_OPTIONS=\"--no-deprecation --import=tsx/esm\" playwright test --project=visual",
     "test:visual:update": "cross-env NODE_OPTIONS=\"--no-deprecation --import=tsx/esm\" playwright test --project=visual --update-snapshots",
-    "typecheck": "next typegen && tsc --noEmit"
+    "typecheck": "next typegen && tsc --noEmit",
+    "baselines:legacy": "bun run scripts/baselines/capture-legacy.ts"
   },
   "dependencies": {
     "@payloadcms/db-postgres": "3.89.0",
