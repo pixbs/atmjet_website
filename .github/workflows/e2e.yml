@@ -97,6 +97,10 @@ jobs:
       - run: bunx playwright install --with-deps chromium
       - name: End-to-end
         run: bun run test:e2e
+      - name: Legacy baseline bundle
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: bash scripts/baselines/download-legacy-bundle.sh
       - name: Visual parity
         run: bun run test:visual
       - name: Accessibility (advisory)
