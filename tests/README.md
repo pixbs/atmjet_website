@@ -21,6 +21,7 @@ Five tiers (ADR-0004), all run by `bun run test`; every change ships the tiers i
 - **One Payload per worker.** `getTestPayload()` (`tests/helpers/payload.ts`) memoises the instance; Vitest runs each file in its own worker, so suites never share one.
 - **Unique data, no truncation.** Every document a test creates carries a `uniqueSuffix()` in its natural key, so files running in parallel do not collide. Never delete whole collections: another worker may be using them.
 - **A registry per suite.** `const registry = await createRegistry()` in `beforeAll`, `registry.create(collection, data)` (or the factories) for every document, `afterAll(() => registry.cleanup())`. The registry deletes what the suite created, newest first, and tolerates documents already removed by the test.
+- **Seed** (`bun run seed`, `scripts/seed`): the fixture content every environment needs to render, idempotent by natural key; the `ci` workflow seeds before the suites run. Tests never depend on seeded data except `tests/int/seed.int.spec.ts`; use the factories instead.
 - **Factories** under `tests/factories` (`createUser`, `createMedia`, ...) produce valid documents with unique keys; every new collection adds one and reuses it in `tests/int/access.int.spec.ts`.
 - **Access checks** pass `overrideAccess: false` and, when needed, `user`; the harness creates documents with `overrideAccess: true`.
 

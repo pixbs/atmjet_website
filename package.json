@@ -33,7 +33,8 @@
     "test:visual:update": "bash scripts/ci/visual-update.sh",
     "typecheck": "next typegen && tsc --noEmit",
     "baselines:legacy": "bun run scripts/baselines/capture-legacy.ts",
-    "visual:bundle": "bash scripts/baselines/download-legacy-bundle.sh"
+    "visual:bundle": "bash scripts/baselines/download-legacy-bundle.sh",
+    "seed": "bun run scripts/seed/index.ts"
   },
   "dependencies": {
     "@payloadcms/db-postgres": "3.89.0",
