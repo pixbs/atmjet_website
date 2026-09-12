@@ -4,24 +4,162 @@
  *
  * Layout of this file (docs/adr/0006-styling-and-motion.md):
  *   1. Tailwind
- *   2. Design tokens (@theme): the only place where colours, fonts, radii live.
- *      Components use utilities generated from these tokens; arbitrary values
- *      such as bg-[#14323d] are linted against.
+ *   2. Design tokens (@theme): the only place where colours, fonts, radii, breakpoints,
+ *      z-index steps and one-off geometry live. Every token carries a legacy value
+ *      (docs/adr/0006, "Legacy token map"); the Tailwind defaults this project does not
+ *      use are cleared with `--namespace-*: initial`, so a class the legacy site relied
+ *      on but this theme does not define (`bg-gray-100`, `rounded-lg`) fails the lint
+ *      rule instead of silently rendering a different colour or radius.
+ *      Components use utilities generated from these tokens; arbitrary values such as
+ *      bg-[#14323d] are linted against.
  *   3. Parity base layer: the legacy global element rules, ported verbatim (E3.2).
  *      It is the single place where element selectors and @apply are allowed.
  */
 @import 'tailwindcss';
 
 @theme {
-  /* Fonts are provided by next/font as CSS variables in the frontend layout (E3.5). */
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-display-serif), ui-serif, Georgia, serif;
+  /* ---------------------------------------------------------------------------
+   * Palette. The legacy ramp is inverted (low = dark) and is used in every role
+   * (text, background, border, stroke, placeholder, gradient stop), so the tokens
+   * are named by lightness rather than by role; positions follow Tailwind's own
+   * neutral scale. Legacy name -> token: gray-100 graphite-900, gray-150
+   * graphite-950, gray-200 graphite-850, gray-300 graphite-800, gray-400
+   * graphite-700, gray-500 graphite-500, gray-600 graphite-400, gray-700
+   * graphite-300, gray-800 graphite-100, gray-900 white.
+   * ------------------------------------------------------------------------- */
+  --color-*: initial;
 
-  /* Placeholders. E3.1 replaces them 1:1 with the legacy palette
-     (inverted gray ramp 100..900, gold gradient stops, radii). */
-  --color-surface: #1a1a1a;
-  --color-on-surface: #ffffff;
-  --color-brand: #dfab53;
+  --color-black: #000000;
+  --color-white: #ffffff;
+
+  --color-graphite-100: #f0f1f6;
+  --color-graphite-300: #c0c9cb;
+  --color-graphite-400: #a2abad;
+  --color-graphite-500: #707070;
+  --color-graphite-700: #474444;
+  --color-graphite-800: #2c2c2c;
+  --color-graphite-850: #1e1e1e;
+  --color-graphite-900: #1a1a1a;
+  --color-graphite-950: #171614;
+
+  /* Stops of the legacy `gold` gradient, also used as flat colours. */
+  --color-gold-300: #efd487;
+  --color-gold-400: #ebca7a;
+  --color-gold-500: #e6be6b;
+  --color-gold-600: #dfab53;
+
+  /* Ends of the two contact-card gradients (legacy `to-[#14323D]`, `to-[#0e2a15]`). */
+  --color-teal-950: #14323d;
+  --color-green-950: #0e2a15;
+
+  /* Tailwind 3 defaults the legacy markup relies on, pinned to their v3 values
+   * (v4 ships different, oklch-based colours). */
+  --color-red-50: #fef2f2;
+  --color-red-500: #ef4444;
+  --color-orange-200: #fed7aa;
+  --color-blue-600: #2563eb;
+  --color-neutral-900: #171717;
+
+  /* ---------------------------------------------------------------------------
+   * Gradients. `bg-gold` paints buttons, badges and border wrappers, and with
+   * `bg-clip-text text-transparent` the gold text. Copied verbatim from the
+   * legacy `backgroundImage.gold`.
+   * ------------------------------------------------------------------------- */
+  --background-image-gold:
+    linear-gradient(
+      22deg,
+      #dfab53 -24.85%,
+      #e6be6b -7.56%,
+      #efd487 12.04%,
+      #ebca7a 33.04%,
+      #dfab53 98.1%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(21, 21, 21, 0) 0%,
+      rgba(21, 21, 21, 0.01) 6.67%,
+      rgba(21, 21, 21, 0.04) 13.33%,
+      rgba(21, 21, 21, 0.08) 20%,
+      rgba(21, 21, 21, 0.15) 26.67%,
+      rgba(21, 21, 21, 0.23) 33.33%,
+      rgba(21, 21, 21, 0.33) 40%,
+      rgba(21, 21, 21, 0.44) 46.67%,
+      rgba(21, 21, 21, 0.56) 53.33%,
+      rgba(21, 21, 21, 0.67) 60%,
+      rgba(21, 21, 21, 0.77) 66.67%,
+      rgba(21, 21, 21, 0.85) 73.33%,
+      rgba(21, 21, 21, 0.92) 80%,
+      rgba(21, 21, 21, 0.96) 86.67%,
+      rgba(21, 21, 21, 0.99) 93.33%,
+      #151515 100%
+    );
+
+  /* ---------------------------------------------------------------------------
+   * Fonts. The two families are the legacy stacks; E3.5 supplies --font-inter and
+   * --font-regresso through next/font, and until then the fallback inside var()
+   * keeps the legacy behaviour (the plain family name).
+   * ------------------------------------------------------------------------- */
+  --font-sans: var(--font-inter, Inter), sans-serif;
+  --font-serif: var(--font-regresso, TARegressoPROEasyRegular), serif;
+
+  /* ---------------------------------------------------------------------------
+   * Radii. Two shifts meet here, so read the map in docs/adr/0006 before porting:
+   *   - the legacy config pointed rounded-sm/md/lg at an undefined --radius, so those
+   *     three utilities rendered SQUARE corners on the live site. Legacy markup that
+   *     carries them is ported without any radius class; --radius-md and --radius-lg
+   *     stay undefined so a copied class fails the lint rule instead;
+   *   - Tailwind 4 renamed the scale: the legacy `rounded` (0.25rem) is `rounded-sm`
+   *     here, and bare `rounded` is deprecated and left undefined.
+   * rounded-xl/2xl/3xl and rounded-full kept their legacy values.
+   * ------------------------------------------------------------------------- */
+  --radius-*: initial;
+
+  --radius-sm: 0.25rem;
+  --radius-xl: 0.75rem;
+  --radius-2xl: 1rem;
+  --radius-3xl: 1.5rem;
+
+  /* ---------------------------------------------------------------------------
+   * Breakpoints: the legacy (Tailwind 3) pixel values, so every `md:`/`lg:`
+   * variant and `max-w-screen-*` matches the live site. Tailwind 4 defaults to
+   * rem, which would move every breakpoint with the root font size (the legacy
+   * root is 14px below lg).
+   * ------------------------------------------------------------------------- */
+  --breakpoint-*: initial;
+
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  --breakpoint-2xl: 1536px;
+
+  /* ---------------------------------------------------------------------------
+   * Stacking order (legacy z-[900]/z-[901]/z-[998]/z-[999], inventory 10.3).
+   * The plain steps the legacy markup uses (z-0 .. z-50, -z-1, -z-10, -z-20,
+   * -z-50) stay bare numbers.
+   * ------------------------------------------------------------------------- */
+  --z-index-cookie-banner: 900;
+  --z-index-cookie-modal: 901;
+  --z-index-preloader-backdrop: 998;
+  --z-index-preloader: 999;
+  --z-index-dropdown: 999;
+
+  /* Legacy shadow-[0_6px_20px_rgba(0,0,0,0.08)] on the booking form's chips. */
+  --shadow-dropdown: 0 6px 20px rgba(0, 0, 0, 0.08);
+
+  /* ---------------------------------------------------------------------------
+   * Geometry the legacy markup expressed as arbitrary values.
+   * ------------------------------------------------------------------------- */
+  --spacing-seam: 2px; /* gap-[2px], mt-[2px]: hairline gaps between tiles */
+  --spacing-hero-overlap: 80px; /* mb-[-80px]: detail hero pulled over the band */
+  --spacing-hero-band: 40vh; /* h-[40vh]: gradient band under the detail hero */
+  --spacing-hero-basic: 80svh; /* h-[80svh]: basic aircraft detail hero */
+  --spacing-preloader-logo: 60vw; /* w-[60vw]: preloader logo */
+  --inset-hero-band: 20vh; /* top-[20vh] */
+
+  --aspect-portrait: 3 / 4; /* aspect-[3/4]: key feature card */
+  --aspect-banner: 3 / 1; /* aspect-[3/1]: yachts promo card */
+  --aspect-panorama: 17 / 5; /* aspect-[17/5]: advantages image */
 }
 
 /*
