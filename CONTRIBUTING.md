@@ -14,7 +14,7 @@ This repository is rebuilt from scratch on Payload 3 + Next.js 16 + Bun. The rul
 - Branch names: `<type>/<issue>-<kebab-slug>` (`feat/42-hero-video-block`). `scripts/ci/check-branch-name.sh` documents the exact rule.
 - Commits follow [Conventional Commits](https://www.conventionalcommits.org): `type(scope): lowercase subject`, at most 100 characters, one verified step per commit, `Refs #<issue>` in the footer. `commitlint` runs on every commit.
 - Pull request titles follow the same format; the body comes from the template and closes its issue.
-- **AI attribution is forbidden** in commits, pull requests, comments and code (see `AGENTS.md` section 1 and `docs/adr/0005-ai-agent-policy.md`).
+- **AI attribution is forbidden** in commits, pull requests, comments and code (see `AGENTS.md` section 1 and `docs/adr/0005-ai-agent-policy.md`). The commit-msg hook strips tool trailers, and CI removes tool footers from pull request descriptions and comments before checking them; the patterns are in `scripts/ci/attribution-patterns.txt`.
 - Never push to `master`; never force-push a shared branch; the `legacy` branch and the `legacy/*` tags are read-only.
 
 ## Definition of done

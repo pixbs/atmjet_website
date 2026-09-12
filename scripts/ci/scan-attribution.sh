@@ -1,39 +1,38 @@
 #!/usr/bin/env bash
 # Rejects AI attribution (docs/adr/0005-ai-agent-policy.md) in:
-#   - commit messages and author/committer emails of a git range (argument 1, e.g. base..head)
+#   - commit messages and author/committer identities of a git range (argument 1, e.g. base..head)
 #   - a pull request title and body passed as PR_TITLE / PR_BODY environment variables
-# Optional: ALLOWED_COMMIT_EMAILS (extended regex) restricts author/committer emails; SKIP_EMAIL_CHECK=1 disables email checks.
+#     (SKIP_BODY=1 skips the body, used for Dependabot pull requests that quote release notes)
+# Patterns: scripts/ci/attribution-patterns.txt (shared with the hooks, commitlint and the scrub).
 # Usage: scripts/ci/scan-attribution.sh [<base>..<head>]
 set -euo pipefail
 export LC_ALL=C.UTF-8
+here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=scripts/ci/attribution-patterns.sh
+source "$here/attribution-patterns.sh"
 
 range="${1:-}"
-forbid='co-authored-by:.*(claude|anthropic|copilot|codex|openai|chatgpt|cursor|gemini)|(generated|made|written|authored|created|produced|assisted|powered)[ -](with|by)[ -](\[|an? )?(claude|anthropic|copilot|codex|openai|chatgpt|cursor|gemini|ai\b|llm\b)|claude-session|claude\.ai/code|claude\.com/claude-code|noreply@anthropic\.com|\u{1f916}'
-deny_email='@anthropic\.com$|@openai\.com$|copilot@users\.noreply\.github\.com$|^(claude|codex|cursor)[^@]*@'
 fail=0
 
 if [[ -n "$range" ]]; then
-  if git log --format='%H%n%an <%ae>%n%cn <%ce>%n%B' "$range" | grep -inE "$forbid"; then
+  if git log --format='%H%n%B' "$range" | grep -inE "$ATTRIBUTION_TEXT"; then
     echo "::error::Forbidden AI attribution found in commit messages ($range)." >&2
     fail=1
   fi
-
-  if [[ "${SKIP_EMAIL_CHECK:-0}" != "1" ]]; then
-    while read -r email; do
-      [[ -z "$email" ]] && continue
-      if grep -iqE "$deny_email" <<<"$email"; then
-        echo "::error::Forbidden author/committer email: $email" >&2
-        fail=1
-      fi
-      if [[ -n "${ALLOWED_COMMIT_EMAILS:-}" ]] && ! grep -qE "$ALLOWED_COMMIT_EMAILS" <<<"$email"; then
-        echo "::error::Author/committer email not in ALLOWED_COMMIT_EMAILS: $email" >&2
-        fail=1
-      fi
-    done < <(git log --format='%ae%n%ce' "$range" | sort -u)
-  fi
+  while read -r identity; do
+    [[ -z "$identity" ]] && continue
+    if grep -iqE "$ATTRIBUTION_IDENTITY" <<<"$identity"; then
+      echo "::error::Forbidden author or committer identity: $identity" >&2
+      fail=1
+    fi
+  done < <(git log --format='%an <%ae>%n%cn <%ce>' "$range" | sort -u)
 fi
 
-if printf '%s\n%s\n' "${PR_TITLE:-}" "${PR_BODY:-}" | grep -inE "$forbid"; then
+text="${PR_TITLE:-}"
+if [[ "${SKIP_BODY:-0}" != "1" ]]; then
+  text+=$'\n'"${PR_BODY:-}"
+fi
+if printf '%s\n' "$text" | grep -inE "$ATTRIBUTION_TEXT"; then
   echo "::error::Forbidden AI attribution found in the pull request title or body." >&2
   fail=1
 fi
