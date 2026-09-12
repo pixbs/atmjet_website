@@ -77,19 +77,33 @@ jobs:
     name: attribution scan
     runs-on: ubuntu-latest
     timeout-minutes: 5
+    permissions:
+      contents: read
+      pull-requests: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      NUMBER: ${{ github.event.pull_request.number }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
           filter: blob:none
-      - name: Scan commits, author emails and the pull request text
+      - name: Remove tool attribution footers from the pull request description
+        # Some agent platforms append such footers on every write, even through the API, so the
+        # removal happens here, out of their reach. Dependabot runs hold a read-only token and are
+        # only checked.
+        if: github.event.pull_request.user.login != 'dependabot[bot]'
+        run: bash scripts/ci/scrub-attribution.sh pr "$NUMBER"
+      - name: Scan commits, identities and the current pull request text
         env:
           RANGE: ${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }}
-          # Untrusted text is passed through the environment, never interpolated into the script.
-          PR_TITLE: ${{ github.event.pull_request.title }}
-          PR_BODY: ${{ github.event.pull_request.body }}
-          ALLOWED_COMMIT_EMAILS: ${{ vars.ALLOWED_COMMIT_EMAILS }}
-        run: bash scripts/ci/scan-attribution.sh "$RANGE"
+          SKIP_BODY: ${{ github.event.pull_request.user.login == 'dependabot[bot]' && '1' || '0' }}
+        run: |
+          # The text is read back after the scrub and passed through the environment, never interpolated.
+          PR_TITLE="$(gh api "repos/$GITHUB_REPOSITORY/pulls/$NUMBER" --jq .title)"
+          PR_BODY="$(gh api "repos/$GITHUB_REPOSITORY/pulls/$NUMBER" --jq '.body // ""')"
+          export PR_TITLE PR_BODY
+          bash scripts/ci/scan-attribution.sh "$RANGE"
 
   conventions:
     name: conventions

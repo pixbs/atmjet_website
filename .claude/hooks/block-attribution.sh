@@ -17,7 +17,15 @@ block() {
   exit 2
 }
 
-attribution='co-authored-by:.*(claude|anthropic|copilot|codex|openai|chatgpt|cursor|gemini)|(generated|made|written|authored|created|produced|assisted|powered)[ -](with|by)[ -](\[|an? )?(claude|anthropic|copilot|codex|openai|chatgpt|cursor|gemini|ai\b|llm\b)|claude-session|claude\.ai/code|claude\.com/claude-code|noreply@anthropic\.com|\u{1f916}'
+# Shared patterns (scripts/ci/attribution-patterns.txt); the built-in list is the fallback outside a checkout.
+root="${CLAUDE_PROJECT_DIR:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+if [[ -f "$root/scripts/ci/attribution-patterns.sh" ]]; then
+  # shellcheck source=/dev/null
+  source "$root/scripts/ci/attribution-patterns.sh"
+  attribution="$ATTRIBUTION_TEXT"
+else
+  attribution='co-authored-by:.*(claude|anthropic|copilot|codex|openai|chatgpt|cursor|gemini)|generated (with|by)|claude-session|claude\.ai/code|claude\.com/claude-code|noreply@anthropic\.com|🤖'
+fi
 sep='(^|[;&|[:space:]])'
 
 if printf '%s' "$cmd" | grep -qiE "${sep}(git (commit|tag|notes|merge|rebase|cherry-pick|am)|gh (pr|api|release|issue))\b"; then

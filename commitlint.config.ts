@@ -1,19 +1,27 @@
+import { readFileSync } from 'node:fs'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { RuleConfigSeverity, type Plugin, type UserConfig } from '@commitlint/types'
 
 /**
  * Commit message policy (docs/adr/0005-ai-agent-policy.md):
  * Conventional Commits plus a hard ban on AI attribution trailers and footers.
- * The same patterns are enforced in CI by scripts/ci/scan-attribution.sh.
+ * The patterns are shared with the CI scanner, the scrub step and the Claude Code hook
+ * through scripts/ci/attribution-patterns.txt.
  */
-const FORBIDDEN: RegExp[] = [
-  /co-authored-by:.*\b(claude|anthropic|copilot|codex|openai|chatgpt|cursor|gemini)\b/i,
-  /(generated|made|written|authored|created|produced|assisted|powered)[ -](with|by)[ -](\[|an? )?(claude|anthropic|copilot|codex|openai|chatgpt|cursor|gemini|ai\b|llm\b)/i,
-  /claude-session/i,
-  /claude\.ai\/code/i,
-  /claude\.com\/claude-code/i,
-  /noreply@anthropic\.com/i,
-  /🤖/u,
-]
+const patternsFile = (() => {
+  try {
+    return fileURLToPath(new URL('./scripts/ci/attribution-patterns.txt', import.meta.url))
+  } catch {
+    return path.resolve(process.cwd(), 'scripts/ci/attribution-patterns.txt')
+  }
+})()
+
+const FORBIDDEN: RegExp[] = readFileSync(patternsFile, 'utf8')
+  .split('\n')
+  .map((line) => line.trim())
+  .filter((line) => line !== '' && !line.startsWith('#') && !line.startsWith('identity '))
+  .map((pattern) => new RegExp(pattern, 'iu'))
 
 const noAiAttribution: Plugin = {
   rules: {
