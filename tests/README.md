@@ -14,6 +14,8 @@ Five tiers (ADR-0004), all run by `bun run test`; every change ships the tiers i
 
 `tests/unit/**/*.test.ts`. Import the function under test directly; no Payload, no network, no file system beyond fixtures. Fixtures live next to the test or under `tests/fixtures`.
 
+The motion vocabulary is pinned the same way: `tests/unit/motion.test.ts` asserts the legacy durations, offsets and variants, `tests/unit/count-up.test.ts` the counter's arithmetic, and the styleguide specs cover the primitives in the browser.
+
 The parity base layer has its own suite as well: `tests/unit/parity-base-layer.test.ts` checks every legacy global rule against `tests/fixtures/parity-base-layer.ts`, including the kept quirks and the cascade split (element rules in `@layer base`, class rules unlayered), and `/styleguide` renders them all for `tests/visual/styleguide.visual.spec.ts`.
 
 The design tokens are unit tested too: `tests/helpers/tailwind.ts` compiles `src/app/(frontend)/globals.css` with Tailwind's own compiler, and `tests/unit/theme-tokens.test.ts` checks every token against the legacy values in `tests/fixtures/legacy-tokens.ts` and asserts that the cleared Tailwind defaults generate nothing.

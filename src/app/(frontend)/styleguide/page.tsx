@@ -1,6 +1,10 @@
 import type { Metadata } from 'next'
 import React from 'react'
 
+import { Counter } from '@/components/motion/counter'
+import { Line } from '@/components/motion/line'
+import { Reveal } from '@/components/motion/reveal'
+
 /**
  * Fixture page for the parity base layer (issue #48). It renders every global rule the
  * legacy stylesheet defined, so tests/visual/styleguide.visual.spec.ts can catch a change
@@ -113,6 +117,23 @@ export default function StyleguidePage() {
             <span key={radius} className={`size-16 bg-graphite-850 ${radius}`} />
           ))}
         </div>
+      </section>
+
+      <section id="motion" className="container items-start gap-4">
+        <h3>Motion</h3>
+        <p>
+          The vocabulary in <code>src/lib/motion.ts</code> carries the legacy timings; these are the
+          primitives built on it. With reduced motion they render in their final state.
+        </p>
+        <Line once className="w-full" />
+        <div className="flex-row items-baseline gap-8">
+          <Counter className="font-serif text-4xl text-white">20+</Counter>
+          <Counter className="font-serif text-4xl text-white">1,000 flights</Counter>
+        </div>
+        <Reveal once className="card w-full gap-2 p-6">
+          <h4>Revealed on scroll</h4>
+          <p>Fades and rises into place when it enters the viewport, and again when it returns.</p>
+        </Reveal>
       </section>
 
       <section id="palette" className="container items-start gap-4">

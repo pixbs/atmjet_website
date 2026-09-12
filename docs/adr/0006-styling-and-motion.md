@@ -20,7 +20,9 @@ The legacy site used Tailwind 3 with an inverted gray ramp, a gold gradient, glo
 ### Motion
 
 - `motion` (`motion/react`) is the only animation library. `MotionProvider` wraps the frontend with `LazyMotion` (strict, `domAnimation`) and `MotionConfig reducedMotion="user"`; components use `m.*`.
-- `src/lib/motion.ts` holds the shared vocabulary (durations, easings, `fade`, `slideFromTop`, `reveal`, `stagger`, `inView`). Each legacy animation (`tailwindcss-animate` classes and their timings, `whileInView` reveals, the preloader, counters, the line separator) is mapped onto it.
+- `src/lib/motion.ts` holds the shared vocabulary, measured from the legacy site (E3.4, issue #50): `duration` (0.15s for the `tailwindcss-animate` default, 0.2s overlay, 0.3s dialog, 0.4s accordion and tiles, 0.5s reveals, 1s heroes and the line, 0.5s/4s preloader, 0.8s counting), `delay`, `offset` (-40px slide, -50px card reveal, -20px counter, -100px contact block, 30deg spin), `easing` (CSS `ease` for the class-based enters, `easeOut` where a component named it) and one variant per legacy animation. A transition the legacy site left without an easing keeps it unset, so the library default still applies.
+- Reveals use `whileInView` with `inViewRepeat` (the legacy cards replayed) or `inViewOnce` (`triggerOnce` with a 0.5 threshold, as the tiles and contact blocks used); `react-intersection-observer` is gone.
+- Primitives in `src/components/motion`: `Reveal` (scroll reveal wrapper), `Line` (the separator drawing itself over a second) and `Counter`, whose counting logic lives in `src/lib/count-up.ts` (the legacy 30ms steps over 800ms, `toLocaleString` formatting, suffixes kept) and which shows the final label at once under reduced motion, so visual tests stay deterministic.
 - `whileInView` replaces `react-intersection-observer`; `AnimatePresence` handles enter and exit of dialogs, menus and accordions. No CSS animation libraries.
 - Embla stays for carousels (it is not an animation library).
 - Visual tests run with reduced motion so screenshots are deterministic.

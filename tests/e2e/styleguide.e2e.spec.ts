@@ -18,5 +18,23 @@ forEachLocale(() => {
       await expect(styleguide.middleButton).toBeVisible()
       await expect(styleguide.page.getByRole('textbox', { name: 'Dark input' })).toBeVisible()
     })
+
+    test('reveals the card when it is scrolled into view', async ({ styleguide }) => {
+      await styleguide.goto()
+
+      // Out of view the reveal has not run, so the card is still transparent.
+      await expect(styleguide.revealedCard).toHaveCSS('opacity', '0')
+
+      await styleguide.revealedCard.scrollIntoViewIfNeeded()
+
+      await expect(styleguide.revealedCard).toHaveCSS('opacity', '1')
+    })
+
+    test('counts the numbers up once they are on screen', async ({ styleguide }) => {
+      await styleguide.goto()
+      await styleguide.counter.scrollIntoViewIfNeeded()
+
+      await expect(styleguide.counter).toHaveText('20+')
+    })
   })
 })
