@@ -5,7 +5,10 @@ import tsconfigPaths from 'vite-tsconfig-paths'
 export default defineConfig({
   plugins: [tsconfigPaths(), react()],
   test: {
-    environment: 'jsdom',
+    // Node, not jsdom: these suites are pure logic and Payload calls, and the upload pipeline's
+    // file-type sniffing (the MIME allowlist on Media) does not work under jsdom. A future
+    // component test opts back in with a `@vitest-environment jsdom` docblock.
+    environment: 'node',
     setupFiles: ['./vitest.setup.ts'],
     include: ['tests/unit/**/*.test.ts', 'tests/int/**/*.int.spec.ts'],
     coverage: {
