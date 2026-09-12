@@ -17,6 +17,12 @@ This repository is rebuilt from scratch on Payload 3 + Next.js 16 + Bun. The rul
 - **AI attribution is forbidden** in commits, pull requests, comments and code (see `AGENTS.md` section 1 and `docs/adr/0005-ai-agent-policy.md`). The commit-msg hook strips tool trailers, and CI removes tool footers from pull request descriptions and comments before checking them; the patterns are in `scripts/ci/attribution-patterns.txt`.
 - Never push to `master`; never force-push a shared branch; the `legacy` branch and the `legacy/*` tags are read-only.
 
+## Reviewing a pull request
+
+- The tests the issue lists are present (`tests/README.md`); the `conventions` check fails a pull request that changes `src/` without touching `tests/`, unless it carries the `no-tests-needed` label and the description says why.
+- Coverage thresholds in `vitest.config.mts` were not lowered (the file is owner-reviewed through `CODEOWNERS`).
+- No AI attribution anywhere; visual parity evidence for UI changes; SSR-first, Tailwind tokens and `motion` only (AGENTS.md).
+
 ## Definition of done
 
 A change is done when (see `tests/README.md` for the test conventions and the coverage ratchet):

@@ -98,6 +98,24 @@ expect ok   "missing baseline directory"        -- bash "$here/check-visual-budg
 expect ok   "visual update allowed on linux"    -- env VISUAL_UPDATE_OS=Linux VISUAL_UPDATE_DRY_RUN=1 bash "$here/visual-update.sh"
 expect fail "visual update refused elsewhere"   -- env VISUAL_UPDATE_OS=Darwin bash "$here/visual-update.sh"
 
+echo "check-tests-required.sh"
+tr="$(mktemp -d)"
+t() { git -C "$tr" -c user.name=Owner -c user.email=owner@example.com "$@"; }
+tests_required() { bash -c "cd '$tr' && $1 bash '$here/check-tests-required.sh' $2"; }
+t init -q -b main
+t commit -q --allow-empty -m "chore: base"
+tbase="$(t rev-parse HEAD)"
+mkdir -p "$tr/src/lib" "$tr/src/migrations" "$tr/tests/unit"
+echo 'export const a = 1' > "$tr/src/lib/a.ts" && t add -A && t commit -q -m "feat: code only"
+expect fail "code without tests"                -- tests_required "PR_LABELS=''" "$tbase..HEAD"
+expect ok   "code without tests but waived"     -- tests_required "PR_LABELS='type:feature,no-tests-needed'" "$tbase..HEAD"
+echo 'it' > "$tr/tests/unit/a.test.ts" && t add -A && t commit -q -m "test: add a test"
+expect ok   "code with tests"                   -- tests_required "PR_LABELS=''" "$tbase..HEAD"
+mbase="$(t rev-parse HEAD)"
+echo 'migration' > "$tr/src/migrations/1.ts" && t add -A && t commit -q -m "chore: migration only"
+expect ok   "migration only"                    -- tests_required "PR_LABELS=''" "$mbase..HEAD"
+expect ok   "nothing changed"                   -- tests_required "PR_LABELS=''" "HEAD..HEAD"
+
 echo "block-attribution.sh"
 hook() { printf '%s' "$1" | bash "$root/.claude/hooks/block-attribution.sh"; }
 expect ok   "plain commit"                       -- hook '{"tool_input":{"command":"git commit -m \"feat: add x\""}}'
