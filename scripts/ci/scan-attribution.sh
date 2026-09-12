@@ -8,7 +8,7 @@ set -euo pipefail
 export LC_ALL=C.UTF-8
 
 range="${1:-}"
-forbid='co-authored-by:.*(claude|anthropic|copilot|codex|openai|chatgpt|cursor|gemini)|generated with|claude-session|noreply@anthropic\.com|made by claude|🤖'
+forbid='co-authored-by:.*(claude|anthropic|copilot|codex|openai|chatgpt|cursor|gemini)|(generated|made|written|authored|created|produced|assisted|powered)[ -](with|by)[ -](\[|an? )?(claude|anthropic|copilot|codex|openai|chatgpt|cursor|gemini|ai\b|llm\b)|claude-session|claude\.ai/code|claude\.com/claude-code|noreply@anthropic\.com|\u{1f916}'
 deny_email='@anthropic\.com$|@openai\.com$|copilot@users\.noreply\.github\.com$|^(claude|codex|cursor)[^@]*@'
 fail=0
 

@@ -7,10 +7,11 @@ import { RuleConfigSeverity, type Plugin, type UserConfig } from '@commitlint/ty
  */
 const FORBIDDEN: RegExp[] = [
   /co-authored-by:.*\b(claude|anthropic|copilot|codex|openai|chatgpt|cursor|gemini)\b/i,
-  /generated with/i,
+  /(generated|made|written|authored|created|produced|assisted|powered)[ -](with|by)[ -](\[|an? )?(claude|anthropic|copilot|codex|openai|chatgpt|cursor|gemini|ai\b|llm\b)/i,
   /claude-session/i,
+  /claude\.ai\/code/i,
+  /claude\.com\/claude-code/i,
   /noreply@anthropic\.com/i,
-  /made by claude/i,
   /🤖/u,
 ]
 

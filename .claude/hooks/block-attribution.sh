@@ -17,7 +17,7 @@ block() {
   exit 2
 }
 
-attribution='co-authored-by:.*(claude|anthropic|copilot|codex|openai|chatgpt|cursor|gemini)|generated with|claude-session|noreply@anthropic\.com|made by claude|🤖'
+attribution='co-authored-by:.*(claude|anthropic|copilot|codex|openai|chatgpt|cursor|gemini)|(generated|made|written|authored|created|produced|assisted|powered)[ -](with|by)[ -](\[|an? )?(claude|anthropic|copilot|codex|openai|chatgpt|cursor|gemini|ai\b|llm\b)|claude-session|claude\.ai/code|claude\.com/claude-code|noreply@anthropic\.com|\u{1f916}'
 sep='(^|[;&|[:space:]])'
 
 if printf '%s' "$cmd" | grep -qiE "${sep}(git (commit|tag|notes|merge|rebase|cherry-pick|am)|gh (pr|api|release|issue))\b"; then
