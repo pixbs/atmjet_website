@@ -12,7 +12,7 @@ Five tiers (ADR-0004), all run by `bun run test`; every change ships the tiers i
 
 ## Unit tests
 
-`tests/unit/**/*.test.ts`. Import the function under test directly; no Payload, no network, no file system beyond fixtures. Fixtures live next to the test or under `tests/fixtures`.
+`tests/unit/**/*.test.ts`. Import the function under test directly; no Payload, no network, no file system beyond fixtures. Fixtures live next to the test or under `tests/fixtures`. Both Vitest tiers run in the node environment; a test that renders a component opts into jsdom with a `/** @vitest-environment jsdom */` docblock.
 
 The motion vocabulary is pinned the same way: `tests/unit/motion.test.ts` asserts the legacy durations, offsets and variants, `tests/unit/count-up.test.ts` the counter's arithmetic, and the styleguide specs cover the primitives in the browser.
 
