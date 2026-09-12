@@ -49,5 +49,9 @@ node_modules/
 /blob-report/
 /playwright/.cache/
 
+# Legacy baseline bundle (downloaded from the legacy/v1 release)
+/tests/visual/legacy/bundle/
+/tests/visual/legacy/*.zip
+
 # lighthouse
 .lighthouseci/
