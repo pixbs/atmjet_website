@@ -12,7 +12,7 @@ Five tiers (ADR-0004), all run by `bun run test`; every change ships the tiers i
 
 ## Unit tests
 
-`tests/unit/**/*.test.ts`. Import the function under test directly; no Payload, no network, no file system beyond fixtures. Fixtures live next to the test or under `tests/fixtures`.
+`tests/unit/**/*.test.ts`. Import the function under test directly; no Payload, no network, no file system beyond fixtures. Fixtures live next to the test or under `tests/fixtures`. Both Vitest tiers run in the node environment; a test that renders a component opts into jsdom with a `/** @vitest-environment jsdom */` docblock.
 
 The design tokens are unit tested too: `tests/helpers/tailwind.ts` compiles `src/app/(frontend)/globals.css` with Tailwind's own compiler, and `tests/unit/theme-tokens.test.ts` checks every token against the legacy values in `tests/fixtures/legacy-tokens.ts` and asserts that the cleared Tailwind defaults generate nothing.
 
