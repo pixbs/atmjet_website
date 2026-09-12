@@ -1,0 +1,32 @@
+# Removes tool attribution footers from issue and pull request comments (AGENTS.md section 1).
+# Some agent platforms append them to every comment they post, even through the API; comment
+# events only run from the default branch, so this activates after the first merge.
+name: scrub comments
+
+on:
+  issue_comment:
+    types: [created, edited]
+  pull_request_review_comment:
+    types: [created, edited]
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
+jobs:
+  scrub:
+    name: remove attribution footers
+    if: github.event.comment.user.type != 'Bot'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          sparse-checkout: scripts/ci
+      - name: Rewrite the comment without footer lines
+        env:
+          GH_TOKEN: ${{ github.token }}
+          COMMENT_ID: ${{ github.event.comment.id }}
+          KIND: ${{ github.event_name == 'issue_comment' && 'comment' || 'review-comment' }}
+        run: bash scripts/ci/scrub-attribution.sh "$KIND" "$COMMENT_ID"

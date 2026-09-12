@@ -1,0 +1,19 @@
+# Attribution patterns (docs/adr/0005-ai-agent-policy.md). One extended regular expression per
+# line, matched case-insensitively. Lines without a prefix apply to text: commit messages, pull
+# request titles and bodies, comments and the commands an agent runs. Lines starting with
+# "identity " apply to author and committer strings ("Name <email>").
+# Consumers: scripts/ci/scan-attribution.sh, scripts/ci/scrub-attribution.sh,
+# scripts/ci/sanitize-commit-msg.sh, commitlint.config.ts, .claude/hooks/block-attribution.sh.
+# Keep every pattern valid for both GNU grep -E and JavaScript RegExp (no lookarounds, no (?:)).
+co-authored-by:.*(claude|anthropic|copilot|codex|openai|chatgpt|cursor|gemini|kimi|\bbot\b|\bai\b|assistant|agent|llm)
+(generated|made|written|authored|created|produced|assisted|powered)[ -](with|by)[ -](\[|an? )?(claude|anthropic|copilot|codex|openai|chatgpt|cursor|gemini|kimi|ai\b|llm\b)
+claude-session
+claude\.ai/code
+claude\.com/claude-code
+noreply@anthropic\.com
+🤖
+identity @anthropic\.com
+identity @openai\.com
+identity copilot@users\.noreply\.github\.com
+identity <(claude|codex|cursor|copilot|gemini|kimi|chatgpt)[^@]*@
+identity ^(claude|codex|cursor|copilot|gemini|kimi|chatgpt|anthropic|openai)\b

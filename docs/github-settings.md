@@ -24,9 +24,8 @@ Settings that cannot live in code. Tick them in the epic issue (#3) as they are 
 ## Actions (Settings → Actions → General)
 
 - [ ] Allow actions: GitHub-owned, verified creators, plus the pinned third-party actions used in `.github/workflows` (`oven-sh/setup-bun`, `amannn/action-semantic-pull-request`, `crazy-max/ghaction-github-labeler`, `treosh/lighthouse-ci-action`).
-- [ ] Workflow permissions: read repository contents (workflows declare what they need).
+- [ ] Workflow permissions: read repository contents (workflows declare what they need: `conventions` and `scrub comments` request `pull-requests: write` to remove tool footers, `branch guard` requests `contents: write` to delete tool-prefixed branches).
 - [ ] Variables (Settings → Secrets and variables → Actions → Variables):
-  - `ALLOWED_COMMIT_EMAILS` (extended regex), for example `^(hey@pixbs\.com|65073995\+pixbs@users\.noreply\.github\.com|49699333\+dependabot\[bot\]@users\.noreply\.github\.com|noreply@github\.com)$`
   - `STAGING_URL`: the new Vercel project's staging URL (target of the nightly and master `e2e` runs)
 - [ ] Secrets: `VERCEL_AUTOMATION_BYPASS_SECRET` (Vercel → Deployment Protection → Protection Bypass for Automation) so the browser tier can reach protected previews.
 - [ ] Run the `labels` workflow once (`workflow_dispatch`) to normalise label colours and descriptions.
