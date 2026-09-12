@@ -19,7 +19,7 @@ This repository is rebuilt from scratch on Payload 3 + Next.js 16 + Bun. The rul
 
 ## Definition of done
 
-A change is done when:
+A change is done when (see `tests/README.md` for the test conventions and the coverage ratchet):
 
 1. `bun run lint`, `bun run typecheck` and `bun run format:check` pass.
 2. Tests were added or extended for the change (`docs/adr/0004-testing-and-ci-strategy.md`): unit tests for logic, integration tests for collections, hooks and access control, e2e for flows, visual for UI, axe for accessibility. Coverage thresholds in `vitest.config.mts` never go down; raise them in the same PR when coverage grows.
