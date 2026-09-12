@@ -1,22 +1,17 @@
-import { expect, test } from '@playwright/test'
+import { expect, forEachLocale, test } from './fixtures'
 
-test.describe('Home', () => {
-  test('is rendered on the server', async ({ request }) => {
-    const response = await request.get('/')
+forEachLocale(() => {
+  test.describe('Home', () => {
+    test('is rendered on the server', async ({ home, request }) => {
+      await home.expectServerRendered(request, 'Welcome to your new project.')
+    })
 
-    expect(response.status()).toBe(200)
-    // The heading must be part of the HTML the server sends, not painted by the client.
-    expect(await response.text()).toContain('Welcome to your new project.')
-  })
+    test('shows the placeholder content and links', async ({ home, page }) => {
+      await home.goto()
 
-  test('shows the placeholder content and links', async ({ page }) => {
-    await page.goto('/')
-
-    await expect(page).toHaveTitle(/ATM JET/)
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Welcome to your new project.')
-    await expect(page.getByRole('link', { name: 'Go to admin panel' })).toHaveAttribute(
-      'href',
-      '/admin',
-    )
+      await expect(page).toHaveTitle(/ATM JET/)
+      await expect(home.heading).toHaveText('Welcome to your new project.')
+      await expect(home.adminLink).toHaveAttribute('href', '/admin')
+    })
   })
 })
