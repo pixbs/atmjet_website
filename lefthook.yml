@@ -11,7 +11,7 @@ pre-commit:
       stage_fixed: true
     - name: eslint
       glob: '*.{ts,tsx,js,mjs}'
-      run: bunx eslint --max-warnings=0 {staged_files}
+      run: bunx eslint --max-warnings=0 --no-warn-ignored {staged_files}
 
 commit-msg:
   jobs:
