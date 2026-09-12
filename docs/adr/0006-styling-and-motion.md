@@ -69,6 +69,22 @@ Accents: the four stops of the gold gradient become `gold-600 #DFAB53`, `gold-50
 - Stacking order replaces the legacy arbitrary z-index values: `z-cookie-banner` (900), `z-cookie-modal` (901), `z-preloader-backdrop` (998), `z-preloader` (999), `z-dropdown` (999). The plain steps the legacy markup uses (`z-0` to `z-50`, `-z-10`, `-z-20`, `-z-50`) stay bare numbers, and `-z-[1]` becomes `-z-1`.
 - One-off geometry becomes tokens: `gap-seam`/`mt-seam` (2px), `-mb-hero-overlap` (80px), `h-hero-band` (40vh), `top-hero-band` (20vh), `h-hero-basic` (80svh), `w-preloader-logo` (60vw), `aspect-portrait` (3/4), `aspect-banner` (3/1), `aspect-panorama` (17/5), `shadow-dropdown` (`0 6px 20px rgba(0,0,0,0.08)`). `h-[1px]`/`w-[1px]` become the native `h-px`/`w-px`, and `min-h-[680]` is dropped: it was invalid and did nothing.
 
+### Parity base layer (E3.2, issue #48)
+
+The legacy stylesheet was unlayered, so plain specificity decided everything: its element rules lost to utility classes, while its class rules came after `@tailwind utilities` and won on source order. That is why the legacy markup carries `!my-0` on containers, and why `.card border-0` still shows a border there. Tailwind 4 emits real cascade layers, so the split is reproduced deliberately:
+
+| Legacy rule                                                                                                                                | Where it lives now          | Effect                                                                                                 |
+| ------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------- | ------------------------------------------------------------------------------------------------------ |
+| `:root`, `div`, `section`, `button`, `input`, `a`, `h1`-`h4`, `hr`                                                                         | `@layer base`               | utility classes win, as on the legacy site                                                             |
+| `.button`, `button.big`, `button.middle(.dark)`, `input.dark`, `.container`, `.card`, `.darkening`, `.hero-darkening`, `.option-darkening` | unlayered, after the layers | they win over utilities, as on the legacy site (an important utility such as `my-0!` still beats them) |
+| `.no-scrollbar`                                                                                                                            | `@utility`                  | a utility there too                                                                                    |
+
+Three Tailwind 3 preflight defaults are restored in the same layer, because the legacy site rendered with them and Tailwind 4 changed them: the default border colour (`gray-200`, now `graphite-850`), the placeholder colour (`gray-400`, now `graphite-700`) and `cursor: pointer` on buttons (with `cursor: default` on disabled elements).
+
+Kept quirks: buttons with `.middle` and every `input` have **square** corners, because the legacy `rounded-lg`/`rounded-sm` pointed at an undefined variable. Not ported: the legacy `body` rule (it referenced three variables that never existed, so it did nothing), the `.react-tel-input` overrides (the library is unused, E6.21), `.text-balance` and `* { margin: 0 }` (native in Tailwind 4), and the `@font-face` block (E3.5 loads the font through `next/font`).
+
+`src/app/(frontend)/styleguide` renders every rule of the layer as a fixture page; it is unlinked and not indexed, and `tests/visual/styleguide.visual.spec.ts` pins it.
+
 ### Other porting notes
 
 - `placeholder-gray-400` becomes `placeholder:text-graphite-700` (Tailwind 4 dropped the `placeholder-*` colour utilities).
