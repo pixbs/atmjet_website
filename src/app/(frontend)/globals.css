@@ -163,11 +163,309 @@
 }
 
 /*
- * Parity base layer (E3.2).
- * The legacy site styled elements globally: div { display: flex; flex-direction: column },
- * section, button (.big/.middle/.dark), input (.dark), a, h1-h4, hr, .container, .card,
- * .darkening, .hero-darkening, .option-darkening. Those rules are the pixel-parity
- * contract and are ported here, unchanged and commented, by E3.2.
+ * Parity base layer (E3.2, issue #48): the legacy global rules, ported one to one from
+ * `legacy/v1:src/app/[locale]/globals.css` (docs/legacy-inventory.md section 10.1). This is
+ * the only place in the project where element selectors and @apply are allowed (ADR-0006).
+ *
+ * The legacy stylesheet was unlayered, so plain CSS specificity decided everything: its
+ * element rules lost to utility classes, while its class rules (.button, .card, .container,
+ * the darkening gradients) came after `@tailwind utilities` and therefore won - which is why
+ * the legacy markup carries `!my-0` on containers. Tailwind 4 emits real cascade layers, so
+ * that split is reproduced here: element rules live in `@layer base` (utilities win), and
+ * every rule whose selector contains a class stays unlayered further down (it wins).
+ *
+ * Quirks that are kept on purpose (docs/legacy-inventory.md section 13, `keep`):
+ *   - rounded-sm/md/lg pointed at an undefined --radius on the legacy site, so buttons with
+ *     `.middle`, inputs and the other users of those classes have SQUARE corners;
+ *   - the legacy `body` rule referenced three variables that were never defined, so it had
+ *     no effect and is not ported;
+ *   - `.react-tel-input` overrides are dropped: the library is not used (E6.21).
  */
 @layer base {
+  /*
+   * The legacy preflight (Tailwind 3) differed in three defaults that are visible on the
+   * page, so they are restored here rather than left at the Tailwind 4 values.
+   */
+
+  /* borderColor.DEFAULT was gray-200; Tailwind 4 uses currentColor. */
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-graphite-850);
+  }
+
+  /* Placeholders were gray-400; Tailwind 4 mixes 50% of the text colour. */
+  ::placeholder {
+    color: var(--color-graphite-700);
+  }
+
+  /* Tailwind 3 made buttons a pointer; Tailwind 4 leaves them at the default cursor. */
+  button,
+  [role='button'] {
+    cursor: pointer;
+  }
+
+  :disabled {
+    cursor: default;
+  }
+
+  /* Legacy `:root`: page background, base text size and colour. The legacy `* { margin: 0 }`
+   * and `box-sizing: border-box` are already in the Tailwind 4 preflight. */
+  :root {
+    @apply scroll-smooth bg-graphite-900 text-sm text-graphite-400 lg:text-base;
+  }
+
+  /* Every div is a flex column on the legacy site: whole layouts depend on it. */
+  div {
+    @apply flex flex-col;
+  }
+
+  section {
+    @apply relative flex flex-col items-center justify-center;
+  }
+
+  /* Buttons are white with dark text (the ramp is inverted). */
+  button {
+    @apply rounded-full bg-white px-4 py-2 text-sm font-semibold text-graphite-900 hover:opacity-75;
+  }
+
+  input {
+    /* Legacy `rounded-sm` rendered square corners; see the header. */
+    @apply bg-white px-4 py-4 text-sm font-normal text-graphite-900;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  a {
+    @apply py-2;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-serif text-white;
+  }
+
+  h1 {
+    @apply text-5xl lg:text-6xl;
+  }
+
+  h2 {
+    @apply text-4xl lg:text-5xl;
+  }
+
+  h3 {
+    @apply text-2xl lg:text-3xl;
+  }
+
+  h4 {
+    @apply text-xl lg:text-2xl;
+  }
+
+  hr {
+    @apply border-t border-graphite-800;
+  }
+}
+
+/* Hidden scrollbars (the legacy `.no-scrollbar`, which was a utility there too). */
+@utility no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/*
+ * Unlayered parity rules. Their selectors carry a class, so on the legacy site they came
+ * after the utilities and won; unlayered CSS outranks every cascade layer, which reproduces
+ * that. A utility marked important (`my-0!`) still wins, exactly as `!my-0` did there.
+ */
+
+/* The second half of the legacy `button, .button` rule, for non-button elements. */
+.button {
+  @apply rounded-full bg-white px-4 py-2 text-sm font-semibold text-graphite-900 hover:opacity-75;
+}
+
+button.big,
+.button.big {
+  @apply rounded-2xl px-8 py-4 text-lg font-normal;
+}
+
+/* Legacy `rounded-lg` rendered square corners; see the header. */
+button.middle,
+.button.middle {
+  @apply px-6 py-3 text-base font-normal;
+}
+
+button.middle.dark,
+.button.middle.dark {
+  @apply border border-white bg-transparent text-white;
+}
+
+input.dark {
+  @apply border-b border-graphite-400 bg-transparent text-white placeholder:text-graphite-400;
+}
+
+/*
+ * Page gutter. Tailwind's own `container` utility still supplies `width: 100%` and the
+ * breakpoint max-widths; this rule caps the width at the legacy 1280px and adds the legacy
+ * spacing on top, as the legacy stylesheet did.
+ */
+.container {
+  @apply relative my-10 flex max-w-screen-xl flex-col px-6 md:px-10 lg:px-16;
+}
+
+.card {
+  @apply rounded-3xl border border-graphite-700;
+}
+
+/* The three darkening overlays, copied verbatim from the legacy stylesheet. */
+.darkening {
+  background:
+    linear-gradient(
+      0deg,
+      rgba(23, 22, 20, 0) 15%,
+      rgba(23, 22, 20, 0.01) 25.02%,
+      rgba(23, 22, 20, 0.03) 33.18%,
+      rgba(23, 22, 20, 0.07) 39.75%,
+      rgba(23, 22, 20, 0.12) 45.04%,
+      rgba(23, 22, 20, 0.18) 49.31%,
+      rgba(23, 22, 20, 0.25) 52.88%,
+      rgba(23, 22, 20, 0.33) 56.01%,
+      rgba(23, 22, 20, 0.41) 58.99%,
+      rgba(23, 22, 20, 0.5) 62.12%,
+      rgba(23, 22, 20, 0.59) 65.69%,
+      rgba(23, 22, 20, 0.67) 69.96%,
+      rgba(23, 22, 20, 0.76) 75.25%,
+      rgba(23, 22, 20, 0.85) 81.82%,
+      rgba(23, 22, 20, 0.93) 89.98%,
+      #171614 100%
+    ),
+    linear-gradient(
+      90deg,
+      rgba(23, 22, 20, 0) 48.46%,
+      rgba(23, 22, 20, 0.01) 54.54%,
+      rgba(23, 22, 20, 0.03) 59.48%,
+      rgba(23, 22, 20, 0.07) 63.47%,
+      rgba(23, 22, 20, 0.12) 66.67%,
+      rgba(23, 22, 20, 0.18) 69.27%,
+      rgba(23, 22, 20, 0.25) 71.43%,
+      rgba(23, 22, 20, 0.33) 73.33%,
+      rgba(23, 22, 20, 0.41) 75.14%,
+      rgba(23, 22, 20, 0.5) 77.03%,
+      rgba(23, 22, 20, 0.59) 79.19%,
+      rgba(23, 22, 20, 0.67) 81.79%,
+      rgba(23, 22, 20, 0.76) 84.99%,
+      rgba(23, 22, 20, 0.85) 88.98%,
+      rgba(23, 22, 20, 0.93) 93.92%,
+      #171614 100%
+    ),
+    linear-gradient(
+      270deg,
+      rgba(23, 22, 20, 0) 50%,
+      rgba(23, 22, 20, 0.01) 55.89%,
+      rgba(23, 22, 20, 0.03) 60.69%,
+      rgba(23, 22, 20, 0.07) 64.56%,
+      rgba(23, 22, 20, 0.12) 67.67%,
+      rgba(23, 22, 20, 0.18) 70.19%,
+      rgba(23, 22, 20, 0.25) 72.28%,
+      rgba(23, 22, 20, 0.33) 74.12%,
+      rgba(23, 22, 20, 0.41) 75.88%,
+      rgba(23, 22, 20, 0.5) 77.72%,
+      rgba(23, 22, 20, 0.59) 79.81%,
+      rgba(23, 22, 20, 0.67) 82.33%,
+      rgba(23, 22, 20, 0.76) 85.44%,
+      rgba(23, 22, 20, 0.85) 89.31%,
+      rgba(23, 22, 20, 0.93) 94.11%,
+      #171614 100%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(23, 22, 20, 0) 1.82%,
+      rgba(23, 22, 20, 0.01) 11.18%,
+      rgba(23, 22, 20, 0.03) 18.8%,
+      rgba(23, 22, 20, 0.07) 24.94%,
+      rgba(23, 22, 20, 0.12) 29.88%,
+      rgba(23, 22, 20, 0.18) 33.88%,
+      rgba(23, 22, 20, 0.25) 37.2%,
+      rgba(23, 22, 20, 0.33) 40.13%,
+      rgba(23, 22, 20, 0.41) 42.92%,
+      rgba(23, 22, 20, 0.5) 45.84%,
+      rgba(23, 22, 20, 0.59) 49.17%,
+      rgba(23, 22, 20, 0.67) 53.17%,
+      rgba(23, 22, 20, 0.76) 58.1%,
+      rgba(23, 22, 20, 0.85) 64.25%,
+      rgba(23, 22, 20, 0.93) 71.87%,
+      #171614 81.23%
+    );
+}
+
+.hero-darkening {
+  background:
+    linear-gradient(
+      0deg,
+      rgba(26, 26, 26, 0) 66.34%,
+      rgba(26, 26, 26, 0.01) 68.35%,
+      rgba(26, 26, 26, 0.04) 70.37%,
+      rgba(26, 26, 26, 0.08) 72.38%,
+      rgba(26, 26, 26, 0.15) 74.4%,
+      rgba(26, 26, 26, 0.23) 76.41%,
+      rgba(26, 26, 26, 0.33) 78.43%,
+      rgba(26, 26, 26, 0.44) 80.44%,
+      rgba(26, 26, 26, 0.56) 82.46%,
+      rgba(26, 26, 26, 0.67) 84.47%,
+      rgba(26, 26, 26, 0.77) 86.49%,
+      rgba(26, 26, 26, 0.85) 88.5%,
+      rgba(26, 26, 26, 0.92) 90.52%,
+      rgba(26, 26, 26, 0.96) 92.53%,
+      rgba(26, 26, 26, 0.99) 94.55%,
+      #1a1a1a 96.56%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(26, 26, 26, 0) 53.66%,
+      rgba(26, 26, 26, 0.01) 56.75%,
+      rgba(26, 26, 26, 0.04) 59.83%,
+      rgba(26, 26, 26, 0.08) 62.92%,
+      rgba(26, 26, 26, 0.15) 66.01%,
+      rgba(26, 26, 26, 0.23) 69.1%,
+      rgba(26, 26, 26, 0.33) 72.19%,
+      rgba(26, 26, 26, 0.44) 75.28%,
+      rgba(26, 26, 26, 0.56) 78.37%,
+      rgba(26, 26, 26, 0.67) 81.46%,
+      rgba(26, 26, 26, 0.77) 84.55%,
+      rgba(26, 26, 26, 0.85) 87.64%,
+      rgba(26, 26, 26, 0.92) 90.73%,
+      rgba(26, 26, 26, 0.96) 93.82%,
+      rgba(26, 26, 26, 0.99) 96.91%,
+      #1a1a1a 100%
+    ),
+    rgba(26, 26, 26, 0.7);
+}
+
+.option-darkening {
+  background: linear-gradient(
+    270deg,
+    rgba(23, 22, 20, 0) -28.59%,
+    rgba(23, 22, 20, 0.01) -12.22%,
+    rgba(23, 22, 20, 0.03) 1.1%,
+    rgba(23, 22, 20, 0.07) 11.84%,
+    rgba(23, 22, 20, 0.12) 20.47%,
+    rgba(23, 22, 20, 0.18) 27.46%,
+    rgba(23, 22, 20, 0.25) 33.28%,
+    rgba(23, 22, 20, 0.33) 38.39%,
+    rgba(23, 22, 20, 0.41) 43.27%,
+    rgba(23, 22, 20, 0.5) 48.39%,
+    rgba(23, 22, 20, 0.59) 54.2%,
+    rgba(23, 22, 20, 0.67) 61.19%,
+    rgba(23, 22, 20, 0.76) 69.82%,
+    rgba(23, 22, 20, 0.85) 80.57%,
+    rgba(23, 22, 20, 0.93) 93.89%,
+    #171614 110.26%
+  );
 }
