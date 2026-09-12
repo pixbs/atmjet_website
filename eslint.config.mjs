@@ -34,7 +34,25 @@ export default defineConfig([
       ...betterTailwindcss.configs['recommended-warn'].rules,
       'better-tailwindcss/enforce-consistent-class-order': 'off',
       'better-tailwindcss/enforce-consistent-line-wrapping': 'off',
-      'better-tailwindcss/no-unknown-classes': 'error',
+      'better-tailwindcss/no-unknown-classes': [
+        'error',
+        {
+          // The parity base layer (docs/adr/0006-styling-and-motion.md) reproduces the
+          // legacy global classes as unlayered CSS, which the plugin does not read, so the
+          // finite set is listed here. Nothing else may be added: a class that is not a
+          // Tailwind utility and not in this list is a typo.
+          ignore: [
+            '^button$',
+            '^card$',
+            '^big$',
+            '^middle$',
+            '^dark$',
+            '^darkening$',
+            '^hero-darkening$',
+            '^option-darkening$',
+          ],
+        },
+      ],
       'better-tailwindcss/no-conflicting-classes': 'error',
       'better-tailwindcss/no-duplicate-classes': 'error',
       // Values belong in @theme, not in class names. Justify exceptions inline.
