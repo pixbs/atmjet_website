@@ -4,6 +4,8 @@ import config from '../../src/payload.config.js'
 export const testUser = {
   email: 'dev@payloadcms.com',
   password: 'test',
+  // The admin e2e specs walk the collection views, which only an admin may reach (issue #70).
+  roles: ['admin' as const],
 }
 
 /**

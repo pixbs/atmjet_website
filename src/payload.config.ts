@@ -15,7 +15,18 @@ import { DEFAULT_LOCALE, LOCALE_DEFINITIONS } from './i18n/locales'
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
+/**
+ * Where this deployment answers. CORS and CSRF are pinned to it so a page on another origin
+ * cannot read the API or ride a logged-in editor's cookie (issue #70).
+ */
+const serverURL = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+const allowedOrigins = [serverURL]
+
 export default buildConfig({
+  serverURL,
+  // Only this site may call the API from a browser, and only its forms may post to it.
+  cors: allowedOrigins,
+  csrf: allowedOrigins,
   admin: {
     user: Users.slug,
     importMap: {

@@ -1,0 +1,80 @@
+# Access-control matrix
+
+Who may do what, per collection and operation. Every cell has a test in `tests/int/access.int.spec.ts`, and a guard there fails if a collection is added without declaring access at all.
+
+This is written out in full because the legacy admin had none of it: no roles, unauthenticated yacht routes, and passwords stored in plain text (`docs/legacy-inventory.md` section 14).
+
+## Roles
+
+| Role     | Who they are                                                |
+| -------- | ----------------------------------------------------------- |
+| `editor` | Runs the content: pages, media, aircraft, yachts, leads.    |
+| `admin`  | Everything an editor can, plus the people and the settings. |
+
+Roles live on the user as a required, repeatable field, so there is no such thing as a signed-in account with no role. `editor` is the default for a new account. Only an admin may write the field: without that guard an editor could add `admin` to their own roles and take over the site.
+
+The very first account is a special case. Payload still allows it to be created while the collection is empty, so a fresh environment can be bootstrapped through `/admin` even though `create` is admin-only. `bun run seed` creates a local admin for development.
+
+## Actors
+
+| Actor     | Meaning                                          |
+| --------- | ------------------------------------------------ |
+| Anonymous | No session: a visitor, a crawler, or any caller. |
+| Editor    | Signed in, holds `editor`.                       |
+| Admin     | Signed in, holds `admin`.                        |
+| Self      | Signed in, acting on their own user document.    |
+
+## Collections
+
+### `media`
+
+Uploads are public because every page renders them; changing them needs someone who runs the content.
+
+| Operation | Anonymous | Editor | Admin |
+| --------- | --------- | ------ | ----- |
+| read      | yes       | yes    | yes   |
+| create    | no        | yes    | yes   |
+| update    | no        | yes    | yes   |
+| delete    | no        | yes    | yes   |
+
+### `users`
+
+| Operation   | Anonymous | Editor          | Admin |
+| ----------- | --------- | --------------- | ----- |
+| read        | no        | themselves only | yes   |
+| create      | no        | no              | yes   |
+| update      | no        | themselves only | yes   |
+| delete      | no        | no              | yes   |
+| admin panel | no        | yes             | yes   |
+
+Field-level: `roles` is writable by admins only, on both create and update. Payload drops a field the caller may not write rather than failing the request, so an editor sending `roles: ['admin']` succeeds with their roles unchanged.
+
+## Helpers
+
+Rules come from `src/access` and nowhere else, so a collection cannot invent its own spelling of the same idea.
+
+| Helper           | Grants                                                                  |
+| ---------------- | ----------------------------------------------------------------------- |
+| `anyone`         | Everyone, signed in or not.                                             |
+| `authenticated`  | Any signed-in user, whatever their role.                                |
+| `admin`          | Admins.                                                                 |
+| `editorOrAdmin`  | The people who run the content.                                         |
+| `adminOrSelf`    | Admins everything; anyone else narrowed to their own document.          |
+| `publishedOnly`  | Editors and admins everything; the public narrowed to published docs.   |
+| `adminFieldOnly` | Field-level: admins only. For fields that would widen someone's access. |
+
+`adminOrSelf` and `publishedOnly` return a query constraint rather than `false`, which is how Payload filters a list instead of rejecting the whole request. That is what lets an editor open the users list and see one row rather than an error.
+
+## Hardening
+
+- **CORS and CSRF** are pinned to `NEXT_PUBLIC_SITE_URL`, so no other origin can call the API from a browser or ride a signed-in editor's cookie. Payload appends `serverURL` to the CORS list itself, so the effective set is this deployment alone.
+- **`serverURL`** comes from the environment, never a hard-coded host, unlike the legacy `robots.ts` (`docs/legacy-inventory.md` section 13 item 4).
+- **Login** locks an account for ten minutes after five failed attempts, so a stolen password is worth less.
+- **API keys are off.** Nothing needs one yet, and an unused key is only ever a liability. Turning them on for a collection is a deliberate change with its own tests.
+
+## Adding a collection
+
+1. Declare all four operations explicitly, using the helpers above. The enumeration test fails otherwise.
+2. Add its rows to this table.
+3. Add its cells to `tests/int/access.int.spec.ts`, including the anonymous ones.
+4. If it holds personal data, say so here and keep read admin-only (Contacts, issue #67, and Leads, issue #68).
