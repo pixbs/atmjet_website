@@ -92,6 +92,18 @@ A lead is created by the server action of E9.4 through the **Local API**, which 
 
 Retention for both is in `SECURITY.md`.
 
+## Globals
+
+One document each, so there is no create and no delete: a global is only ever read or written. The cells are tested in `tests/int/globals.int.spec.ts`; the guard that fails when a global is added without declaring access sits next to the collection one in `tests/int/access.int.spec.ts`.
+
+| Global          | read   | update |
+| --------------- | ------ | ------ |
+| `header`        | anyone | editor |
+| `footer`        | anyone | editor |
+| `site-settings` | anyone | admin  |
+
+Reads are public because every page renders the navigation, the phone number and the socials. The split on writes follows the roles: the navigation and the footer are content, so an editor owns them; `site-settings` holds how the business is reached and which languages the site serves, which is running the site rather than writing it.
+
 ## Helpers
 
 Rules come from `src/access` and nowhere else, so a collection cannot invent its own spelling of the same idea.
@@ -115,9 +127,9 @@ Rules come from `src/access` and nowhere else, so a collection cannot invent its
 - **Login** locks an account for ten minutes after five failed attempts, so a stolen password is worth less.
 - **API keys are off.** Nothing needs one yet, and an unused key is only ever a liability. Turning them on for a collection is a deliberate change with its own tests.
 
-## Adding a collection
+## Adding a collection or a global
 
-1. Declare all four operations explicitly, using the helpers above. The enumeration test fails otherwise.
+1. Declare all four operations explicitly, using the helpers above (`read` and `update` for a global). The enumeration test fails otherwise.
 2. Add its rows to this table.
 3. Add its cells to a test, including the anonymous ones: the collection's own spec if it has one, `tests/int/access.int.spec.ts` otherwise.
 4. If it holds personal data, say so here, keep read admin-only (`contacts` and `leads` above), and give it a row in the retention table in `SECURITY.md`.

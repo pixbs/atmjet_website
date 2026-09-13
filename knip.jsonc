@@ -10,6 +10,9 @@
     // The legacy motion vocabulary (ADR-0006): the callers arrive with each ported component and
     // tests/unit/motion.test.ts pins the values until then.
     "src/lib/motion.ts",
+    // The chrome link builders (issue #61): the globals hold the handles today and the Header,
+    // Footer and MenuBar components of E6 build the URLs; tests/unit/links.test.ts pins them.
+    "src/lib/links.ts",
   ],
   // A type that only its own module uses stays exported when it is part of an exported signature.
   "ignoreExportsUsedInFile": { "interface": true, "type": true },
