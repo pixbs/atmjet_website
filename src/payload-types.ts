@@ -73,6 +73,7 @@ export interface Config {
     airports: Airport;
     aircraft: Aircraft;
     contacts: Contact;
+    yachts: Yacht;
     'payload-kv': PayloadKv;
     'payload-jobs': PayloadJob;
     'payload-locked-documents': PayloadLockedDocument;
@@ -87,6 +88,7 @@ export interface Config {
     airports: AirportsSelect<false> | AirportsSelect<true>;
     aircraft: AircraftSelect<false> | AircraftSelect<true>;
     contacts: ContactsSelect<false> | ContactsSelect<true>;
+    yachts: YachtsSelect<false> | YachtsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-jobs': PayloadJobsSelect<false> | PayloadJobsSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
@@ -482,6 +484,141 @@ export interface Contact {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "yachts".
+ */
+export interface Yacht {
+  id: number;
+  /**
+   * The name both legacy cards render, without the manufacturer.
+   */
+  name: string;
+  /**
+   * Which legacy catalogue this listing belongs to: charter (new_yachts) or sale (yachts).
+   */
+  listingType: 'charter' | 'sale';
+  /**
+   * The URL of the detail page. Generated from the name when a listing is created, then left alone: changing it moves a published URL. A name in a script this cannot transliterate leaves it empty, and you are asked for one.
+   */
+  slug?: string | null;
+  /**
+   * Where the yacht is, as both legacy tables record it.
+   */
+  location?: string | null;
+  /**
+   * Length in feet, as the legacy numeric column holds it. The card renders the metres itself.
+   */
+  length?: number | null;
+  /**
+   * From the legacy description and description_ru, which were two columns rather than a locale.
+   */
+  description?: string | null;
+  /**
+   * In the order they are shown; the first is the card cover. From the legacy photos and pictures arrays, whose order was the order of the array.
+   */
+  photos?:
+    | {
+        media?: (number | null) | Media;
+        /**
+         * Set while the file still lives on the legacy bucket, as on Media.
+         */
+        externalUrl?: string | null;
+        alt?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * The columns of the legacy new_yachts table.
+   */
+  charter?: {
+    manufacturer?: string | null;
+    owner?: string | null;
+    /**
+     * Per hour, as the legacy card renders it.
+     */
+    customerPrice?: number | null;
+    /**
+     * The legacy bussines_price, misspelled in the source and never rendered. Kept so nothing is lost.
+     */
+    businessPrice?: number | null;
+    /**
+     * The legacy column is free text; the import maps it to one of these.
+     */
+    currency?: ('AED' | 'USD' | 'EUR') | null;
+    minHours?: number | null;
+    guestsDay?: number | null;
+    guestsNight?: number | null;
+    /**
+     * Text, not a number: the legacy column is text and the card prints it verbatim.
+     */
+    cabins?: string | null;
+    bathrooms?: string | null;
+    refit?: number | null;
+    /**
+     * From the legacy included and included_en.
+     */
+    included?: string | null;
+  };
+  /**
+   * The columns of the legacy yachts table.
+   */
+  sale?: {
+    /**
+     * The builder.
+     */
+    shipyard?: string | null;
+    year?: number | null;
+    /**
+     * No legacy column: the sale table held no price and the card showed none. Left empty by the import.
+     */
+    price?: number | null;
+    currency?: ('AED' | 'USD' | 'EUR') | null;
+    beam?: number | null;
+    draft?: number | null;
+    /**
+     * An integer here, unlike the charter side.
+     */
+    cabins?: number | null;
+    guests?: number | null;
+    crew?: number | null;
+    cruisingSpeed?: number | null;
+    maxSpeed?: number | null;
+  };
+  /**
+   * From the legacy new_yachts.contact_id. Personal data: administrators only, and never part of a public response.
+   */
+  contact?: (number | null) | Contact;
+  /**
+   * From the legacy new_yachts.captain_id. Personal data: administrators only, and never part of a public response.
+   */
+  captain?: (number | null) | Contact;
+  /**
+   * Every legacy column with no field of its own, kept verbatim so nothing is lost before E5.13 reconciles.
+   */
+  legacyAttributes?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  /**
+   * Where this document came from (ADR-0002 section 8).
+   */
+  provenance: {
+    origin: 'new-yachts-charter' | 'yachts-sale' | 'manual';
+    legacyId?: number | null;
+    legacySlug?: string | null;
+    importRunId?: string | null;
+    importedAt?: string | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -619,6 +756,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'contacts';
         value: number | Contact;
+      } | null)
+    | ({
+        relationTo: 'yachts';
+        value: number | Yacht;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -908,6 +1049,72 @@ export interface ContactsSelect<T extends boolean = true> {
       };
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "yachts_select".
+ */
+export interface YachtsSelect<T extends boolean = true> {
+  name?: T;
+  listingType?: T;
+  slug?: T;
+  location?: T;
+  length?: T;
+  description?: T;
+  photos?:
+    | T
+    | {
+        media?: T;
+        externalUrl?: T;
+        alt?: T;
+        id?: T;
+      };
+  charter?:
+    | T
+    | {
+        manufacturer?: T;
+        owner?: T;
+        customerPrice?: T;
+        businessPrice?: T;
+        currency?: T;
+        minHours?: T;
+        guestsDay?: T;
+        guestsNight?: T;
+        cabins?: T;
+        bathrooms?: T;
+        refit?: T;
+        included?: T;
+      };
+  sale?:
+    | T
+    | {
+        shipyard?: T;
+        year?: T;
+        price?: T;
+        currency?: T;
+        beam?: T;
+        draft?: T;
+        cabins?: T;
+        guests?: T;
+        crew?: T;
+        cruisingSpeed?: T;
+        maxSpeed?: T;
+      };
+  contact?: T;
+  captain?: T;
+  legacyAttributes?: T;
+  provenance?:
+    | T
+    | {
+        origin?: T;
+        legacyId?: T;
+        legacySlug?: T;
+        importRunId?: T;
+        importedAt?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
