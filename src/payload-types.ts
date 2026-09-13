@@ -74,6 +74,7 @@ export interface Config {
     aircraft: Aircraft;
     contacts: Contact;
     yachts: Yacht;
+    'empty-legs': EmptyLeg;
     'payload-kv': PayloadKv;
     'payload-jobs': PayloadJob;
     'payload-locked-documents': PayloadLockedDocument;
@@ -89,6 +90,7 @@ export interface Config {
     aircraft: AircraftSelect<false> | AircraftSelect<true>;
     contacts: ContactsSelect<false> | ContactsSelect<true>;
     yachts: YachtsSelect<false> | YachtsSelect<true>;
+    'empty-legs': EmptyLegsSelect<false> | EmptyLegsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-jobs': PayloadJobsSelect<false> | PayloadJobsSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
@@ -619,6 +621,106 @@ export interface Yacht {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "empty-legs".
+ */
+export interface EmptyLeg {
+  id: number;
+  /**
+   * Filled in by the admin list from the two codes below; it is what the row is called in a list of rows.
+   */
+  route?: string | null;
+  /**
+   * Resolved from the legacy `from` code during the import of E5.11.
+   */
+  departureAirport?: (number | null) | Airport;
+  /**
+   * The four-letter code as the leg was entered. Kept even when the airport above is set, and the only record of the route when no airport matches: the legacy section dropped such a row from the page entirely.
+   */
+  departureIcao?: string | null;
+  /**
+   * Resolved from the legacy `to` code during the import of E5.11.
+   */
+  arrivalAirport?: (number | null) | Airport;
+  /**
+   * The four-letter code as the leg was entered.
+   */
+  arrivalIcao?: string | null;
+  /**
+   * Stored in UTC, as the legacy timestamptz was. The card prints the UTC day in en-US, whatever the page language, which is what the legacy card did.
+   */
+  departureAt: string;
+  /**
+   * The legacy `end` column. Written by the legacy admin and never rendered.
+   */
+  arrivalAt?: string | null;
+  /**
+   * The legacy price column, an integer that defaulted to 0.
+   */
+  price?: number | null;
+  /**
+   * No legacy column: the card hard-coded a dollar sign. USD reproduces it.
+   */
+  currency?: ('USD' | 'EUR' | 'AED') | null;
+  /**
+   * No legacy column, and the legacy card showed no seat count. Left empty by the import.
+   */
+  seats?: number | null;
+  /**
+   * Lowest first. The legacy admin wrote this column and the site ignored it, so rows came back in whatever order the database felt like. A leg with no number sorts last.
+   */
+  order?: number | null;
+  /**
+   * The legacy columns were free text the admin typed. The relationship is preferred; the text survives for a leg whose aircraft is not in the catalogue.
+   */
+  aircraft?: {
+    /**
+     * Resolved from the legacy type and company during E5.11.
+     */
+    document?: (number | null) | Aircraft;
+    /**
+     * The legacy type column.
+     */
+    type?: string | null;
+    /**
+     * The legacy category column.
+     */
+    category?: string | null;
+    /**
+     * The legacy company column.
+     */
+    company?: string | null;
+    /**
+     * The legacy safety column.
+     */
+    safety?: string | null;
+  };
+  /**
+   * Every legacy column with no field of its own, kept verbatim so nothing is lost before E5.13 reconciles.
+   */
+  legacyAttributes?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  /**
+   * Where this document came from (ADR-0002 section 8).
+   */
+  provenance: {
+    origin: 'empty-legs-legacy' | 'manual';
+    legacyId?: number | null;
+    importRunId?: string | null;
+    importedAt?: string | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -760,6 +862,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'yachts';
         value: number | Yacht;
+      } | null)
+    | ({
+        relationTo: 'empty-legs';
+        value: number | EmptyLeg;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -1109,6 +1215,44 @@ export interface YachtsSelect<T extends boolean = true> {
         origin?: T;
         legacyId?: T;
         legacySlug?: T;
+        importRunId?: T;
+        importedAt?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "empty-legs_select".
+ */
+export interface EmptyLegsSelect<T extends boolean = true> {
+  route?: T;
+  departureAirport?: T;
+  departureIcao?: T;
+  arrivalAirport?: T;
+  arrivalIcao?: T;
+  departureAt?: T;
+  arrivalAt?: T;
+  price?: T;
+  currency?: T;
+  seats?: T;
+  order?: T;
+  aircraft?:
+    | T
+    | {
+        document?: T;
+        type?: T;
+        category?: T;
+        company?: T;
+        safety?: T;
+      };
+  legacyAttributes?: T;
+  provenance?:
+    | T
+    | {
+        origin?: T;
+        legacyId?: T;
         importRunId?: T;
         importedAt?: T;
       };
