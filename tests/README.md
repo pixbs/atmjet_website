@@ -27,7 +27,7 @@ The design tokens are unit tested too: `tests/helpers/tailwind.ts` compiles `src
 - **One Payload per worker.** `getTestPayload()` (`tests/helpers/payload.ts`) memoises the instance; Vitest runs each file in its own worker, so suites never share one.
 - **Unique data, no truncation.** Every document a test creates carries a `uniqueSuffix()` in its natural key, so files running in parallel do not collide. Never delete whole collections: another worker may be using them.
 - **A registry per suite.** `const registry = await createRegistry()` in `beforeAll`, `registry.create(collection, data)` (or the factories) for every document, `afterAll(() => registry.cleanup())`. The registry deletes what the suite created, newest first, and tolerates documents already removed by the test.
-- **Seed** (`bun run seed`, `scripts/seed`): the fixture content every environment needs to render, idempotent by natural key; the `ci` workflow seeds before the suites run. Tests never depend on seeded data except `tests/int/seed.int.spec.ts`; use the factories instead.
+- **Seed** (`bun run seed`, `scripts/seed`): the fixture content every environment needs to render, idempotent by natural key; the `ci` workflow seeds before the suites run. The Vitest tiers never depend on seeded data except `tests/int/seed.int.spec.ts`; use the factories instead. The browser tiers do depend on it, because the site is content-driven: since issue #60 the home page is the `pages` document with the empty slug, so `/en` is a 404 until the seed has run.
 - **Factories** under `tests/factories` (`createUser`, `createMedia`, ...) produce valid documents with unique keys; every new collection adds one and reuses it in `tests/int/access.int.spec.ts`.
 - **Access checks** pass `overrideAccess: false` and, when needed, `user`; the harness creates documents with `overrideAccess: true`.
 
@@ -40,6 +40,8 @@ The design tokens are unit tested too: `tests/helpers/tailwind.ts` compiles `src
 ## Browser tiers
 
 `playwright.config.ts` defines the `e2e`, `visual` and `a11y` projects. They start `bun run dev` themselves, or target a deployment when `PLAYWRIGHT_BASE_URL` is set (with the Vercel bypass header from `VERCEL_AUTOMATION_BYPASS_SECRET`). Chromium comes from `bunx playwright install chromium` or `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH`.
+
+Run `bun run migrate && bun run seed` before them on a fresh database, as the `ci` workflow does. Readiness is checked against `/en/styleguide` rather than `/`: the styleguide is a static route, so an unseeded database fails a test that names the missing content instead of timing out after two minutes on a webServer check with nothing to say.
 
 ### Accessibility
 

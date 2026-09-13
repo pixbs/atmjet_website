@@ -70,6 +70,7 @@ export interface Config {
     users: User;
     media: Media;
     pages: Page;
+    airports: Airport;
     'payload-kv': PayloadKv;
     'payload-jobs': PayloadJob;
     'payload-locked-documents': PayloadLockedDocument;
@@ -81,6 +82,7 @@ export interface Config {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     pages: PagesSelect<false> | PagesSelect<true>;
+    airports: AirportsSelect<false> | AirportsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-jobs': PayloadJobsSelect<false> | PayloadJobsSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
@@ -248,6 +250,55 @@ export interface Page {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "airports".
+ */
+export interface Airport {
+  id: number;
+  /**
+   * Four-letter ICAO code, upper-cased. The empty legs block looks airports up by it.
+   */
+  icao?: string | null;
+  /**
+   * Three-letter IATA code, upper-cased.
+   */
+  iata?: string | null;
+  /**
+   * The airport name as a traveller would read it in this language.
+   */
+  name?: string | null;
+  city?: string | null;
+  country?: string | null;
+  /**
+   * Other names the search should match, comma separated. The legacy column is the misspelled `alies_en` / `alies_ru`.
+   */
+  aliases?: string | null;
+  /**
+   * Airport type as the source data describes it. Never rendered today.
+   */
+  type?: string | null;
+  /**
+   * Annual passengers, used to rank search results. A number here, unlike the legacy text column; the import parses that text with parsePassengersPerYear before writing.
+   */
+  passengersPerYear?: number | null;
+  /**
+   * ISO country code, upper-cased.
+   */
+  isoCode?: string | null;
+  /**
+   * Offset as the legacy data records it, kept verbatim rather than parsed.
+   */
+  gmtOffset?: string | null;
+  latitude?: number | null;
+  longitude?: number | null;
+  /**
+   * Wikidata identifier from the legacy `new_airports` table.
+   */
+  wikidata?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -373,6 +424,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'pages';
         value: number | Page;
+      } | null)
+    | ({
+        relationTo: 'airports';
+        value: number | Airport;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -520,6 +575,27 @@ export interface PagesSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "airports_select".
+ */
+export interface AirportsSelect<T extends boolean = true> {
+  icao?: T;
+  iata?: T;
+  name?: T;
+  city?: T;
+  country?: T;
+  aliases?: T;
+  type?: T;
+  passengersPerYear?: T;
+  isoCode?: T;
+  gmtOffset?: T;
+  latitude?: T;
+  longitude?: T;
+  wikidata?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
