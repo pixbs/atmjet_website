@@ -58,7 +58,14 @@ export default defineConfig({
     ? undefined
     : {
         command: 'bun run dev',
-        url: baseURL,
+        /**
+         * Readiness is checked against the styleguide, not `/`. The home page is a `pages`
+         * document (issue #60), so on a database without `bun run seed` the root answers 404
+         * and Playwright would wait the full two minutes before failing with a webServer
+         * timeout that says nothing about the real cause. The styleguide is a static route and
+         * is always there, so a missing seed now surfaces as a failing test instead.
+         */
+        url: `${baseURL}/en/styleguide`,
         reuseExistingServer: true,
         timeout: 120_000,
       },
