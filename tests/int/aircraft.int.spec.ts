@@ -134,12 +134,13 @@ describe('specification and offerings', () => {
     expect(created.offerings).toEqual(['charter', 'sale'])
   })
 
-  it('separates the aircraft from its publication state', async () => {
-    // `availability` rather than `status`: drafts generate a `_status` enum of that name.
+  it('keeps an aircraft listed while saying it cannot be chartered', async () => {
+    // `availability` is the only state the catalogue has (issue #236): a visitor still sees the
+    // aircraft, with the legacy commercial state that the listing renders.
     const created = await registry.create('aircraft', aircraft({ availability: 'unavailable' }))
 
     expect(created.availability).toBe('unavailable')
-    expect(created._status).toBe('draft')
+    expect(created).not.toHaveProperty('_status')
   })
 })
 
@@ -178,29 +179,17 @@ describe('base airport', () => {
 })
 
 describe('access', () => {
-  it('hides a draft from the public and shows a published one', async () => {
-    const draft = await registry.create('aircraft', aircraft())
+  it('is live for a visitor the moment it is saved, as the legacy catalogue was', async () => {
+    // No draft state on the catalogue (issue #236): an editor saves and the listing is public.
+    const saved = await registry.create('aircraft', aircraft())
 
     const asVisitor = await registry.payload.find({
       collection: 'aircraft',
-      where: { id: { equals: draft.id } },
+      where: { id: { equals: saved.id } },
       overrideAccess: false,
     })
-    expect(asVisitor.totalDocs).toBe(0)
 
-    await registry.payload.update({
-      collection: 'aircraft',
-      id: draft.id,
-      data: { _status: 'published' },
-      overrideAccess: true,
-    })
-
-    const published = await registry.payload.find({
-      collection: 'aircraft',
-      where: { id: { equals: draft.id } },
-      overrideAccess: false,
-    })
-    expect(published.totalDocs).toBe(1)
+    expect(asVisitor.totalDocs).toBe(1)
   })
 
   it('is not writable anonymously and is writable by an editor', async () => {

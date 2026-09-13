@@ -256,13 +256,6 @@ describe('the people', () => {
 
     const created = await createYacht(registry, { contact: contact.id, captain: captain.id })
 
-    await registry.payload.update({
-      collection: 'yachts',
-      id: created.id,
-      data: { _status: 'published' },
-      overrideAccess: true,
-    })
-
     const asAdmin = await registry.payload.findByID({
       collection: 'yachts',
       id: created.id,
@@ -320,29 +313,17 @@ describe('provenance and the columns with no field of their own', () => {
 })
 
 describe('access', () => {
-  it('hides a draft from the public and shows a published one', async () => {
-    const draft = await createYacht(registry)
+  it('is live for a visitor the moment it is saved, as the legacy catalogue was', async () => {
+    // No draft state on the catalogue (issue #236): an editor saves and the listing is public.
+    const saved = await createYacht(registry)
 
     const asVisitor = await registry.payload.find({
       collection: 'yachts',
-      where: { id: { equals: draft.id } },
+      where: { id: { equals: saved.id } },
       overrideAccess: false,
     })
-    expect(asVisitor.totalDocs).toBe(0)
 
-    await registry.payload.update({
-      collection: 'yachts',
-      id: draft.id,
-      data: { _status: 'published' },
-      overrideAccess: true,
-    })
-
-    const published = await registry.payload.find({
-      collection: 'yachts',
-      where: { id: { equals: draft.id } },
-      overrideAccess: false,
-    })
-    expect(published.totalDocs).toBe(1)
+    expect(asVisitor.totalDocs).toBe(1)
   })
 
   it('is not writable anonymously and is writable by an editor', async () => {

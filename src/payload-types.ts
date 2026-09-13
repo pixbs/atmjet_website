@@ -446,7 +446,6 @@ export interface Aircraft {
   };
   updatedAt: string;
   createdAt: string;
-  _status?: ('draft' | 'published') | null;
 }
 /**
  * Personal data. Administrators only, and never rendered on the public site.
@@ -621,7 +620,6 @@ export interface Yacht {
   };
   updatedAt: string;
   createdAt: string;
-  _status?: ('draft' | 'published') | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -721,7 +719,6 @@ export interface EmptyLeg {
   };
   updatedAt: string;
   createdAt: string;
-  _status?: ('draft' | 'published') | null;
 }
 /**
  * Form submissions and how they were delivered. Personal data: administrators only, and never rendered on the public site.
@@ -1275,7 +1272,6 @@ export interface AircraftSelect<T extends boolean = true> {
       };
   updatedAt?: T;
   createdAt?: T;
-  _status?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1362,7 +1358,6 @@ export interface YachtsSelect<T extends boolean = true> {
       };
   updatedAt?: T;
   createdAt?: T;
-  _status?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1400,7 +1395,6 @@ export interface EmptyLegsSelect<T extends boolean = true> {
       };
   updatedAt?: T;
   createdAt?: T;
-  _status?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
