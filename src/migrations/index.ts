@@ -1,5 +1,5 @@
 import * as migration_20260913_170121_initial from './20260913_170121_initial';
-import * as migration_20260913_222520_globals from './20260913_222520_globals';
+import * as migration_20260913_224636_globals from './20260913_224636_globals';
 
 export const migrations = [
   {
@@ -8,8 +8,8 @@ export const migrations = [
     name: '20260913_170121_initial',
   },
   {
-    up: migration_20260913_222520_globals.up,
-    down: migration_20260913_222520_globals.down,
-    name: '20260913_222520_globals'
+    up: migration_20260913_224636_globals.up,
+    down: migration_20260913_224636_globals.down,
+    name: '20260913_224636_globals'
   },
 ];

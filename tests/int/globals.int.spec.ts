@@ -162,6 +162,18 @@ describe('navigation', () => {
     })
   }
 
+  it('loses the link rather than the page when a page is deleted', async () => {
+    const page = await aPage()
+    await writeNav('header', 'en', [{ label: 'Doomed', page: page.id }])
+
+    await registry.payload.delete({ collection: 'pages', id: page.id, overrideAccess: true })
+
+    const header = await registry.payload.findGlobal({ slug: 'header', depth: 0 })
+    // The link stays in the admin with an empty page, which says which menu needs attention;
+    // a required relationship would instead make the delete fail on a not-null column.
+    expect(header.primaryNav?.[0]).toMatchObject({ label: 'Doomed', page: null })
+  })
+
   it('records which button a booking request came from', async () => {
     const header = await registry.payload.findGlobal({ slug: 'header' })
     const footer = await registry.payload.findGlobal({ slug: 'footer' })

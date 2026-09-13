@@ -1575,7 +1575,7 @@ export interface Header {
         /**
          * The page this link opens. Its slug decides the URL.
          */
-        page: number | Page;
+        page?: (number | null) | Page;
         id?: string | null;
       }[]
     | null;
@@ -1591,7 +1591,7 @@ export interface Header {
         /**
          * The page this link opens. Its slug decides the URL.
          */
-        page: number | Page;
+        page?: (number | null) | Page;
         id?: string | null;
       }[]
     | null;
@@ -1623,7 +1623,7 @@ export interface Footer {
         /**
          * The page this link opens. Its slug decides the URL.
          */
-        page: number | Page;
+        page?: (number | null) | Page;
         id?: string | null;
       }[]
     | null;
@@ -1639,7 +1639,7 @@ export interface Footer {
         /**
          * The page this link opens. Its slug decides the URL.
          */
-        page: number | Page;
+        page?: (number | null) | Page;
         id?: string | null;
       }[]
     | null;

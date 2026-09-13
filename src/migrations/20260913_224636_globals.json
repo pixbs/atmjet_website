@@ -9007,7 +9007,7 @@
           "name": "page_id",
           "type": "integer",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         }
       },
       "indexes": {
@@ -9191,7 +9191,7 @@
           "name": "page_id",
           "type": "integer",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         }
       },
       "indexes": {
@@ -9487,7 +9487,7 @@
           "name": "page_id",
           "type": "integer",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         }
       },
       "indexes": {
@@ -9671,7 +9671,7 @@
           "name": "page_id",
           "type": "integer",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         }
       },
       "indexes": {
@@ -10751,6 +10751,6 @@
     "tables": {},
     "columns": {}
   },
-  "id": "3a9c89a0-9faa-4e04-a31e-bcd8add00c29",
+  "id": "eb579c85-2082-4825-b95e-bdcaa3c5207e",
   "prevId": "00000000-0000-0000-0000-000000000000"
 }

@@ -19,7 +19,9 @@ const navLinkFields: Field[] = [
     name: 'page',
     type: 'relationship',
     relationTo: 'pages',
-    required: true,
+    // Optional so that deleting a page clears the links to it instead of failing: a required
+    // relationship is a NOT NULL column, and the database cannot null it out on delete. A link
+    // left without a page is not rendered, and the empty field says which menu needs attention.
     admin: { description: 'The page this link opens. Its slug decides the URL.' },
   },
 ]

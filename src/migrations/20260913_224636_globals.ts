@@ -8,7 +8,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"_order" integer NOT NULL,
   	"_parent_id" integer NOT NULL,
   	"id" varchar PRIMARY KEY NOT NULL,
-  	"page_id" integer NOT NULL
+  	"page_id" integer
   );
   
   CREATE TABLE "header_primary_nav_locales" (
@@ -22,7 +22,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"_order" integer NOT NULL,
   	"_parent_id" integer NOT NULL,
   	"id" varchar PRIMARY KEY NOT NULL,
-  	"page_id" integer NOT NULL
+  	"page_id" integer
   );
   
   CREATE TABLE "header_secondary_nav_locales" (
@@ -50,7 +50,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"_order" integer NOT NULL,
   	"_parent_id" integer NOT NULL,
   	"id" varchar PRIMARY KEY NOT NULL,
-  	"page_id" integer NOT NULL
+  	"page_id" integer
   );
   
   CREATE TABLE "footer_primary_nav_locales" (
@@ -64,7 +64,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"_order" integer NOT NULL,
   	"_parent_id" integer NOT NULL,
   	"id" varchar PRIMARY KEY NOT NULL,
-  	"page_id" integer NOT NULL
+  	"page_id" integer
   );
   
   CREATE TABLE "footer_secondary_nav_locales" (
