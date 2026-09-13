@@ -1,6 +1,6 @@
 # Access-control matrix
 
-Who may do what, per collection and operation. Every cell has a test: the shared rules and the collections without a spec of their own live in `tests/int/access.int.spec.ts`, which also holds the guard that fails when a collection is added without declaring access at all; a collection with its own spec (`airports`, `aircraft`, `contacts`, `yachts`, `empty-legs`, `leads`) keeps its cells there, next to the rest of its behaviour.
+Who may do what, per collection and operation. Every cell has a test: the shared rules and the collections without a spec of their own live in `tests/int/access.int.spec.ts`, which also holds the guard that fails when a collection is added without declaring access at all; a collection with its own spec (`airports`, `aircraft`, `contacts`, `yachts`, `empty-legs`, `leads`, `redirects`) keeps its cells there, next to the rest of its behaviour.
 
 This is written out in full because the legacy admin had none of it: no roles, unauthenticated yacht routes, and passwords stored in plain text (`docs/legacy-inventory.md` section 14).
 
@@ -49,9 +49,9 @@ Uploads are public because every page renders them; changing them needs someone 
 
 Field-level: `roles` is writable by admins only, on both create and update. Payload drops a field the caller may not write rather than failing the request, so an editor sending `roles: ['admin']` succeeds with their roles unchanged.
 
-### `pages`, `airports`, `aircraft`, `yachts` and `empty-legs`
+### `pages`, `airports`, `aircraft`, `yachts`, `empty-legs` and `redirects`
 
-Content and reference data. `pages`, `aircraft`, `yachts` and `empty-legs` use `publishedOnly`, so the public sees published documents and the people who run the content see drafts too; `airports` is read by anyone, because the airport search endpoint (E9.9) and the empty legs block answer without a session.
+Content and reference data. `pages`, `aircraft`, `yachts` and `empty-legs` use `publishedOnly`, so the public sees published documents and the people who run the content see drafts too; `airports` and `redirects` are read by anyone, because the airport search endpoint (E9.9), the empty legs block and a visitor following an old link all answer without a session. `redirects` comes from `@payloadcms/plugin-redirects`, which declares only `read`; the other three are declared in the overrides so the enumeration test passes.
 
 | Collection | read           | create | update | delete |
 | ---------- | -------------- | ------ | ------ | ------ |

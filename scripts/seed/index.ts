@@ -9,6 +9,7 @@ import { getPayload, type Payload } from 'payload'
 import config from '../../src/payload.config'
 import { seedMedia } from './media'
 import { seedPages } from './pages'
+import { seedRedirects } from './redirects'
 import { summarise, type SeedReport } from './report'
 import { seedUsers } from './users'
 
@@ -17,6 +18,7 @@ export async function runSeed(payload: Payload): Promise<SeedReport> {
     ...(await seedUsers(payload)),
     ...(await seedMedia(payload)),
     ...(await seedPages(payload)),
+    ...(await seedRedirects(payload)),
   ]
   return summarise(outcomes)
 }

@@ -1,12 +1,16 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { runSeed } from '../../scripts/seed'
 import { SEED_IMAGES } from '../../scripts/seed/media'
+import { LEGACY_REDIRECTS } from '../../scripts/seed/redirects'
 import { SEED_ADMIN } from '../../scripts/seed/users'
 import { PAGE_SLUGS } from '../../src/collections/Pages'
 import { createRegistry, type TestRegistry } from '../helpers/payload'
 
-/** One admin, the placeholder images, and one page per static route (issues #41 and #60). */
-const EXPECTED_DOCUMENTS = 1 + SEED_IMAGES.length + PAGE_SLUGS.length
+/**
+ * One admin, the placeholder images, one page per static route, and the legacy redirect map
+ * (issues #41, #60 and #69).
+ */
+const EXPECTED_DOCUMENTS = 1 + SEED_IMAGES.length + PAGE_SLUGS.length + LEGACY_REDIRECTS.length
 
 let registry: TestRegistry
 
@@ -31,7 +35,10 @@ describe('seed', () => {
       const first = await runSeed(registry.payload)
       for (const outcome of first.outcomes)
         if (outcome.id !== undefined)
-          registry.track(outcome.collection as 'users' | 'media' | 'pages', outcome.id)
+          registry.track(
+            outcome.collection as 'users' | 'media' | 'pages' | 'redirects',
+            outcome.id,
+          )
       expect(first.created + first.unchanged).toBe(EXPECTED_DOCUMENTS)
 
       const second = await runSeed(registry.payload)
@@ -50,6 +57,15 @@ describe('seed', () => {
       })
       expect(media.totalDocs).toBe(SEED_IMAGES.length)
       expect(media.docs.every((doc) => doc.width === 1280 && doc.height === 720)).toBe(true)
+
+      // Every legacy URL that must keep resolving has a rule (issue #69).
+      const redirects = await registry.payload.find({
+        collection: 'redirects',
+        where: { from: { in: LEGACY_REDIRECTS.map((entry) => entry.from) } },
+        limit: 0,
+        overrideAccess: true,
+      })
+      expect(redirects.totalDocs).toBe(LEGACY_REDIRECTS.length)
 
       // Every static route has a published page, so no environment renders an empty site.
       const pages = await registry.payload.find({

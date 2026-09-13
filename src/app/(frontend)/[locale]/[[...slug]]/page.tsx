@@ -1,11 +1,13 @@
 import type { Metadata } from 'next'
-import { notFound } from 'next/navigation'
+import { notFound, permanentRedirect, redirect } from 'next/navigation'
 import { setRequestLocale } from 'next-intl/server'
 import React from 'react'
 
 import { PAGE_LOCALES } from '@/collections/Pages'
+import { servedStatusFor } from '@/collections/Redirects'
+import type { Locale } from '@/i18n/locales'
 import { routing } from '@/i18n/routing'
-import { getPayloadClient, listPageParams } from '@/lib/data'
+import { findRedirect, getPayloadClient, listPageParams } from '@/lib/data'
 
 /**
  * Renders a page document at `/<locale>/<slug>` (issue #60), with the locale root serving the
@@ -61,6 +63,23 @@ export async function generateMetadata({
   }
 }
 
+/**
+ * Sends the visitor on if an editor has a redirect for this path, and 404s otherwise. Never
+ * returns: both branches throw, which is how `redirect` and `notFound` work.
+ *
+ * The App Router can only emit 307 and 308, so a rule stored as 301 is served as 308 and one
+ * stored as 302 or 303 as 307 (`servedStatusFor`, `src/collections/Redirects.ts`).
+ */
+async function redirectOrNotFound(locale: Locale, slug: string[] | undefined): Promise<never> {
+  const match = await findRedirect(locale, `/${slugFrom(slug)}`)
+
+  if (!match) notFound()
+
+  if (servedStatusFor(match.status) === 308) permanentRedirect(match.destination)
+
+  redirect(match.destination)
+}
+
 export default async function CatchAllPage({ params }: { params: Promise<PageParams> }) {
   const { locale, slug } = await params
 
@@ -69,7 +88,10 @@ export default async function CatchAllPage({ params }: { params: Promise<PagePar
 
   const page = await findPage(locale, slugFrom(slug))
 
-  if (!page) notFound()
+  // Only a request that would otherwise be a 404 pays for the redirect lookup (issue #69), so an
+  // old URL keeps resolving without every other page reading the table. Returned rather than
+  // awaited: the helper is typed `Promise<never>`, which narrows `page` only through a `return`.
+  if (!page) return redirectOrNotFound(locale as Locale, slug)
 
   return (
     <article className="container gap-8 py-16">
