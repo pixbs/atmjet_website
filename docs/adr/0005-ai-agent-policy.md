@@ -1,6 +1,6 @@
 # ADR-0005: AI agents, attribution ban, identity and enforcement
 
-Status: accepted (2026-09-11)
+Status: accepted (2026-09-11); enforcement layers 3 (branch-name hook) and 6 (branch guard) and the self-test retired by [ADR-0008](0008-lean-conventions.md) (2026-09-13)
 
 ## Context
 
