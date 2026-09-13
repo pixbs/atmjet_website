@@ -2,7 +2,7 @@ import type { Access, FieldAccess } from 'payload'
 
 import { hasRole } from './roles'
 
-export { DEFAULT_ROLE, hasRole, ROLES, rolesOf, type Role } from './roles'
+export { DEFAULT_ROLE, hasRole, ROLES, rolesOf, type Role, type RoleBearer } from './roles'
 
 /** Public. Used for content a visitor must be able to read without signing in. */
 export const anyone: Access = () => true
