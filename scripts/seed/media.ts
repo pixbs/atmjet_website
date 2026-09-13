@@ -57,6 +57,9 @@ export async function seedMedia(payload: Payload): Promise<SeedOutcome[]> {
       data: { alt: image.alt },
       file: fileFor(image),
       overrideAccess: true,
+      // A bulk write has nothing to invalidate: the seed runs before anything is cached
+      // (docs/conventions/rendering.md).
+      context: { skipRevalidation: true },
     })
     outcomes.push({ collection: 'media', key: image.filename, action: 'created', id: created.id })
   }

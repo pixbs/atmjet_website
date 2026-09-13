@@ -8,7 +8,7 @@ Closes #<!-- issue number --> <!-- or: Part of #<epic> (layer N of a stack, base
 
 - [ ] Branch name `<type>/<issue>-<kebab-slug>`; commits are Conventional Commits, each one a verified step
 - [ ] No AI attribution anywhere in this pull request (title, body, commits, code)
-- [ ] SSR-first: initial content is server-rendered; `'use client'` only for leaf interactivity
+- [ ] SSR-first: initial content is server-rendered; `'use client'` only for leaf interactivity; pages, blocks and collections follow the checklist in `docs/conventions/rendering.md`
 - [ ] Tailwind: tokens only (no arbitrary values), `cva`/`cn`, no `@apply` outside the parity base layer
 - [ ] Animation only with `motion` (`src/lib/motion.ts` vocabulary)
 - [ ] Tests added for this change: unit / integration / e2e / visual / a11y (delete what does not apply); coverage thresholds unchanged or raised
