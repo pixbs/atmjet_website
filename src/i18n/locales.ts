@@ -2,10 +2,10 @@
  * The single locale list shared by routing, Payload and the tests (ADR-0003).
  *
  * `ALL_LOCALES` is the set editors can enter content for and is what `localization.locales` in
- * `src/payload.config.ts` is built from. `ROUTED_LOCALES` is the subset that is public today and
- * therefore reachable through a URL; `uk` is entered in the admin but stays unrouted until its
- * catalogue is complete. Issue #53 replaces that constant with a `SiteSettings.enabledLocales`
- * read, which is why every consumer goes through this module instead of hard-coding a list.
+ * `src/payload.config.ts` is built from. Which of them the public site serves is
+ * `SiteSettings.enabledLocales` (issue #53), read through `src/lib/data/site-settings.ts`;
+ * `DEFAULT_LOCALES` is what a new settings document starts with and what a build or a request
+ * that cannot reach the database falls back to.
  *
  * This module must stay free of framework imports: `payload.config.ts`, the next-intl routing
  * and the Vitest suites all load it, and only the last of those runs outside Next.
@@ -16,8 +16,8 @@ export type Locale = (typeof ALL_LOCALES)[number]
 
 export const DEFAULT_LOCALE: Locale = 'en'
 
-/** Public locales, in the order the legacy site served them. */
-export const ROUTED_LOCALES: readonly Locale[] = ['en', 'ru']
+/** What the site serves until an editor says otherwise: the locales the legacy site served. */
+export const DEFAULT_LOCALES: readonly Locale[] = ['en', 'ru']
 
 export interface LocaleDefinition {
   code: Locale

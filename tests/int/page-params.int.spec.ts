@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
 
-import { PAGE_LOCALES } from '@/collections/Pages'
+import { DEFAULT_LOCALES } from '@/i18n/locales'
 import { listPageParams } from '@/lib/data/pages'
 import { createRegistry, uniqueSuffix, type TestRegistry } from '../helpers/payload'
 
@@ -21,13 +21,13 @@ beforeAll(async () => {
 afterAll(() => registry.cleanup())
 
 describe('listPageParams', () => {
-  it('returns one entry per published page per routed locale', async () => {
+  it('returns one entry per published page per enabled locale', async () => {
     const slug = `params-${uniqueSuffix()}`
     await registry.create('pages', { title: 'Params', slug, layout: [], _status: 'published' })
 
-    const params = await listPageParams(PAGE_LOCALES)
+    const params = await listPageParams(DEFAULT_LOCALES)
 
-    for (const locale of PAGE_LOCALES) {
+    for (const locale of DEFAULT_LOCALES) {
       expect(params).toContainEqual({ locale, slug: [slug] })
     }
   })

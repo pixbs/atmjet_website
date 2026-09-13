@@ -2,7 +2,7 @@ import type { GlobalConfig } from 'payload'
 
 import { admin, anyone } from '@/access'
 import { revalidateGlobal } from '@/hooks/revalidate'
-import { ALL_LOCALES, DEFAULT_LOCALE, LOCALE_DEFINITIONS, ROUTED_LOCALES } from '@/i18n/locales'
+import { ALL_LOCALES, DEFAULT_LOCALE, LOCALE_DEFINITIONS, DEFAULT_LOCALES } from '@/i18n/locales'
 import type { Locale } from '@/i18n/locales'
 
 /**
@@ -107,7 +107,7 @@ export const SiteSettings: GlobalConfig = {
       type: 'select',
       hasMany: true,
       required: true,
-      defaultValue: [...ROUTED_LOCALES],
+      defaultValue: [...DEFAULT_LOCALES],
       options: LOCALE_DEFINITIONS.map(({ code, label }) => ({ value: code, label })),
       hooks: { beforeChange: [({ value }) => withDefaultLocale(value)] },
       admin: {
