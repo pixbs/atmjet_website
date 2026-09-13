@@ -5,7 +5,7 @@ import React from 'react'
 
 import { PAGE_LOCALES } from '@/collections/Pages'
 import { routing } from '@/i18n/routing'
-import { getPayloadClient } from '@/lib/data'
+import { getPayloadClient, listPageParams } from '@/lib/data'
 
 /**
  * Renders a page document at `/<locale>/<slug>` (issue #60), with the locale root serving the
@@ -40,26 +40,7 @@ async function findPage(locale: string, slug: string) {
 }
 
 export async function generateStaticParams(): Promise<PageParams[]> {
-  const payload = await getPayloadClient()
-  const params: PageParams[] = []
-
-  for (const locale of PAGE_LOCALES) {
-    const pages = await payload.find({
-      collection: 'pages',
-      locale,
-      limit: 0,
-      depth: 0,
-      select: { slug: true },
-      overrideAccess: false,
-    })
-
-    for (const page of pages.docs) {
-      const slug = page.slug ?? ''
-      params.push({ locale, slug: slug === '' ? [] : slug.split('/') })
-    }
-  }
-
-  return params
+  return listPageParams(PAGE_LOCALES)
 }
 
 export async function generateMetadata({
