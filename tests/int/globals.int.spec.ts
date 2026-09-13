@@ -2,6 +2,8 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vites
 
 import type { TypedUser } from 'payload'
 
+import { DEFAULT_LOCALES } from '@/i18n/locales'
+import { getEnabledLocales } from '@/lib/data/site-settings'
 import { createAdmin, createUser } from '../factories'
 import { createRegistry, uniqueSuffix, type TestRegistry } from '../helpers/payload'
 
@@ -75,6 +77,25 @@ describe('site settings', () => {
     const settings = await registry.payload.findGlobal({ slug: 'site-settings' })
 
     expect(settings.enabledLocales).toEqual(['en', 'ru'])
+  })
+
+  it('is what the site reads to decide which locales it serves', async () => {
+    await registry.payload.updateGlobal({
+      slug: 'site-settings',
+      data: { enabledLocales: ['en', 'ru', 'uk'] },
+      overrideAccess: true,
+    })
+
+    await expect(getEnabledLocales()).resolves.toEqual(['en', 'ru', 'uk'])
+
+    await registry.payload.updateGlobal({
+      slug: 'site-settings',
+      data: { enabledLocales: [...DEFAULT_LOCALES] },
+      overrideAccess: true,
+    })
+
+    // Enabling a language in the admin is all it takes: no deploy, no constant to edit.
+    await expect(getEnabledLocales()).resolves.toEqual([...DEFAULT_LOCALES])
   })
 
   it('keeps English enabled even when it is left out of the selection', async () => {

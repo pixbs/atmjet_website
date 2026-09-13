@@ -1,11 +1,12 @@
-import { hasLocale, NextIntlClientProvider } from 'next-intl'
+import { NextIntlClientProvider } from 'next-intl'
 import { setRequestLocale } from 'next-intl/server'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import React from 'react'
 
 import { MotionProvider } from '@/components/providers/motion-provider'
-import { routing } from '@/i18n/routing'
+import type { Locale } from '@/i18n/locales'
+import { getEnabledLocales } from '@/lib/data/site-settings'
 
 import '../globals.css'
 
@@ -19,8 +20,8 @@ export const metadata: Metadata = {
  * catalogue both depend on the locale, and because every frontend route carries the prefix
  * (ADR-0003). The Payload admin has its own root layout under `(payload)`.
  */
-export function generateStaticParams(): Array<{ locale: string }> {
-  return routing.locales.map((locale) => ({ locale }))
+export async function generateStaticParams(): Promise<Array<{ locale: string }>> {
+  return (await getEnabledLocales()).map((locale) => ({ locale }))
 }
 
 export default async function LocaleLayout({
@@ -32,9 +33,9 @@ export default async function LocaleLayout({
 }) {
   const { locale } = await params
 
-  // A prefix that is not a routed locale never reaches a page (ADR-0003: hidden locales stay
-  // unreachable until SiteSettings enables them).
-  if (!hasLocale(routing.locales, locale)) {
+  // A prefix that is not an enabled locale never reaches a page: the proxy stops routing it and
+  // this is the second door, for a request that arrives at the route directly (issue #53).
+  if (!(await getEnabledLocales()).includes(locale as Locale)) {
     notFound()
   }
 

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { ALL_LOCALES, DEFAULT_LOCALE, LOCALE_DEFINITIONS, ROUTED_LOCALES } from '@/i18n/locales'
+import { ALL_LOCALES, DEFAULT_LOCALE, DEFAULT_LOCALES, LOCALE_DEFINITIONS } from '@/i18n/locales'
 import { routing } from '@/i18n/routing'
 
 /**
@@ -9,12 +9,12 @@ import { routing } from '@/i18n/routing'
  * covered by tests/e2e/i18n.e2e.spec.ts.
  */
 describe('locale list', () => {
-  it('keeps every routed locale inside the Payload set', () => {
-    expect(ROUTED_LOCALES.every((locale) => ALL_LOCALES.includes(locale))).toBe(true)
+  it('keeps every default locale inside the Payload set', () => {
+    expect(DEFAULT_LOCALES.every((locale) => ALL_LOCALES.includes(locale))).toBe(true)
   })
 
-  it('defaults to a routed locale', () => {
-    expect(ROUTED_LOCALES).toContain(DEFAULT_LOCALE)
+  it('serves the default locale out of the box', () => {
+    expect(DEFAULT_LOCALES).toContain(DEFAULT_LOCALE)
   })
 
   it('defines every locale once, in the same order', () => {
@@ -23,8 +23,10 @@ describe('locale list', () => {
 })
 
 describe('next-intl routing', () => {
-  it('is built from the shared locale list', () => {
-    expect(routing.locales).toBe(ROUTED_LOCALES)
+  it('recognises every locale an editor can enable, not only the default ones', () => {
+    // Which of them the site serves is decided per request by the proxy (issue #53); a locale
+    // missing here could not be routed at all without a deploy.
+    expect(routing.locales).toBe(ALL_LOCALES)
     expect(routing.defaultLocale).toBe(DEFAULT_LOCALE)
   })
 

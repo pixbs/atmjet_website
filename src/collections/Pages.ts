@@ -2,7 +2,6 @@ import type { CollectionConfig } from 'payload'
 
 import { editorOrAdmin, publishedOnly } from '@/access'
 import { revalidateCollection } from '@/hooks/revalidate'
-import { ROUTED_LOCALES } from '@/i18n/locales'
 
 /**
  * The content pages of the site (issue #60). The legacy site hard-coded all thirteen of them as
@@ -97,6 +96,3 @@ export const Pages: CollectionConfig = {
     },
   ],
 }
-
-/** The locales a page is prerendered for. Kept here so the route and the seed agree. */
-export const PAGE_LOCALES = ROUTED_LOCALES
