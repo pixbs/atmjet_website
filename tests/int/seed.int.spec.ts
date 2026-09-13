@@ -1,5 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { runSeed } from '../../scripts/seed'
+import { SEEDED_GLOBALS } from '../../scripts/seed/globals'
 import { SEED_IMAGES } from '../../scripts/seed/media'
 import { LEGACY_REDIRECTS } from '../../scripts/seed/redirects'
 import { SEED_ADMIN } from '../../scripts/seed/users'
@@ -7,10 +8,11 @@ import { PAGE_SLUGS } from '../../src/collections/Pages'
 import { createRegistry, type TestRegistry } from '../helpers/payload'
 
 /**
- * One admin, the placeholder images, one page per static route, and the legacy redirect map
- * (issues #41, #60 and #69).
+ * One admin, the placeholder images, one page per static route, the chrome globals and the
+ * legacy redirect map (issues #41, #60, #61 and #69).
  */
-const EXPECTED_DOCUMENTS = 1 + SEED_IMAGES.length + PAGE_SLUGS.length + LEGACY_REDIRECTS.length
+const EXPECTED_DOCUMENTS =
+  1 + SEED_IMAGES.length + PAGE_SLUGS.length + SEEDED_GLOBALS.length + LEGACY_REDIRECTS.length
 
 let registry: TestRegistry
 
@@ -76,6 +78,13 @@ describe('seed', () => {
       })
       expect(pages.totalDocs).toBe(PAGE_SLUGS.length)
       expect(pages.docs.every((doc) => doc._status === 'published')).toBe(true)
+
+      // The chrome is filled in rather than left as an empty menu (issue #61). What it holds is
+      // asserted in tests/int/globals.int.spec.ts: a global is a single document, so a suite
+      // running in a parallel worker may already have written its own navigation over the seed's.
+      expect(first.outcomes.filter((outcome) => outcome.collection === 'globals')).toHaveLength(
+        SEEDED_GLOBALS.length,
+      )
     },
     SEED_TIMEOUT,
   )
