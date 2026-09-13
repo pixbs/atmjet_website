@@ -1,4 +1,4 @@
-# ADR-0008: Lean conventions: slices, merge commits, Payload's migration workflow, fixed coverage, one enforcement layer
+# ADR-0008: Lean conventions: slices, squash merges, Payload's migration workflow, fixed coverage, one enforcement layer
 
 Status: accepted (2026-09-13). Amends ADR-0001 (merging, pull request scope), ADR-0002 (item 4, development workflow), ADR-0004 (coverage ratchet, tests-required gate) and ADR-0005 (enforcement layers 3 and 6, self-test).
 
@@ -16,7 +16,7 @@ The rules produced this, not the people or the tools running them:
 
 ## Decision
 
-1. **Merge commits.** `master` accepts merge commits only; the ruleset no longer requires linear history. Stacked pull requests merge bottom-up; when a merged head branch is deleted, GitHub retargets the next one to `master`.
+1. **Squash merges.** `master` holds one commit per pull request, named after it, so the history reads as the list of slices; the ruleset allows squash only and no longer requires linear history. Stacked pull requests merge bottom-up: when a merged head branch is deleted, GitHub retargets the next one to `master`, and its diff shows the lower slice again until it merges, one more reason to keep stacks two deep.
 2. **One pull request = one shippable slice.** A page with its blocks, a block with its components, a collection with the page or import that reads it, or one process change. A slice may close several issues. Aim for 200 to 800 hand-written lines, generated files excluded; above 1,000, split. Merge each slice before starting the next; stack at most two open pull requests.
 3. **Payload's migration workflow.** Drizzle push runs only under `next dev` (`push: process.env.NODE_ENV === 'development'`; the adapter's own default would also push during seeding and tests, which the docs warn against mixing with migrations); seeding, tests, CI, previews and production apply committed migrations; one migration per finished slice. The CI drift check stays. Before the first production database exists, the accumulated migrations are squashed into one initial migration (#229).
 4. **Generated files are marked generated.** Migration snapshots, `src/payload-types.ts`, the admin import map and the legacy visual manifest carry `linguist-generated` in `.gitattributes`: hidden by default in pull request diffs and excluded from language statistics.

@@ -9,7 +9,7 @@ Settings that cannot live in code. Tick them in the epic issue (#3) as they are 
 
 ## Repository settings (Settings → General)
 
-- [ ] Pull requests: allow **merge commits only**; disable rebase merging and squash merging (#227).
+- [ ] Pull requests: allow **squash merging only**, default commit message: pull request title; disable merge commits and rebase merging (#227).
 - [ ] Automatically delete head branches; allow auto-merge.
 - [ ] Features: disable Wiki and Projects unless used; issues stay enabled with the forms in `.github/ISSUE_TEMPLATE`.
 - [ ] Description and topics (payload, nextjs, bun, tailwindcss).
@@ -17,7 +17,7 @@ Settings that cannot live in code. Tick them in the epic issue (#3) as they are 
 
 ## Rules (Settings → Rules → Rulesets → Import)
 
-- [ ] Import `.github/rulesets/master.json` (pull requests merged with a merge commit, required checks `conventions` and `ci`, no force push or deletion).
+- [ ] Import `.github/rulesets/master.json` (pull requests squash-merged, required checks `conventions` and `ci`, no force push or deletion).
 - [ ] Import `.github/rulesets/legacy-branch.json` and `.github/rulesets/legacy-tags.json` (read-only legacy refs).
 - [ ] After the first pull request run, confirm the two required checks are recognised (the check names must match exactly: `conventions`, `ci`).
 

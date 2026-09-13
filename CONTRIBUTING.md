@@ -10,7 +10,7 @@ This repository is rebuilt from scratch on Payload 3 + Next.js 16 + Bun. The rul
 
 ## Branches, commits and pull requests
 
-- One pull request = one shippable slice (a page with its blocks, a block with its components, a collection with the page or import that reads it, or one process change); it closes every issue it completes. Aim for 200 to 800 hand-written lines, generated files excluded. Merge each slice before starting the next; stack at most two open pull requests (`gh pr create --base <lower-branch>`). Pull requests are merged with **a merge commit** (the only merge method), bottom-up for a stack.
+- One pull request = one shippable slice (a page with its blocks, a block with its components, a collection with the page or import that reads it, or one process change); it closes every issue it completes. Aim for 200 to 800 hand-written lines, generated files excluded. Merge each slice before starting the next; stack at most two open pull requests (`gh pr create --base <lower-branch>`). Pull requests are **squash-merged** (the only merge method): `master` holds one commit per pull request, named after it; a stack merges bottom-up.
 - Branch names: `<type>/<issue>-<kebab-slug>` (`feat/42-hero-video-block`). `scripts/ci/check-branch-name.sh` documents the exact rule.
 - Commits follow [Conventional Commits](https://www.conventionalcommits.org): `type(scope): lowercase subject`, at most 100 characters, one verified step per commit, `Refs #<issue>` in the footer. `commitlint` runs on every commit.
 - Pull request titles follow the same format; the body comes from the template and closes its issue.
