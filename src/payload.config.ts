@@ -28,9 +28,9 @@ export default buildConfig({
     pool: {
       connectionString: process.env.DATABASE_URL || '',
     },
-    // Schema changes go through committed migrations only (never drizzle push),
-    // so no environment can be altered implicitly. See docs/adr/0002.
-    push: false,
+    // Drizzle push only under `next dev`, against the disposable local database;
+    // CI, previews and production apply the committed migrations. See docs/adr/0008.
+    push: process.env.NODE_ENV === 'development',
     migrationDir: path.resolve(dirname, 'migrations'),
   }),
   // en/ru are public; uk is entered in the admin but stays hidden from routing
