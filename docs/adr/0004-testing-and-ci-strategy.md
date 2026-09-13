@@ -18,4 +18,5 @@ The legacy repository had no tests and no CI. The rewrite must look exactly like
 ## Consequences
 
 - A pull request without the tests its issue lists is not done (`CONTRIBUTING.md`, PR template).
+- Every automated tier drives Chromium, so WebKit and Gecko are covered manually: `docs/runbooks/cross-browser-checklist.md` runs at the end of E6, E7 and E8 and again before the cutover.
 - The `e2e` workflow only fires from the default branch; it is verified after the first merge with `workflow_dispatch`.
