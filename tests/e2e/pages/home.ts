@@ -1,17 +1,18 @@
 import { expect, type APIRequestContext, type Locator, type Page } from '@playwright/test'
 import { pathFor, type Locale } from '../routes'
 
-/** Page object for the home page. Locators describe what a visitor sees, not the markup. */
+/**
+ * Page object for the home page, which is the `pages` document with the empty slug (issue #60).
+ * Locators describe what a visitor sees, not the markup.
+ */
 export class HomePage {
   readonly heading: Locator
-  readonly adminLink: Locator
 
   constructor(
     readonly page: Page,
     readonly locale: Locale,
   ) {
     this.heading = page.getByRole('heading', { level: 1 })
-    this.adminLink = page.getByRole('link', { name: 'Go to admin panel' })
   }
 
   get path(): string {

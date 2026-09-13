@@ -1,5 +1,6 @@
 import { postgresAdapter } from '@payloadcms/db-postgres'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
+import { seoPlugin } from '@payloadcms/plugin-seo'
 import { en } from '@payloadcms/translations/languages/en'
 import { ru } from '@payloadcms/translations/languages/ru'
 import { uk } from '@payloadcms/translations/languages/uk'
@@ -10,6 +11,7 @@ import sharp from 'sharp'
 
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
+import { Pages } from './collections/Pages'
 import { DEFAULT_LOCALE, LOCALE_DEFINITIONS } from './i18n/locales'
 
 const filename = fileURLToPath(import.meta.url)
@@ -37,7 +39,7 @@ export default buildConfig({
   i18n: {
     supportedLanguages: { en, ru, uk },
   },
-  collections: [Users, Media],
+  collections: [Users, Media, Pages],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
@@ -62,5 +64,12 @@ export default buildConfig({
     fallback: true,
   },
   sharp,
-  plugins: [],
+  plugins: [
+    // Localized meta fields per page; E11.1 refines what each route actually emits.
+    seoPlugin({
+      collections: ['pages'],
+      uploadsCollection: 'media',
+      generateTitle: ({ doc }) => (doc as { title?: string }).title ?? '',
+    }),
+  ],
 })

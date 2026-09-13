@@ -39,6 +39,7 @@
   "dependencies": {
     "@payloadcms/db-postgres": "3.89.0",
     "@payloadcms/next": "3.89.0",
+    "@payloadcms/plugin-seo": "3.89.0",
     "@payloadcms/richtext-lexical": "3.89.0",
     "@payloadcms/ui": "3.89.0",
     "@tailwindcss/postcss": "^4.3.3",

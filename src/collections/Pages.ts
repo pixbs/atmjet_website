@@ -1,0 +1,104 @@
+import type { CollectionConfig } from 'payload'
+
+import { editorOrAdmin, publishedOnly } from '@/access'
+import { ROUTED_LOCALES } from '@/i18n/locales'
+import { nextRevalidationHooks } from '@/lib/data/revalidate-next'
+
+/**
+ * The content pages of the site (issue #60). The legacy site hard-coded all thirteen of them as
+ * React files (`docs/legacy-inventory.md` section 2.1), so a copy change meant a deploy; here
+ * they are documents an editor owns.
+ *
+ * `layout` is the blocks field every ported section lands in (E7). It is deliberately empty
+ * until then, so this collection can ship, be seeded and be rendered before the first block
+ * exists.
+ */
+
+/** The thirteen static routes of section 2.1. The empty slug is the home page. */
+export const PAGE_SLUGS = [
+  '',
+  'aircraft',
+  'atm_jet_group',
+  'business_agents',
+  'cargo_charter',
+  'citizens',
+  'empty_legs',
+  'group_charters',
+  'medical_aviation',
+  'partners',
+  'sales_dept',
+  'sales_yachts',
+  'yachts',
+] as const
+
+export type PageSlug = (typeof PAGE_SLUGS)[number]
+
+/** The path a page is served at. The home page is the locale root, not `/en/home`. */
+export function pathForPage(locale: string, slug: string): string {
+  return slug === '' ? `/${locale}` : `/${locale}/${slug}`
+}
+
+const revalidation = nextRevalidationHooks('pages')
+
+export const Pages: CollectionConfig = {
+  slug: 'pages',
+  admin: {
+    useAsTitle: 'title',
+    defaultColumns: ['title', 'slug', '_status', 'updatedAt'],
+    livePreview: {
+      // One preview per routed locale, so an editor sees the page they are actually editing.
+      url: ({ data, req }) =>
+        `${req.payload.config.serverURL}${pathForPage(String(req.locale ?? 'en'), String(data?.slug ?? ''))}`,
+    },
+  },
+  access: {
+    // A visitor sees published pages; the people who run the content see drafts too, which is
+    // what makes live preview and the admin list work (docs/access-matrix.md).
+    read: publishedOnly,
+    create: editorOrAdmin,
+    update: editorOrAdmin,
+    delete: editorOrAdmin,
+  },
+  hooks: {
+    afterChange: [revalidation.afterChange],
+    afterDelete: [revalidation.afterDelete],
+  },
+  versions: {
+    drafts: {
+      autosave: { interval: 375 },
+      schedulePublish: true,
+    },
+    maxPerDoc: 25,
+  },
+  fields: [
+    {
+      name: 'title',
+      type: 'text',
+      required: true,
+      localized: true,
+      admin: { description: 'Shown in the admin and used as the default SEO title.' },
+    },
+    {
+      name: 'slug',
+      type: 'text',
+      required: false,
+      unique: true,
+      index: true,
+      admin: {
+        position: 'sidebar',
+        description:
+          'The path after the locale, without a leading slash. Empty means the home page. Not localized: the legacy URLs are identical in every language and parity depends on that.',
+      },
+    },
+    {
+      name: 'layout',
+      type: 'blocks',
+      // Sections land here one at a time in E7; an empty list keeps the field valid until then.
+      blocks: [],
+      admin: { description: 'The sections of this page, in the order they are rendered.' },
+    },
+  ],
+}
+
+/** The locales a page is prerendered for. Kept here so the route and the seed agree. */
+export const PAGE_LOCALES = ROUTED_LOCALES
