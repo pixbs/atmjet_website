@@ -2,5 +2,12 @@
   "common": {
     "skipToContent": "Перейти к содержимому",
     "loading": "Загрузка"
+  },
+  "units": {
+    "hours": "{count, plural, one {# час} few {# часа} many {# часов} other {# часа}}",
+    "guests": "{count, plural, one {# гость} few {# гостя} many {# гостей} other {# гостя}}",
+    "cabins": "{count, plural, one {# каюта} few {# каюты} many {# кают} other {# каюты}}",
+    "bathrooms": "{count, plural, one {# ванная} few {# ванные} many {# ванных} other {# ванные}}",
+    "passengers": "{count, plural, one {# пассажир} few {# пассажира} many {# пассажиров} other {# пассажира}}"
   }
 }

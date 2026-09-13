@@ -108,7 +108,13 @@ Listed so nobody ports them by accident. The disposition is #110.
 
 `tests/unit/no-locale-ternaries.test.ts` runs ESLint over fixtures for every spelling of the pattern, and over the paths that are deliberately exempt. The fixtures are strings rather than files, because a file containing the pattern would be flagged by the repository's own lint run.
 
-## 7. What is left over
+## 7. Counting
+
+The legacy site pluralised exactly one string, by hand and in Russian only: `pluralizeHours` in `yachts/yacht_card.tsx`, choosing between `час`, `часа` and `часов` with `% 10` and `% 100` arithmetic. Everything else it counted was printed in one fixed form whatever the number, so a Russian visitor read `1 гостей` and `1 каюты`, and an English one read `min 1 hours`.
+
+The `units` namespace of `src/messages/{en,ru,uk}.json` is the vocabulary that replaces both (#167). `hours` reproduces the legacy Russian rule exactly, teens included; `guests`, `cabins`, `bathrooms` and `passengers` are correct plurals that nothing reaches yet, because whether a page keeps the legacy fixed form is a parity question for the page issue that renders it (E8.6 and E8.7), not for the catalogue.
+
+## 8. What is left over
 
 Two things in this audit are decisions, not work:
 

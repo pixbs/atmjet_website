@@ -2,5 +2,12 @@
   "common": {
     "skipToContent": "Skip to content",
     "loading": "Loading"
+  },
+  "units": {
+    "hours": "{count, plural, one {# hour} other {# hours}}",
+    "guests": "{count, plural, one {# guest} other {# guests}}",
+    "cabins": "{count, plural, one {# cabin} other {# cabins}}",
+    "bathrooms": "{count, plural, one {# bathroom} other {# bathrooms}}",
+    "passengers": "{count, plural, one {# passenger} other {# passengers}}"
   }
 }
