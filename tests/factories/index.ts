@@ -1,5 +1,6 @@
 export * from './contacts'
 export * from './empty-legs'
+export * from './leads'
 export * from './media'
 export * from './users'
 export * from './yachts'
