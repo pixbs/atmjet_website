@@ -1,5 +1,7 @@
 import type { CollectionConfig } from 'payload'
 
+import { nextRevalidationHooks } from '@/lib/data/revalidate-next'
+
 /**
  * Uploads (issue #62). The legacy admin accepted any file type and every image was served in
  * whatever size it happened to have (docs/legacy-inventory.md sections 12 and 14), so two things
@@ -37,6 +39,12 @@ export const IMAGE_SIZES = [
 export const Media: CollectionConfig = {
   slug: 'media',
   admin: { useAsTitle: 'filename', defaultColumns: ['filename', 'alt', 'updatedAt'] },
+  // Media feeds every page that renders an image, so a save has to drop the cached HTML that
+  // embedded it (ADR-0007, docs/conventions/rendering.md).
+  hooks: {
+    afterChange: [nextRevalidationHooks('media').afterChange],
+    afterDelete: [nextRevalidationHooks('media').afterDelete],
+  },
   access: {
     // Uploads are public; everything that changes them needs an authenticated editor.
     read: () => true,
