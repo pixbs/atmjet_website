@@ -1,6 +1,6 @@
 # ADR-0001: Repository reset, branching, merging and CI gating
 
-Status: accepted (2026-09-11)
+Status: accepted (2026-09-11); merging and pull request scope amended by [ADR-0008](0008-lean-conventions.md) (2026-09-13)
 
 ## Context
 

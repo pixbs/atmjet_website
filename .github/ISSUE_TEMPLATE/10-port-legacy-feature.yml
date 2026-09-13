@@ -6,7 +6,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        One issue = one pull request. Read `AGENTS.md` first. Reference the legacy code by file path and by the anchor in `docs/legacy-inventory.md`.
+        One pull request = one shippable slice; it may close several issues. Read `AGENTS.md` first. Reference the legacy code by file path and by the anchor in `docs/legacy-inventory.md`.
   - type: input
     id: legacy-reference
     attributes:

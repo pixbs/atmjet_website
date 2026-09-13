@@ -25,7 +25,7 @@ export default defineConfig({
         'src/access/**',
       ],
       exclude: ['**/*.d.ts'],
-      // Ratchet: these numbers may only go up. Raise them in the PR that adds tests.
+      // Fixed thresholds (ADR-0008): change them only in a pull request that says why.
       thresholds: {
         statements: 80,
         lines: 80,
