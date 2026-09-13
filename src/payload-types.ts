@@ -71,6 +71,7 @@ export interface Config {
     media: Media;
     pages: Page;
     airports: Airport;
+    aircraft: Aircraft;
     'payload-kv': PayloadKv;
     'payload-jobs': PayloadJob;
     'payload-locked-documents': PayloadLockedDocument;
@@ -83,6 +84,7 @@ export interface Config {
     media: MediaSelect<false> | MediaSelect<true>;
     pages: PagesSelect<false> | PagesSelect<true>;
     airports: AirportsSelect<false> | AirportsSelect<true>;
+    aircraft: AircraftSelect<false> | AircraftSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-jobs': PayloadJobsSelect<false> | PayloadJobsSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
@@ -299,6 +301,145 @@ export interface Airport {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "aircraft".
+ */
+export interface Aircraft {
+  id: number;
+  /**
+   * The registration as it is painted on the aircraft, hyphens included.
+   */
+  registrationDisplay: string;
+  /**
+   * Canonical registration, derived from the one above by upper-casing and removing hyphens. The natural key the import merges on.
+   */
+  registration?: string | null;
+  /**
+   * The legacy slug, kept so /aircraft/<slug> does not move.
+   */
+  slug?: string | null;
+  availability?: ('available' | 'unavailable') | null;
+  /**
+   * From the legacy is_for_charter, is_for_sale, is_for_lease and is_cargo.
+   */
+  offerings?: ('charter' | 'sale' | 'lease' | 'cargo')[] | null;
+  /**
+   * The aircraft type, as the legacy aircraft_type_* columns describe it.
+   */
+  type?: {
+    name?: string | null;
+    slug?: string | null;
+    category?: string | null;
+    manufacturer?: string | null;
+    model?: string | null;
+  };
+  specification?: {
+    passengers?: number | null;
+    typePassengers?: number | null;
+    rangeMaximum?: number | null;
+    speedTypical?: number | null;
+    cabinHeight?: number | null;
+    cabinLength?: number | null;
+    cabinWidth?: number | null;
+    yearOfProduction?: number | null;
+    serialNumber?: string | null;
+    hoursFlown?: number | null;
+    cycles?: number | null;
+    interiorRefit?: string | null;
+    exteriorRefit?: string | null;
+    luggageVolume?: string | null;
+    sleepingPlaces?: number | null;
+    divanSeats?: number | null;
+    beds?: number | null;
+  };
+  /**
+   * The legacy extension_* booleans. Stored but not rendered today.
+   */
+  amenities?: {
+    cabinCrew?: boolean | null;
+    lavatory?: boolean | null;
+    shower?: boolean | null;
+    hotMeal?: boolean | null;
+    wirelessInternet?: boolean | null;
+    satellitePhone?: boolean | null;
+    petsAllowed?: boolean | null;
+    refurbishment?: boolean | null;
+  };
+  operator?: {
+    companyName?: string | null;
+    companySlug?: string | null;
+    technicalOperator?: string | null;
+  };
+  /**
+   * Resolved from the legacy airport_icao during the import of E5.6.
+   */
+  baseAirport?: (number | null) | Airport;
+  /**
+   * From the legacy extension_description. Localized, unlike the source column, which held one language.
+   */
+  description?: string | null;
+  specialEquipment?: string | null;
+  /**
+   * The legacy extension_view_360 iframe source, when there is one.
+   */
+  view360Url?: string | null;
+  brochure?: {
+    url?: string | null;
+    name?: string | null;
+  };
+  /**
+   * In the order they are shown. The first is the hero; the rich detail layout needs more than one.
+   */
+  images?:
+    | {
+        type: 'exterior' | 'cabin' | 'cockpit';
+        media?: (number | null) | Media;
+        /**
+         * Set while the file still lives on a legacy host, as on Media.
+         */
+        externalUrl?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Every legacy column with no field of its own, kept verbatim so nothing is lost before E5.13 reconciles.
+   */
+  legacyAttributes?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  /**
+   * Where this document came from (ADR-0002 section 8).
+   */
+  provenance: {
+    origin: 'aircrafts-catalog' | 'vehicles-legacy' | 'manual';
+    legacyAircraftId?: number | null;
+    legacyVehicleId?: number | null;
+    legacyTailNumber?: string | null;
+    legacySlug?: string | null;
+    /**
+     * Every legacy row folded into this document.
+     */
+    mergedFrom?:
+      | {
+          table: string;
+          id: number;
+        }[]
+      | null;
+    importRunId?: string | null;
+    importedAt?: string | null;
+    verifiedAt?: string | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -428,6 +569,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'airports';
         value: number | Airport;
+      } | null)
+    | ({
+        relationTo: 'aircraft';
+        value: number | Aircraft;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -596,6 +741,106 @@ export interface AirportsSelect<T extends boolean = true> {
   wikidata?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "aircraft_select".
+ */
+export interface AircraftSelect<T extends boolean = true> {
+  registrationDisplay?: T;
+  registration?: T;
+  slug?: T;
+  availability?: T;
+  offerings?: T;
+  type?:
+    | T
+    | {
+        name?: T;
+        slug?: T;
+        category?: T;
+        manufacturer?: T;
+        model?: T;
+      };
+  specification?:
+    | T
+    | {
+        passengers?: T;
+        typePassengers?: T;
+        rangeMaximum?: T;
+        speedTypical?: T;
+        cabinHeight?: T;
+        cabinLength?: T;
+        cabinWidth?: T;
+        yearOfProduction?: T;
+        serialNumber?: T;
+        hoursFlown?: T;
+        cycles?: T;
+        interiorRefit?: T;
+        exteriorRefit?: T;
+        luggageVolume?: T;
+        sleepingPlaces?: T;
+        divanSeats?: T;
+        beds?: T;
+      };
+  amenities?:
+    | T
+    | {
+        cabinCrew?: T;
+        lavatory?: T;
+        shower?: T;
+        hotMeal?: T;
+        wirelessInternet?: T;
+        satellitePhone?: T;
+        petsAllowed?: T;
+        refurbishment?: T;
+      };
+  operator?:
+    | T
+    | {
+        companyName?: T;
+        companySlug?: T;
+        technicalOperator?: T;
+      };
+  baseAirport?: T;
+  description?: T;
+  specialEquipment?: T;
+  view360Url?: T;
+  brochure?:
+    | T
+    | {
+        url?: T;
+        name?: T;
+      };
+  images?:
+    | T
+    | {
+        type?: T;
+        media?: T;
+        externalUrl?: T;
+        id?: T;
+      };
+  legacyAttributes?: T;
+  provenance?:
+    | T
+    | {
+        origin?: T;
+        legacyAircraftId?: T;
+        legacyVehicleId?: T;
+        legacyTailNumber?: T;
+        legacySlug?: T;
+        mergedFrom?:
+          | T
+          | {
+              table?: T;
+              id?: T;
+            };
+        importRunId?: T;
+        importedAt?: T;
+        verifiedAt?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
