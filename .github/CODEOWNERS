@@ -9,5 +9,5 @@
 /docs/adr/      @pixbs
 /scripts/ci/    @pixbs
 
-# Coverage thresholds only go up (tests/README.md); raising or lowering them needs the owner
+# Coverage thresholds are fixed numbers (ADR-0008); changing them needs the owner
 /vitest.config.mts @pixbs
