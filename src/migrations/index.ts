@@ -4,6 +4,7 @@ import * as migration_20260912_224124_localize_media_alt from './20260912_224124
 import * as migration_20260913_121639_add_user_roles from './20260913_121639_add_user_roles';
 import * as migration_20260913_122632_add_pages from './20260913_122632_add_pages';
 import * as migration_20260913_124553_add_airports from './20260913_124553_add_airports';
+import * as migration_20260913_130852_add_aircraft from './20260913_130852_add_aircraft';
 
 export const migrations = [
   {
@@ -34,6 +35,11 @@ export const migrations = [
   {
     up: migration_20260913_124553_add_airports.up,
     down: migration_20260913_124553_add_airports.down,
-    name: '20260913_124553_add_airports'
+    name: '20260913_124553_add_airports',
+  },
+  {
+    up: migration_20260913_130852_add_aircraft.up,
+    down: migration_20260913_130852_add_aircraft.down,
+    name: '20260913_130852_add_aircraft'
   },
 ];
