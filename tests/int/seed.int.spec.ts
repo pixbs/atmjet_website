@@ -2,7 +2,11 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { runSeed } from '../../scripts/seed'
 import { SEED_IMAGES } from '../../scripts/seed/media'
 import { SEED_ADMIN } from '../../scripts/seed/users'
+import { PAGE_SLUGS } from '../../src/collections/Pages'
 import { createRegistry, type TestRegistry } from '../helpers/payload'
+
+/** One admin, the placeholder images, and one page per static route (issues #41 and #60). */
+const EXPECTED_DOCUMENTS = 1 + SEED_IMAGES.length + PAGE_SLUGS.length
 
 let registry: TestRegistry
 
@@ -17,13 +21,13 @@ describe('seed', () => {
     const first = await runSeed(registry.payload)
     for (const outcome of first.outcomes)
       if (outcome.id !== undefined)
-        registry.track(outcome.collection as 'users' | 'media', outcome.id)
-    expect(first.created + first.unchanged).toBe(1 + SEED_IMAGES.length)
+        registry.track(outcome.collection as 'users' | 'media' | 'pages', outcome.id)
+    expect(first.created + first.unchanged).toBe(EXPECTED_DOCUMENTS)
 
     const second = await runSeed(registry.payload)
     expect(second.created).toBe(0)
     expect(second.updated).toBe(0)
-    expect(second.unchanged).toBe(1 + SEED_IMAGES.length)
+    expect(second.unchanged).toBe(EXPECTED_DOCUMENTS)
 
     const users = await registry.payload.find({
       collection: 'users',
@@ -36,5 +40,15 @@ describe('seed', () => {
     })
     expect(media.totalDocs).toBe(SEED_IMAGES.length)
     expect(media.docs.every((doc) => doc.width === 1280 && doc.height === 720)).toBe(true)
+
+    // Every static route has a published page, so no environment renders an empty site.
+    const pages = await registry.payload.find({
+      collection: 'pages',
+      where: { slug: { in: [...PAGE_SLUGS] } },
+      limit: 0,
+      overrideAccess: true,
+    })
+    expect(pages.totalDocs).toBe(PAGE_SLUGS.length)
+    expect(pages.docs.every((doc) => doc._status === 'published')).toBe(true)
   })
 })

@@ -1,17 +1,23 @@
 import { expect, forEachLocale, test } from './fixtures'
 
-forEachLocale(() => {
+/**
+ * The home page is the `pages` document whose slug is empty (issue #60), so these assertions
+ * follow the seeded content rather than the template placeholder that used to live here.
+ * E8.1 fills the layout in; the title is what proves the document reached the browser.
+ */
+const TITLES = { en: 'Home', ru: 'Главная' } as const
+
+forEachLocale((locale) => {
   test.describe('Home', () => {
     test('is rendered on the server', async ({ home, request }) => {
-      await home.expectServerRendered(request, 'Welcome to your new project.')
+      await home.expectServerRendered(request, TITLES[locale as keyof typeof TITLES])
     })
 
-    test('shows the placeholder content and links', async ({ home, page }) => {
+    test('shows the page a visitor asked for, in their locale', async ({ home, page }) => {
       await home.goto()
 
-      await expect(page).toHaveTitle(/ATM JET/)
-      await expect(home.heading).toHaveText('Welcome to your new project.')
-      await expect(home.adminLink).toHaveAttribute('href', '/admin')
+      await expect(page).toHaveTitle(/Home|Главная/)
+      await expect(home.heading).toHaveText(TITLES[locale as keyof typeof TITLES])
     })
   })
 })
