@@ -12,3 +12,9 @@
 *.mp4 binary
 *.webm binary
 *.pdf binary
+
+# Generated files: hidden by default in pull request diffs and excluded from language statistics
+src/migrations/*.json linguist-generated
+src/payload-types.ts linguist-generated
+src/app/(payload)/admin/importMap.js linguist-generated
+tests/visual/legacy/manifest.json linguist-generated
