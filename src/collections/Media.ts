@@ -1,5 +1,6 @@
 import type { CollectionConfig } from 'payload'
 
+import { anyone, editorOrAdmin } from '@/access'
 import { nextRevalidationHooks } from '@/lib/data/revalidate-next'
 
 /**
@@ -46,11 +47,11 @@ export const Media: CollectionConfig = {
     afterDelete: [nextRevalidationHooks('media').afterDelete],
   },
   access: {
-    // Uploads are public; everything that changes them needs an authenticated editor.
-    read: () => true,
-    create: ({ req: { user } }) => Boolean(user),
-    update: ({ req: { user } }) => Boolean(user),
-    delete: ({ req: { user } }) => Boolean(user),
+    // Uploads are public; everything that changes them needs an editor (docs/access-matrix.md).
+    read: anyone,
+    create: editorOrAdmin,
+    update: editorOrAdmin,
+    delete: editorOrAdmin,
   },
   fields: [
     {

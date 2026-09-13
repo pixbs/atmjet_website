@@ -5,6 +5,8 @@ import type { SeedOutcome } from './report'
 export const SEED_ADMIN = {
   email: process.env.SEED_ADMIN_EMAIL ?? 'dev@atmjet.local',
   password: process.env.SEED_ADMIN_PASSWORD ?? 'dev-password-change-me',
+  // A local environment needs someone who can create the other accounts (issue #70).
+  roles: ['admin' as const],
 }
 
 export async function seedUsers(payload: Payload): Promise<SeedOutcome[]> {
