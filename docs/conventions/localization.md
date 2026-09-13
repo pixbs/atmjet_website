@@ -6,16 +6,28 @@ How a field becomes translatable, what an empty translation renders, and where t
 
 `src/i18n/locales.ts` is the only place a locale is declared:
 
-| Export               | Value                  | Read by                                                         |
-| -------------------- | ---------------------- | --------------------------------------------------------------- |
-| `ALL_LOCALES`        | `en`, `ru`, `uk`       | the `Locale` type                                               |
-| `LOCALE_DEFINITIONS` | code, label, direction | `localization.locales` in `src/payload.config.ts`, the switcher |
-| `ROUTED_LOCALES`     | `en`, `ru`             | `src/i18n/routing.ts`, so only public locales get a URL         |
-| `DEFAULT_LOCALE`     | `en`                   | both of the above                                               |
+| Export               | Value                  | Read by                                                                                     |
+| -------------------- | ---------------------- | ------------------------------------------------------------------------------------------- |
+| `ALL_LOCALES`        | `en`, `ru`, `uk`       | the `Locale` type                                                                           |
+| `LOCALE_DEFINITIONS` | code, label, direction | `localization.locales` in `src/payload.config.ts`, the switcher                             |
+| `DEFAULT_LOCALES`    | `en`, `ru`             | the `SiteSettings.enabledLocales` default and the fallback when the database is unreachable |
+| `DEFAULT_LOCALE`     | `en`                   | all of the above                                                                            |
 
 The module imports nothing from Next or Payload, because the Payload config, the next-intl routing and the Vitest suites all load it and only the last runs outside Next. A unit test asserts the Payload config and the list agree, so the admin selector cannot drift from the public URLs.
 
-Adding a locale means adding one entry to `LOCALE_DEFINITIONS`, a catalogue under `src/messages/`, an admin translation in `i18n.supportedLanguages`, and a migration. Making it public is a separate step: it joins `ROUTED_LOCALES` (issue #53 moves that decision into `SiteSettings.enabledLocales`).
+Adding a locale means adding one entry to `LOCALE_DEFINITIONS`, a catalogue under `src/messages/`, an admin translation in `i18n.supportedLanguages`, and a migration. Making it public is a separate step, and not a code change at all: an administrator ticks it in `SiteSettings.enabledLocales` (issue #53).
+
+## Which locales the site serves
+
+`src/lib/data/site-settings.ts` reads that setting, and everything that turns a locale into a URL goes through it:
+
+| Consumer                                  | Effect                                                                   |
+| ----------------------------------------- | ------------------------------------------------------------------------ |
+| `src/proxy.ts`                            | routes and detects only enabled locales; a disabled prefix ends in a 404 |
+| `generateStaticParams` (layout and pages) | prerenders the enabled locales only                                      |
+| `[locale]/layout.tsx`                     | 404s a request that reaches the route with a disabled locale             |
+
+The proxy holds the setting for a minute rather than reading it per request, so enabling a language takes effect within that minute and without a deploy. English is always in the list, whatever is saved: a site that serves no language has no home page to redirect to. A build that cannot reach the database serves `DEFAULT_LOCALES` rather than failing.
 
 ## Fallback
 

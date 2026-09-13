@@ -1,6 +1,6 @@
 import type { Payload } from 'payload'
 
-import { DEFAULT_LOCALE, ROUTED_LOCALES, type Locale } from '../../src/i18n/locales'
+import { DEFAULT_LOCALE, DEFAULT_LOCALES, type Locale } from '../../src/i18n/locales'
 import type { SeedOutcome } from './report'
 
 /**
@@ -134,7 +134,7 @@ export async function seedGlobals(payload: Payload): Promise<SeedOutcome[]> {
     let written: { primaryNav?: WrittenRows; secondaryNav?: WrittenRows } | undefined
 
     // English first, then the translations onto the rows it created.
-    for (const locale of [DEFAULT_LOCALE, ...ROUTED_LOCALES.filter((l) => l !== DEFAULT_LOCALE)]) {
+    for (const locale of [DEFAULT_LOCALE, ...DEFAULT_LOCALES.filter((l) => l !== DEFAULT_LOCALE)]) {
       written = await payload.updateGlobal({
         slug,
         locale,
