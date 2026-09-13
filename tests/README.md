@@ -33,9 +33,9 @@ The design tokens are unit tested too: `tests/helpers/tailwind.ts` compiles `src
 
 `tests/int/harness.int.spec.ts` is the self-test of these rules.
 
-## Coverage ratchet
+## Coverage
 
-`bun run test:int` reports coverage for `src/collections`, `src/lib`, `src/utils`, `src/hooks` and `src/access` and fails under the thresholds in `vitest.config.mts`. Thresholds only go up: the pull request that raises coverage raises them to the new numbers in the same change; a pull request may not lower them. Reviewers check the thresholds line in the diff.
+`bun run test:int` reports coverage for `src/collections`, `src/lib`, `src/utils`, `src/hooks` and `src/access` and fails under the thresholds in `vitest.config.mts`. The thresholds are fixed numbers, not a ratchet (ADR-0008): a pull request changes them only when it says why. Coverage is a signal, not a target: a test asserts a behaviour the issue lists, never a constant, a type or an admin `condition` called directly.
 
 ## Browser tiers
 
