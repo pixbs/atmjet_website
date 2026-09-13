@@ -72,6 +72,7 @@ export interface Config {
     pages: Page;
     airports: Airport;
     aircraft: Aircraft;
+    contacts: Contact;
     'payload-kv': PayloadKv;
     'payload-jobs': PayloadJob;
     'payload-locked-documents': PayloadLockedDocument;
@@ -85,6 +86,7 @@ export interface Config {
     pages: PagesSelect<false> | PagesSelect<true>;
     airports: AirportsSelect<false> | AirportsSelect<true>;
     aircraft: AircraftSelect<false> | AircraftSelect<true>;
+    contacts: ContactsSelect<false> | ContactsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-jobs': PayloadJobsSelect<false> | PayloadJobsSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
@@ -439,6 +441,46 @@ export interface Aircraft {
   _status?: ('draft' | 'published') | null;
 }
 /**
+ * Personal data. Administrators only, and never rendered on the public site.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "contacts".
+ */
+export interface Contact {
+  id: number;
+  /**
+   * From the legacy contact.name.
+   */
+  name: string;
+  /**
+   * What this person does, in their own words: captain, broker, owner. No legacy column, so the import leaves it empty.
+   */
+  role?: string | null;
+  /**
+   * From the legacy contact.phone. Personal data.
+   */
+  phone?: string | null;
+  /**
+   * From the legacy contact.email. Personal data.
+   */
+  email?: string | null;
+  /**
+   * No legacy column, so the import leaves it empty. Media is public: do not upload anything here that the person would not want served from a URL.
+   */
+  photo?: (number | null) | Media;
+  /**
+   * Where this document came from (ADR-0002 section 8).
+   */
+  provenance: {
+    origin: 'contact-legacy' | 'manual';
+    legacyContactId?: number | null;
+    importRunId?: string | null;
+    importedAt?: string | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
@@ -573,6 +615,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'aircraft';
         value: number | Aircraft;
+      } | null)
+    | ({
+        relationTo: 'contacts';
+        value: number | Contact;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -841,6 +887,27 @@ export interface AircraftSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "contacts_select".
+ */
+export interface ContactsSelect<T extends boolean = true> {
+  name?: T;
+  role?: T;
+  phone?: T;
+  email?: T;
+  photo?: T;
+  provenance?:
+    | T
+    | {
+        origin?: T;
+        legacyContactId?: T;
+        importRunId?: T;
+        importedAt?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

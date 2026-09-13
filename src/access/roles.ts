@@ -1,4 +1,4 @@
-import type { TypedUser } from 'payload'
+import type { ClientUser, TypedUser } from 'payload'
 
 /**
  * Who can do what (docs/access-matrix.md). Two roles are enough for this site: editors run the
@@ -14,15 +14,22 @@ export type Role = (typeof ROLES)[number]
 
 export const DEFAULT_ROLE: Role = 'editor'
 
+/**
+ * Anything that might carry roles. `req.user` on the server is a full `TypedUser`, but the admin
+ * hands components a `ClientUser`, which is the same person with fewer fields; both are read the
+ * same way here, and neither is trusted to have the shape it claims.
+ */
+export type RoleBearer = TypedUser | ClientUser | { roles?: unknown } | null | undefined
+
 /** Narrows whatever is on `req.user` to the roles it actually carries. */
-export function rolesOf(user: TypedUser | null | undefined): Role[] {
+export function rolesOf(user: RoleBearer): Role[] {
   const raw = (user as { roles?: unknown } | null | undefined)?.roles
   if (!Array.isArray(raw)) return []
 
   return raw.filter((entry): entry is Role => (ROLES as readonly unknown[]).includes(entry))
 }
 
-export function hasRole(user: TypedUser | null | undefined, ...accepted: Role[]): boolean {
+export function hasRole(user: RoleBearer, ...accepted: Role[]): boolean {
   const held = rolesOf(user)
   return accepted.some((role) => held.includes(role))
 }
