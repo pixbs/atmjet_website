@@ -1,7 +1,7 @@
 import type { Payload } from 'payload'
 
 import { PAGE_SLUGS } from '../../src/collections/Pages'
-import { ROUTED_LOCALES } from '../../src/i18n/locales'
+import { DEFAULT_LOCALES } from '../../src/i18n/locales'
 import type { SeedOutcome } from './report'
 
 /**
@@ -55,7 +55,7 @@ export async function seedPages(payload: Payload): Promise<SeedOutcome[]> {
     })
 
     // The other routed locales are translations of the same document, not new ones.
-    for (const locale of ROUTED_LOCALES.filter((entry) => entry !== 'en')) {
+    for (const locale of DEFAULT_LOCALES.filter((entry) => entry !== 'en')) {
       await payload.update({
         collection: 'pages',
         id: created.id,
