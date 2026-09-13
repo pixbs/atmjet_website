@@ -1,5 +1,8 @@
 import { postgresAdapter } from '@payloadcms/db-postgres'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
+import { en } from '@payloadcms/translations/languages/en'
+import { ru } from '@payloadcms/translations/languages/ru'
+import { uk } from '@payloadcms/translations/languages/uk'
 import path from 'path'
 import { buildConfig } from 'payload'
 import { fileURLToPath } from 'url'
@@ -7,6 +10,7 @@ import sharp from 'sharp'
 
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
+import { DEFAULT_LOCALE, LOCALE_DEFINITIONS } from './i18n/locales'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -17,6 +21,10 @@ export default buildConfig({
     importMap: {
       baseDir: path.resolve(dirname),
     },
+  },
+  // The admin interface itself speaks the same three languages as the content (issue #54).
+  i18n: {
+    supportedLanguages: { en, ru, uk },
   },
   collections: [Users, Media],
   editor: lexicalEditor(),
@@ -33,15 +41,13 @@ export default buildConfig({
     push: process.env.NODE_ENV === 'development',
     migrationDir: path.resolve(dirname, 'migrations'),
   }),
-  // en/ru are public; uk is entered in the admin but stays hidden from routing
-  // until its catalog is complete (SiteSettings.enabledLocales). See docs/adr/0003.
+  // Built from the one locale list the routing also reads (src/i18n/locales.ts), so the admin
+  // selector and the public URLs can never drift apart. en/ru are public; uk is entered in the
+  // admin but stays hidden from routing until its catalogue is complete
+  // (SiteSettings.enabledLocales, issue #53). Fallback semantics: docs/adr/0003.
   localization: {
-    locales: [
-      { code: 'en', label: 'English' },
-      { code: 'ru', label: 'Русский' },
-      { code: 'uk', label: 'Українська' },
-    ],
-    defaultLocale: 'en',
+    locales: LOCALE_DEFINITIONS.map(({ code, label }) => ({ code, label })),
+    defaultLocale: DEFAULT_LOCALE,
     fallback: true,
   },
   sharp,
