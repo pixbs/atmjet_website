@@ -10075,7 +10075,7 @@
           "name": "file_id",
           "type": "integer",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         }
       },
       "indexes": {
@@ -10751,6 +10751,6 @@
     "tables": {},
     "columns": {}
   },
-  "id": "eb579c85-2082-4825-b95e-bdcaa3c5207e",
+  "id": "7034ecf3-9e50-47a9-845c-cb93d3b3b1e5",
   "prevId": "00000000-0000-0000-0000-000000000000"
 }

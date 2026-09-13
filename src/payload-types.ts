@@ -1700,7 +1700,7 @@ export interface SiteSetting {
   documents?:
     | {
         label: string;
-        file: number | Media;
+        file?: (number | null) | Media;
         id?: string | null;
       }[]
     | null;

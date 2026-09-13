@@ -103,7 +103,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"_locale" "_locales" NOT NULL,
   	"id" varchar PRIMARY KEY NOT NULL,
   	"label" varchar NOT NULL,
-  	"file_id" integer NOT NULL
+  	"file_id" integer
   );
   
   CREATE TABLE "site_settings_enabled_locales" (
