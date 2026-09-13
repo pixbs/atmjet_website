@@ -26,12 +26,12 @@ Never read Payload from a client component, and never fetch the initial content 
 
 | Page kind                                   | Strategy                                                             |
 | ------------------------------------------- | -------------------------------------------------------------------- |
-| Content pages (the 13 static routes)        | `generateStaticParams` over the routed locales, prerendered          |
+| Content pages (the 13 static routes)        | `generateStaticParams` over the enabled locales, prerendered         |
 | Collection detail (aircraft, yacht)         | `generateStaticParams` where the set is bounded, cached otherwise    |
 | Listings with `searchParams`                | Cached dynamic: rendered on demand, tagged, reused until invalidated |
 | Anything reading `headers()` or `cookies()` | Dynamic; keep it to the smallest possible subtree                    |
 
-`generateStaticParams` reads `routing.locales`, never a hard-coded list, so a locale becoming public (issue #53) changes what is prerendered without touching a page.
+`generateStaticParams` reads `getEnabledLocales()` (`src/lib/data/site-settings.ts`), never a hard-coded list, so a language an administrator enables is prerendered without touching a page (issue #53).
 
 Reaching for `headers()` or `cookies()` at the top of a page makes the whole page dynamic. Push it into a leaf, or read it in a client island, so the shell can still be prerendered.
 
@@ -78,7 +78,7 @@ For any pull request that adds or changes a page, a block or a collection:
 - [ ] Data is read through `getPayloadClient()` with a justified `depth` and an explicit `select` on listings.
 - [ ] The initial content is in the server response; the e2e test asserts it on the raw HTML.
 - [ ] `'use client'` appears only on leaves, never on a page or a block wrapper.
-- [ ] Static where it can be: `generateStaticParams` reads the routed locales.
+- [ ] Static where it can be: `generateStaticParams` reads the enabled locales.
 - [ ] `headers()` and `cookies()` are not read at page level unless the page must be dynamic.
 - [ ] A new collection that feeds a page carries the revalidation hooks.
 - [ ] A cached read tags itself with the slug of the collection it reads.

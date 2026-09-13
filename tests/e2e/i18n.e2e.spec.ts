@@ -35,9 +35,9 @@ test.describe('locale routing', () => {
     await expect(page.getByRole('heading', { level: 1, name: 'Heading one' })).toBeVisible()
   })
 
-  test('does not route a locale that is not public yet', async ({ request }) => {
-    // `uk` is entered in the admin but unrouted (ADR-0003), so the segment is read as an
-    // ordinary path and answers 404, exactly as it did on the legacy site.
+  test('does not route a locale that is not enabled', async ({ request }) => {
+    // `uk` is entered in the admin but not enabled in SiteSettings (issue #53), so the proxy
+    // reads the segment as an ordinary path and it answers 404, as the legacy site did.
     const response = await request.get('/uk', { maxRedirects: 5 })
 
     expect(response.status()).toBe(404)
