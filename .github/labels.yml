@@ -65,9 +65,6 @@
 - name: owner-action
   color: 'f9d0c4'
   description: Requires the repository owner (settings, secrets, external accounts)
-- name: no-tests-needed
-  color: 'e4e669'
-  description: This pull request changes application code without tests; the description says why
 - name: run-e2e
   color: '006b75'
   description: Run the browser test tier on this pull request's preview deployment

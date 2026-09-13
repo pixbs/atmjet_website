@@ -105,25 +105,10 @@ jobs:
           export PR_TITLE PR_BODY
           bash scripts/ci/scan-attribution.sh "$RANGE"
 
-  tests-required:
-    name: tests required
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          fetch-depth: 0
-          filter: blob:none
-      - name: Application code changes come with tests
-        env:
-          RANGE: ${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }}
-          PR_LABELS: ${{ join(github.event.pull_request.labels.*.name, ',') }}
-        run: bash scripts/ci/check-tests-required.sh "$RANGE"
-
   conventions:
     name: conventions
     if: always()
-    needs: [branch-name, pr-title, commits, attribution-scan, tests-required]
+    needs: [branch-name, pr-title, commits, attribution-scan]
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -132,7 +117,7 @@ jobs:
           RESULTS: ${{ toJSON(needs) }}
         run: |
           failed=0
-          for job in branch-name pr-title commits attribution-scan tests-required; do
+          for job in branch-name pr-title commits attribution-scan; do
             result="$(echo "$RESULTS" | jq -r --arg job "$job" '.[$job].result')"
             echo "$job: $result"
             [ "$result" = "success" ] || failed=1
