@@ -1,3 +1,4 @@
+import { setRequestLocale } from 'next-intl/server'
 import { headers as getHeaders } from 'next/headers.js'
 import { getPayload } from 'payload'
 import React from 'react'
@@ -8,7 +9,10 @@ import config from '@/payload.config'
  * Placeholder home page. Rendered on the server (docs/adr/0007-rendering-strategy.md);
  * the real home page is composed from Payload blocks in E8.1.
  */
-export default async function HomePage() {
+export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params
+  setRequestLocale(locale)
+
   const headers = await getHeaders()
   const payloadConfig = await config
   const payload = await getPayload({ config: payloadConfig })

@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test'
+import { pathFor } from '../e2e/routes'
 import { bundleAvailable } from './legacy/bundle'
 import { compareImages, paintPixels } from './legacy/compare'
 import { expectLegacyParity } from './legacy/expect'
@@ -9,7 +10,7 @@ import { expectLegacyParity } from './legacy/expect'
  */
 test.describe('visual parity harness', () => {
   test('a page matches its own capture and rejects a painted copy', async ({ page }) => {
-    await page.goto('/')
+    await page.goto(pathFor('/', 'en'))
     await page.evaluate(() => document.fonts.ready)
     const first = await page.screenshot({ fullPage: true, animations: 'disabled', caret: 'hide' })
     const second = await page.screenshot({ fullPage: true, animations: 'disabled', caret: 'hide' })
@@ -25,7 +26,7 @@ test.describe('visual parity harness', () => {
 
   test('the legacy helper skips while the bundle is absent', async ({ page }) => {
     test.skip(bundleAvailable(), 'the bundle is present; page specs cover the comparison')
-    await page.goto('/')
+    await page.goto(pathFor('/', 'en'))
     await expectLegacyParity(page, { id: 'home--en--desktop--default' })
   })
 })
