@@ -94,7 +94,9 @@ export const SiteSettings: GlobalConfig = {
       labels: { singular: 'Document', plural: 'Documents' },
       fields: [
         { name: 'label', type: 'text', required: true },
-        { name: 'file', type: 'upload', relationTo: 'media', required: true },
+        // Optional like a nav link's page (src/fields/nav.ts): a required upload is a NOT NULL column the
+        // database cannot null out when the file is deleted, so deleting a linked PDF would fail.
+        { name: 'file', type: 'upload', relationTo: 'media' },
       ],
       admin: {
         description:
