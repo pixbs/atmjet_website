@@ -19,7 +19,7 @@ beforeAll(async () => {
 
 afterAll(() => registry.cleanup())
 
-describe('every collection declares its access', () => {
+describe('every collection and global declares its access', () => {
   it('leaves no operation to a framework default', async () => {
     const config = await registry.payload.config
     const missing: string[] = []
@@ -33,6 +33,22 @@ describe('every collection declares its access', () => {
     }
 
     // Adding a collection without access control fails here rather than in production.
+    expect(missing).toEqual([])
+  })
+
+  it('leaves no global to a framework default either', async () => {
+    const config = await registry.payload.config
+    const missing: string[] = []
+
+    for (const global of config.globals) {
+      for (const operation of ['read', 'update'] as const) {
+        if (typeof global.access?.[operation] !== 'function') {
+          missing.push(`${global.slug}.${operation}`)
+        }
+      }
+    }
+
+    // A global has no create and no delete: it is one document that is only ever read or written.
     expect(missing).toEqual([])
   })
 

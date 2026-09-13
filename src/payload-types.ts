@@ -105,8 +105,16 @@ export interface Config {
     defaultIDType: number;
   };
   fallbackLocale: ('false' | 'none' | 'null') | false | null | ('en' | 'ru' | 'uk') | ('en' | 'ru' | 'uk')[];
-  globals: {};
-  globalsSelect: {};
+  globals: {
+    header: Header;
+    footer: Footer;
+    'site-settings': SiteSetting;
+  };
+  globalsSelect: {
+    header: HeaderSelect<false> | HeaderSelect<true>;
+    footer: FooterSelect<false> | FooterSelect<true>;
+    'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
+  };
   locale: 'en' | 'ru' | 'uk';
   widgets: {
     collections: CollectionsWidget;
@@ -1542,6 +1550,248 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   batch?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "header".
+ */
+export interface Header {
+  id: number;
+  /**
+   * The left-hand column of the open menu.
+   */
+  primaryNav?:
+    | {
+        /**
+         * The wording shown in this locale.
+         */
+        label: string;
+        /**
+         * The page this link opens. Its slug decides the URL.
+         */
+        page?: (number | null) | Page;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * The right-hand column of the open menu.
+   */
+  secondaryNav?:
+    | {
+        /**
+         * The wording shown in this locale.
+         */
+        label: string;
+        /**
+         * The page this link opens. Its slug decides the URL.
+         */
+        page?: (number | null) | Page;
+        id?: string | null;
+      }[]
+    | null;
+  cta: {
+    label: string;
+    /**
+     * Recorded with the lead so a request can be traced to its button.
+     */
+    source: string;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "footer".
+ */
+export interface Footer {
+  id: number;
+  /**
+   * The first row of page links.
+   */
+  primaryNav?:
+    | {
+        /**
+         * The wording shown in this locale.
+         */
+        label: string;
+        /**
+         * The page this link opens. Its slug decides the URL.
+         */
+        page?: (number | null) | Page;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * The second row of page links.
+   */
+  secondaryNav?:
+    | {
+        /**
+         * The wording shown in this locale.
+         */
+        label: string;
+        /**
+         * The page this link opens. Its slug decides the URL.
+         */
+        page?: (number | null) | Page;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Which accounts to link, in the order they are shown.
+   */
+  socials?: ('telegram' | 'whatsapp' | 'instagram')[] | null;
+  cta: {
+    label: string;
+    /**
+     * Recorded with the lead so a request can be traced to its button.
+     */
+    source: string;
+  };
+  legal: {
+    /**
+     * The city and phone line above the copyright.
+     */
+    location: string;
+    /**
+     * Use {year} where the current year belongs, as the legacy line did; it is filled in when the page renders.
+     */
+    copyright: string;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings".
+ */
+export interface SiteSetting {
+  id: number;
+  /**
+   * Written as it should be read. The dialled number is derived from it, so the two can no longer disagree.
+   */
+  phone: string;
+  email: string;
+  /**
+   * Account name without the @. The t.me link is built from it.
+   */
+  telegram: string;
+  /**
+   * Channel name without the @, linked from the empty legs section.
+   */
+  telegramChannel: string;
+  /**
+   * The number WhatsApp answers on; it may differ from the phone.
+   */
+  whatsapp: string;
+  /**
+   * Account name without the @.
+   */
+  instagram: string;
+  /**
+   * The PDFs offered for download, per locale: the legacy site served a separate English and Russian file for each one.
+   */
+  documents?:
+    | {
+        label: string;
+        file?: (number | null) | Media;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * The languages the public site serves. Content can be entered in every language regardless; English is always served.
+   */
+  enabledLocales: ('en' | 'ru' | 'uk')[];
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "header_select".
+ */
+export interface HeaderSelect<T extends boolean = true> {
+  primaryNav?:
+    | T
+    | {
+        label?: T;
+        page?: T;
+        id?: T;
+      };
+  secondaryNav?:
+    | T
+    | {
+        label?: T;
+        page?: T;
+        id?: T;
+      };
+  cta?:
+    | T
+    | {
+        label?: T;
+        source?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "footer_select".
+ */
+export interface FooterSelect<T extends boolean = true> {
+  primaryNav?:
+    | T
+    | {
+        label?: T;
+        page?: T;
+        id?: T;
+      };
+  secondaryNav?:
+    | T
+    | {
+        label?: T;
+        page?: T;
+        id?: T;
+      };
+  socials?: T;
+  cta?:
+    | T
+    | {
+        label?: T;
+        source?: T;
+      };
+  legal?:
+    | T
+    | {
+        location?: T;
+        copyright?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings_select".
+ */
+export interface SiteSettingsSelect<T extends boolean = true> {
+  phone?: T;
+  email?: T;
+  telegram?: T;
+  telegramChannel?: T;
+  whatsapp?: T;
+  instagram?: T;
+  documents?:
+    | T
+    | {
+        label?: T;
+        file?: T;
+        id?: T;
+      };
+  enabledLocales?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
