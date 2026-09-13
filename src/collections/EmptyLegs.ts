@@ -1,8 +1,9 @@
 import type { CollectionConfig } from 'payload'
 
 import { editorOrAdmin, publishedOnly } from '@/access'
+import { provenanceGroup } from '@/fields/provenance'
+import { revalidateCollection } from '@/hooks/revalidate'
 import { normaliseCode } from '@/lib/airports'
-import { nextRevalidationHooks } from '@/lib/data/revalidate-next'
 
 /**
  * Empty legs (issue #66). The legacy table is `atmjet_admin__empty_legs`: `start`, `end`, `from`
@@ -21,7 +22,7 @@ import { nextRevalidationHooks } from '@/lib/data/revalidate-next'
  *
  * Whether a past leg disappears on its own is E7.7's decision, so nothing here filters by date.
  */
-const revalidation = nextRevalidationHooks('empty-legs')
+const revalidation = revalidateCollection('empty-legs')
 
 /** The currencies a leg may be priced in. The legacy card hard-coded a dollar sign. */
 const EMPTY_LEG_CURRENCIES = ['USD', 'EUR', 'AED'] as const
@@ -198,24 +199,9 @@ export const EmptyLegs: CollectionConfig = {
           'Every legacy column with no field of its own, kept verbatim so nothing is lost before E5.13 reconciles.',
       },
     },
-    {
-      type: 'group',
-      name: 'provenance',
-      label: 'Provenance',
-      admin: { description: 'Where this document came from (ADR-0002 section 8).' },
-      fields: [
-        {
-          name: 'origin',
-          type: 'select',
-          required: true,
-          defaultValue: 'manual',
-          options: EMPTY_LEG_ORIGINS.map((origin) => ({ label: origin, value: origin })),
-          index: true,
-        },
-        { name: 'legacyId', type: 'number', index: true },
-        { name: 'importRunId', type: 'text', index: true },
-        { name: 'importedAt', type: 'date' },
-      ],
-    },
+    provenanceGroup({
+      origins: EMPTY_LEG_ORIGINS,
+      legacyFields: [{ name: 'legacyId', type: 'number', index: true }],
+    }),
   ],
 }

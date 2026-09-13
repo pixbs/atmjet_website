@@ -37,32 +37,22 @@ Reaching for `headers()` or `cookies()` at the top of a page makes the whole pag
 
 ## Cache tags
 
-Tags are built in `src/lib/data/tags.ts` and nowhere else, because a read and a write can only match if they spell the tag the same way.
-
-| Shape                            | Example           | Meaning                           |
-| -------------------------------- | ----------------- | --------------------------------- |
-| `<collection>`                   | `media`           | everything from the collection    |
-| `<collection>:list:<locale>`     | `media:list:en`   | every listing of it in one locale |
-| `<collection>:doc:<id>:<locale>` | `media:doc:12:en` | one document in one locale        |
-
-The locale is part of the tag because a translated save changes one locale's HTML and leaves the others valid. Dropping all of them would throw away correct pages for no reason.
-
-Tag a cached read with `cacheTag()` inside a `'use cache'` function, using the same helpers.
+A write invalidates one tag, the collection slug (`media`, `aircraft`), with the `max` profile. Tag a cached read with `cacheTag(<collection>)` inside a `'use cache'` function. Finer tags (one listing, one document, one locale) are added together with the first reader that needs them, never ahead of it (ADR-0008).
 
 ## Invalidation
 
 Every collection that feeds a page carries the hooks:
 
 ```ts
-import { nextRevalidationHooks } from '@/lib/data/revalidate-next'
+import { revalidateCollection } from '@/hooks/revalidate'
 
 hooks: {
-  afterChange: [nextRevalidationHooks('media').afterChange],
-  afterDelete: [nextRevalidationHooks('media').afterDelete],
+  afterChange: [revalidateCollection('media').afterChange],
+  afterDelete: [revalidateCollection('media').afterDelete],
 }
 ```
 
-A write invalidates the collection tag, the listing tag and the document tag, for the locale that was written; a write that names no locale invalidates all of them.
+A write, a delete included, invalidates the collection tag.
 
 Two details worth knowing:
 
@@ -91,6 +81,6 @@ For any pull request that adds or changes a page, a block or a collection:
 - [ ] Static where it can be: `generateStaticParams` reads the routed locales.
 - [ ] `headers()` and `cookies()` are not read at page level unless the page must be dynamic.
 - [ ] A new collection that feeds a page carries the revalidation hooks.
-- [ ] Cache tags come from `src/lib/data/tags.ts`.
+- [ ] A cached read tags itself with the slug of the collection it reads.
 - [ ] Listing state is in `searchParams`; unparseable values fall back to defaults and the canonical URL omits them.
 - [ ] Suspense fallbacks reserve the height of what they replace.

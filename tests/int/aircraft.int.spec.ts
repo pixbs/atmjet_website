@@ -228,11 +228,10 @@ describe('access', () => {
 describe('revalidation', () => {
   it('drops the cached pages when an aircraft is saved', async () => {
     revalidateTag.mockClear()
-    const created = await registry.create('aircraft', aircraft())
+    await registry.create('aircraft', aircraft())
 
     const tags = revalidateTag.mock.calls.map(([tag]) => tag as string)
 
     expect(tags).toContain('aircraft')
-    expect(tags).toContain(`aircraft:doc:${created.id}:en`)
   })
 })

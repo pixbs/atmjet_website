@@ -244,11 +244,10 @@ describe('access', () => {
 describe('revalidation', () => {
   it('drops the cached pages when a leg is saved', async () => {
     revalidateTag.mockClear()
-    const created = await createEmptyLeg(registry)
+    await createEmptyLeg(registry)
 
     const tags = revalidateTag.mock.calls.map(([tag]) => tag as string)
 
     expect(tags).toContain('empty-legs')
-    expect(tags).toContain(`empty-legs:doc:${created.id}:en`)
   })
 })

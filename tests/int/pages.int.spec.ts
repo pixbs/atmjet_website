@@ -176,12 +176,11 @@ describe('access', () => {
 describe('revalidation', () => {
   it('drops the cached HTML of a page when it is saved', async () => {
     revalidateTag.mockClear()
-    const page = await registry.create('pages', pageData({ _status: 'published' }))
+    await registry.create('pages', pageData({ _status: 'published' }))
 
     const tags = revalidateTag.mock.calls.map(([tag]) => tag as string)
 
     expect(tags).toContain('pages')
-    expect(tags).toContain(`pages:doc:${page.id}:en`)
   })
 })
 

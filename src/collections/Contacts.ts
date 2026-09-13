@@ -1,6 +1,7 @@
 import type { CollectionConfig, RelationshipField } from 'payload'
 
 import { admin, adminFieldOnly, hasRole } from '@/access'
+import { provenanceGroup } from '@/fields/provenance'
 
 /**
  * The people behind a yacht (issue #67). The legacy `contact` table is four columns — `id`,
@@ -112,24 +113,9 @@ export const Contacts: CollectionConfig = {
           'No legacy column, so the import leaves it empty. Media is public: do not upload anything here that the person would not want served from a URL.',
       },
     },
-    {
-      type: 'group',
-      name: 'provenance',
-      label: 'Provenance',
-      admin: { description: 'Where this document came from (ADR-0002 section 8).' },
-      fields: [
-        {
-          name: 'origin',
-          type: 'select',
-          required: true,
-          defaultValue: 'manual',
-          options: CONTACT_ORIGINS.map((origin) => ({ label: origin, value: origin })),
-          index: true,
-        },
-        { name: 'legacyContactId', type: 'number', index: true },
-        { name: 'importRunId', type: 'text', index: true },
-        { name: 'importedAt', type: 'date' },
-      ],
-    },
+    provenanceGroup({
+      origins: CONTACT_ORIGINS,
+      legacyFields: [{ name: 'legacyContactId', type: 'number', index: true }],
+    }),
   ],
 }
