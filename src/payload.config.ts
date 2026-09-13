@@ -20,6 +20,9 @@ import { Yachts } from './collections/Yachts'
 import { EmptyLegs } from './collections/EmptyLegs'
 import { Leads } from './collections/Leads'
 import { redirectsOverrides, REDIRECT_TYPES } from './collections/Redirects'
+import { Header } from './globals/Header'
+import { Footer } from './globals/Footer'
+import { SiteSettings } from './globals/SiteSettings'
 import { DEFAULT_LOCALE, LOCALE_DEFINITIONS } from './i18n/locales'
 
 const filename = fileURLToPath(import.meta.url)
@@ -48,6 +51,9 @@ export default buildConfig({
     supportedLanguages: { en, ru, uk },
   },
   collections: [Users, Media, Pages, Airports, Aircraft, Contacts, Yachts, EmptyLegs, Leads],
+  // The chrome and the values every page links to (issue #61). One document each, so there is
+  // nothing to list and nothing to publish.
+  globals: [Header, Footer, SiteSettings],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
