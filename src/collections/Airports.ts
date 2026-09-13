@@ -1,8 +1,8 @@
 import type { CollectionConfig } from 'payload'
 
 import { anyone, editorOrAdmin } from '@/access'
+import { revalidateCollection } from '@/hooks/revalidate'
 import { normaliseCode, normaliseText } from '@/lib/airports'
-import { nextRevalidationHooks } from '@/lib/data/revalidate-next'
 
 /**
  * Airports (issue #64). The legacy site held the same facts in two tables: `airports`, with
@@ -14,7 +14,7 @@ import { nextRevalidationHooks } from '@/lib/data/revalidate-next'
  * sorting "9" above "1000000" lexicographically (section 8.5), and the codes are canonical, so
  * a lookup does not need a wildcard `ILIKE` to find an exact match.
  */
-const revalidation = nextRevalidationHooks('airports')
+const revalidation = revalidateCollection('airports')
 
 export const Airports: CollectionConfig = {
   slug: 'airports',

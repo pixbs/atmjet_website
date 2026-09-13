@@ -1,8 +1,9 @@
 import type { CollectionConfig } from 'payload'
 
 import { editorOrAdmin, publishedOnly } from '@/access'
+import { provenanceGroup } from '@/fields/provenance'
+import { revalidateCollection } from '@/hooks/revalidate'
 import { canonicalRegistration } from '@/lib/aircraft'
-import { nextRevalidationHooks } from '@/lib/data/revalidate-next'
 
 /**
  * The aircraft catalogue (issue #63). Three legacy tables feed it: `aircrafts` (the catalogue),
@@ -17,7 +18,7 @@ import { nextRevalidationHooks } from '@/lib/data/revalidate-next'
  * The rich and basic detail layouts are chosen from the image count at render time (E8.3) and
  * never stored, matching the legacy fallback.
  */
-const revalidation = nextRevalidationHooks('aircraft')
+const revalidation = revalidateCollection('aircraft')
 
 /** Which offers an aircraft is listed under, from the four legacy booleans. */
 const AIRCRAFT_OFFERINGS = ['charter', 'sale', 'lease', 'cargo'] as const
@@ -248,20 +249,9 @@ export const Aircraft: CollectionConfig = {
           'Every legacy column with no field of its own, kept verbatim so nothing is lost before E5.13 reconciles.',
       },
     },
-    {
-      type: 'group',
-      name: 'provenance',
-      label: 'Provenance',
-      admin: { description: 'Where this document came from (ADR-0002 section 8).' },
-      fields: [
-        {
-          name: 'origin',
-          type: 'select',
-          required: true,
-          defaultValue: 'manual',
-          options: AIRCRAFT_ORIGINS.map((origin) => ({ label: origin, value: origin })),
-          index: true,
-        },
+    provenanceGroup({
+      origins: AIRCRAFT_ORIGINS,
+      legacyFields: [
         { name: 'legacyAircraftId', type: 'number', index: true },
         { name: 'legacyVehicleId', type: 'number', index: true },
         { name: 'legacyTailNumber', type: 'text' },
@@ -275,10 +265,8 @@ export const Aircraft: CollectionConfig = {
             { name: 'id', type: 'number', required: true },
           ],
         },
-        { name: 'importRunId', type: 'text', index: true },
-        { name: 'importedAt', type: 'date' },
-        { name: 'verifiedAt', type: 'date' },
       ],
-    },
+      verified: true,
+    }),
   ],
 }

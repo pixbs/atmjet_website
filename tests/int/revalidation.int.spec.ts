@@ -10,9 +10,8 @@ const revalidateTag = vi.hoisted(() => vi.fn())
 vi.mock('next/cache', () => ({ revalidateTag }))
 
 /**
- * Revalidation wired into a real collection (issue #59, ADR-0007). The unit tests pin the tag
- * rules; this one proves the Media hooks actually fire on a write through the Local API and ask
- * Next to drop the right tags.
+ * Revalidation wired into a real collection (issue #59, ADR-0007): the Media hooks fire on a
+ * write through the Local API and ask Next to drop the collection tag.
  */
 let registry: TestRegistry
 
@@ -29,12 +28,10 @@ afterAll(() => registry.cleanup())
 const tagsPassed = (): string[] => revalidateTag.mock.calls.map(([tag]) => tag as string)
 
 describe('media revalidation', () => {
-  it('drops the collection, listing and document tags when a document is created', async () => {
-    const media = await createMedia(registry)
+  it('drops the collection tag when a document is created', async () => {
+    await createMedia(registry)
 
     expect(tagsPassed()).toContain('media')
-    expect(tagsPassed()).toContain('media:list:en')
-    expect(tagsPassed()).toContain(`media:doc:${media.id}:en`)
   })
 
   it('asks Next to serve stale content while it revalidates', async () => {
@@ -47,30 +44,13 @@ describe('media revalidation', () => {
     }
   })
 
-  it('drops only the written locale when an editor saves a translation', async () => {
-    const media = await createMedia(registry)
-    revalidateTag.mockClear()
-
-    await registry.payload.update({
-      collection: 'media',
-      id: media.id,
-      data: { alt: `Перевод ${uniqueSuffix()}` },
-      locale: 'ru',
-      overrideAccess: true,
-    })
-
-    expect(tagsPassed()).toContain(`media:doc:${media.id}:ru`)
-    expect(tagsPassed()).not.toContain(`media:doc:${media.id}:en`)
-    expect(tagsPassed()).not.toContain('media:list:uk')
-  })
-
   it('drops the tags again when a document is deleted', async () => {
     const media = await createMedia(registry)
     revalidateTag.mockClear()
 
     await registry.payload.delete({ collection: 'media', id: media.id, overrideAccess: true })
 
-    expect(tagsPassed()).toContain(`media:doc:${media.id}:en`)
+    expect(tagsPassed()).toContain('media')
   })
 
   it('stays quiet for a write that opts out, as the E5 importers do', async () => {

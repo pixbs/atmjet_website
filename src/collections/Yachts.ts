@@ -1,7 +1,8 @@
 import { ValidationError, type CollectionConfig } from 'payload'
 
 import { editorOrAdmin, publishedOnly } from '@/access'
-import { nextRevalidationHooks } from '@/lib/data/revalidate-next'
+import { provenanceGroup } from '@/fields/provenance'
+import { revalidateCollection } from '@/hooks/revalidate'
 import { slugify } from '@/lib/slug'
 import { listingProblems, YACHT_CURRENCIES, YACHT_LISTING_TYPES } from '@/lib/yachts'
 import { contactRelationship } from './Contacts'
@@ -22,7 +23,7 @@ import { contactRelationship } from './Contacts'
  * rather than recomputed on every edit, so a rename no longer moves the URL. An imported row
  * keeps the slug it arrived with.
  */
-const revalidation = nextRevalidationHooks('yachts')
+const revalidation = revalidateCollection('yachts')
 
 /** Where a document came from, per ADR-0002 section 8. */
 const YACHT_ORIGINS = ['new-yachts-charter', 'yachts-sale', 'manual'] as const
@@ -265,25 +266,12 @@ export const Yachts: CollectionConfig = {
           'Every legacy column with no field of its own, kept verbatim so nothing is lost before E5.13 reconciles.',
       },
     },
-    {
-      type: 'group',
-      name: 'provenance',
-      label: 'Provenance',
-      admin: { description: 'Where this document came from (ADR-0002 section 8).' },
-      fields: [
-        {
-          name: 'origin',
-          type: 'select',
-          required: true,
-          defaultValue: 'manual',
-          options: YACHT_ORIGINS.map((origin) => ({ label: origin, value: origin })),
-          index: true,
-        },
+    provenanceGroup({
+      origins: YACHT_ORIGINS,
+      legacyFields: [
         { name: 'legacyId', type: 'number', index: true },
         { name: 'legacySlug', type: 'text', index: true },
-        { name: 'importRunId', type: 'text', index: true },
-        { name: 'importedAt', type: 'date' },
       ],
-    },
+    }),
   ],
 }

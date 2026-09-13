@@ -1,8 +1,8 @@
 import type { CollectionConfig } from 'payload'
 
 import { editorOrAdmin, publishedOnly } from '@/access'
+import { revalidateCollection } from '@/hooks/revalidate'
 import { ROUTED_LOCALES } from '@/i18n/locales'
-import { nextRevalidationHooks } from '@/lib/data/revalidate-next'
 
 /**
  * The content pages of the site (issue #60). The legacy site hard-coded all thirteen of them as
@@ -36,7 +36,7 @@ export function pathForPage(locale: string, slug: string): string {
   return slug === '' ? `/${locale}` : `/${locale}/${slug}`
 }
 
-const revalidation = nextRevalidationHooks('pages')
+const revalidation = revalidateCollection('pages')
 
 export const Pages: CollectionConfig = {
   slug: 'pages',

@@ -2,8 +2,8 @@ import type { CollectionConfig, Field } from 'payload'
 import { ValidationError } from 'payload'
 
 import { anyone, editorOrAdmin } from '@/access'
+import { revalidateCollection } from '@/hooks/revalidate'
 import { ALL_LOCALES } from '@/i18n/locales'
-import { nextRevalidationHooks } from '@/lib/data/revalidate-next'
 import { normaliseRedirectPath } from '@/lib/redirects'
 
 /**
@@ -23,7 +23,7 @@ import { normaliseRedirectPath } from '@/lib/redirects'
  * The plugin also leaves `create`, `update` and `delete` to Payload's defaults; the access
  * enumeration test of issue #70 fails on that, so all four are declared here.
  */
-const revalidation = nextRevalidationHooks('redirects')
+const revalidation = revalidateCollection('redirects')
 
 /** The status codes the collection offers, the legacy 308 first. */
 export const REDIRECT_TYPES = ['308', '301', '307', '302', '303'] as const

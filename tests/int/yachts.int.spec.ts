@@ -366,11 +366,10 @@ describe('access', () => {
 describe('revalidation', () => {
   it('drops the cached pages when a yacht is saved', async () => {
     revalidateTag.mockClear()
-    const created = await createYacht(registry)
+    await createYacht(registry)
 
     const tags = revalidateTag.mock.calls.map(([tag]) => tag as string)
 
     expect(tags).toContain('yachts')
-    expect(tags).toContain(`yachts:doc:${created.id}:en`)
   })
 })

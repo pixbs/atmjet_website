@@ -1,7 +1,7 @@
 import type { CollectionConfig } from 'payload'
 
 import { anyone, editorOrAdmin } from '@/access'
-import { nextRevalidationHooks } from '@/lib/data/revalidate-next'
+import { revalidateCollection } from '@/hooks/revalidate'
 
 /**
  * Uploads (issue #62). The legacy admin accepted any file type and every image was served in
@@ -43,8 +43,8 @@ export const Media: CollectionConfig = {
   // Media feeds every page that renders an image, so a save has to drop the cached HTML that
   // embedded it (ADR-0007, docs/conventions/rendering.md).
   hooks: {
-    afterChange: [nextRevalidationHooks('media').afterChange],
-    afterDelete: [nextRevalidationHooks('media').afterDelete],
+    afterChange: [revalidateCollection('media').afterChange],
+    afterDelete: [revalidateCollection('media').afterDelete],
   },
   access: {
     // Uploads are public; everything that changes them needs an editor (docs/access-matrix.md).
