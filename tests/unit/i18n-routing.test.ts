@@ -1,7 +1,14 @@
 import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
 
-import { ALL_LOCALES, DEFAULT_LOCALE, isRoutedLocale, ROUTED_LOCALES } from '@/i18n/locales'
+import {
+  ALL_LOCALES,
+  DEFAULT_LOCALE,
+  isRoutedLocale,
+  LOCALE_DEFINITIONS,
+  localeDefinition,
+  ROUTED_LOCALES,
+} from '@/i18n/locales'
 import { isProxiedPath, PROXY_MATCHER } from '@/i18n/proxy-matcher'
 import { routing } from '@/i18n/routing'
 
@@ -87,5 +94,28 @@ describe('proxy matcher', () => {
     expect(matches('/sitemap.xml')).toBe(false)
     expect(matches('/robots.txt')).toBe(false)
     expect(matches('/video/background_full.mp4')).toBe(false)
+  })
+})
+
+describe('locale definitions', () => {
+  it('has one entry per locale, in the same order', () => {
+    expect(LOCALE_DEFINITIONS.map(({ code }) => code)).toEqual([...ALL_LOCALES])
+  })
+
+  it('labels every locale in its own language, as the switcher shows them', () => {
+    expect(LOCALE_DEFINITIONS).toEqual([
+      { code: 'en', label: 'English', direction: 'ltr' },
+      { code: 'ru', label: 'Русский', direction: 'ltr' },
+      { code: 'uk', label: 'Українська', direction: 'ltr' },
+    ])
+  })
+
+  it('looks a definition up by code', () => {
+    expect(localeDefinition('ru').label).toBe('Русский')
+  })
+
+  it('fails loudly when a locale has no definition', () => {
+    // @ts-expect-error the guard exists for a locale added to ALL_LOCALES and nowhere else.
+    expect(() => localeDefinition('de')).toThrow(/No locale definition/)
   })
 })
