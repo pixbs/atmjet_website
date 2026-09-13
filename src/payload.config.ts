@@ -1,5 +1,6 @@
 import { postgresAdapter } from '@payloadcms/db-postgres'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
+import { redirectsPlugin } from '@payloadcms/plugin-redirects'
 import { seoPlugin } from '@payloadcms/plugin-seo'
 import { en } from '@payloadcms/translations/languages/en'
 import { ru } from '@payloadcms/translations/languages/ru'
@@ -18,6 +19,7 @@ import { Contacts } from './collections/Contacts'
 import { Yachts } from './collections/Yachts'
 import { EmptyLegs } from './collections/EmptyLegs'
 import { Leads } from './collections/Leads'
+import { redirectsOverrides, REDIRECT_TYPES } from './collections/Redirects'
 import { DEFAULT_LOCALE, LOCALE_DEFINITIONS } from './i18n/locales'
 
 const filename = fileURLToPath(import.meta.url)
@@ -76,6 +78,22 @@ export default buildConfig({
       collections: ['pages'],
       uploadsCollection: 'media',
       generateTitle: ({ doc }) => (doc as { title?: string }).title ?? '',
+    }),
+    // The old URLs that must keep resolving (issue #69). The legacy map lived in
+    // next.config.mjs, so changing it meant a deploy; E11.3 decides the final list.
+    redirectsPlugin({
+      collections: ['pages'],
+      redirectTypes: [...REDIRECT_TYPES],
+      redirectTypeFieldOverride: {
+        defaultValue: '308',
+        required: false,
+        admin: {
+          position: 'sidebar',
+          description:
+            'The legacy redirects were all 308. A server component can only emit 307 or 308, so 301 is served as 308 and 302 or 303 as 307.',
+        },
+      },
+      overrides: redirectsOverrides,
     }),
   ],
 })

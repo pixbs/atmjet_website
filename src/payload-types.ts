@@ -76,6 +76,7 @@ export interface Config {
     yachts: Yacht;
     'empty-legs': EmptyLeg;
     leads: Lead;
+    redirects: Redirect;
     'payload-kv': PayloadKv;
     'payload-jobs': PayloadJob;
     'payload-locked-documents': PayloadLockedDocument;
@@ -93,6 +94,7 @@ export interface Config {
     yachts: YachtsSelect<false> | YachtsSelect<true>;
     'empty-legs': EmptyLegsSelect<false> | EmptyLegsSelect<true>;
     leads: LeadsSelect<false> | LeadsSelect<true>;
+    redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-jobs': PayloadJobsSelect<false> | PayloadJobsSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
@@ -813,6 +815,45 @@ export interface Lead {
   createdAt: string;
 }
 /**
+ * Old URLs that must keep resolving. The final list is decided in E11.3; what is seeded is the legacy next.config.mjs map.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "redirects".
+ */
+export interface Redirect {
+  id: number;
+  /**
+   * The path to catch, without the locale: /planes, not /en/planes. One row then covers every language.
+   */
+  from: string;
+  to?: {
+    type?: ('reference' | 'custom') | null;
+    reference?: {
+      relationTo: 'pages';
+      value: number | Page;
+    } | null;
+    url?: string | null;
+  };
+  /**
+   * The legacy redirects were all 308. A server component can only emit 307 or 308, so 301 is served as 308 and 302 or 303 as 307.
+   */
+  type?: ('301' | '302' | '303' | '307' | '308') | null;
+  /**
+   * Also catch everything below this path and carry the rest over to the target, so /planes/g650 lands on /aircraft/g650.
+   */
+  matchSubPaths?: boolean | null;
+  /**
+   * Leave empty to apply this redirect in every language, as the legacy ones did.
+   */
+  locale?: ('en' | 'ru' | 'uk') | null;
+  /**
+   * Why this redirect exists, for whoever reviews the list in E11.3.
+   */
+  note?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
@@ -963,6 +1004,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'leads';
         value: number | Lead;
+      } | null)
+    | ({
+        relationTo: 'redirects';
+        value: number | Redirect;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -1410,6 +1455,26 @@ export interface LeadsSelect<T extends boolean = true> {
         lastError?: T;
         id?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "redirects_select".
+ */
+export interface RedirectsSelect<T extends boolean = true> {
+  from?: T;
+  to?:
+    | T
+    | {
+        type?: T;
+        reference?: T;
+        url?: T;
+      };
+  type?: T;
+  matchSubPaths?: T;
+  locale?: T;
+  note?: T;
   updatedAt?: T;
   createdAt?: T;
 }
