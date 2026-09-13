@@ -1,11 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import {
-  listingProblems,
-  YACHT_CURRENCIES,
-  YACHT_LISTING_TYPES,
-  type YachtListing,
-} from '@/lib/yachts'
+import { listingProblems, type YachtListing } from '@/lib/yachts'
 
 /**
  * What makes a listing coherent (issue #65). Every column of both legacy tables is nullable, so
@@ -23,13 +18,6 @@ const sale: YachtListing = {
   charter: {},
   sale: { shipyard: 'Benetti', year: 2016 },
 }
-
-describe('the vocabulary', () => {
-  it('offers the two legacy catalogues and the three currencies', () => {
-    expect(YACHT_LISTING_TYPES).toEqual(['charter', 'sale'])
-    expect(YACHT_CURRENCIES).toEqual(['AED', 'USD', 'EUR'])
-  })
-})
 
 describe('a coherent listing', () => {
   it('has nothing to complain about', () => {

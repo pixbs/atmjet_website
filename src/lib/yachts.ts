@@ -13,12 +13,11 @@
  */
 
 export const YACHT_LISTING_TYPES = ['charter', 'sale'] as const
-export type YachtListingType = (typeof YACHT_LISTING_TYPES)[number]
+type YachtListingType = (typeof YACHT_LISTING_TYPES)[number]
 
 /** The currencies a listing may be priced in. The legacy column is free text (see the README of
  * the import, E5.10): anything outside this set is mapped there, not stored here. */
 export const YACHT_CURRENCIES = ['AED', 'USD', 'EUR'] as const
-export type YachtCurrency = (typeof YACHT_CURRENCIES)[number]
 
 export interface YachtListing {
   listingType?: unknown

@@ -1,7 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
 
 import { PAGE_LOCALES } from '@/collections/Pages'
-import { listPageParams } from '@/lib/data'
+import { listPageParams } from '@/lib/data/pages'
 import { createRegistry, uniqueSuffix, type TestRegistry } from '../helpers/payload'
 
 const revalidateTag = vi.hoisted(() => vi.fn())

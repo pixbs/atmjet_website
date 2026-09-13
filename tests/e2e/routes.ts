@@ -11,7 +11,7 @@ export type Locale = (typeof LOCALES)[number]
 export const ENABLED_LOCALES: readonly Locale[] = ['en', 'ru']
 
 /** Whether paths carry the locale prefix (`/en/aircraft`). */
-export const LOCALE_ROUTING = true
+const LOCALE_ROUTING = true
 
 export function pathFor(route: string, locale: Locale, localeRouting = LOCALE_ROUTING): string {
   const path = route.startsWith('/') ? route : `/${route}`

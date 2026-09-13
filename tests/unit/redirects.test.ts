@@ -3,7 +3,6 @@ import { describe, expect, it } from 'vitest'
 import { servedStatusFor } from '@/collections/Redirects'
 import {
   bySpecificity,
-  DEFAULT_REDIRECT_STATUS,
   matchRedirect,
   normaliseRedirectPath,
   type RedirectRule,
@@ -98,9 +97,7 @@ describe('matchRedirect', () => {
   })
 
   it('falls back to the legacy permanent status when a rule does not say', () => {
-    expect(matchRedirect([{ from: '/jets', to: '/' }], '/jets', 'en')?.status).toBe(
-      DEFAULT_REDIRECT_STATUS,
-    )
+    expect(matchRedirect([{ from: '/jets', to: '/' }], '/jets', 'en')?.status).toBe(308)
     expect(matchRedirect([{ from: '/a', to: '/b', type: 'nonsense' }], '/a', 'en')?.status).toBe(
       308,
     )

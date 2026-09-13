@@ -7,7 +7,7 @@ How a page reads data, what it caches, and what invalidates it. The decision beh
 `src/lib/data` is the only way a page reaches Payload.
 
 ```ts
-import { getPayloadClient } from '@/lib/data'
+import { getPayloadClient } from '@/lib/data/payload'
 
 const payload = await getPayloadClient()
 const media = await payload.find({ collection: 'media', depth: 0, limit: 15 })
@@ -75,26 +75,7 @@ Adding a collection without these hooks is the usual cause of "the editor saved 
 
 Filters, sorting and pagination live in the URL, never in client state. The legacy listing kept them in React state, so "load more" dropped the filters and no listing URL could be shared or crawled (`docs/legacy-inventory.md` section 4).
 
-`parseListingQuery` reads them against a schema:
-
-```ts
-const query = parseListingQuery(await searchParams, {
-  sorts: ['year', 'passengers', 'range'],
-  defaultDirection: 'desc',
-  filters: { category: ['jet', 'turboprop', 'helicopter'] },
-})
-```
-
-The contract it enforces:
-
-- parameter names are `page`, `perPage`, `sort`, `direction`, plus one per declared filter;
-- a filter accepts repetition (`?category=jet&category=turboprop`) and commas (`?category=jet,turboprop`) alike;
-- anything unparseable falls back to the default rather than throwing, so a hand-edited URL returns the first page and never an error screen;
-- `perPage` is capped, so no single request can pull a whole table.
-
-`canonicalListingQuery` rebuilds the one URL that means this listing: defaults omitted, filters sorted, page last. Use it for the `canonical` link and for pagination links, so crawlers see one URL per listing and the cache holds one entry.
-
-`offsetFor(query)` gives the Local API offset. No page recomputes it.
+The first listing page (E8) brings the `searchParams` parser with it, and it keeps this contract: the parameters are `page`, `perPage`, `sort`, `direction` and one per filter; a filter accepts repetition and commas alike; anything unparseable falls back to the default rather than throwing; `perPage` is capped; the canonical URL omits defaults and sorts filters, so crawlers see one URL per listing and the cache holds one entry.
 
 ## Streaming
 
@@ -111,5 +92,5 @@ For any pull request that adds or changes a page, a block or a collection:
 - [ ] `headers()` and `cookies()` are not read at page level unless the page must be dynamic.
 - [ ] A new collection that feeds a page carries the revalidation hooks.
 - [ ] Cache tags come from `src/lib/data/tags.ts`.
-- [ ] Listing state is in `searchParams` and parsed with `parseListingQuery`; the canonical URL uses `canonicalListingQuery`.
+- [ ] Listing state is in `searchParams`; unparseable values fall back to defaults and the canonical URL omits them.
 - [ ] Suspense fallbacks reserve the height of what they replace.

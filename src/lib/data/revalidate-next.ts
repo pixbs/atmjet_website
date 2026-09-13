@@ -16,7 +16,7 @@ const REVALIDATE_PROFILE = 'max'
  * Whether Next refused because there is no request scope to revalidate in. It signals that with
  * an invariant rather than a typed error, so the message is all there is to match on.
  */
-export function isMissingRequestScope(error: unknown): boolean {
+function isMissingRequestScope(error: unknown): boolean {
   return error instanceof Error && /static generation store missing/i.test(error.message)
 }
 

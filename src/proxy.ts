@@ -14,8 +14,8 @@ import { routing } from './i18n/routing'
 export default createIntlProxy(routing)
 
 export const config = {
-  // Next parses this field statically, so it has to be a literal and cannot reference the
-  // shared constant. `PROXY_MATCHER` in src/i18n/proxy-matcher.ts holds the same pattern for
-  // the tests and the helpers; tests/unit/i18n-routing.test.ts fails if the two drift apart.
+  // Next parses this field statically, so it has to be a literal: everything except the Payload
+  // admin, the API routes, Next and Vercel internals and paths with a file extension
+  // (docs/legacy-inventory.md section 2.2 plus `admin`). tests/e2e/i18n.e2e.spec.ts covers it.
   matcher: ['/((?!admin|api|_next|_vercel|.*\\..*).*)'],
 }

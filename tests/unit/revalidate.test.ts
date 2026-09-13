@@ -1,15 +1,8 @@
 import { describe, expect, it, vi } from 'vitest'
 
 import { ALL_LOCALES } from '@/i18n/locales'
-import {
-  collectionTag,
-  documentTag,
-  isMissingRequestScope,
-  listTag,
-  localeOf,
-  revalidationHooks,
-  tagsForWrite,
-} from '@/lib/data'
+import { revalidationHooks } from '@/lib/data/revalidate'
+import { tagsForWrite } from '@/lib/data/tags'
 
 /**
  * Cache tags and the collection hooks that invalidate them (issue #59, ADR-0007). The Next
@@ -17,17 +10,6 @@ import {
  * checked without a request scope.
  */
 describe('cache tags', () => {
-  it('names the three scopes distinctly', () => {
-    expect(collectionTag('media')).toBe('media')
-    expect(listTag('media', 'en')).toBe('media:list:en')
-    expect(documentTag('media', 12, 'en')).toBe('media:doc:12:en')
-  })
-
-  it('keeps locales apart, so one translation does not drop the others', () => {
-    expect(listTag('media', 'ru')).not.toBe(listTag('media', 'en'))
-    expect(documentTag('media', 12, 'ru')).not.toBe(documentTag('media', 12, 'en'))
-  })
-
   it('invalidates the document, its listings and the collection for a localised write', () => {
     expect(tagsForWrite('media', 7, 'ru', ALL_LOCALES)).toEqual([
       'media',
@@ -46,16 +28,6 @@ describe('cache tags', () => {
       'media:doc:7:ru',
       'media:doc:7:uk',
     ])
-  })
-})
-
-describe('localeOf', () => {
-  it('accepts a known locale and rejects anything else', () => {
-    expect(localeOf('ru')).toBe('ru')
-    expect(localeOf('all')).toBeUndefined()
-    expect(localeOf('de')).toBeUndefined()
-    expect(localeOf(undefined)).toBeUndefined()
-    expect(localeOf(42)).toBeUndefined()
   })
 })
 
@@ -113,22 +85,6 @@ describe('revalidationHooks', () => {
     afterDelete({ doc, id: undefined, req: { locale: 'en' }, context: {} } as never)
 
     expect(revalidate.mock.calls[0][0]).toContain('media:doc:7:en')
-  })
-})
-
-describe('isMissingRequestScope', () => {
-  it('recognises the invariant Next throws outside a request scope', () => {
-    expect(
-      isMissingRequestScope(
-        new Error('Invariant: static generation store missing in revalidateTag media'),
-      ),
-    ).toBe(true)
-  })
-
-  it('does not swallow a real failure', () => {
-    expect(isMissingRequestScope(new Error('tag exceeds 256 characters'))).toBe(false)
-    expect(isMissingRequestScope('not an error')).toBe(false)
-    expect(isMissingRequestScope(undefined)).toBe(false)
   })
 })
 

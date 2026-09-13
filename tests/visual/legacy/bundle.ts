@@ -34,7 +34,7 @@ export interface LegacyManifest {
   entries: LegacyEntry[]
 }
 
-export const LEGACY_DIR = path.resolve(process.cwd(), 'tests/visual/legacy')
+const LEGACY_DIR = path.resolve(process.cwd(), 'tests/visual/legacy')
 export const MANIFEST_PATH = path.join(LEGACY_DIR, 'manifest.json')
 export const BUNDLE_DIR = path.join(LEGACY_DIR, 'bundle')
 

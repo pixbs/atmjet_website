@@ -7,7 +7,7 @@ import AxeBuilder from '@axe-core/playwright'
 import { expect, test, type Page } from '@playwright/test'
 import type { Result } from 'axe-core'
 
-export const WCAG_TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']
+const WCAG_TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']
 
 /** Rules reported but not blocking until the design decisions behind them are made (see tests/README.md). */
 export const ADVISORY_RULES = ['color-contrast']

@@ -39,7 +39,7 @@ export interface RedirectMatch {
 }
 
 /** The status a rule uses when it does not say, matching the legacy `permanent: true`. */
-export const DEFAULT_REDIRECT_STATUS = 308
+const DEFAULT_REDIRECT_STATUS = 308
 
 /**
  * A path in the one spelling everything here compares: a leading slash, no trailing one, and no

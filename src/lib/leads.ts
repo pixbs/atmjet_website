@@ -20,12 +20,10 @@ export const LEAD_FORM_TYPES = [
   'aircraft-detail',
   'yacht-detail',
 ] as const
-export type LeadFormType = (typeof LEAD_FORM_TYPES)[number]
 
 /** Where a lead is sent. Telegram is what the legacy site used; the CRM route existed but nothing
  * called it (section 9.2). */
 export const LEAD_DELIVERY_CHANNELS = ['telegram', 'crm'] as const
-export type LeadDeliveryChannel = (typeof LEAD_DELIVERY_CHANNELS)[number]
 
 export const LEAD_DELIVERY_STATUSES = ['pending', 'sent', 'failed'] as const
 export type LeadDeliveryStatus = (typeof LEAD_DELIVERY_STATUSES)[number]
@@ -38,7 +36,7 @@ export const LEAD_PHONE_MIN_DIGITS = 8
 export const LEAD_PHONE_MAX_DIGITS = 15
 
 /** How many digits a phone number carries, ignoring spaces, brackets and the leading plus. */
-export function phoneDigitCount(value: unknown): number {
+function phoneDigitCount(value: unknown): number {
   if (typeof value !== 'string') return 0
 
   return value.replace(/\D/g, '').length
@@ -85,17 +83,4 @@ export function deliveryStatus(
   if (statuses.some((status) => status !== 'sent')) return 'pending'
 
   return 'sent'
-}
-
-/** The channels a lead still has to reach, so a retry does not resend what already arrived. */
-export function undeliveredChannels(
-  attempts: readonly DeliveryAttempt[] | null | undefined,
-): LeadDeliveryChannel[] {
-  const sent = new Set(
-    (Array.isArray(attempts) ? attempts : [])
-      .filter((attempt) => attempt.status === 'sent')
-      .map((attempt) => attempt.channel),
-  )
-
-  return LEAD_DELIVERY_CHANNELS.filter((channel) => !sent.has(channel))
 }

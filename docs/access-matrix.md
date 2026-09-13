@@ -77,7 +77,7 @@ Personal data — a name, a phone number and an e-mail address — that the lega
 
 Field-level, on the other side of the relationship: every field that points at a contact is built by `contactRelationship()` in `src/collections/Contacts.ts`, which declares `read`, `create` and `update` as `adminFieldOnly`. Collection access alone would stop Payload populating the document but still return the stored id on the parent, which is one lookup away from the person; field access removes the field outright. Yachts (issue #65) carries two such fields, from the legacy `contact_id` and `captain_id`.
 
-The public projection is `publicContact()` in `src/lib/contacts.ts`. Its allowlist is empty, because no legacy page showed any part of a contact, and it drops `phone` and `email` even when a caller names them.
+There is no public projection of a contact: no legacy page showed any part of one, so nothing outside the admin reads `phone`, `email` or even the name.
 
 `leads` holds the same rule for the same reason: a name, a phone number, an e-mail address and the itinerary a stranger asked about.
 

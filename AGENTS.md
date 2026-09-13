@@ -49,6 +49,7 @@ scripts/ci           convention checks shared by git hooks and CI
 | `bun install`                                                        | install dependencies; also installs the git hooks (lefthook)     |
 | `bun run dev`                                                        | dev server at http://localhost:3000, admin at `/admin`           |
 | `bun run lint`, `bun run typecheck`, `bun run format:check`          | static checks                                                    |
+| `bun run knip`                                                       | files, exports and dependencies nothing uses (part of `ci`)      |
 | `bun run migrate`, `bun run migrate:create <name>`, `migrate:status` | Payload migrations                                               |
 | `bun run test:int`                                                   | unit and integration tests with coverage thresholds              |
 | `bun run test:e2e`, `bun run test:visual`, `bun run test:a11y`       | Playwright tiers against the dev server or `PLAYWRIGHT_BASE_URL` |

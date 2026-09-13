@@ -33,7 +33,7 @@ interface StoredRedirect {
 }
 
 /** The target of a stored rule: a path the resolver will localise, or nothing usable. */
-export function targetOf(redirect: StoredRedirect): string | undefined {
+function targetOf(redirect: StoredRedirect): string | undefined {
   const to = redirect.to
   if (!to) return undefined
 
@@ -48,7 +48,7 @@ export function targetOf(redirect: StoredRedirect): string | undefined {
 }
 
 /** Every usable rule, most specific first, in the shape `matchRedirect` takes. */
-export function rulesFrom(documents: readonly StoredRedirect[]): RedirectRule[] {
+function rulesFrom(documents: readonly StoredRedirect[]): RedirectRule[] {
   const rules: RedirectRule[] = []
 
   for (const document of documents) {

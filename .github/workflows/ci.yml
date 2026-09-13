@@ -42,6 +42,7 @@ jobs:
       - run: bun run format:check
       - run: bun run lint
       - run: bun run typecheck
+      - run: bun run knip
       - name: Generated files are up to date
         run: |
           bun run generate:types

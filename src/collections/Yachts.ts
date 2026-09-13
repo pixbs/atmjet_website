@@ -25,7 +25,7 @@ import { contactRelationship } from './Contacts'
 const revalidation = nextRevalidationHooks('yachts')
 
 /** Where a document came from, per ADR-0002 section 8. */
-export const YACHT_ORIGINS = ['new-yachts-charter', 'yachts-sale', 'manual'] as const
+const YACHT_ORIGINS = ['new-yachts-charter', 'yachts-sale', 'manual'] as const
 
 export const Yachts: CollectionConfig = {
   slug: 'yachts',

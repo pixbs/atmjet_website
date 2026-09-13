@@ -1,23 +1,9 @@
 import { describe, expect, it } from 'vitest'
 
-import {
-  COUNT_DURATION_MS,
-  COUNT_INTERVAL_MS,
-  COUNT_STEPS,
-  countValues,
-  formatCount,
-  isCountDone,
-  parseCountTargets,
-} from '@/lib/count-up'
+import { countValues, formatCount, isCountDone, parseCountTargets } from '@/lib/count-up'
 
 /** The legacy counter's behaviour (issue #50): what it parsed, how it stepped and formatted. */
 describe('count up', () => {
-  it('counts for 800ms in 30ms steps, as the legacy counter did', () => {
-    expect(COUNT_DURATION_MS).toBe(800)
-    expect(COUNT_INTERVAL_MS).toBe(30)
-    expect(COUNT_STEPS).toBeCloseTo(800 / 30)
-  })
-
   it.each([
     ['16+', [16]],
     ['1,000 flights', [1000]],
@@ -32,8 +18,9 @@ describe('count up', () => {
     const targets = [16]
 
     expect(countValues(targets, 0)).toEqual([0])
-    expect(isCountDone(countValues(targets, Math.floor(COUNT_STEPS) - 1), targets)).toBe(false)
-    expect(isCountDone(countValues(targets, Math.ceil(COUNT_STEPS)), targets)).toBe(true)
+    // 800 ms in 30 ms steps: 26 steps are not enough, 27 reach the target.
+    expect(isCountDone(countValues(targets, 25), targets)).toBe(false)
+    expect(isCountDone(countValues(targets, 27), targets)).toBe(true)
   })
 
   it('keeps everything around the numbers while counting', () => {

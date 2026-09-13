@@ -7,7 +7,9 @@ import { PAGE_LOCALES } from '@/collections/Pages'
 import { servedStatusFor } from '@/collections/Redirects'
 import type { Locale } from '@/i18n/locales'
 import { routing } from '@/i18n/routing'
-import { findRedirect, getPayloadClient, listPageParams } from '@/lib/data'
+import { listPageParams } from '@/lib/data/pages'
+import { getPayloadClient } from '@/lib/data/payload'
+import { findRedirect } from '@/lib/data/redirects'
 
 /**
  * Renders a page document at `/<locale>/<slug>` (issue #60), with the locale root serving the
