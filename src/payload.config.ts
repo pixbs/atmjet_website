@@ -17,6 +17,7 @@ import { Aircraft } from './collections/Aircraft'
 import { Contacts } from './collections/Contacts'
 import { Yachts } from './collections/Yachts'
 import { EmptyLegs } from './collections/EmptyLegs'
+import { Leads } from './collections/Leads'
 import { DEFAULT_LOCALE, LOCALE_DEFINITIONS } from './i18n/locales'
 
 const filename = fileURLToPath(import.meta.url)
@@ -44,7 +45,7 @@ export default buildConfig({
   i18n: {
     supportedLanguages: { en, ru, uk },
   },
-  collections: [Users, Media, Pages, Airports, Aircraft, Contacts, Yachts, EmptyLegs],
+  collections: [Users, Media, Pages, Airports, Aircraft, Contacts, Yachts, EmptyLegs, Leads],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {

@@ -1,6 +1,6 @@
 # Access-control matrix
 
-Who may do what, per collection and operation. Every cell has a test: the shared rules and the collections without a spec of their own live in `tests/int/access.int.spec.ts`, which also holds the guard that fails when a collection is added without declaring access at all; a collection with its own spec (`airports`, `aircraft`, `contacts`, `yachts`, `empty-legs`) keeps its cells there, next to the rest of its behaviour.
+Who may do what, per collection and operation. Every cell has a test: the shared rules and the collections without a spec of their own live in `tests/int/access.int.spec.ts`, which also holds the guard that fails when a collection is added without declaring access at all; a collection with its own spec (`airports`, `aircraft`, `contacts`, `yachts`, `empty-legs`, `leads`) keeps its cells there, next to the rest of its behaviour.
 
 This is written out in full because the legacy admin had none of it: no roles, unauthenticated yacht routes, and passwords stored in plain text (`docs/legacy-inventory.md` section 14).
 
@@ -64,7 +64,7 @@ Content and reference data. `pages`, `aircraft`, `yachts` and `empty-legs` use `
 
 Two fields on `yachts` are narrower than their collection: `contact` and `captain`, from the legacy `contact_id` and `captain_id`, are built by `contactRelationship()` and are admin-only at field level. So a published yacht that any anonymous visitor may read carries neither the people nor the ids that would find them.
 
-### `contacts`
+### `contacts` and `leads`
 
 Personal data — a name, a phone number and an e-mail address — that the legacy site never rendered and the legacy admin never showed (`docs/legacy-inventory.md` section 8). Administrators only, on every operation: running the content does not require a broker's mobile number.
 
@@ -78,6 +78,19 @@ Personal data — a name, a phone number and an e-mail address — that the lega
 Field-level, on the other side of the relationship: every field that points at a contact is built by `contactRelationship()` in `src/collections/Contacts.ts`, which declares `read`, `create` and `update` as `adminFieldOnly`. Collection access alone would stop Payload populating the document but still return the stored id on the parent, which is one lookup away from the person; field access removes the field outright. Yachts (issue #65) carries two such fields, from the legacy `contact_id` and `captain_id`.
 
 The public projection is `publicContact()` in `src/lib/contacts.ts`. Its allowlist is empty, because no legacy page showed any part of a contact, and it drops `phone` and `email` even when a caller names them.
+
+`leads` holds the same rule for the same reason: a name, a phone number, an e-mail address and the itinerary a stranger asked about.
+
+| Operation | Anonymous | Editor | Admin |
+| --------- | --------- | ------ | ----- |
+| read      | no        | no     | yes   |
+| create    | no        | no     | yes   |
+| update    | no        | no     | yes   |
+| delete    | no        | no     | yes   |
+
+A lead is created by the server action of E9.4 through the **Local API**, which does not go through access control at all, so closing `create` to everyone but an administrator costs the public forms nothing and means nobody can write a lead by posting to `/api/leads`. Both collections are hidden from an editor's sidebar rather than offered as a screen that would fail.
+
+Retention for both is in `SECURITY.md`.
 
 ## Helpers
 
@@ -107,4 +120,4 @@ Rules come from `src/access` and nowhere else, so a collection cannot invent its
 1. Declare all four operations explicitly, using the helpers above. The enumeration test fails otherwise.
 2. Add its rows to this table.
 3. Add its cells to a test, including the anonymous ones: the collection's own spec if it has one, `tests/int/access.int.spec.ts` otherwise.
-4. If it holds personal data, say so here and keep read admin-only (`contacts` above; Leads, issue #68, is still to come).
+4. If it holds personal data, say so here, keep read admin-only (`contacts` and `leads` above), and give it a row in the retention table in `SECURITY.md`.

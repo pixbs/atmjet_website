@@ -75,6 +75,7 @@ export interface Config {
     contacts: Contact;
     yachts: Yacht;
     'empty-legs': EmptyLeg;
+    leads: Lead;
     'payload-kv': PayloadKv;
     'payload-jobs': PayloadJob;
     'payload-locked-documents': PayloadLockedDocument;
@@ -91,6 +92,7 @@ export interface Config {
     contacts: ContactsSelect<false> | ContactsSelect<true>;
     yachts: YachtsSelect<false> | YachtsSelect<true>;
     'empty-legs': EmptyLegsSelect<false> | EmptyLegsSelect<true>;
+    leads: LeadsSelect<false> | LeadsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-jobs': PayloadJobsSelect<false> | PayloadJobsSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
@@ -720,6 +722,97 @@ export interface EmptyLeg {
   _status?: ('draft' | 'published') | null;
 }
 /**
+ * Form submissions and how they were delivered. Personal data: administrators only, and never rendered on the public site.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "leads".
+ */
+export interface Lead {
+  id: number;
+  /**
+   * As submitted. The legacy form allowed 32 characters.
+   */
+  name: string;
+  email: string;
+  /**
+   * As submitted, formatting included. The legacy message stripped the spaces on its way to Telegram; the original is kept here.
+   */
+  phone: string;
+  /**
+   * The chips the visitor ticked. The legacy list was hard-coded per language (section 7.2).
+   */
+  tags?: string[] | null;
+  /**
+   * The legs, in the order they were entered. From the legacy `direction` query parameter, which carried this exact shape (section 7.6).
+   */
+  directions?:
+    | {
+        from?: string | null;
+        to?: string | null;
+        date?: string | null;
+        returnDate?: string | null;
+        passengers?: number | null;
+        guests?: number | null;
+        hours?: number | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Which form the visitor actually submitted.
+   */
+  formType: 'booking-dialog' | 'contact-us-inline' | 'flight-request' | 'aircraft-detail' | 'yacht-detail';
+  /**
+   * The ?showBooking= value that opened the dialog (Header, Empty-legs, Flight_request …), or the page when the form had none, as the inline contact form does.
+   */
+  source?: string | null;
+  /**
+   * The language the visitor was reading.
+   */
+  locale?: ('en' | 'ru' | 'uk') | null;
+  page?: {
+    path?: string | null;
+    url?: string | null;
+    referrer?: string | null;
+  };
+  /**
+   * The utm_* parameters on the page the form was submitted from.
+   */
+  utm?: {
+    source?: string | null;
+    medium?: string | null;
+    campaign?: string | null;
+    term?: string | null;
+    content?: string | null;
+  };
+  /**
+   * As sent by the browser. Kept for spam triage, nothing else.
+   */
+  userAgent?: string | null;
+  /**
+   * Worked out from the attempts below: failed if any channel failed, pending while any has not been sent.
+   */
+  deliveryStatus?: string | null;
+  /**
+   * One row per channel. The legacy site had none of this: a failed send was an unhandled rejection and the lead was gone.
+   */
+  delivery?:
+    | {
+        channel: 'telegram' | 'crm';
+        status: 'pending' | 'sent' | 'failed';
+        attempts?: number | null;
+        lastAttemptAt?: string | null;
+        deliveredAt?: string | null;
+        /**
+         * What the channel said when it refused, verbatim.
+         */
+        lastError?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
@@ -866,6 +959,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'empty-legs';
         value: number | EmptyLeg;
+      } | null)
+    | ({
+        relationTo: 'leads';
+        value: number | Lead;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -1259,6 +1356,62 @@ export interface EmptyLegsSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "leads_select".
+ */
+export interface LeadsSelect<T extends boolean = true> {
+  name?: T;
+  email?: T;
+  phone?: T;
+  tags?: T;
+  directions?:
+    | T
+    | {
+        from?: T;
+        to?: T;
+        date?: T;
+        returnDate?: T;
+        passengers?: T;
+        guests?: T;
+        hours?: T;
+        id?: T;
+      };
+  formType?: T;
+  source?: T;
+  locale?: T;
+  page?:
+    | T
+    | {
+        path?: T;
+        url?: T;
+        referrer?: T;
+      };
+  utm?:
+    | T
+    | {
+        source?: T;
+        medium?: T;
+        campaign?: T;
+        term?: T;
+        content?: T;
+      };
+  userAgent?: T;
+  deliveryStatus?: T;
+  delivery?:
+    | T
+    | {
+        channel?: T;
+        status?: T;
+        attempts?: T;
+        lastAttemptAt?: T;
+        deliveredAt?: T;
+        lastError?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
