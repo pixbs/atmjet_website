@@ -1,6 +1,6 @@
 # Access-control matrix
 
-Who may do what, per collection and operation. Every cell has a test: the shared rules and the collections without a spec of their own live in `tests/int/access.int.spec.ts`, which also holds the guard that fails when a collection is added without declaring access at all; a collection with its own spec (`airports`, `aircraft`, `contacts`) keeps its cells there, next to the rest of its behaviour.
+Who may do what, per collection and operation. Every cell has a test: the shared rules and the collections without a spec of their own live in `tests/int/access.int.spec.ts`, which also holds the guard that fails when a collection is added without declaring access at all; a collection with its own spec (`airports`, `aircraft`, `contacts`, `yachts`) keeps its cells there, next to the rest of its behaviour.
 
 This is written out in full because the legacy admin had none of it: no roles, unauthenticated yacht routes, and passwords stored in plain text (`docs/legacy-inventory.md` section 14).
 
@@ -48,6 +48,21 @@ Uploads are public because every page renders them; changing them needs someone 
 | admin panel | no        | yes             | yes   |
 
 Field-level: `roles` is writable by admins only, on both create and update. Payload drops a field the caller may not write rather than failing the request, so an editor sending `roles: ['admin']` succeeds with their roles unchanged.
+
+### `pages`, `airports`, `aircraft` and `yachts`
+
+Content and reference data. `pages` and `aircraft` use `publishedOnly`, so the public sees published documents and the people who run the content see drafts too; `airports` is read by anyone, because the airport search endpoint (E9.9) and the empty legs block answer without a session.
+
+| Collection | read           | create | update | delete |
+| ---------- | -------------- | ------ | ------ | ------ |
+| `pages`    | published only | editor | editor | editor |
+| `airports` | anyone         | editor | editor | editor |
+| `aircraft` | published only | editor | editor | editor |
+| `yachts`   | published only | editor | editor | editor |
+
+"Editor" means `editorOrAdmin` throughout: an admin can do everything an editor can. Their cells are tested in each collection's own spec.
+
+Two fields on `yachts` are narrower than their collection: `contact` and `captain`, from the legacy `contact_id` and `captain_id`, are built by `contactRelationship()` and are admin-only at field level. So a published yacht that any anonymous visitor may read carries neither the people nor the ids that would find them.
 
 ### `contacts`
 

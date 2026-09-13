@@ -1,0 +1,80 @@
+import { describe, expect, it } from 'vitest'
+
+import { slugify, transliterate } from '@/lib/slug'
+
+/**
+ * The slug rule (issue #65). The legacy admin's version dropped every non-ASCII character before
+ * building the slug, so a Cyrillic yacht name produced an empty one
+ * (`docs/legacy-inventory.md` section 14 item 4). That is the bug these tests pin shut.
+ */
+describe('transliterate', () => {
+  it('spells Russian in Latin', () => {
+    expect(transliterate('Жемчужина')).toBe('Zhemchuzhina')
+    expect(transliterate('Щука')).toBe('Shchuka')
+    expect(transliterate('Объект')).toBe('Obekt')
+  })
+
+  it('spells Ukrainian in Latin, including the letters Russian does not have', () => {
+    expect(transliterate('Їжак')).toBe('Yizhak')
+    expect(transliterate('Єдність')).toBe('Yednist')
+    expect(transliterate('ґанок')).toBe('ganok')
+  })
+
+  it('maps a Cyrillic letter that decomposes into another one, rather than flattening it', () => {
+    // NFD turns Ї into І plus a diaeresis and й into и plus a breve, so a strip-marks-first
+    // transliteration spells these Izhak and Ioga.
+    expect(transliterate('Їжак')).toBe('Yizhak')
+    expect(transliterate('Йога')).toBe('Yoga')
+  })
+
+  it('drops the marks off accented Latin', () => {
+    expect(transliterate('Café Crème')).toBe('Cafe Creme')
+    expect(transliterate('Ålesund')).toBe('Alesund')
+  })
+
+  it('maps the Latin letters that carry no mark to drop', () => {
+    expect(transliterate('Ærø')).toBe('Aero')
+    expect(transliterate('Straße')).toBe('Strasse')
+    expect(transliterate('Łódź')).toBe('Lodz')
+  })
+
+  it('leaves what it does not know alone rather than deleting it', () => {
+    expect(transliterate('海')).toBe('海')
+    expect(transliterate('M/Y Lady 7')).toBe('M/Y Lady 7')
+  })
+})
+
+describe('slugify', () => {
+  it('gives a Cyrillic name a stable ASCII slug instead of an empty one', () => {
+    // The legacy rule returned '' here, which is the whole reason this exists.
+    expect(slugify('Жемчужина')).toBe('zhemchuzhina')
+    expect(slugify('Морская Звезда')).toBe('morskaya_zvezda')
+  })
+
+  it('is stable: the same name always gives the same slug', () => {
+    expect(slugify('Морская Звезда')).toBe(slugify('Морская Звезда'))
+  })
+
+  it('keeps the legacy shape for an ASCII name, so an imported row lands where it did', () => {
+    // name.toLowerCase().replace(/[^a-z0-9 ]/g, '').replace(/\s+/g, '_')
+    expect(slugify('Lady M.')).toBe('lady_m')
+    expect(slugify('Sunseeker 76')).toBe('sunseeker_76')
+    expect(slugify('M/Y Blue Ice')).toBe('my_blue_ice')
+  })
+
+  it('collapses runs of spaces and trims, unlike the legacy rule', () => {
+    expect(slugify('  Blue   Ice  ')).toBe('blue_ice')
+  })
+
+  it('returns nothing when nothing survives, rather than a slug of punctuation', () => {
+    expect(slugify('!!!')).toBe('')
+    expect(slugify('海')).toBe('')
+    expect(slugify('')).toBe('')
+  })
+
+  it('returns nothing for a value that is not text', () => {
+    expect(slugify(undefined)).toBe('')
+    expect(slugify(null)).toBe('')
+    expect(slugify(42)).toBe('')
+  })
+})
