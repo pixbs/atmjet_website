@@ -1,3 +1,4 @@
+import { setRequestLocale } from 'next-intl/server'
 import type { Metadata } from 'next'
 import React from 'react'
 
@@ -56,7 +57,10 @@ function Swatch({ label, className }: { label: string; className: string }) {
   )
 }
 
-export default function StyleguidePage() {
+export default async function StyleguidePage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params
+  setRequestLocale(locale)
+
   return (
     <div className="gap-16 py-16">
       <section id="typography" className="container items-start gap-4">
