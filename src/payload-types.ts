@@ -289,7 +289,7 @@ export interface Airport {
    */
   type?: string | null;
   /**
-   * Annual passengers, used to rank search results. A number here, unlike the legacy text column; the import parses that text with parsePassengersPerYear before writing.
+   * Annual passengers, used to rank search results. A number here, unlike the legacy text column; the import parses that text before writing.
    */
   passengersPerYear?: number | null;
   /**

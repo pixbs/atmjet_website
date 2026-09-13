@@ -28,7 +28,7 @@ export interface CompareResult {
   diff?: Buffer
 }
 
-export const DEFAULT_COMPARE_OPTIONS: Required<CompareOptions> = {
+const DEFAULT_COMPARE_OPTIONS: Required<CompareOptions> = {
   threshold: 0.1,
   maxDiffPixelRatio: 0.01,
   maxHeightDelta: 0,

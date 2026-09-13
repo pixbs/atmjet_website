@@ -15,10 +15,10 @@ const NUMBER_PATTERN = /\d+([,.]\d+)?/g
 export const COUNT_INTERVAL_MS = 30
 
 /** How long the legacy counter took to reach its targets, in milliseconds. */
-export const COUNT_DURATION_MS = 800
+const COUNT_DURATION_MS = 800
 
 /** The number of steps the count takes. */
-export const COUNT_STEPS = COUNT_DURATION_MS / COUNT_INTERVAL_MS
+const COUNT_STEPS = COUNT_DURATION_MS / COUNT_INTERVAL_MS
 
 /** Every number in the text, in order ("1,000 of 3.5" gives [1000, 3.5]). */
 export function parseCountTargets(text: string): number[] {

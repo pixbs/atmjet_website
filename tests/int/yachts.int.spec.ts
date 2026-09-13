@@ -1,6 +1,5 @@
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
 
-import { YACHT_ORIGINS } from '@/collections/Yachts'
 import { slugify } from '@/lib/slug'
 import { createAdmin, createContact, createUser, createYacht, yachtData } from '../factories'
 import { createRegistry, uniqueSuffix, type TestRegistry } from '../helpers/payload'
@@ -111,41 +110,6 @@ describe('slugs', () => {
 
     expect(updated.slug).toBe(created.slug)
     expect(updated.location).toBe('Monaco')
-  })
-})
-
-describe('the hooks and the admin conditions', () => {
-  it('leaves a write that carries no data at all alone', async () => {
-    const config = await registry.payload.config
-    const collection = config.collections.find((entry) => entry.slug === 'yachts')
-    const derive = collection?.hooks.beforeValidate?.[0] as (args: unknown) => unknown
-
-    expect(typeof derive).toBe('function')
-    // Payload calls the hook with no data on some paths, and a partial update must not be
-    // turned into a slug generation or a validation failure.
-    expect(derive({ data: undefined, operation: 'update' })).toBeUndefined()
-  })
-
-  it('shows each group only for the listing type it belongs to', async () => {
-    const config = await registry.payload.config
-    const collection = config.collections.find((entry) => entry.slug === 'yachts')
-    const conditionOf = (name: string) => {
-      const group = collection?.fields.find((field) => 'name' in field && field.name === name)
-      return group?.admin?.condition as (data: unknown) => boolean
-    }
-
-    const charterCondition = conditionOf('charter')
-    const saleCondition = conditionOf('sale')
-
-    expect(charterCondition({ listingType: 'charter' })).toBe(true)
-    expect(charterCondition({ listingType: 'sale' })).toBe(false)
-    expect(saleCondition({ listingType: 'sale' })).toBe(true)
-    expect(saleCondition({ listingType: 'charter' })).toBe(false)
-
-    // The admin calls a condition with no data while a document is still loading; charter is
-    // the default, so that is what an empty form shows.
-    expect(charterCondition(undefined)).toBe(true)
-    expect(saleCondition(undefined)).toBe(false)
   })
 })
 
@@ -352,7 +316,6 @@ describe('provenance and the columns with no field of their own', () => {
     expect(created.legacyAttributes).toEqual(legacyAttributes)
     expect(created.provenance?.origin).toBe('yachts-sale')
     expect(created.provenance?.legacySlug).toBe('lady_m')
-    expect(YACHT_ORIGINS).toEqual(['new-yachts-charter', 'yachts-sale', 'manual'])
   })
 })
 

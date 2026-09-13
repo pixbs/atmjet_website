@@ -31,8 +31,6 @@ export const PAGE_SLUGS = [
   'yachts',
 ] as const
 
-export type PageSlug = (typeof PAGE_SLUGS)[number]
-
 /** The path a page is served at. The home page is the locale root, not `/en/home`. */
 export function pathForPage(locale: string, slug: string): string {
   return slug === '' ? `/${locale}` : `/${locale}/${slug}`

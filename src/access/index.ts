@@ -2,13 +2,10 @@ import type { Access, FieldAccess } from 'payload'
 
 import { hasRole } from './roles'
 
-export { DEFAULT_ROLE, hasRole, ROLES, rolesOf, type Role, type RoleBearer } from './roles'
+export { DEFAULT_ROLE, hasRole, ROLES } from './roles'
 
 /** Public. Used for content a visitor must be able to read without signing in. */
 export const anyone: Access = () => true
-
-/** Any signed-in user, whatever their role. */
-export const authenticated: Access = ({ req: { user } }) => Boolean(user)
 
 /** Administrators only: people, roles and anything that changes how the site is run. */
 export const admin: Access = ({ req: { user } }) => hasRole(user, 'admin')

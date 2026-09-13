@@ -35,15 +35,3 @@ export const LOCALE_DEFINITIONS: readonly LocaleDefinition[] = [
   { code: 'ru', label: 'Русский', direction: 'ltr' },
   { code: 'uk', label: 'Українська', direction: 'ltr' },
 ]
-
-export function isRoutedLocale(value: string): value is Locale {
-  return (ROUTED_LOCALES as readonly string[]).includes(value)
-}
-
-export function localeDefinition(code: Locale): LocaleDefinition {
-  const definition = LOCALE_DEFINITIONS.find((entry) => entry.code === code)
-  if (!definition) {
-    throw new Error(`No locale definition for "${code}"; add it to LOCALE_DEFINITIONS.`)
-  }
-  return definition
-}

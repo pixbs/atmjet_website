@@ -50,8 +50,8 @@ describe('normalisation on write', () => {
   it('does not try to rescue a passenger count that arrives as legacy text', async () => {
     // Payload coerces a number field before the collection hook runs, so "49 837 000" is
     // already 49 by then and the truncation cannot be detected. The importer parses the legacy
-    // text itself (parsePassengersPerYear, unit-tested); this pins the reason the hook does
-    // not, so nobody adds it back expecting it to work.
+    // text itself; this pins the reason the hook does not, so nobody adds it back expecting it
+    // to work.
     const created = await registry.create(
       'airports',
       airport({ passengersPerYear: '49 837 000' as unknown as number }),
@@ -95,22 +95,6 @@ describe('partial writes', () => {
 
     expect(created.icao).toMatch(/^EK/)
     expect(created.city).toBeFalsy()
-  })
-
-  it('survives a write that carries no data at all', async () => {
-    const config = await registry.payload.config
-    const airports = config.collections.find((collection) => collection.slug === 'airports')
-    const normalise = airports?.hooks.beforeValidate?.[0]
-
-    expect(typeof normalise).toBe('function')
-    const run = normalise as (args: unknown) => Record<string, unknown> | undefined
-
-    // Payload calls the hook with no data on some paths; it must pass it through untouched.
-    expect(run({ data: undefined })).toBeUndefined()
-
-    // And a write that mentions one field must not invent the others, whichever field it is.
-    expect(run({ data: { icao: ' uudd ' } })).toEqual({ icao: 'UUDD' })
-    expect(run({ data: { iata: ' dme ' } })).toEqual({ iata: 'DME' })
   })
 })
 

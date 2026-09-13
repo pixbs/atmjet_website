@@ -4,7 +4,7 @@ import { ValidationError } from 'payload'
 import { anyone, editorOrAdmin } from '@/access'
 import { ALL_LOCALES } from '@/i18n/locales'
 import { nextRevalidationHooks } from '@/lib/data/revalidate-next'
-import { DEFAULT_REDIRECT_STATUS, normaliseRedirectPath } from '@/lib/redirects'
+import { normaliseRedirectPath } from '@/lib/redirects'
 
 /**
  * The overrides `@payloadcms/plugin-redirects` is configured with (issue #69).
@@ -166,4 +166,3 @@ export const redirectsOverrides: Partial<Omit<CollectionConfig, 'fields'>> & {
 }
 
 /** The status a rule falls back to, re-exported so the seed and the admin agree. */
-export { DEFAULT_REDIRECT_STATUS }

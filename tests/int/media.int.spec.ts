@@ -1,7 +1,5 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 
-import { IMAGE_SIZES } from '@/collections/Media'
-import { mediaUrl } from '@/lib/media-url'
 import { createMedia, mediaData, pngFile } from '../factories'
 import { createRegistry, uniqueSuffix, type TestRegistry } from '../helpers/payload'
 
@@ -21,8 +19,8 @@ describe('media', () => {
   it('generates every configured size for an upload', async () => {
     const media = await createMedia(registry)
 
-    for (const size of IMAGE_SIZES) {
-      expect(media.sizes, `${size.name} is missing`).toHaveProperty(size.name)
+    for (const size of ['thumbnail', 'card', 'gallery', 'hero']) {
+      expect(media.sizes, `${size} is missing`).toHaveProperty(size)
     }
   })
 
@@ -63,14 +61,6 @@ describe('media', () => {
 
     expect(english.alt).toBe('A jet on the apron')
     expect(russian.alt).toBe('Самолёт на перроне')
-  })
-
-  it('serves a document that still lives on a legacy host from that host', async () => {
-    const media = await createMedia(registry, {
-      externalUrl: 'https://legacy.example/aircraft/hero.jpg',
-    })
-
-    expect(mediaUrl(media, 'card')).toBe('https://legacy.example/aircraft/hero.jpg')
   })
 
   it('requires alt text', async () => {

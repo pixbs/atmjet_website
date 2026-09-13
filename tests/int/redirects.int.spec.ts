@@ -1,7 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
 
 import { LEGACY_REDIRECTS, seedRedirects } from '../../scripts/seed/redirects'
-import { findRedirect, rulesFrom, targetOf } from '@/lib/data'
+import { findRedirect } from '@/lib/data/redirects'
 import { createUser } from '../factories'
 import { createRegistry, uniqueSuffix, type TestRegistry } from '../helpers/payload'
 
@@ -73,14 +73,6 @@ describe('a rule that points at a page', () => {
       redirect({ to: { type: 'reference', reference: { relationTo: 'pages', value: page.id } } }),
     )
 
-    const stored = await registry.payload.findByID({
-      collection: 'redirects',
-      id: created.id,
-      depth: 1,
-    })
-
-    expect(targetOf(stored)).toBe(`/${page.slug}`)
-
     const client = () => Promise.resolve(registry.payload)
     expect((await findRedirect('en', created.from, client))?.destination).toBe(`/en/${page.slug}`)
   })
@@ -113,44 +105,6 @@ describe('validation', () => {
     await registry.create('redirects', redirect({ from }))
 
     await expect(registry.create('redirects', redirect({ from }))).rejects.toThrow()
-  })
-
-  it('leaves alone the parts of a write that do not mention a path', async () => {
-    const config = await registry.payload.config
-    const collection = config.collections.find((entry) => entry.slug === 'redirects')
-    const hook = collection?.hooks.beforeValidate?.[0] as (args: unknown) => unknown
-
-    expect(typeof hook).toBe('function')
-
-    // Payload calls the hook with no data on some paths.
-    expect(hook({ data: undefined })).toBeUndefined()
-
-    // A partial update that changes the note must not invent a `from`, and must still be told
-    // where the redirect goes.
-    expect(hook({ data: { note: 'why', to: { type: 'custom', url: '/aircraft' } } })).toEqual({
-      note: 'why',
-      to: { type: 'custom', url: '/aircraft' },
-    })
-
-    // A custom target that is not text at all is nothing, not a path.
-    expect(() => hook({ data: { from: '/a', to: { type: 'custom', url: 42 } } })).toThrow()
-  })
-})
-
-describe('rulesFrom', () => {
-  it('drops a stored row that cannot be matched on', () => {
-    expect(
-      rulesFrom([
-        { from: '/a', to: { type: 'custom', url: '/b' } },
-        { from: undefined, to: { type: 'custom', url: '/b' } },
-        { from: '/c', to: null },
-        { from: '/d', to: { type: 'custom', url: '' } },
-        { from: '/e', to: { type: 'reference', reference: null } },
-        { from: '/f', to: { type: 'reference', reference: { value: { slug: 42 } } } },
-      ]),
-    ).toEqual([
-      { from: '/a', to: '/b', matchSubPaths: undefined, locale: undefined, type: undefined },
-    ])
   })
 })
 

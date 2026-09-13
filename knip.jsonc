@@ -1,0 +1,25 @@
+{
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+  // Entries with "!" are production: what the site, the Payload CLI and the scripts run. Tests are
+  // entries too, so `knip --production` reports the code that only tests reach (ADR-0008).
+  "entry": ["src/payload.config.ts!", "src/proxy.ts!", "src/migrations/*.ts!", "scripts/**/*.ts!"],
+  "project": ["src/**/*.{ts,tsx}!", "scripts/**/*.ts!", "tests/**/*.{ts,tsx}"],
+  "ignore": [
+    "src/payload-types.ts",
+    "src/migrations/*.json",
+    // The legacy motion vocabulary (ADR-0006): the callers arrive with each ported component and
+    // tests/unit/motion.test.ts pins the values until then.
+    "src/lib/motion.ts",
+  ],
+  // A type that only its own module uses stays exported when it is part of an exported signature.
+  "ignoreExportsUsedInFile": { "interface": true, "type": true },
+  "ignoreDependencies": [
+    // Payload's admin needs @payloadcms/ui at runtime although nothing imports it directly.
+    "@payloadcms/ui",
+    // Imported from globals.css, which knip does not read.
+    "tailwindcss",
+  ],
+  // knip's Payload plugin treats payload.config.ts as a config file and drops it from the production
+  // graph; the config is the root of the content model, so it is a plain production entry instead.
+  "payload": false,
+}

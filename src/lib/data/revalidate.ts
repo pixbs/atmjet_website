@@ -18,7 +18,7 @@ import { tagsForWrite } from './tags'
 export type Revalidator = (tags: readonly string[]) => void
 
 /** Narrows whatever Payload puts on `req.locale` to a locale we know, or undefined for all. */
-export function localeOf(value: unknown): Locale | undefined {
+function localeOf(value: unknown): Locale | undefined {
   return typeof value === 'string' && (ALL_LOCALES as readonly string[]).includes(value)
     ? (value as Locale)
     : undefined

@@ -10,12 +10,12 @@ import { nextRevalidationHooks } from '@/lib/data/revalidate-next'
  *
  * `externalUrl` carries objects that still live on the legacy hosts. The media migration
  * (E5.12) imports those rows first and mirrors the files afterwards, so a document can point at
- * a legacy URL before the object exists in this bucket; `mediaUrl()` in src/lib/media-url.ts is
- * what components read, and it prefers that URL when it is set.
+ * a legacy URL before the object exists in this bucket; the media component of E6 prefers that
+ * URL when it is set.
  */
 
 /** The types the site actually uses. Anything else is rejected with a readable error. */
-export const ALLOWED_MIME_TYPES = [
+const ALLOWED_MIME_TYPES = [
   'image/jpeg',
   'image/png',
   'image/webp',
@@ -30,7 +30,7 @@ export const ALLOWED_MIME_TYPES = [
  * galleries and full-bleed heroes. Images are never enlarged, so a small source keeps its size
  * and simply has fewer variants.
  */
-export const IMAGE_SIZES = [
+const IMAGE_SIZES = [
   { name: 'thumbnail', width: 400 },
   { name: 'card', width: 768 },
   { name: 'gallery', width: 1280 },

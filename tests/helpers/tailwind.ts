@@ -10,8 +10,8 @@ import { readFileSync } from 'node:fs'
 import path from 'node:path'
 import { compile } from 'tailwindcss'
 
-export const PROJECT_ROOT = process.cwd()
-export const FRONTEND_STYLESHEET = path.resolve(PROJECT_ROOT, 'src/app/(frontend)/globals.css')
+const PROJECT_ROOT = process.cwd()
+const FRONTEND_STYLESHEET = path.resolve(PROJECT_ROOT, 'src/app/(frontend)/globals.css')
 
 const TAILWIND_DIR = path.resolve(PROJECT_ROOT, 'node_modules/tailwindcss')
 
@@ -81,7 +81,7 @@ export function normaliseCssValue(value: string): string {
  * friends with a backslash, and a leading digit as a hex escape (`2xl:flex` becomes
  * `.\32 xl\:flex`).
  */
-export function escapeClassName(className: string): string {
+function escapeClassName(className: string): string {
   const escaped = className.replace(/[.:/%[\]()#,!]/g, (character) => `\\${character}`)
 
   return /^\d/.test(escaped) ? `\\3${escaped[0]} ${escaped.slice(1)}` : escaped
@@ -92,7 +92,7 @@ export function escapeClassName(className: string): string {
  * selector has to start a line, so `div` does not match `.card div`; a selector list is
  * matched as written on one line (`h1, h2, h3, h4`).
  */
-export function ruleFor(css: string, selector: string): string | undefined {
+function ruleFor(css: string, selector: string): string | undefined {
   // Prettier breaks selector lists over several lines; compare them on one line.
   css = css.replace(/,\s*\n\s*/g, ', ')
   const pattern = new RegExp(`(?:^|\\n)\\s*${selector.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')} \\{`)

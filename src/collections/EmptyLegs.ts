@@ -3,7 +3,6 @@ import type { CollectionConfig } from 'payload'
 import { editorOrAdmin, publishedOnly } from '@/access'
 import { normaliseCode } from '@/lib/airports'
 import { nextRevalidationHooks } from '@/lib/data/revalidate-next'
-import { EMPTY_LEG_SORT } from '@/lib/empty-legs'
 
 /**
  * Empty legs (issue #66). The legacy table is `atmjet_admin__empty_legs`: `start`, `end`, `from`
@@ -25,10 +24,10 @@ import { EMPTY_LEG_SORT } from '@/lib/empty-legs'
 const revalidation = nextRevalidationHooks('empty-legs')
 
 /** The currencies a leg may be priced in. The legacy card hard-coded a dollar sign. */
-export const EMPTY_LEG_CURRENCIES = ['USD', 'EUR', 'AED'] as const
+const EMPTY_LEG_CURRENCIES = ['USD', 'EUR', 'AED'] as const
 
 /** Where a document came from, per ADR-0002 section 8. */
-export const EMPTY_LEG_ORIGINS = ['empty-legs-legacy', 'manual'] as const
+const EMPTY_LEG_ORIGINS = ['empty-legs-legacy', 'manual'] as const
 
 export const EmptyLegs: CollectionConfig = {
   slug: 'empty-legs',
@@ -40,7 +39,7 @@ export const EmptyLegs: CollectionConfig = {
   },
   // The list view opens on the order the listing renders in, so what an editor drags into place
   // is what a visitor sees. The legacy admin wrote this column and the site ignored it.
-  defaultSort: [...EMPTY_LEG_SORT],
+  defaultSort: ['order', 'departureAt'],
   access: {
     read: publishedOnly,
     create: editorOrAdmin,

@@ -48,8 +48,8 @@ export const Airports: CollectionConfig = {
 
         // `passengersPerYear` is deliberately not normalised here. Payload coerces a number
         // field before this hook runs, so "49 837 000" would already have become 49 and the
-        // truncation would be invisible. The importer of E5.5 runs `parsePassengersPerYear`
-        // on the legacy text itself, which is why that function is exported.
+        // truncation would be invisible. The importer of E5.5 parses the legacy text
+        // itself before writing.
 
         return data
       },
@@ -115,7 +115,7 @@ export const Airports: CollectionConfig = {
       admin: {
         position: 'sidebar',
         description:
-          'Annual passengers, used to rank search results. A number here, unlike the legacy text column; the import parses that text with parsePassengersPerYear before writing.',
+          'Annual passengers, used to rank search results. A number here, unlike the legacy text column; the import parses that text before writing.',
       },
     },
     {

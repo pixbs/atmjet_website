@@ -73,7 +73,7 @@ const LATIN: Record<string, string> = {
  * letters decompose into another letter plus a mark: `Ї` is `І` with a diaeresis and `й` is `и`
  * with a breve, so stripping marks first would spell `Їжак` as `Izhak` and `Йога` as `Ioga`.
  */
-export function transliterate(value: string): string {
+function transliterate(value: string): string {
   let result = ''
 
   for (const character of value.normalize('NFC')) {

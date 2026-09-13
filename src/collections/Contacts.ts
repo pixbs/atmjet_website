@@ -22,10 +22,10 @@ import { admin, adminFieldOnly, hasRole } from '@/access'
  * No drafts and no revalidation hooks: nothing public renders a contact, so there is no published
  * state to model and no cached page to drop.
  */
-export const CONTACTS_SLUG = 'contacts'
+const CONTACTS_SLUG = 'contacts'
 
 /** Where a contact document came from, per ADR-0002 section 8. */
-export const CONTACT_ORIGINS = ['contact-legacy', 'manual'] as const
+const CONTACT_ORIGINS = ['contact-legacy', 'manual'] as const
 
 /**
  * A relationship to a contact, for the collections that reference one — Yachts (E4.6) carries

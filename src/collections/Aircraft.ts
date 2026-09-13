@@ -14,19 +14,19 @@ import { nextRevalidationHooks } from '@/lib/data/revalidate-next'
  * comparison used, `upper(replace(x, '-', ''))`, so it is the natural key; `registrationDisplay`
  * keeps the spelling the source had, because that is what the detail page rendered.
  *
- * The rich and basic detail layouts are chosen from the image count at render time and never
- * stored (`detailLayoutFor` in `src/lib/aircraft.ts`), matching the legacy fallback.
+ * The rich and basic detail layouts are chosen from the image count at render time (E8.3) and
+ * never stored, matching the legacy fallback.
  */
 const revalidation = nextRevalidationHooks('aircraft')
 
 /** Which offers an aircraft is listed under, from the four legacy booleans. */
-export const AIRCRAFT_OFFERINGS = ['charter', 'sale', 'lease', 'cargo'] as const
+const AIRCRAFT_OFFERINGS = ['charter', 'sale', 'lease', 'cargo'] as const
 
 /** Where a document came from, per ADR-0002 section 8. */
-export const AIRCRAFT_ORIGINS = ['aircrafts-catalog', 'vehicles-legacy', 'manual'] as const
+const AIRCRAFT_ORIGINS = ['aircrafts-catalog', 'vehicles-legacy', 'manual'] as const
 
 /** The image roles the legacy `aircraft_images.type` enum allowed. */
-export const AIRCRAFT_IMAGE_TYPES = ['exterior', 'cabin', 'cockpit'] as const
+const AIRCRAFT_IMAGE_TYPES = ['exterior', 'cabin', 'cockpit'] as const
 
 export const Aircraft: CollectionConfig = {
   slug: 'aircraft',

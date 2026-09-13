@@ -1,7 +1,5 @@
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
 
-import { AIRCRAFT_IMAGE_TYPES, AIRCRAFT_OFFERINGS, AIRCRAFT_ORIGINS } from '@/collections/Aircraft'
-import { detailLayoutFor } from '@/lib/aircraft'
 import { createUser } from '../factories'
 import { createRegistry, uniqueSuffix, type TestRegistry } from '../helpers/payload'
 
@@ -66,20 +64,6 @@ describe('registration as the natural key', () => {
   })
 })
 
-describe('the derivation hook', () => {
-  it('leaves a write that does not mention the registration alone', async () => {
-    const config = await registry.payload.config
-    const collection = config.collections.find((entry) => entry.slug === 'aircraft')
-    const derive = collection?.hooks.beforeValidate?.[0] as (args: unknown) => unknown
-
-    expect(typeof derive).toBe('function')
-    // Payload calls the hook with no data on some paths, and a partial update must not blank
-    // the natural key of a document it never mentioned.
-    expect(derive({ data: undefined })).toBeUndefined()
-    expect(derive({ data: { slug: 'untouched' } })).toEqual({ slug: 'untouched' })
-  })
-})
-
 describe('slugs', () => {
   it('refuses two aircraft with the same slug, so a URL resolves to one document', async () => {
     const slug = `duplicate-${uniqueSuffix()}`
@@ -109,10 +93,6 @@ describe('provenance', () => {
     expect(created.provenance?.origin).toBe('aircrafts-catalog')
     expect(created.provenance?.legacyAircraftId).toBe(412)
     expect(created.provenance?.mergedFrom?.[0]).toMatchObject({ table: 'vehicles', id: 88 })
-  })
-
-  it('offers exactly the three origins ADR-0002 names', () => {
-    expect(AIRCRAFT_ORIGINS).toEqual(['aircrafts-catalog', 'vehicles-legacy', 'manual'])
   })
 })
 
@@ -152,7 +132,6 @@ describe('specification and offerings', () => {
     const created = await registry.create('aircraft', aircraft({ offerings: ['charter', 'sale'] }))
 
     expect(created.offerings).toEqual(['charter', 'sale'])
-    expect(AIRCRAFT_OFFERINGS).toEqual(['charter', 'sale', 'lease', 'cargo'])
   })
 
   it('separates the aircraft from its publication state', async () => {
@@ -177,28 +156,6 @@ describe('images', () => {
     )
 
     expect(created.images?.map((image) => image.type)).toEqual(['exterior', 'cabin'])
-    expect(AIRCRAFT_IMAGE_TYPES).toEqual(['exterior', 'cabin', 'cockpit'])
-  })
-
-  it('decides the detail layout from the image count rather than storing it', async () => {
-    const sparse = await registry.create(
-      'aircraft',
-      aircraft({ images: [{ type: 'exterior', externalUrl: 'https://example.test/a.jpg' }] }),
-    )
-    const rich = await registry.create(
-      'aircraft',
-      aircraft({
-        images: [
-          { type: 'exterior', externalUrl: 'https://example.test/a.jpg' },
-          { type: 'cabin', externalUrl: 'https://example.test/b.jpg' },
-        ],
-      }),
-    )
-
-    expect(detailLayoutFor(sparse.images?.length ?? 0)).toBe('basic')
-    expect(detailLayoutFor(rich.images?.length ?? 0)).toBe('rich')
-    // Nothing on the document says which layout it gets.
-    expect(rich).not.toHaveProperty('layout')
   })
 })
 

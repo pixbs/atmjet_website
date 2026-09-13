@@ -14,19 +14,15 @@ import type { Locale } from '@/i18n/locales'
  * Locale is part of the tag because a localised write changes one locale's HTML and leaves the
  * others valid; invalidating all of them would throw away work for no reason.
  */
-export function collectionTag(collection: CollectionSlug): string {
+function collectionTag(collection: CollectionSlug): string {
   return collection
 }
 
-export function listTag(collection: CollectionSlug, locale: Locale): string {
+function listTag(collection: CollectionSlug, locale: Locale): string {
   return `${collection}:list:${locale}`
 }
 
-export function documentTag(
-  collection: CollectionSlug,
-  id: number | string,
-  locale: Locale,
-): string {
+function documentTag(collection: CollectionSlug, id: number | string, locale: Locale): string {
   return `${collection}:doc:${id}:${locale}`
 }
 

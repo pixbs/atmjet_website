@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from 'vitest'
 const revalidateTag = vi.hoisted(() => vi.fn())
 vi.mock('next/cache', () => ({ revalidateTag }))
 
-import { nextRevalidationHooks } from '@/lib/data'
+import { nextRevalidationHooks } from '@/lib/data/revalidate-next'
 
 /**
  * The Next binding of the revalidation hooks (issue #59). The tag rules live in

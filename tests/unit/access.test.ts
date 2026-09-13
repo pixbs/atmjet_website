@@ -5,13 +5,9 @@ import {
   adminFieldOnly,
   adminOrSelf,
   anyone,
-  authenticated,
-  DEFAULT_ROLE,
   editorOrAdmin,
   hasRole,
   publishedOnly,
-  ROLES,
-  rolesOf,
 } from '@/access'
 
 /**
@@ -21,23 +17,6 @@ import {
  */
 const as = (roles?: unknown) => ({ req: { user: roles === undefined ? null : { id: 1, roles } } })
 const anonymous = { req: { user: null } }
-
-describe('rolesOf', () => {
-  it('reads the roles a user holds', () => {
-    expect(rolesOf({ roles: ['admin', 'editor'] } as never)).toEqual(['admin', 'editor'])
-  })
-
-  it('ignores anything that is not a role this site knows', () => {
-    expect(rolesOf({ roles: ['admin', 'superuser', 42, null] } as never)).toEqual(['admin'])
-  })
-
-  it('treats a missing, null or malformed roles value as no roles', () => {
-    expect(rolesOf(null)).toEqual([])
-    expect(rolesOf(undefined)).toEqual([])
-    expect(rolesOf({} as never)).toEqual([])
-    expect(rolesOf({ roles: 'admin' } as never)).toEqual([])
-  })
-})
 
 describe('hasRole', () => {
   it('is true when the user holds any of the accepted roles', () => {
@@ -54,11 +33,6 @@ describe('hasRole', () => {
 describe('access rules', () => {
   it('lets anyone read what is public', () => {
     expect(anyone(anonymous as never)).toBe(true)
-  })
-
-  it('separates signed in from signed out', () => {
-    expect(authenticated(anonymous as never)).toBe(false)
-    expect(authenticated(as(['editor']) as never)).toBe(true)
   })
 
   it('keeps admin rules to admins', () => {
@@ -105,13 +79,5 @@ describe('adminFieldOnly', () => {
     expect(adminFieldOnly(as(['admin']) as never)).toBe(true)
     expect(adminFieldOnly(as(['editor']) as never)).toBe(false)
     expect(adminFieldOnly(anonymous as never)).toBe(false)
-  })
-})
-
-describe('roles', () => {
-  it('offers two roles and defaults to the lesser one', () => {
-    expect(ROLES).toEqual(['admin', 'editor'])
-    expect(DEFAULT_ROLE).toBe('editor')
-    expect(ROLES).toContain(DEFAULT_ROLE)
   })
 })

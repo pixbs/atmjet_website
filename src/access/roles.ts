@@ -22,7 +22,7 @@ export const DEFAULT_ROLE: Role = 'editor'
 export type RoleBearer = TypedUser | ClientUser | { roles?: unknown } | null | undefined
 
 /** Narrows whatever is on `req.user` to the roles it actually carries. */
-export function rolesOf(user: RoleBearer): Role[] {
+function rolesOf(user: RoleBearer): Role[] {
   const raw = (user as { roles?: unknown } | null | undefined)?.roles
   if (!Array.isArray(raw)) return []
 

@@ -1,7 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import type { Field, SanitizedConfig } from 'payload'
 
-import { CONTACT_ORIGINS, contactRelationship } from '@/collections/Contacts'
+import { contactRelationship } from '@/collections/Contacts'
 import { createAdmin, createContact, createUser, contactData } from '../factories'
 import { createRegistry, type TestRegistry } from '../helpers/payload'
 
@@ -211,7 +211,6 @@ describe('the document', () => {
     expect(created.email).toBe('legacy@example.test')
     expect(created.provenance?.origin).toBe('contact-legacy')
     expect(created.provenance?.legacyContactId).toBe(42)
-    expect(CONTACT_ORIGINS).toEqual(['contact-legacy', 'manual'])
   })
 
   it('requires a name, because a contact with none is not a contact', async () => {

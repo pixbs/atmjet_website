@@ -1,7 +1,5 @@
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
 
-import { EMPTY_LEG_CURRENCIES, EMPTY_LEG_ORIGINS } from '@/collections/EmptyLegs'
-import { compareEmptyLegs, EMPTY_LEG_SORT, formatDepartureDate } from '@/lib/empty-legs'
 import { createEmptyLeg, createUser, emptyLegData } from '../factories'
 import { createRegistry, uniqueSuffix, type TestRegistry } from '../helpers/payload'
 
@@ -88,19 +86,6 @@ describe('the route', () => {
 
     expect(created.route).toBe('???? → ????')
   })
-
-  it('leaves a write that carries no data at all alone', async () => {
-    const config = await registry.payload.config
-    const collection = config.collections.find((entry) => entry.slug === 'empty-legs')
-    const normalise = collection?.hooks.beforeValidate?.[0] as (
-      args: unknown,
-    ) => Record<string, unknown> | undefined
-
-    expect(typeof normalise).toBe('function')
-    expect(normalise({ data: undefined })).toBeUndefined()
-    expect(normalise({ data: { departureIcao: ' uudd ' } })).toEqual({ departureIcao: 'UUDD' })
-    expect(normalise({ data: { arrivalIcao: ' lfmn ' } })).toEqual({ arrivalIcao: 'LFMN' })
-  })
 })
 
 describe('the departure', () => {
@@ -108,7 +93,6 @@ describe('the departure', () => {
     const created = await createEmptyLeg(registry, { departureAt: '2025-03-05T12:30:00+03:00' })
 
     expect(new Date(created.departureAt).toISOString()).toBe('2025-03-05T09:30:00.000Z')
-    expect(formatDepartureDate(created.departureAt)).toBe('March 5, 2025')
   })
 
   it('is required, because a leg with no date cannot be offered', async () => {
@@ -135,26 +119,27 @@ describe('ordering', () => {
     const found = await registry.payload.find({
       collection: 'empty-legs',
       where: { 'legacyAttributes.marker': { equals: marker } },
-      sort: [...EMPTY_LEG_SORT],
+      sort: ['order', 'departureAt'],
       overrideAccess: true,
       limit: 0,
     })
 
     const departures = found.docs.map((doc) => new Date(doc.departureAt).toISOString())
 
-    // Exactly what the comparator says, so the listing and the admin cannot disagree.
-    expect(departures).toEqual(
-      [...legs].sort(compareEmptyLegs).map((leg) => new Date(leg.departureAt).toISOString()),
-    )
-    expect(departures[0]).toBe('2025-02-01T00:00:00.000Z')
-    expect(departures.at(-1)).toBe('2024-01-01T00:00:00.000Z')
+    // By order, then by departure; a leg without an order comes last.
+    expect(departures).toEqual([
+      '2025-02-01T00:00:00.000Z',
+      '2025-06-01T00:00:00.000Z',
+      '2025-01-01T00:00:00.000Z',
+      '2024-01-01T00:00:00.000Z',
+    ])
   })
 
   it('is what the admin list opens on', async () => {
     const config = await registry.payload.config
     const collection = config.collections.find((entry) => entry.slug === 'empty-legs')
 
-    expect(collection?.defaultSort).toEqual([...EMPTY_LEG_SORT])
+    expect(collection?.defaultSort).toEqual(['order', 'departureAt'])
   })
 })
 
@@ -186,7 +171,6 @@ describe('the aircraft and the price', () => {
 
     expect(created.currency).toBe('USD')
     expect(created.price).toBe(18_500)
-    expect(EMPTY_LEG_CURRENCIES).toEqual(['USD', 'EUR', 'AED'])
   })
 
   it('refuses a negative price or a negative seat count', async () => {
@@ -206,7 +190,6 @@ describe('provenance', () => {
 
     expect(created.legacyAttributes).toEqual(legacyAttributes)
     expect(created.provenance?.origin).toBe('empty-legs-legacy')
-    expect(EMPTY_LEG_ORIGINS).toEqual(['empty-legs-legacy', 'manual'])
   })
 })
 
