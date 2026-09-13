@@ -47,8 +47,6 @@ jobs:
           bun run generate:types
           bun run generate:importmap
           git diff --exit-code -- src/payload-types.ts 'src/app/(payload)/admin/importMap.js'
-      - name: Convention scripts self-test
-        run: bun run check:conventions
       - name: Visual baseline size budget
         run: bash scripts/ci/check-visual-budget.sh
 

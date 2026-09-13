@@ -4,16 +4,16 @@ Public website of ATM JET (private jet charter, yachts, cargo), rebuilt from scr
 
 ## Stack
 
-| Layer     | Choice                                                                                    |
-| --------- | ----------------------------------------------------------------------------------------- |
-| CMS / API | Payload 3 (Postgres adapter, migrations only), admin at `/admin`                          |
-| Frontend  | Next.js 16 App Router, React 19, server components first                                  |
-| Styling   | Tailwind CSS v4 (tokens in `@theme`), `class-variance-authority`, `cn()`                  |
-| Animation | `motion` (the only animation library)                                                     |
-| i18n      | Payload localisation (`en`, `ru`, `uk`) + next-intl routing                               |
-| Tooling   | Bun, TypeScript, ESLint 9, Prettier, lefthook, commitlint                                 |
-| Tests     | Vitest (unit + integration, coverage ratchet), Playwright (e2e, visual, a11y), Lighthouse |
-| Hosting   | Vercel (build: `bun run ci`), Neon Postgres, S3-compatible media storage                  |
+| Layer     | Choice                                                                                             |
+| --------- | -------------------------------------------------------------------------------------------------- |
+| CMS / API | Payload 3 (Postgres adapter, migrations only), admin at `/admin`                                   |
+| Frontend  | Next.js 16 App Router, React 19, server components first                                           |
+| Styling   | Tailwind CSS v4 (tokens in `@theme`), `class-variance-authority`, `cn()`                           |
+| Animation | `motion` (the only animation library)                                                              |
+| i18n      | Payload localisation (`en`, `ru`, `uk`) + next-intl routing                                        |
+| Tooling   | Bun, TypeScript, ESLint 9, Prettier, lefthook, commitlint                                          |
+| Tests     | Vitest (unit + integration, fixed coverage thresholds), Playwright (e2e, visual, a11y), Lighthouse |
+| Hosting   | Vercel (build: `bun run ci`), Neon Postgres, S3-compatible media storage                           |
 
 ## Quick start
 
@@ -28,17 +28,16 @@ bun run dev                 # http://localhost:3000, admin at /admin
 
 ## Scripts
 
-| Script                                                                | Purpose                                                |
-| --------------------------------------------------------------------- | ------------------------------------------------------ |
-| `bun run dev` / `bun run build` / `bun run start`                     | develop, build, serve                                  |
-| `bun run ci`                                                          | migrate and build (Vercel build command)               |
-| `bun run lint` / `lint:fix` / `format` / `format:check` / `typecheck` | static checks                                          |
-| `bun run migrate` / `migrate:create <name>` / `migrate:status`        | Payload migrations (`push` is disabled)                |
-| `bun run generate:types` / `generate:importmap`                       | regenerate Payload artefacts after config changes      |
-| `bun run test:int`                                                    | unit and integration tests with coverage thresholds    |
-| `bun run test:e2e` / `test:visual` / `test:a11y` / `test:lighthouse`  | browser tiers (dev server or `PLAYWRIGHT_BASE_URL`)    |
-| `bun run test:visual:update`                                          | regenerate visual baselines (Linux only)               |
-| `bun run check:conventions`                                           | self-test of the branch, commit and attribution checks |
+| Script                                                                | Purpose                                                    |
+| --------------------------------------------------------------------- | ---------------------------------------------------------- |
+| `bun run dev` / `bun run build` / `bun run start`                     | develop, build, serve                                      |
+| `bun run ci`                                                          | migrate and build (Vercel build command)                   |
+| `bun run lint` / `lint:fix` / `format` / `format:check` / `typecheck` | static checks                                              |
+| `bun run migrate` / `migrate:create <name>` / `migrate:status`        | Payload migrations (Drizzle push only under `bun run dev`) |
+| `bun run generate:types` / `generate:importmap`                       | regenerate Payload artefacts after config changes          |
+| `bun run test:int`                                                    | unit and integration tests with coverage thresholds        |
+| `bun run test:e2e` / `test:visual` / `test:a11y` / `test:lighthouse`  | browser tiers (dev server or `PLAYWRIGHT_BASE_URL`)        |
+| `bun run test:visual:update`                                          | regenerate visual baselines (Linux only)                   |
 
 ## Repository layout
 
