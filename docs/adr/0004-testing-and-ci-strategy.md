@@ -1,6 +1,6 @@
 # ADR-0004: Tests first, tiers, coverage ratchet and visual parity
 
-Status: accepted (2026-09-11)
+Status: accepted (2026-09-11); the coverage ratchet and the tests-required gate replaced by fixed thresholds in [ADR-0008](0008-lean-conventions.md) (2026-09-13)
 
 ## Context
 
