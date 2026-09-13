@@ -7,6 +7,7 @@ import * as migration_20260913_124553_add_airports from './20260913_124553_add_a
 import * as migration_20260913_130852_add_aircraft from './20260913_130852_add_aircraft';
 import * as migration_20260913_132340_add_contacts from './20260913_132340_add_contacts';
 import * as migration_20260913_133641_add_yachts from './20260913_133641_add_yachts';
+import * as migration_20260913_134851_add_empty_legs from './20260913_134851_add_empty_legs';
 
 export const migrations = [
   {
@@ -52,6 +53,11 @@ export const migrations = [
   {
     up: migration_20260913_133641_add_yachts.up,
     down: migration_20260913_133641_add_yachts.down,
-    name: '20260913_133641_add_yachts'
+    name: '20260913_133641_add_yachts',
+  },
+  {
+    up: migration_20260913_134851_add_empty_legs.up,
+    down: migration_20260913_134851_add_empty_legs.down,
+    name: '20260913_134851_add_empty_legs'
   },
 ];
