@@ -1,6 +1,6 @@
 # ADR-0002: Zero-data-loss migration from the legacy database
 
-Status: accepted (2026-09-11)
+Status: accepted (2026-09-11); the development workflow of item 4 (`push: false` everywhere) amended by [ADR-0008](0008-lean-conventions.md) (2026-09-13)
 
 ## Context
 

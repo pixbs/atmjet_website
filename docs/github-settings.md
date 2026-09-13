@@ -9,7 +9,7 @@ Settings that cannot live in code. Tick them in the epic issue (#3) as they are 
 
 ## Repository settings (Settings → General)
 
-- [ ] Pull requests: allow **rebase merging only**; disable merge commits and squash merging.
+- [ ] Pull requests: allow **squash merging only**, default commit message: pull request title; disable merge commits and rebase merging (#227).
 - [ ] Automatically delete head branches; allow auto-merge.
 - [ ] Features: disable Wiki and Projects unless used; issues stay enabled with the forms in `.github/ISSUE_TEMPLATE`.
 - [ ] Description and topics (payload, nextjs, bun, tailwindcss).
@@ -17,14 +17,14 @@ Settings that cannot live in code. Tick them in the epic issue (#3) as they are 
 
 ## Rules (Settings → Rules → Rulesets → Import)
 
-- [ ] Import `.github/rulesets/master.json` (pull requests with rebase merge, linear history, required checks `conventions` and `ci`, no force push or deletion).
+- [ ] Import `.github/rulesets/master.json` (pull requests squash-merged, required checks `conventions` and `ci`, no force push or deletion).
 - [ ] Import `.github/rulesets/legacy-branch.json` and `.github/rulesets/legacy-tags.json` (read-only legacy refs).
 - [ ] After the first pull request run, confirm the two required checks are recognised (the check names must match exactly: `conventions`, `ci`).
 
 ## Actions (Settings → Actions → General)
 
 - [ ] Allow actions: GitHub-owned, verified creators, plus the pinned third-party actions used in `.github/workflows` (`oven-sh/setup-bun`, `amannn/action-semantic-pull-request`, `crazy-max/ghaction-github-labeler`, `treosh/lighthouse-ci-action`).
-- [ ] Workflow permissions: read repository contents (workflows declare what they need: `conventions` and `scrub comments` request `pull-requests: write` to remove tool footers, `branch guard` requests `contents: write` to delete tool-prefixed branches).
+- [ ] Workflow permissions: read repository contents (workflows declare what they need: `conventions` and `scrub comments` request `pull-requests: write` to remove tool footers).
 - [ ] Variables (Settings → Secrets and variables → Actions → Variables):
   - `STAGING_URL`: the new Vercel project's staging URL (target of the nightly and master `e2e` runs)
 - [ ] Secrets: `VERCEL_AUTOMATION_BYPASS_SECRET` (Vercel → Deployment Protection → Protection Bypass for Automation) so the browser tier can reach protected previews.
