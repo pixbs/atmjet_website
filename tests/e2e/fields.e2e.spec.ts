@@ -9,6 +9,9 @@ import { pathFor } from './routes'
  */
 const STYLEGUIDE = pathFor('/styleguide', 'en')
 
+/** Its own section: the airport field further down the page is labelled `From` as well. */
+const SECTION = '[data-section="fields"]'
+
 test.describe('the form fields', () => {
   test('are in the HTML the server sends', async ({ request }) => {
     const html = await (await request.get(STYLEGUIDE)).text()
@@ -21,14 +24,14 @@ test.describe('the form fields', () => {
     await page.goto(STYLEGUIDE)
 
     // The legacy label had no `htmlFor`, so clicking it did nothing at all.
-    await page.getByText('From', { exact: true }).click()
+    await page.locator(SECTION).getByText('From', { exact: true }).click()
 
-    await expect(page.getByLabel('From')).toBeFocused()
+    await expect(page.locator(SECTION).getByLabel('From')).toBeFocused()
   })
 
   test('take what is typed into them', async ({ page }) => {
     await page.goto(STYLEGUIDE)
-    const from = page.getByLabel('From')
+    const from = page.locator(SECTION).getByLabel('From')
 
     await from.fill('Dubai')
 
@@ -37,7 +40,7 @@ test.describe('the form fields', () => {
 
   test('let the sort order be chosen', async ({ page }) => {
     await page.goto(STYLEGUIDE)
-    const sort = page.getByLabel('Sort by')
+    const sort = page.locator(SECTION).getByLabel('Sort by')
 
     await expect(sort).toHaveValue('size')
     await sort.selectOption('range')
@@ -47,7 +50,7 @@ test.describe('the form fields', () => {
 
   test('show the tick once the box is checked, and hide it again', async ({ page }) => {
     await page.goto(STYLEGUIDE)
-    const box = page.getByLabel('Unchecked')
+    const box = page.locator(SECTION).getByLabel('Unchecked')
     const tick = box.locator('..').locator('svg')
 
     await expect(tick).toBeHidden()
