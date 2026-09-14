@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
 
-import { localeUrl, localeUrls, siteOrigin } from '@/lib/urls'
+import { internalPath, localeUrl, localeUrls, siteOrigin } from '@/lib/urls'
 
 /**
  * Where a page lives (issues #171, #170). The legacy site built these in every file that needed
@@ -73,5 +73,31 @@ describe('localeUrls', () => {
 
   it('says nothing while the site serves no locale', () => {
     expect(localeUrls(ORIGIN, [], 'yachts')).toEqual({})
+  })
+})
+
+describe('internalPath', () => {
+  it('leaves a path that is already rooted where it is', () => {
+    expect(internalPath('/aircraft')).toBe('/aircraft')
+  })
+
+  it('roots a path that was stored without a slash', () => {
+    expect(internalPath('sales_dept')).toBe('/sales_dept')
+  })
+
+  it('closes up the gap the legacy card left', () => {
+    // `/${locale}/${href}` around an href that already had a slash: every card on
+    // `/atm_jet_group` linked to `/en//aircraft` (`docs/legacy-inventory.md` section 13, 9).
+    expect(internalPath('//aircraft')).toBe('/aircraft')
+    expect(internalPath('/aircraft//old')).toBe('/aircraft/old')
+  })
+
+  it('drops a trailing slash, so one page is one URL', () => {
+    expect(internalPath('/yachts/')).toBe('/yachts')
+  })
+
+  it('reads an empty path as the home page', () => {
+    expect(internalPath('')).toBe('/')
+    expect(internalPath('/')).toBe('/')
   })
 })

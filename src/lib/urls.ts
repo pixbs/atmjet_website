@@ -75,3 +75,18 @@ export function localeSwitchHref(pathname: string, search: string): string {
 
   return query === '' ? pathname : `${pathname}?${query}`
 }
+
+/**
+ * The path a card's button opens, rooted and without the empty segments the legacy produced:
+ * `Link` from `@/i18n/navigation` prefixes the locale, so what it is given carries neither a
+ * locale nor a repeated slash.
+ *
+ * The legacy `GroupCard` wrote `/${locale}/${href}` around an href that already began with one,
+ * so both cards on `/atm_jet_group` linked to `/en//aircraft` (`docs/legacy-inventory.md`
+ * section 13, entry 9). This takes a path, not an address: an external link is an `<a href>`.
+ */
+export function internalPath(href: string): string {
+  const segments = href.split('/').filter((segment) => segment !== '')
+
+  return segments.length === 0 ? '/' : `/${segments.join('/')}`
+}
