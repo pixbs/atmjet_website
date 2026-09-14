@@ -2,6 +2,7 @@ import type { CollectionConfig } from 'payload'
 
 import { editorOrAdmin, publishedOnly } from '@/access'
 import { advantages } from '@/blocks/Advantages/config'
+import { bestPrice } from '@/blocks/BestPrice/config'
 import { documents } from '@/blocks/Documents/config'
 import { faq } from '@/blocks/Faq/config'
 import { groupCards } from '@/blocks/GroupCards/config'
@@ -11,6 +12,7 @@ import { keyFeatures } from '@/blocks/KeyFeatures/config'
 import { optionsTiles } from '@/blocks/OptionsTiles/config'
 import { privilege } from '@/blocks/Privilege/config'
 import { tiles } from '@/blocks/Tiles/config'
+import { weInspect } from '@/blocks/WeInspect/config'
 import { whyUs } from '@/blocks/WhyUs/config'
 import { yachtsPromo } from '@/blocks/YachtsPromo/config'
 import { revalidateCollection } from '@/hooks/revalidate'
@@ -103,6 +105,7 @@ export const Pages: CollectionConfig = {
       // Sections land here one at a time in E7, each with its own issue.
       blocks: [
         advantages,
+        bestPrice,
         documents,
         faq,
         groupCards,
@@ -112,6 +115,7 @@ export const Pages: CollectionConfig = {
         optionsTiles,
         privilege,
         tiles,
+        weInspect,
         whyUs,
         yachtsPromo,
       ],

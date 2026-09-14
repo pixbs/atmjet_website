@@ -258,6 +258,7 @@ export interface Page {
   layout?:
     | (
         | AdvantagesBlock
+        | BestPriceBlock
         | DocumentsBlock
         | FaqBlock
         | GroupCardsBlock
@@ -267,6 +268,7 @@ export interface Page {
         | OptionsTilesBlock
         | PrivilegeBlock
         | TilesBlock
+        | WeInspectBlock
         | WhyUsBlock
         | YachtsPromoBlock
       )[]
@@ -300,6 +302,25 @@ export interface AdvantagesBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'advantages';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "BestPriceBlock".
+ */
+export interface BestPriceBlock {
+  title: string;
+  description: string;
+  image: number | Media;
+  cta: {
+    label: string;
+    /**
+     * Recorded with the lead so a request can be traced to its button.
+     */
+    source: string;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'bestPrice';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -505,6 +526,27 @@ export interface TilesBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'tiles';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "WeInspectBlock".
+ */
+export interface WeInspectBlock {
+  title: string;
+  /**
+   * Shown in this order; the row scrolls when they do not fit.
+   */
+  slides?:
+    | {
+        title: string;
+        description: string;
+        image: number | Media;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'weInspect';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1451,6 +1493,7 @@ export interface PagesSelect<T extends boolean = true> {
     | T
     | {
         advantages?: T | AdvantagesBlockSelect<T>;
+        bestPrice?: T | BestPriceBlockSelect<T>;
         documents?: T | DocumentsBlockSelect<T>;
         faq?: T | FaqBlockSelect<T>;
         groupCards?: T | GroupCardsBlockSelect<T>;
@@ -1460,6 +1503,7 @@ export interface PagesSelect<T extends boolean = true> {
         optionsTiles?: T | OptionsTilesBlockSelect<T>;
         privilege?: T | PrivilegeBlockSelect<T>;
         tiles?: T | TilesBlockSelect<T>;
+        weInspect?: T | WeInspectBlockSelect<T>;
         whyUs?: T | WhyUsBlockSelect<T>;
         yachtsPromo?: T | YachtsPromoBlockSelect<T>;
       };
@@ -1487,6 +1531,23 @@ export interface AdvantagesBlockSelect<T extends boolean = true> {
         title?: T;
         description?: T;
         id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "BestPriceBlock_select".
+ */
+export interface BestPriceBlockSelect<T extends boolean = true> {
+  title?: T;
+  description?: T;
+  image?: T;
+  cta?:
+    | T
+    | {
+        label?: T;
+        source?: T;
       };
   id?: T;
   blockName?: T;
@@ -1641,6 +1702,23 @@ export interface TilesBlockSelect<T extends boolean = true> {
   tiles?:
     | T
     | {
+        image?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "WeInspectBlock_select".
+ */
+export interface WeInspectBlockSelect<T extends boolean = true> {
+  title?: T;
+  slides?:
+    | T
+    | {
+        title?: T;
+        description?: T;
         image?: T;
         id?: T;
       };
