@@ -2,7 +2,9 @@ import { mediaSource } from '@/lib/media'
 import { hrefForSlug } from '@/lib/nav'
 import type { Page } from '@/payload-types'
 
+import { Documents } from './Documents/Component'
 import { Faq } from './Faq/Component'
+import { Guide } from './Guide/Component'
 import { HeroSubpage } from './HeroSubpage/Component'
 import { KeyFeatures } from './KeyFeatures/Component'
 import { OptionsTiles } from './OptionsTiles/Component'
@@ -23,6 +25,18 @@ type LayoutBlock = NonNullable<Page['layout']>[number]
 
 function blockFor(block: LayoutBlock, key: string) {
   switch (block.blockType) {
+    case 'documents': {
+      // A document is its file and its cover; one missing either cannot be offered.
+      const offered = (block.documents ?? []).flatMap((entry) => {
+        const image = mediaSource(typeof entry.image === 'object' ? entry.image : null)
+        const file = mediaSource(typeof entry.file === 'object' ? entry.file : null)
+        if (image === null || file === null) return []
+
+        return [{ file: { href: file.src, label: entry.label }, image, title: entry.title }]
+      })
+
+      return offered.length === 0 ? null : <Documents key={key} documents={offered} />
+    }
     case 'faq':
       return (
         <Faq
@@ -34,6 +48,19 @@ function blockFor(block: LayoutBlock, key: string) {
           title={block.title}
         />
       )
+    case 'guide': {
+      const image = mediaSource(typeof block.image === 'object' ? block.image : null)
+
+      return image === null ? null : (
+        <Guide
+          key={key}
+          heading={block.heading}
+          image={image}
+          points={(block.points ?? []).map((point) => point.text)}
+          title={block.title}
+        />
+      )
+    }
     case 'heroSubpage': {
       const image = mediaSource(typeof block.image === 'object' ? block.image : null)
 

@@ -9,6 +9,7 @@ import * as migration_20260914_131928_yachts_promo_block from './20260914_131928
 import * as migration_20260914_134329_options_tiles_block from './20260914_134329_options_tiles_block';
 import * as migration_20260914_143330_tiles_block from './20260914_143330_tiles_block';
 import * as migration_20260914_150937_faq_block from './20260914_150937_faq_block';
+import * as migration_20260914_154856_guide_and_documents_blocks from './20260914_154856_guide_and_documents_blocks';
 
 export const migrations = [
   {
@@ -64,6 +65,11 @@ export const migrations = [
   {
     up: migration_20260914_150937_faq_block.up,
     down: migration_20260914_150937_faq_block.down,
-    name: '20260914_150937_faq_block'
+    name: '20260914_150937_faq_block',
+  },
+  {
+    up: migration_20260914_154856_guide_and_documents_blocks.up,
+    down: migration_20260914_154856_guide_and_documents_blocks.down,
+    name: '20260914_154856_guide_and_documents_blocks'
   },
 ];

@@ -242,6 +242,32 @@ const FAQ: { en: [string, string]; ru: [string, string] }[] = [
   },
 ]
 
+/**
+ * What the business agents page offers an agent, and the two documents under it (issue #131,
+ * section 4). The legacy chose between two hard-coded PDF addresses by comparing the locale.
+ */
+const GUIDE_POINTS: { en: string; ru: string }[] = [
+  {
+    en: 'A desk that answers in minutes, at any hour, in the language your client writes in.',
+    ru: 'Стол, который отвечает за минуты, в любой час, на языке вашего клиента.',
+  },
+  {
+    en: 'Commission agreed before the quote goes out, and paid on the day the flight closes.',
+    ru: 'Комиссия согласована до отправки предложения и выплачивается в день закрытия рейса.',
+  },
+]
+
+const DOCUMENTS: { en: [string, string]; ru: [string, string] }[] = [
+  {
+    en: ['Checklist for ordering a private jet', 'Download the checklist'],
+    ru: ['Чек-лист для заказа частного самолёта', 'Скачать чек-лист'],
+  },
+  {
+    en: ['ATM JET presentation', 'Download the presentation'],
+    ru: ['Презентация ATM JET', 'Скачать презентацию'],
+  },
+]
+
 /** The sections a seeded page starts with; a page with no entry here starts with none. */
 function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout {
   const sections: Layout = []
@@ -328,6 +354,26 @@ function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout 
       }),
     })
 
+  if (slug === 'business_agents') {
+    sections.push({
+      blockType: 'guide',
+      title: locale === 'en' ? 'For business agents' : 'Бизнес-агентам',
+      heading: locale === 'en' ? 'What working with us gives you' : 'Что даёт работа с нами',
+      points: GUIDE_POINTS.map((point) => ({ text: point[locale] })),
+      image: fixture.photo,
+    })
+    sections.push({
+      blockType: 'documents',
+      documents: DOCUMENTS.map((document) => ({
+        title: document[locale][0],
+        label: document[locale][1],
+        image: fixture.photo,
+        // The real PDFs are mirrored into Media by E1.6; until then the placeholder stands in.
+        file: fixture.photo,
+      })),
+    })
+  }
+
   if (slug === 'citizens')
     sections.push({
       blockType: 'faq',
@@ -385,6 +431,15 @@ function translated(layout: Layout | null | undefined, slug: string, fixture: Fi
 
     // One case per block type: a spread over the union widens every field back to optional.
     switch (block.blockType) {
+      case 'documents':
+        return {
+          ...block,
+          id,
+          documents: withRowIds(
+            block.documents ?? [],
+            written?.blockType === 'documents' ? written.documents : undefined,
+          ),
+        }
       case 'faq':
         return {
           ...block,
@@ -392,6 +447,15 @@ function translated(layout: Layout | null | undefined, slug: string, fixture: Fi
           questions: withRowIds(
             block.questions ?? [],
             written?.blockType === 'faq' ? written.questions : undefined,
+          ),
+        }
+      case 'guide':
+        return {
+          ...block,
+          id,
+          points: withRowIds(
+            block.points ?? [],
+            written?.blockType === 'guide' ? written.points : undefined,
           ),
         }
       case 'heroSubpage':
