@@ -102,6 +102,29 @@ const WHY_US: {
   },
 ]
 
+/**
+ * The features the medical aviation page shows (issue #118, section 5). Four of them, as the
+ * legacy page passed.
+ */
+const KEY_FEATURES: { en: [string, string]; ru: [string, string] }[] = [
+  {
+    en: ['An intensive care cabin', 'A stretcher, a ventilator and the monitoring beside it.'],
+    ru: ['Реанимационная кабина', 'Носилки, аппарат ИВЛ и мониторинг рядом с ними.'],
+  },
+  {
+    en: ['A doctor on board', 'The crew flies with the team the case needs, not the other way.'],
+    ru: ['Врач на борту', 'Экипаж летит с той бригадой, которой требует случай.'],
+  },
+  {
+    en: ['Wheels up in hours', 'Permits, slots and the ambulance at both ends, arranged here.'],
+    ru: ['Вылет за часы', 'Разрешения, слоты и скорая с обеих сторон — на нас.'],
+  },
+  {
+    en: ['Door to door', 'The flight is one leg of a journey that starts and ends at a bed.'],
+    ru: ['От двери до двери', 'Перелёт — одно плечо пути, который начинается и кончается у койки.'],
+  },
+]
+
 type Layout = NonNullable<Page['layout']>
 
 /** The sections a seeded page starts with; a page with no entry here starts with none. */
@@ -115,6 +138,25 @@ function layoutFor(slug: string, locale: 'en' | 'ru', image: number): Layout {
     description,
     image,
   }
+
+  if (slug === 'medical_aviation')
+    return [
+      hero,
+      {
+        blockType: 'keyFeatures' as const,
+        title: locale === 'en' ? 'What is on board' : 'Что на борту',
+        description:
+          locale === 'en'
+            ? 'The aircraft is fitted for the patient, not for the route.'
+            : 'Самолёт оснащается под пациента, а не под маршрут.',
+        cards: KEY_FEATURES.map((card) => ({
+          title: card[locale][0],
+          description: card[locale][1],
+          image,
+        })),
+      },
+    ]
+
   if (slug !== 'cargo_charter') return [hero]
 
   return [
@@ -144,16 +186,21 @@ function layoutFor(slug: string, locale: 'en' | 'ru', image: number): Layout {
 function translated(layout: Layout | null | undefined, slug: string, image: number): Layout {
   return layoutFor(slug, 'ru', image).map((block, index) => {
     const written = layout?.[index]
+    const id = written?.id
+    const rows = written && 'cards' in written ? written.cards : undefined
 
-    if (block.blockType !== 'whyUs' || written?.blockType !== 'whyUs')
-      return { ...block, id: written?.id }
+    // One branch per block type: a spread over the union widens every field back to optional.
+    if (block.blockType === 'heroSubpage') return { ...block, id }
+    if (block.blockType === 'whyUs')
+      return { ...block, id, cards: withRowIds(block.cards ?? [], rows) }
 
-    return {
-      ...block,
-      id: written.id,
-      cards: (block.cards ?? []).map((card, row) => ({ ...card, id: written.cards?.[row]?.id })),
-    }
+    return { ...block, id, cards: withRowIds(block.cards ?? [], rows) }
   })
+}
+
+/** The rows of a section, wearing the ids the English write gave the same rows. */
+function withRowIds<Row>(rows: Row[], written: { id?: string | null }[] | null | undefined): Row[] {
+  return rows.map((row, index) => ({ ...row, id: written?.[index]?.id }))
 }
 
 /**
