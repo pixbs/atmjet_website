@@ -21,3 +21,12 @@ export async function waitForPhotos(cards: Locator) {
     await expect(photo).toHaveJSProperty('complete', true)
   }
 }
+
+/**
+ * The dev server paints its own indicator over the bottom-left corner, and a section at the
+ * foot of a page is captured with that corner in the clip. A preview deployment has no such
+ * badge, so a baseline holding one could never match it.
+ */
+export async function hideDevOverlay(page: Page) {
+  await page.addStyleTag({ content: 'nextjs-portal { display: none }' })
+}

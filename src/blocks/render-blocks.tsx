@@ -3,6 +3,7 @@ import { hrefForSlug } from '@/lib/nav'
 import type { Page } from '@/payload-types'
 
 import { Advantages } from './Advantages/Component'
+import { BestPrice } from './BestPrice/Component'
 import { Documents } from './Documents/Component'
 import { Faq } from './Faq/Component'
 import { GroupCards } from './GroupCards/Component'
@@ -12,6 +13,7 @@ import { KeyFeatures } from './KeyFeatures/Component'
 import { OptionsTiles } from './OptionsTiles/Component'
 import { Privilege } from './Privilege/Component'
 import { Tiles } from './Tiles/Component'
+import { WeInspect } from './WeInspect/Component'
 import { YachtsPromo } from './YachtsPromo/Component'
 import { WhyUs } from './WhyUs/Component'
 
@@ -37,6 +39,21 @@ function blockFor(block: LayoutBlock, key: string) {
             description: card.description,
             title: card.title,
           }))}
+          image={image}
+          title={block.title}
+        />
+      )
+    }
+    case 'bestPrice': {
+      const image = mediaSource(typeof block.image === 'object' ? block.image : null)
+
+      return image === null ? null : (
+        <BestPrice
+          key={key}
+          // The query is the whole of the href, so the dialog opens on the page it is read on,
+          // which is what the legacy link did (`docs/legacy-inventory.md` section 3.9).
+          action={{ href: `?showBooking=${block.cta.source}`, label: block.cta.label }}
+          description={block.description}
           image={image}
           title={block.title}
         />
@@ -205,6 +222,19 @@ function blockFor(block: LayoutBlock, key: string) {
       })
 
       return photos.length === 0 ? null : <Tiles key={key} tiles={photos} />
+    }
+    case 'weInspect': {
+      // Every card draws a photograph, so one whose upload is gone is left out rather than drawn
+      // empty, and a row of none is left out altogether.
+      const slides = (block.slides ?? []).flatMap((slide) => {
+        const image = mediaSource(typeof slide.image === 'object' ? slide.image : null)
+
+        return image === null ? [] : [{ description: slide.description, image, title: slide.title }]
+      })
+
+      return slides.length === 0 ? null : (
+        <WeInspect key={key} slides={slides} title={block.title} />
+      )
     }
     case 'whyUs':
       return (
