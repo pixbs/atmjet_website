@@ -3,8 +3,10 @@ import type { CollectionConfig } from 'payload'
 import { editorOrAdmin, publishedOnly } from '@/access'
 import { advantages } from '@/blocks/Advantages/config'
 import { bestPrice } from '@/blocks/BestPrice/config'
+import { descriptor } from '@/blocks/Descriptor/config'
 import { documents } from '@/blocks/Documents/config'
 import { faq } from '@/blocks/Faq/config'
+import { framedDescriptor } from '@/blocks/FramedDescriptor/config'
 import { groupCards } from '@/blocks/GroupCards/config'
 import { guide } from '@/blocks/Guide/config'
 import { heroSales } from '@/blocks/HeroSales/config'
@@ -12,6 +14,7 @@ import { heroSubpage } from '@/blocks/HeroSubpage/config'
 import { heroYachts } from '@/blocks/HeroYachts/config'
 import { keyFeatures } from '@/blocks/KeyFeatures/config'
 import { optionsTiles } from '@/blocks/OptionsTiles/config'
+import { photoDescriptor } from '@/blocks/PhotoDescriptor/config'
 import { privilege } from '@/blocks/Privilege/config'
 import { quote } from '@/blocks/Quote/config'
 import { tiles } from '@/blocks/Tiles/config'
@@ -109,8 +112,10 @@ export const Pages: CollectionConfig = {
       blocks: [
         advantages,
         bestPrice,
+        descriptor,
         documents,
         faq,
+        framedDescriptor,
         groupCards,
         guide,
         heroSales,
@@ -118,6 +123,7 @@ export const Pages: CollectionConfig = {
         heroYachts,
         keyFeatures,
         optionsTiles,
+        photoDescriptor,
         privilege,
         quote,
         tiles,

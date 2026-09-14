@@ -477,6 +477,16 @@ function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout 
     })
   }
 
+  if (slug === 'empty_legs')
+    sections.push({
+      blockType: 'descriptor',
+      title: locale === 'en' ? 'What an empty leg is' : 'Что такое пустой перелёт',
+      description:
+        locale === 'en'
+          ? 'A flight that has to be made anyway, with the cabin going the same way you are.'
+          : 'Рейс, который всё равно состоится, и салон летит в ту же сторону, что и вы.',
+    })
+
   if (slug === 'sales_yachts' || slug === 'yachts') {
     const hero = HERO_YACHTS[slug][locale]
     sections.push({
@@ -620,6 +630,15 @@ function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout 
 
   if (slug === 'sales_yachts')
     sections.push({
+      blockType: 'framedDescriptor',
+      title:
+        locale === 'en'
+          ? 'Every yacht we list, we have stood on'
+          : 'На каждой яхте из списка мы стояли сами',
+    })
+
+  if (slug === 'sales_yachts')
+    sections.push({
       blockType: 'weInspect',
       title: locale === 'en' ? 'What we inspect' : 'Что мы проверяем',
       slides: INSPECTIONS.map((slide) => ({
@@ -627,6 +646,17 @@ function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout 
         description: slide[locale][1],
         image: fixture.photo,
       })),
+    })
+
+  if (slug === 'sales_yachts')
+    sections.push({
+      blockType: 'photoDescriptor',
+      title: locale === 'en' ? 'Twenty years on the water' : 'Двадцать лет на воде',
+      description:
+        locale === 'en'
+          ? 'The same brokers, the same yards, and a list of buyers who answer the telephone.'
+          : 'Те же брокеры, те же верфи и список покупателей, которые берут трубку.',
+      image: fixture.photo,
     })
 
   if (slug === 'citizens') {
@@ -705,6 +735,8 @@ function translated(layout: Layout | null | undefined, slug: string, fixture: Fi
         }
       case 'bestPrice':
         return { ...block, id }
+      case 'descriptor':
+        return { ...block, id }
       case 'documents':
         return {
           ...block,
@@ -723,6 +755,8 @@ function translated(layout: Layout | null | undefined, slug: string, fixture: Fi
             written?.blockType === 'faq' ? written.questions : undefined,
           ),
         }
+      case 'framedDescriptor':
+        return { ...block, id }
       case 'groupCards':
         return {
           ...block,
@@ -765,6 +799,8 @@ function translated(layout: Layout | null | undefined, slug: string, fixture: Fi
             written?.blockType === 'optionsTiles' ? written.tiles : undefined,
           ),
         }
+      case 'photoDescriptor':
+        return { ...block, id }
       case 'privilege':
         return { ...block, id, cards: withRowIds(block.cards ?? [], rows) }
       case 'quote':
