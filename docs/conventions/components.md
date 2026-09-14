@@ -7,7 +7,6 @@ How to add a component to this project (issue #49). The decisions behind it are 
 | Folder                     | What lives there                                                                  |
 | -------------------------- | --------------------------------------------------------------------------------- |
 | `src/components/ui`        | primitives with no domain knowledge: button, input, checkbox, carousel arrows     |
-| `src/components/icons`     | the legacy SVG artwork as TSX, one file per icon (ADR-0006)                       |
 | `src/components/motion`    | the animation primitives built on `src/lib/motion.ts`: reveal, line, counter      |
 | `src/components/icons`     | the ported SVG artwork, one component per legacy file, all sharing `IconProps`    |
 | `src/components/sections`  | shells shared by several sections: headers, footers, dialogs                      |
