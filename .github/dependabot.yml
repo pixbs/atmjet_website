@@ -12,12 +12,6 @@ updates:
     groups:
       minor-and-patch:
         update-types: [minor, patch]
-    ignore:
-      # Playwright 1.59 and later load the specs through their own ESM loader instead of tsx's,
-      # and `tests/helpers/seedUser.ts` reaches the Payload config, whose `next/cache` import
-      # has no extension and no `exports` entry to resolve through. Held back until #275 lands.
-      - dependency-name: '@playwright/test'
-        versions: ['>=1.59.0']
     labels: [type:chore]
   - package-ecosystem: github-actions
     directory: /
