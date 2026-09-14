@@ -40,11 +40,11 @@ export function HeroYachts({
       section="hero-yachts"
     >
       <p className="text-sm uppercase">{overline}</p>
-      <Reveal variants={heroHeadline}>
+      <Reveal once variants={heroHeadline}>
         <h1>{title}</h1>
       </Reveal>
-      <p className="max-w-lg pt-4">{description}</p>
-      {description2 !== undefined && <p className="max-w-lg pt-4">{description2}</p>}
+      <p className="max-w-lg pt-4 text-white">{description}</p>
+      {description2 !== undefined && <p className="max-w-lg pt-4 text-white">{description2}</p>}
       {action !== undefined && (
         <Link
           className={cn(buttonVariants({ as: 'link', size: 'big' }), 'mt-8')}

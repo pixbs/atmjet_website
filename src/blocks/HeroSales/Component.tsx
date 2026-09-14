@@ -14,8 +14,7 @@ import { heroHeadline } from '@/lib/motion'
  * arriving from above with its figures counting up from zero, and the call to action under it.
  *
  * `heroHeadline` is the legacy `animate-in fade-in slide-in-from-top-10 duration-1000` measured
- * into the shared vocabulary (ADR-0006); the reveal runs on arrival rather than on scroll
- * because a hero is the first screen and is never scrolled to.
+ * into the shared vocabulary (ADR-0006), run once on arrival as the legacy CSS animation was.
  */
 export interface HeroSalesProps {
   overline: string
@@ -35,7 +34,7 @@ export function HeroSales({ overline, lines, description, image, action }: HeroS
       section="hero-sales"
     >
       <p className="text-sm uppercase">{overline}</p>
-      <Reveal variants={heroHeadline}>
+      <Reveal once variants={heroHeadline}>
         <h1>
           {lines.map((line, index) => (
             <Fragment key={line.text}>
@@ -49,7 +48,7 @@ export function HeroSales({ overline, lines, description, image, action }: HeroS
         </h1>
       </Reveal>
       {/* The legacy broke this sentence on its own newlines and drew each line in turn. */}
-      <p className="max-w-xs pt-4 whitespace-pre-line">{description}</p>
+      <p className="max-w-xs pt-4 whitespace-pre-line text-white">{description}</p>
       <Link
         className={cn(buttonVariants({ as: 'link', size: 'big' }), 'mt-8')}
         href={action.href}
