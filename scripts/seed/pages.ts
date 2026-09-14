@@ -292,6 +292,18 @@ function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout 
       }),
     })
 
+  // Eight, as the legacy grid sliced one picture into eight. Below the sections above it, as
+  // the legacy grid sat far down the home page: it is scrolled to, not landed on.
+  if (slug === 'cargo_charter')
+    sections.push({
+      blockType: 'tiles',
+      // The two placeholders in turn, so the cells of the grid can be told apart; the legacy
+      // eight were eight slices of one picture.
+      tiles: Array.from({ length: 8 }, (_, index) => ({
+        image: index % 2 === 0 ? fixture.photo : fixture.surface,
+      })),
+    })
+
   const yachts = fixture.pages.get('yachts')
   if (slug === 'atm_jet_group' && yachts !== undefined)
     sections.push({
@@ -345,6 +357,16 @@ function translated(layout: Layout | null | undefined, slug: string, fixture: Fi
         }
       case 'privilege':
         return { ...block, id, cards: withRowIds(block.cards ?? [], rows) }
+      case 'tiles':
+        return {
+          ...block,
+          id,
+          // Nothing in a tile is localized, so the rows only need their ids back.
+          tiles: withRowIds(
+            block.tiles ?? [],
+            written?.blockType === 'tiles' ? written.tiles : undefined,
+          ),
+        }
       case 'whyUs':
         return { ...block, id, cards: withRowIds(block.cards ?? [], rows) }
       case 'yachtsPromo':

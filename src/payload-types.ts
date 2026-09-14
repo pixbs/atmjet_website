@@ -256,7 +256,16 @@ export interface Page {
    * The sections of this page, in the order they are rendered.
    */
   layout?:
-    (HeroSubpageBlock | KeyFeaturesBlock | OptionsTilesBlock | PrivilegeBlock | WhyUsBlock | YachtsPromoBlock)[] | null;
+    | (
+        | HeroSubpageBlock
+        | KeyFeaturesBlock
+        | OptionsTilesBlock
+        | PrivilegeBlock
+        | TilesBlock
+        | WhyUsBlock
+        | YachtsPromoBlock
+      )[]
+    | null;
   meta?: {
     title?: string | null;
     description?: string | null;
@@ -362,6 +371,24 @@ export interface PrivilegeBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'privilege';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TilesBlock".
+ */
+export interface TilesBlock {
+  /**
+   * Two to a row on a narrow screen, three from the medium width up.
+   */
+  tiles?:
+    | {
+        image: number | Media;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'tiles';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1311,6 +1338,7 @@ export interface PagesSelect<T extends boolean = true> {
         keyFeatures?: T | KeyFeaturesBlockSelect<T>;
         optionsTiles?: T | OptionsTilesBlockSelect<T>;
         privilege?: T | PrivilegeBlockSelect<T>;
+        tiles?: T | TilesBlockSelect<T>;
         whyUs?: T | WhyUsBlockSelect<T>;
         yachtsPromo?: T | YachtsPromoBlockSelect<T>;
       };
@@ -1395,6 +1423,20 @@ export interface PrivilegeBlockSelect<T extends boolean = true> {
         telegram?: T;
         whatsapp?: T;
         background?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TilesBlock_select".
+ */
+export interface TilesBlockSelect<T extends boolean = true> {
+  tiles?:
+    | T
+    | {
+        image?: T;
+        id?: T;
       };
   id?: T;
   blockName?: T;
