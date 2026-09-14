@@ -8,6 +8,7 @@ import { Line } from '@/components/motion/line'
 import { Reveal } from '@/components/motion/reveal'
 import { Accordion, AccordionItem } from '@/components/ui/accordion'
 import { Button, buttonVariants } from '@/components/ui/button'
+import { Carousel, CarouselArrows, CarouselDots, CarouselProgress } from '@/components/ui/carousel'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
 import { LocaleSwitch } from '@/components/ui/locale-switch'
@@ -54,6 +55,9 @@ const ACCENTS = [
 ]
 
 const RADII = ['rounded-sm', 'rounded-xl', 'rounded-2xl', 'rounded-3xl', 'rounded-full']
+
+/** Enough slides for the dots to have something to count and the progress bar somewhere to go. */
+const SLIDES = ['One', 'Two', 'Three', 'Four', 'Five']
 
 /** Every ported icon (issue #109), in the order `src/components/icons/index.ts` exports them. */
 const ICONS = Object.entries(icons)
@@ -164,6 +168,33 @@ export default async function StyleguidePage({ params }: { params: Promise<{ loc
           <h4>Revealed on scroll</h4>
           <p>Fades and rises into place when it enters the viewport, and again when it returns.</p>
         </Reveal>
+      </section>
+
+      <section id="carousel" data-section="carousel" className="container items-start gap-4">
+        <h3>Carousel</h3>
+        <Carousel
+          className="w-full"
+          containerClassName="gap-4"
+          controls={
+            <>
+              <CarouselArrows
+                className="justify-end pt-4"
+                labels={{ previous: 'Previous slide', next: 'Next slide' }}
+              />
+              <CarouselDots className="pt-4" label="Slides" />
+              <CarouselProgress className="mt-4" />
+            </>
+          }
+        >
+          {SLIDES.map((slide) => (
+            <div
+              key={slide}
+              className="h-32 w-2/3 shrink-0 items-center justify-center bg-graphite-850 md:w-1/3"
+            >
+              <span className="font-serif text-2xl text-white">{slide}</span>
+            </div>
+          ))}
+        </Carousel>
       </section>
 
       <section id="icons" className="container items-start gap-4">
