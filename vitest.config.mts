@@ -10,7 +10,8 @@ export default defineConfig({
     // component test opts back in with a `@vitest-environment jsdom` docblock.
     environment: 'node',
     setupFiles: ['./vitest.setup.ts'],
-    include: ['tests/unit/**/*.test.ts', 'tests/int/**/*.int.spec.ts'],
+    // `.tsx` for the suites that render a component (the error boundary of issue #56).
+    include: ['tests/unit/**/*.test.{ts,tsx}', 'tests/int/**/*.int.spec.ts'],
     coverage: {
       provider: 'v8',
       reporter: ['text', 'lcov', 'json-summary'],

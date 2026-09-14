@@ -3,6 +3,18 @@
     "skipToContent": "Skip to content",
     "loading": "Loading"
   },
+  "errors": {
+    "notFound": {
+      "title": "This page does not exist",
+      "description": "The address may have changed, or the page may have been removed. The home page is the quickest way back.",
+      "home": "Back to the home page"
+    },
+    "unexpected": {
+      "title": "Something went wrong",
+      "description": "The page could not be loaded. Trying again usually helps; if it does not, come back in a few minutes.",
+      "retry": "Try again"
+    }
+  },
   "units": {
     "hours": "{count, plural, one {# hour} other {# hours}}",
     "guests": "{count, plural, one {# guest} other {# guests}}",
