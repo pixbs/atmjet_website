@@ -9,6 +9,7 @@ import { Reveal } from '@/components/motion/reveal'
 import { Accordion, AccordionItem } from '@/components/ui/accordion'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
+import { CounterInput } from '@/components/ui/counter-input'
 import { Input } from '@/components/ui/input'
 import { LocaleSwitch } from '@/components/ui/locale-switch'
 import { Select } from '@/components/ui/select'
@@ -128,6 +129,7 @@ export default async function StyleguidePage({ params }: { params: Promise<{ loc
             <Checkbox id="field-optional" />
             <label htmlFor="field-optional">Unchecked</label>
           </div>
+          <CounterInput id="field-passengers" label="Passengers" wrapperClassName="self-start" />
         </div>
       </section>
 
