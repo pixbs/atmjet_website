@@ -22,6 +22,11 @@ export interface NavLink {
   href: string
 }
 
+/** Where a page's slug sits in the site, without the locale that `Link` adds. */
+export function hrefForSlug(slug: string): string {
+  return slug === '' ? '/' : `/${slug}`
+}
+
 const idOf = (row: NavRow): number | undefined => {
   if (typeof row.page === 'number') return row.page
   return typeof row.page === 'object' && row.page !== null ? row.page.id : undefined
@@ -49,6 +54,6 @@ export function navLinks(
     const slug = id === undefined ? undefined : slugs.get(id)
     if (slug === undefined) return []
 
-    return [{ label: row.label, href: slug === '' ? '/' : `/${slug}` }]
+    return [{ label: row.label, href: hrefForSlug(slug) }]
   })
 }

@@ -127,10 +127,11 @@ const KEY_FEATURES: { en: [string, string]; ru: [string, string] }[] = [
 
 type Layout = NonNullable<Page['layout']>
 
-/** The placeholder uploads the fixture draws with. */
-interface Images {
+/** What the seeded sections are built out of: the placeholder uploads and the pages they link to. */
+interface Fixture {
   photo: number
   surface: number
+  pages: ReadonlyMap<string, number>
 }
 
 /**
@@ -168,8 +169,24 @@ const PRIVILEGES: {
   },
 ]
 
+/** What the yachts promotion offers, in the three columns the legacy card carried. */
+const YACHT_COLUMNS: { en: [string, string]; ru: [string, string] }[] = [
+  {
+    en: ['The fleet', 'Motor yachts and sailing yachts from 20 to 100 metres.'],
+    ru: ['Флот', 'Моторные и парусные яхты от 20 до 100 метров.'],
+  },
+  {
+    en: ['The crew', 'Captain, chef and stewardesses chosen for the party aboard.'],
+    ru: ['Экипаж', 'Капитан, шеф-повар и стюардессы под конкретную компанию.'],
+  },
+  {
+    en: ['The week', 'Berths, permits and the transfer from the airport, arranged here.'],
+    ru: ['Неделя', 'Стоянки, разрешения и трансфер из аэропорта — на нас.'],
+  },
+]
+
 /** The sections a seeded page starts with; a page with no entry here starts with none. */
-function layoutFor(slug: string, locale: 'en' | 'ru', images: Images): Layout {
+function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout {
   const sections: Layout = []
   const description = HERO_PAGES[slug]?.[locale]
 
@@ -178,7 +195,7 @@ function layoutFor(slug: string, locale: 'en' | 'ru', images: Images): Layout {
       blockType: 'heroSubpage',
       title: TITLES[slug][locale],
       description,
-      image: images.photo,
+      image: fixture.photo,
     })
 
   if (slug === 'medical_aviation')
@@ -192,7 +209,7 @@ function layoutFor(slug: string, locale: 'en' | 'ru', images: Images): Layout {
       cards: KEY_FEATURES.map((card) => ({
         title: card[locale][0],
         description: card[locale][1],
-        image: images.photo,
+        image: fixture.photo,
       })),
     })
 
@@ -208,7 +225,7 @@ function layoutFor(slug: string, locale: 'en' | 'ru', images: Images): Layout {
         figure: card.figure,
         title: card[locale][0],
         description: card[locale][1],
-        image: card.withImage ? images.photo : undefined,
+        image: card.withImage ? fixture.photo : undefined,
       })),
     })
 
@@ -230,7 +247,29 @@ function layoutFor(slug: string, locale: 'en' | 'ru', images: Images): Layout {
             : 'Менеджер отвечает в течение нескольких минут, в любой час, на любом языке.',
         telegram: 'Telegram',
         whatsapp: 'WhatsApp',
-        background: images.surface,
+        background: fixture.surface,
+      },
+    })
+
+  const yachts = fixture.pages.get('yachts')
+  if (slug === 'atm_jet_group' && yachts !== undefined)
+    sections.push({
+      blockType: 'yachtsPromo',
+      title: locale === 'en' ? 'Yachts' : 'Яхты',
+      description:
+        locale === 'en'
+          ? 'The same crew arranges the week that follows the flight.'
+          : 'Та же команда организует неделю, которая следует за перелётом.',
+      image: fixture.photo,
+      columns: YACHT_COLUMNS.map((column) => ({
+        title: column[locale][0],
+        description: column[locale][1],
+      })),
+      invitation: {
+        image: fixture.photo,
+        title: locale === 'en' ? 'Tell us the week and the water' : 'Назовите неделю и место',
+        label: locale === 'en' ? 'See the fleet' : 'Посмотреть флот',
+        page: yachts,
       },
     })
 
@@ -242,8 +281,8 @@ function layoutFor(slug: string, locale: 'en' | 'ru', images: Images): Layout {
  * matches a block, and a row inside it, by id; a write without them replaces the rows instead of
  * translating them, and the English words go with the rows that held them.
  */
-function translated(layout: Layout | null | undefined, slug: string, images: Images): Layout {
-  return layoutFor(slug, 'ru', images).map((block, index) => {
+function translated(layout: Layout | null | undefined, slug: string, fixture: Fixture): Layout {
+  return layoutFor(slug, 'ru', fixture).map((block, index) => {
     const written = layout?.[index]
     const id = written?.id
     const rows = written && 'cards' in written ? written.cards : undefined
@@ -258,6 +297,15 @@ function translated(layout: Layout | null | undefined, slug: string, images: Ima
         return { ...block, id, cards: withRowIds(block.cards ?? [], rows) }
       case 'whyUs':
         return { ...block, id, cards: withRowIds(block.cards ?? [], rows) }
+      case 'yachtsPromo':
+        return {
+          ...block,
+          id,
+          columns: withRowIds(
+            block.columns ?? [],
+            written?.blockType === 'yachtsPromo' ? written.columns : undefined,
+          ),
+        }
     }
   })
 }
@@ -276,11 +324,11 @@ async function addSections(
   payload: Payload,
   page: Page,
   slug: string,
-  images: Images,
+  fixture: Fixture,
 ): Promise<'updated' | 'unchanged'> {
   const current = page.layout ?? []
   const has = new Set(current.map((block) => block.blockType))
-  const missing = layoutFor(slug, 'en', images).filter((block) => !has.has(block.blockType))
+  const missing = layoutFor(slug, 'en', fixture).filter((block) => !has.has(block.blockType))
   if (missing.length === 0) return 'unchanged'
 
   const id = page.id
@@ -297,7 +345,7 @@ async function addSections(
     await payload.update({
       collection: 'pages',
       id,
-      data: { layout: translated(written.layout, slug, images) },
+      data: { layout: translated(written.layout, slug, fixture) },
       locale,
       overrideAccess: true,
       context: { skipRevalidation: true },
@@ -319,38 +367,56 @@ async function upload(payload: Payload, filename: string): Promise<number> {
 }
 
 export async function seedPages(payload: Payload): Promise<SeedOutcome[]> {
-  const outcomes: SeedOutcome[] = []
-  // The photograph every section shows, and the dark one the privileges panel is patterned with.
-  const images = {
+  // Every page first, then the sections: a section can point at another page (the yachts
+  // promotion does), and the page it points at may come later in the list than it does.
+  const created = await createPages(payload)
+  const pages = await payload.find({
+    collection: 'pages',
+    limit: 0,
+    depth: 0,
+    select: { slug: true },
+    overrideAccess: true,
+  })
+  const fixture: Fixture = {
+    // The photograph every section shows, and the dark one the privileges panel is patterned with.
     photo: await upload(payload, 'seed-gold.png'),
     surface: await upload(payload, 'seed-surface.png'),
+    pages: new Map(pages.docs.map((page) => [page.slug ?? '', page.id])),
   }
 
+  const outcomes: SeedOutcome[] = []
   for (const slug of PAGE_SLUGS) {
-    const key = slug === '' ? '(home)' : slug
-    const existing = await payload.find({
+    const page = await find(payload, slug)
+    if (!page) continue
+
+    // A page that predates a block takes the sections that block's issue adds, which is what
+    // keeps the fixture reconciled rather than only idempotent (AGENTS.md §1.5).
+    const action = await addSections(payload, page, slug, fixture)
+
+    outcomes.push({
       collection: 'pages',
-      where: { slug: { equals: slug } },
-      limit: 1,
-      overrideAccess: true,
+      key: slug === '' ? '(home)' : slug,
+      action: created.has(slug) ? 'created' : action,
+      id: page.id,
     })
+  }
 
-    if (existing.totalDocs > 0) {
-      const page = existing.docs[0]
-      // A page that predates a block takes the sections that block's issue adds, which is what
-      // keeps the fixture reconciled rather than only idempotent (AGENTS.md §1.5).
-      const action = await addSections(payload, page, slug, images)
+  return outcomes
+}
 
-      outcomes.push({ collection: 'pages', key, action, id: page.id })
-      continue
-    }
+/** One published page per static route, in every routed locale. Answers which ones it wrote. */
+async function createPages(payload: Payload): Promise<Set<string>> {
+  const created = new Set<string>()
 
-    const created = await payload.create({
+  for (const slug of PAGE_SLUGS) {
+    if (await find(payload, slug)) continue
+
+    const page = await payload.create({
       collection: 'pages',
       data: {
         title: TITLES[slug].en,
         slug,
-        layout: layoutFor(slug, 'en', images),
+        layout: [],
         _status: 'published',
         meta: META[slug]?.en,
       },
@@ -361,25 +427,30 @@ export async function seedPages(payload: Payload): Promise<SeedOutcome[]> {
     })
 
     // The other routed locales are translations of the same document, not new ones.
-    for (const locale of DEFAULT_LOCALES.filter((entry) => entry !== 'en')) {
+    for (const locale of DEFAULT_LOCALES.filter((entry) => entry !== 'en'))
       await payload.update({
         collection: 'pages',
-        id: created.id,
-        data: {
-          title: TITLES[slug][locale as 'ru'],
-          meta: META[slug]?.[locale],
-          // The blocks keep the ids the English write gave them, so this translates the
-          // sections rather than adding a second set.
-          layout: translated(created.layout, slug, images),
-        },
+        id: page.id,
+        data: { title: TITLES[slug][locale as 'ru'], meta: META[slug]?.[locale] },
         locale,
         overrideAccess: true,
         context: { skipRevalidation: true },
       })
-    }
 
-    outcomes.push({ collection: 'pages', key, action: 'created', id: created.id })
+    created.add(slug)
   }
 
-  return outcomes
+  return created
+}
+
+/** The page a route is served from, or nothing when the seed has not written it yet. */
+async function find(payload: Payload, slug: string): Promise<Page | undefined> {
+  const result = await payload.find({
+    collection: 'pages',
+    where: { slug: { equals: slug } },
+    limit: 1,
+    overrideAccess: true,
+  })
+
+  return result.docs[0]
 }
