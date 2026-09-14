@@ -1,5 +1,6 @@
 import Image from 'next/image'
 
+import { buttonVariants } from '@/components/ui/button'
 import { Link } from '@/i18n/navigation'
 import { cn } from '@/lib/cn'
 import type { ImageSource } from '@/lib/media'
@@ -47,10 +48,11 @@ export function GroupCard({ title, description, image, action, className }: Grou
       <div className="z-10">
         <h2>{title}</h2>
         <p className="pt-3">{description}</p>
-        <Link href={internalPath(action.href)}>
-          <button className="mt-6" type="button">
-            {action.label}
-          </button>
+        <Link
+          className={cn(buttonVariants({ as: 'link' }), 'mt-6 self-start')}
+          href={internalPath(action.href)}
+        >
+          {action.label}
         </Link>
       </div>
       <div className={VEIL} />

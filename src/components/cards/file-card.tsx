@@ -1,5 +1,6 @@
 import Image from 'next/image'
 
+import { buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/cn'
 import type { ImageSource } from '@/lib/media'
 
@@ -39,8 +40,13 @@ export function FileCard({ title, image, file, className }: FileCardProps) {
         <h3>{title}</h3>
         {/* An address outside this site, so neither `Link` nor a locale: a plain anchor.
             `noopener` is what a browser already does for `target="_blank"`, written down. */}
-        <a className="md:self-start" href={file.href} rel="noopener" target="_blank">
-          <button type="button">{file.label}</button>
+        <a
+          className={cn(buttonVariants({ as: 'link' }), 'self-start')}
+          href={file.href}
+          rel="noopener"
+          target="_blank"
+        >
+          {file.label}
         </a>
       </div>
     </div>

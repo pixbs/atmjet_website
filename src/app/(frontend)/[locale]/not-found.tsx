@@ -18,7 +18,7 @@ export default function NotFound() {
     <section className="container min-h-svh items-start justify-center gap-6 py-24">
       <h1>{t('title')}</h1>
       <p className="max-w-screen-sm">{t('description')}</p>
-      <Link className={buttonVariants({ size: 'middle' })} href="/">
+      <Link className={buttonVariants({ as: 'link', size: 'middle' })} href="/">
         {t('home')}
       </Link>
     </section>
