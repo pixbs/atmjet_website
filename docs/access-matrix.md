@@ -51,14 +51,15 @@ Field-level: `roles` is writable by admins only, on both create and update. Payl
 
 ### `pages`, `airports`, `aircraft`, `yachts`, `empty-legs` and `redirects`
 
-Content and reference data. `pages`, `aircraft`, `yachts` and `empty-legs` use `publishedOnly`, so the public sees published documents and the people who run the content see drafts too; `airports` and `redirects` are read by anyone, because the airport search endpoint (E9.9), the empty legs block and a visitor following an old link all answer without a session. `redirects` comes from `@payloadcms/plugin-redirects`, which declares only `read`; the other three are declared in the overrides so the enumeration test passes.
+Content and reference data. `pages` uses `publishedOnly`, so the public sees published documents and the people who run the content see drafts too. Everything else is read by anyone: the catalogue has no draft state at all (issue #236 — the legacy admin had none, a listing was live the moment it was saved), and the airport search endpoint (E9.9), the empty legs block and a visitor following an old link all answer without a session. `redirects` comes from `@payloadcms/plugin-redirects`, which declares only `read`; the other three are declared in the overrides so the enumeration test passes.
 
-| Collection | read           | create | update | delete |
-| ---------- | -------------- | ------ | ------ | ------ |
-| `pages`    | published only | editor | editor | editor |
-| `airports` | anyone         | editor | editor | editor |
-| `aircraft` | published only | editor | editor | editor |
-| `yachts`   | published only | editor | editor | editor |
+| Collection   | read           | create | update | delete |
+| ------------ | -------------- | ------ | ------ | ------ |
+| `pages`      | published only | editor | editor | editor |
+| `airports`   | anyone         | editor | editor | editor |
+| `aircraft`   | anyone         | editor | editor | editor |
+| `yachts`     | anyone         | editor | editor | editor |
+| `empty-legs` | anyone         | editor | editor | editor |
 
 "Editor" means `editorOrAdmin` throughout: an admin can do everything an editor can. Their cells are tested in each collection's own spec.
 
