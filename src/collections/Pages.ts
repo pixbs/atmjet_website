@@ -5,6 +5,7 @@ import { heroSubpage } from '@/blocks/HeroSubpage/config'
 import { keyFeatures } from '@/blocks/KeyFeatures/config'
 import { optionsTiles } from '@/blocks/OptionsTiles/config'
 import { privilege } from '@/blocks/Privilege/config'
+import { tiles } from '@/blocks/Tiles/config'
 import { whyUs } from '@/blocks/WhyUs/config'
 import { yachtsPromo } from '@/blocks/YachtsPromo/config'
 import { revalidateCollection } from '@/hooks/revalidate'
@@ -95,7 +96,7 @@ export const Pages: CollectionConfig = {
       name: 'layout',
       type: 'blocks',
       // Sections land here one at a time in E7, each with its own issue.
-      blocks: [heroSubpage, keyFeatures, optionsTiles, privilege, whyUs, yachtsPromo],
+      blocks: [heroSubpage, keyFeatures, optionsTiles, privilege, tiles, whyUs, yachtsPromo],
       admin: { description: 'The sections of this page, in the order they are rendered.' },
     },
   ],
