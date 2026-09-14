@@ -19,6 +19,7 @@ import { HeroSubpage } from './HeroSubpage/Component'
 import { HeroYachts } from './HeroYachts/Component'
 import { KeyFeatures } from './KeyFeatures/Component'
 import { OptionsTiles } from './OptionsTiles/Component'
+import { PersonalManager } from './PersonalManager/Component'
 import { PhotoDescriptor } from './PhotoDescriptor/Component'
 import { Privilege } from './Privilege/Component'
 import { Quote } from './Quote/Component'
@@ -256,6 +257,19 @@ function blockFor(block: LayoutBlock, key: string) {
       })
 
       return tiles.length === 0 ? null : <OptionsTiles key={key} tiles={tiles} />
+    }
+    case 'personalManager': {
+      const image = mediaSource(typeof block.image === 'object' ? block.image : null)
+
+      return image === null ? null : (
+        <PersonalManager
+          key={key}
+          chips={(block.chips ?? []).map((chip) => chip.text)}
+          description={block.description}
+          image={image}
+          title={block.title}
+        />
+      )
     }
     case 'photoDescriptor': {
       const image = mediaSource(typeof block.image === 'object' ? block.image : null)
