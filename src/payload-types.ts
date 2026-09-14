@@ -255,7 +255,7 @@ export interface Page {
   /**
    * The sections of this page, in the order they are rendered.
    */
-  layout?: HeroSubpageBlock[] | null;
+  layout?: (HeroSubpageBlock | WhyUsBlock)[] | null;
   meta?: {
     title?: string | null;
     description?: string | null;
@@ -282,6 +282,32 @@ export interface HeroSubpageBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'heroSubpage';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "WhyUsBlock".
+ */
+export interface WhyUsBlock {
+  title: string;
+  description?: string | null;
+  /**
+   * Each one comes to rest a little lower than the one above it.
+   */
+  cards?:
+    | {
+        /**
+         * Counted up when the card arrives, as `20+`; some pages had none.
+         */
+        figure?: string | null;
+        title: string;
+        description: string;
+        image?: (number | null) | Media;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'whyUs';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1168,6 +1194,7 @@ export interface PagesSelect<T extends boolean = true> {
     | T
     | {
         heroSubpage?: T | HeroSubpageBlockSelect<T>;
+        whyUs?: T | WhyUsBlockSelect<T>;
       };
   meta?:
     | T
@@ -1188,6 +1215,25 @@ export interface HeroSubpageBlockSelect<T extends boolean = true> {
   title?: T;
   description?: T;
   image?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "WhyUsBlock_select".
+ */
+export interface WhyUsBlockSelect<T extends boolean = true> {
+  title?: T;
+  description?: T;
+  cards?:
+    | T
+    | {
+        figure?: T;
+        title?: T;
+        description?: T;
+        image?: T;
+        id?: T;
+      };
   id?: T;
   blockName?: T;
 }
