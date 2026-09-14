@@ -10,8 +10,8 @@ import { cn } from '@/lib/cn'
  * declarations: the rendered markup stays identical to the legacy site, and there is one place
  * to change a button.
  *
- * `buttonVariants` is exported for the elements that only look like buttons (a link, or the
- * legacy `.button` span).
+ * `buttonVariants` is exported for the elements that only look like buttons — a link, or the
+ * legacy `.button` span — which is what `as: 'link'` is for (issue #262).
  */
 export const buttonVariants = cva('', {
   variants: {
@@ -30,9 +30,19 @@ export const buttonVariants = cva('', {
       /** The gold gradient. */
       gold: 'bg-gold',
     },
+    /**
+     * What is wearing the clothes. A `<button>` is dressed by the element rule in the base
+     * layer, where a utility a caller passes still wins; anything else needs the `button` class,
+     * which the parity layer styles outside every cascade layer. Putting that class on a real
+     * button would therefore beat the caller's own utilities, which is why it is not the default.
+     */
+    as: {
+      button: '',
+      link: 'button',
+    },
   },
   compoundVariants: [{ size: 'middle', tone: 'dark', class: 'dark' }],
-  defaultVariants: { size: 'default', tone: 'default' },
+  defaultVariants: { size: 'default', tone: 'default', as: 'button' },
 })
 
 export interface ButtonProps

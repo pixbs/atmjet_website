@@ -1,6 +1,7 @@
 import Image from 'next/image'
 
 import { Reveal } from '@/components/motion/reveal'
+import { buttonVariants } from '@/components/ui/button'
 import { Link } from '@/i18n/navigation'
 import { cn } from '@/lib/cn'
 import type { ImageSource } from '@/lib/media'
@@ -65,10 +66,11 @@ export function YachtsCard({ image, columns, invitation, className }: YachtsCard
         />
         <div className="gap-6 p-6">
           <h3>{invitation.title}</h3>
-          <Link href={internalPath(invitation.action.href)}>
-            <button className="md:self-center md:px-8" type="button">
-              {invitation.action.label}
-            </button>
+          <Link
+            className={cn(buttonVariants({ as: 'link' }), 'self-start md:self-center md:px-8')}
+            href={internalPath(invitation.action.href)}
+          >
+            {invitation.action.label}
           </Link>
         </div>
       </Reveal>
