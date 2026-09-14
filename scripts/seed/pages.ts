@@ -206,6 +206,42 @@ const OPTIONS_TILES: { slug: string; dim: boolean; en: [string, string]; ru: [st
     },
   ]
 
+/**
+ * The five questions the legacy home page answered (issue #123, section 5). Placeholder copy an
+ * editor replaces; the second answer carries a line break, which the block keeps.
+ */
+const FAQ: { en: [string, string]; ru: [string, string] }[] = [
+  {
+    en: ['How soon can we fly?', 'Three hours from the call, once the crew and the slot are held.'],
+    ru: ['Как скоро вылет?', 'Через три часа после звонка, когда экипаж и слот забронированы.'],
+  },
+  {
+    en: [
+      'What does the price include?',
+      'The aircraft, the crew, fuel and handling.\nCatering and ground transfers are quoted beside it.',
+    ],
+    ru: [
+      'Что входит в стоимость?',
+      'Самолёт, экипаж, топливо и наземное обслуживание.\nКейтеринг и трансферы считаются отдельно.',
+    ],
+  },
+  {
+    en: ['Can we change the route?', 'Up to the moment the flight plan is filed, and often after.'],
+    ru: ['Можно ли изменить маршрут?', 'До подачи плана полёта, а часто и после неё.'],
+  },
+  {
+    en: ['Do you fly with pets?', 'In the cabin, on most of the fleet, with the papers arranged.'],
+    ru: [
+      'Летаете ли вы с животными?',
+      'В салоне, на большей части флота, с оформленными документами.',
+    ],
+  },
+  {
+    en: ['How is payment made?', 'By transfer, by card, or by the arrangement the charter needs.'],
+    ru: ['Как происходит оплата?', 'Переводом, картой или так, как требует конкретный чартер.'],
+  },
+]
+
 /** The sections a seeded page starts with; a page with no entry here starts with none. */
 function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout {
   const sections: Layout = []
@@ -292,6 +328,13 @@ function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout 
       }),
     })
 
+  if (slug === 'citizens')
+    sections.push({
+      blockType: 'faq',
+      title: locale === 'en' ? 'Questions we are asked' : 'Что нас спрашивают',
+      questions: FAQ.map((entry) => ({ question: entry[locale][0], answer: entry[locale][1] })),
+    })
+
   // Eight, as the legacy grid sliced one picture into eight. Below the sections above it, as
   // the legacy grid sat far down the home page: it is scrolled to, not landed on.
   if (slug === 'cargo_charter')
@@ -342,6 +385,15 @@ function translated(layout: Layout | null | undefined, slug: string, fixture: Fi
 
     // One case per block type: a spread over the union widens every field back to optional.
     switch (block.blockType) {
+      case 'faq':
+        return {
+          ...block,
+          id,
+          questions: withRowIds(
+            block.questions ?? [],
+            written?.blockType === 'faq' ? written.questions : undefined,
+          ),
+        }
       case 'heroSubpage':
         return { ...block, id }
       case 'keyFeatures':

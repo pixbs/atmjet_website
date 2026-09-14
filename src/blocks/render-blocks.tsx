@@ -2,6 +2,7 @@ import { mediaSource } from '@/lib/media'
 import { hrefForSlug } from '@/lib/nav'
 import type { Page } from '@/payload-types'
 
+import { Faq } from './Faq/Component'
 import { HeroSubpage } from './HeroSubpage/Component'
 import { KeyFeatures } from './KeyFeatures/Component'
 import { OptionsTiles } from './OptionsTiles/Component'
@@ -22,6 +23,17 @@ type LayoutBlock = NonNullable<Page['layout']>[number]
 
 function blockFor(block: LayoutBlock, key: string) {
   switch (block.blockType) {
+    case 'faq':
+      return (
+        <Faq
+          key={key}
+          questions={(block.questions ?? []).map((entry) => ({
+            answer: entry.answer,
+            question: entry.question,
+          }))}
+          title={block.title}
+        />
+      )
     case 'heroSubpage': {
       const image = mediaSource(typeof block.image === 'object' ? block.image : null)
 
