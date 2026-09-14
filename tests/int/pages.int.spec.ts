@@ -1,7 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
 
 import { PAGE_SLUGS, pathForPage } from '@/collections/Pages'
-import { createAdmin, createUser } from '../factories'
+import { createAdmin, createMedia, createUser } from '../factories'
 import { createRegistry, uniqueSuffix, type TestRegistry } from '../helpers/payload'
 
 // Media and Pages both revalidate on write, which needs a Next request scope this suite has not
@@ -244,5 +244,69 @@ describe('seo', () => {
 
     expect(english.meta?.title).toBe('English meta')
     expect(russian.meta?.title).toBe('Русское описание')
+  })
+})
+
+/**
+ * The subpage hero, the first section to land in the layout (issue #112). What matters here is
+ * what a page made of blocks has to do: keep the words of each language apart while the
+ * photograph stays one document, and refuse a hero with no photograph at all.
+ */
+describe('the subpage hero block', () => {
+  it('translates the words while both locales draw the same photograph', async () => {
+    const image = await createMedia(registry)
+    const page = await registry.create(
+      'pages',
+      pageData({
+        layout: [
+          {
+            blockType: 'heroSubpage',
+            title: 'Cargo charter',
+            description: 'By air',
+            image: image.id,
+          },
+        ],
+      }),
+    )
+
+    await registry.payload.update({
+      collection: 'pages',
+      id: page.id,
+      data: {
+        title: 'Грузовые перевозки',
+        layout: [
+          {
+            blockType: 'heroSubpage',
+            id: page.layout?.[0]?.id,
+            title: 'Грузовые перевозки',
+            description: 'По воздуху',
+            image: image.id,
+          },
+        ],
+      },
+      locale: 'ru',
+      overrideAccess: true,
+    })
+
+    const english = await registry.payload.findByID({ collection: 'pages', id: page.id, depth: 0 })
+    const russian = await registry.payload.findByID({
+      collection: 'pages',
+      id: page.id,
+      locale: 'ru',
+      depth: 0,
+    })
+
+    expect(english.layout?.[0]?.description).toBe('By air')
+    expect(russian.layout?.[0]?.description).toBe('По воздуху')
+    expect(russian.layout?.[0]?.image).toBe(image.id)
+  })
+
+  it('refuses a hero with no photograph, which would render as a hole in the page', async () => {
+    await expect(
+      registry.create(
+        'pages',
+        pageData({ layout: [{ blockType: 'heroSubpage', title: 'No image' }] }),
+      ),
+    ).rejects.toThrow()
   })
 })

@@ -1,6 +1,7 @@
 import type { CollectionConfig } from 'payload'
 
 import { editorOrAdmin, publishedOnly } from '@/access'
+import { heroSubpage } from '@/blocks/HeroSubpage/config'
 import { revalidateCollection } from '@/hooks/revalidate'
 
 /**
@@ -8,9 +9,7 @@ import { revalidateCollection } from '@/hooks/revalidate'
  * React files (`docs/legacy-inventory.md` section 2.1), so a copy change meant a deploy; here
  * they are documents an editor owns.
  *
- * `layout` is the blocks field every ported section lands in (E7). It is deliberately empty
- * until then, so this collection can ship, be seeded and be rendered before the first block
- * exists.
+ * `layout` is the blocks field every ported section lands in (E7), one block per issue.
  */
 
 /** The thirteen static routes of section 2.1. The empty slug is the home page. */
@@ -90,8 +89,8 @@ export const Pages: CollectionConfig = {
     {
       name: 'layout',
       type: 'blocks',
-      // Sections land here one at a time in E7; an empty list keeps the field valid until then.
-      blocks: [],
+      // Sections land here one at a time in E7, each with its own issue.
+      blocks: [heroSubpage],
       admin: { description: 'The sections of this page, in the order they are rendered.' },
     },
   ],
