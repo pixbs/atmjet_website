@@ -73,7 +73,10 @@ export function AccordionItem({
       <m.button
         aria-controls={contentId}
         aria-expanded={isOpen}
-        className="cursor-pointer text-left font-serif text-2xl text-white"
+        // The legacy question was a `<p>`, so the parity layer's button rule — the pill, the
+        // white fill, the padding and the weight — is taken back off; what is left is what it
+        // looked like there (issue #106).
+        className="cursor-pointer rounded-none bg-transparent p-0 text-left font-serif text-2xl font-normal text-white"
         // The legacy dimmed the open question and left the timing unset, so the library default
         // still applies (docs/adr/0006-styling-and-motion.md).
         animate={{ opacity: isOpen ? 0.8 : 1 }}
