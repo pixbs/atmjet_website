@@ -5,6 +5,7 @@ import { notFound } from 'next/navigation'
 import React from 'react'
 
 import { MotionProvider } from '@/components/providers/motion-provider'
+import { Header } from '@/components/sections/header'
 import { JsonLd } from '@/components/ui/json-ld'
 import type { Locale } from '@/i18n/locales'
 import { getEnabledLocales, getSiteContact } from '@/lib/data/site-settings'
@@ -57,7 +58,8 @@ export default async function LocaleLayout({
 
   // A prefix that is not an enabled locale never reaches a page: the proxy stops routing it and
   // this is the second door, for a request that arrives at the route directly (issue #53).
-  if (!(await getEnabledLocales()).includes(locale as Locale)) {
+  const locales = await getEnabledLocales()
+  if (!locales.includes(locale as Locale)) {
     notFound()
   }
 
@@ -76,6 +78,7 @@ export default async function LocaleLayout({
       <body className="min-h-dvh bg-graphite-900 font-sans text-white antialiased">
         <NextIntlClientProvider>
           <MotionProvider>
+            <Header locale={locale as Locale} locales={locales} />
             <main>{children}</main>
           </MotionProvider>
         </NextIntlClientProvider>

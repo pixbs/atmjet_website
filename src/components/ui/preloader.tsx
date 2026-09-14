@@ -37,6 +37,7 @@ export function Preloader({ isStatic = false, className, ...props }: PreloaderPr
         animate={state}
       />
       <m.div
+        data-testid="preloader-logo"
         className="fixed inset-0 z-preloader flex items-center justify-center"
         variants={preloaderLogo}
         initial="hidden"

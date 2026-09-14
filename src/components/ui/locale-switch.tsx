@@ -43,7 +43,10 @@ function LocaleLinks({ locales, href, className, ...props }: LocaleLinksProps) {
   return (
     <nav
       aria-label={t('language')}
-      className={cn('flex-row items-center gap-4', className)}
+      // `flex` as well as the direction: the legacy switcher had no element of its own and
+      // inherited the flex box of the div that held it (`docs/legacy-inventory.md` section 3.6),
+      // and a bare `flex-row` on this nav left the two languages touching.
+      className={cn('flex flex-row items-center gap-4', className)}
       {...props}
     >
       {locales.map((locale) => (

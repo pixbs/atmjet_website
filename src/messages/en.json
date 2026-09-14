@@ -3,7 +3,15 @@
     "skipToContent": "Skip to content",
     "loading": "Loading",
     "home": "Home",
-    "language": "Language"
+    "language": "Language",
+    "openMenu": "Open the menu",
+    "closeMenu": "Close the menu",
+    "logo": "ATM JET, back to the home page"
+  },
+  "social": {
+    "telegram": "Telegram",
+    "whatsapp": "WhatsApp",
+    "instagram": "Instagram"
   },
   "errors": {
     "notFound": {

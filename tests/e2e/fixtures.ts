@@ -4,6 +4,7 @@
  */
 import { test as base, expect } from '@playwright/test'
 import { AdminPage } from './pages/admin'
+import { HeaderPage } from './pages/header'
 import { HomePage } from './pages/home'
 import { StyleguidePage } from './pages/styleguide'
 import { ENABLED_LOCALES, type Locale } from './routes'
@@ -11,6 +12,7 @@ import { ENABLED_LOCALES, type Locale } from './routes'
 interface Fixtures {
   /** the site locale under test (Playwright's own `locale` option is the browser locale) */
   siteLocale: Locale
+  header: HeaderPage
   home: HomePage
   styleguide: StyleguidePage
   admin: AdminPage
@@ -18,6 +20,9 @@ interface Fixtures {
 
 export const test = base.extend<Fixtures>({
   siteLocale: ['en', { option: true }],
+  header: async ({ page, siteLocale }, provide) => {
+    await provide(new HeaderPage(page, siteLocale))
+  },
   home: async ({ page, siteLocale }, provide) => {
     await provide(new HomePage(page, siteLocale))
   },
