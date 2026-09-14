@@ -3,6 +3,7 @@ import type { CollectionConfig } from 'payload'
 import { editorOrAdmin, publishedOnly } from '@/access'
 import { heroSubpage } from '@/blocks/HeroSubpage/config'
 import { keyFeatures } from '@/blocks/KeyFeatures/config'
+import { privilege } from '@/blocks/Privilege/config'
 import { whyUs } from '@/blocks/WhyUs/config'
 import { revalidateCollection } from '@/hooks/revalidate'
 
@@ -92,7 +93,7 @@ export const Pages: CollectionConfig = {
       name: 'layout',
       type: 'blocks',
       // Sections land here one at a time in E7, each with its own issue.
-      blocks: [heroSubpage, keyFeatures, whyUs],
+      blocks: [heroSubpage, keyFeatures, privilege, whyUs],
       admin: { description: 'The sections of this page, in the order they are rendered.' },
     },
   ],

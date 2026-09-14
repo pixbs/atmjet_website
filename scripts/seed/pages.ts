@@ -127,42 +127,78 @@ const KEY_FEATURES: { en: [string, string]; ru: [string, string] }[] = [
 
 type Layout = NonNullable<Page['layout']>
 
-/** The sections a seeded page starts with; a page with no entry here starts with none. */
-function layoutFor(slug: string, locale: 'en' | 'ru', image: number): Layout {
-  const description = HERO_PAGES[slug]?.[locale]
-  if (description === undefined) return []
+/** The placeholder uploads the fixture draws with. */
+interface Images {
+  photo: number
+  surface: number
+}
 
-  const hero = {
-    blockType: 'heroSubpage' as const,
-    title: TITLES[slug][locale],
-    description,
-    image,
-  }
+/**
+ * The privileges the group page stacks (issue #120, section 5), one per icon the legacy drew,
+ * and the invitation under them.
+ */
+const PRIVILEGES: {
+  icon: 'plane' | 'exchange' | 'diamond'
+  en: [string, string]
+  ru: [string, string]
+}[] = [
+  {
+    icon: 'plane',
+    en: [
+      'A jet within three hours',
+      'An aircraft ready at the nearest airport, whatever the hour.',
+    ],
+    ru: ['Самолёт за три часа', 'Борт готов в ближайшем аэропорту в любое время суток.'],
+  },
+  {
+    icon: 'exchange',
+    en: ['One price, agreed once', 'What is quoted is what is invoiced, with nothing added later.'],
+    ru: [
+      'Одна цена, согласованная один раз',
+      'Сколько названо, столько и в счёте, без добавлений.',
+    ],
+  },
+  {
+    icon: 'diamond',
+    en: ['The cabin as you left it', 'Crew, catering and cabin kept to the standard you set.'],
+    ru: [
+      'Салон таким, каким вы его оставили',
+      'Экипаж, кейтеринг и салон — по заданному стандарту.',
+    ],
+  },
+]
+
+/** The sections a seeded page starts with; a page with no entry here starts with none. */
+function layoutFor(slug: string, locale: 'en' | 'ru', images: Images): Layout {
+  const sections: Layout = []
+  const description = HERO_PAGES[slug]?.[locale]
+
+  if (description !== undefined)
+    sections.push({
+      blockType: 'heroSubpage',
+      title: TITLES[slug][locale],
+      description,
+      image: images.photo,
+    })
 
   if (slug === 'medical_aviation')
-    return [
-      hero,
-      {
-        blockType: 'keyFeatures' as const,
-        title: locale === 'en' ? 'What is on board' : 'Что на борту',
-        description:
-          locale === 'en'
-            ? 'The aircraft is fitted for the patient, not for the route.'
-            : 'Самолёт оснащается под пациента, а не под маршрут.',
-        cards: KEY_FEATURES.map((card) => ({
-          title: card[locale][0],
-          description: card[locale][1],
-          image,
-        })),
-      },
-    ]
+    sections.push({
+      blockType: 'keyFeatures',
+      title: locale === 'en' ? 'What is on board' : 'Что на борту',
+      description:
+        locale === 'en'
+          ? 'The aircraft is fitted for the patient, not for the route.'
+          : 'Самолёт оснащается под пациента, а не под маршрут.',
+      cards: KEY_FEATURES.map((card) => ({
+        title: card[locale][0],
+        description: card[locale][1],
+        image: images.photo,
+      })),
+    })
 
-  if (slug !== 'cargo_charter') return [hero]
-
-  return [
-    hero,
-    {
-      blockType: 'whyUs' as const,
+  if (slug === 'cargo_charter')
+    sections.push({
+      blockType: 'whyUs',
       title: locale === 'en' ? 'Why us' : 'Почему мы',
       description:
         locale === 'en'
@@ -172,10 +208,33 @@ function layoutFor(slug: string, locale: 'en' | 'ru', image: number): Layout {
         figure: card.figure,
         title: card[locale][0],
         description: card[locale][1],
-        image: card.withImage ? image : undefined,
+        image: card.withImage ? images.photo : undefined,
       })),
-    },
-  ]
+    })
+
+  if (slug === 'atm_jet_group')
+    sections.push({
+      blockType: 'privilege',
+      title: locale === 'en' ? 'What flying with us' : 'Что даёт полёт',
+      goldTitle: locale === 'en' ? 'comes with' : 'с нами',
+      cards: PRIVILEGES.map((card) => ({
+        icon: card.icon,
+        title: card[locale][0],
+        description: card[locale][1],
+      })),
+      contact: {
+        title: locale === 'en' ? 'Tell us where you are going' : 'Расскажите, куда летите',
+        description:
+          locale === 'en'
+            ? 'A manager answers within minutes, at any hour, in either language.'
+            : 'Менеджер отвечает в течение нескольких минут, в любой час, на любом языке.',
+        telegram: 'Telegram',
+        whatsapp: 'WhatsApp',
+        background: images.surface,
+      },
+    })
+
+  return sections
 }
 
 /**
@@ -183,18 +242,23 @@ function layoutFor(slug: string, locale: 'en' | 'ru', image: number): Layout {
  * matches a block, and a row inside it, by id; a write without them replaces the rows instead of
  * translating them, and the English words go with the rows that held them.
  */
-function translated(layout: Layout | null | undefined, slug: string, image: number): Layout {
-  return layoutFor(slug, 'ru', image).map((block, index) => {
+function translated(layout: Layout | null | undefined, slug: string, images: Images): Layout {
+  return layoutFor(slug, 'ru', images).map((block, index) => {
     const written = layout?.[index]
     const id = written?.id
     const rows = written && 'cards' in written ? written.cards : undefined
 
-    // One branch per block type: a spread over the union widens every field back to optional.
-    if (block.blockType === 'heroSubpage') return { ...block, id }
-    if (block.blockType === 'whyUs')
-      return { ...block, id, cards: withRowIds(block.cards ?? [], rows) }
-
-    return { ...block, id, cards: withRowIds(block.cards ?? [], rows) }
+    // One case per block type: a spread over the union widens every field back to optional.
+    switch (block.blockType) {
+      case 'heroSubpage':
+        return { ...block, id }
+      case 'keyFeatures':
+        return { ...block, id, cards: withRowIds(block.cards ?? [], rows) }
+      case 'privilege':
+        return { ...block, id, cards: withRowIds(block.cards ?? [], rows) }
+      case 'whyUs':
+        return { ...block, id, cards: withRowIds(block.cards ?? [], rows) }
+    }
   })
 }
 
@@ -212,11 +276,11 @@ async function addSections(
   payload: Payload,
   page: Page,
   slug: string,
-  image: number,
+  images: Images,
 ): Promise<'updated' | 'unchanged'> {
   const current = page.layout ?? []
   const has = new Set(current.map((block) => block.blockType))
-  const missing = layoutFor(slug, 'en', image).filter((block) => !has.has(block.blockType))
+  const missing = layoutFor(slug, 'en', images).filter((block) => !has.has(block.blockType))
   if (missing.length === 0) return 'unchanged'
 
   const id = page.id
@@ -233,7 +297,7 @@ async function addSections(
     await payload.update({
       collection: 'pages',
       id,
-      data: { layout: translated(written.layout, slug, image) },
+      data: { layout: translated(written.layout, slug, images) },
       locale,
       overrideAccess: true,
       context: { skipRevalidation: true },
@@ -242,11 +306,11 @@ async function addSections(
   return 'updated'
 }
 
-/** The placeholder upload the seeded sections draw, by the filename `seedMedia` gave it. */
-async function heroImage(payload: Payload): Promise<number> {
+/** A placeholder upload the seeded sections draw, by the filename `seedMedia` gave it. */
+async function upload(payload: Payload, filename: string): Promise<number> {
   const media = await payload.find({
     collection: 'media',
-    where: { filename: { equals: 'seed-gold.png' } },
+    where: { filename: { equals: filename } },
     limit: 1,
     overrideAccess: true,
   })
@@ -256,7 +320,11 @@ async function heroImage(payload: Payload): Promise<number> {
 
 export async function seedPages(payload: Payload): Promise<SeedOutcome[]> {
   const outcomes: SeedOutcome[] = []
-  const image = await heroImage(payload)
+  // The photograph every section shows, and the dark one the privileges panel is patterned with.
+  const images = {
+    photo: await upload(payload, 'seed-gold.png'),
+    surface: await upload(payload, 'seed-surface.png'),
+  }
 
   for (const slug of PAGE_SLUGS) {
     const key = slug === '' ? '(home)' : slug
@@ -271,7 +339,7 @@ export async function seedPages(payload: Payload): Promise<SeedOutcome[]> {
       const page = existing.docs[0]
       // A page that predates a block takes the sections that block's issue adds, which is what
       // keeps the fixture reconciled rather than only idempotent (AGENTS.md §1.5).
-      const action = await addSections(payload, page, slug, image)
+      const action = await addSections(payload, page, slug, images)
 
       outcomes.push({ collection: 'pages', key, action, id: page.id })
       continue
@@ -282,7 +350,7 @@ export async function seedPages(payload: Payload): Promise<SeedOutcome[]> {
       data: {
         title: TITLES[slug].en,
         slug,
-        layout: layoutFor(slug, 'en', image),
+        layout: layoutFor(slug, 'en', images),
         _status: 'published',
         meta: META[slug]?.en,
       },
@@ -302,7 +370,7 @@ export async function seedPages(payload: Payload): Promise<SeedOutcome[]> {
           meta: META[slug]?.[locale],
           // The blocks keep the ids the English write gave them, so this translates the
           // sections rather than adding a second set.
-          layout: translated(created.layout, slug, image),
+          layout: translated(created.layout, slug, images),
         },
         locale,
         overrideAccess: true,
