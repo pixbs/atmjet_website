@@ -4,7 +4,7 @@ import type { TypedUser } from 'payload'
 
 import { DEFAULT_LOCALES } from '@/i18n/locales'
 import { getEnabledLocales } from '@/lib/data/site-settings'
-import { createAdmin, createUser } from '../factories'
+import { createAdmin, createMedia, createUser } from '../factories'
 import { createRegistry, uniqueSuffix, type TestRegistry } from '../helpers/payload'
 
 // The globals revalidate on write, which needs a Next request scope this suite has not got; the
@@ -132,6 +132,24 @@ describe('site settings', () => {
       user: owner,
     })
     expect(updated.phone).toBe('+971 (50) 458-99-26')
+  })
+
+  it('loses the link rather than the row when a document is deleted', async () => {
+    const file = await createMedia(registry)
+    await registry.payload.updateGlobal({
+      slug: 'site-settings',
+      data: { documents: [{ label: 'Presentation', file: file.id }] },
+      locale: 'en',
+      depth: 0,
+      overrideAccess: true,
+    })
+
+    await registry.payload.delete({ collection: 'media', id: file.id, overrideAccess: true })
+
+    const settings = await registry.payload.findGlobal({ slug: 'site-settings', depth: 0 })
+    // The same rule as the navigation above: a required upload is a not-null column, and the
+    // delete would fail on it rather than leaving a row an editor can give a new file.
+    expect(settings.documents?.[0]).toMatchObject({ label: 'Presentation', file: null })
   })
 
   it('drops the cached pages that render it', async () => {

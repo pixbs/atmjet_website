@@ -194,29 +194,17 @@ describe('provenance', () => {
 })
 
 describe('access', () => {
-  it('hides a draft from the public and shows a published one', async () => {
-    const draft = await createEmptyLeg(registry)
+  it('is live for a visitor the moment it is saved, as the legacy catalogue was', async () => {
+    // No draft state on the catalogue (issue #236): an editor saves and the listing is public.
+    const saved = await createEmptyLeg(registry)
 
     const asVisitor = await registry.payload.find({
       collection: 'empty-legs',
-      where: { id: { equals: draft.id } },
+      where: { id: { equals: saved.id } },
       overrideAccess: false,
     })
-    expect(asVisitor.totalDocs).toBe(0)
 
-    await registry.payload.update({
-      collection: 'empty-legs',
-      id: draft.id,
-      data: { _status: 'published' },
-      overrideAccess: true,
-    })
-
-    const published = await registry.payload.find({
-      collection: 'empty-legs',
-      where: { id: { equals: draft.id } },
-      overrideAccess: false,
-    })
-    expect(published.totalDocs).toBe(1)
+    expect(asVisitor.totalDocs).toBe(1)
   })
 
   it('is not writable anonymously and is writable by an editor', async () => {

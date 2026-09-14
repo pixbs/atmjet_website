@@ -1,6 +1,6 @@
 import { ValidationError, type CollectionConfig } from 'payload'
 
-import { editorOrAdmin, publishedOnly } from '@/access'
+import { anyone, editorOrAdmin } from '@/access'
 import { provenanceGroup } from '@/fields/provenance'
 import { revalidateCollection } from '@/hooks/revalidate'
 import { slugify } from '@/lib/slug'
@@ -32,11 +32,11 @@ export const Yachts: CollectionConfig = {
   slug: 'yachts',
   admin: {
     useAsTitle: 'name',
-    defaultColumns: ['name', 'listingType', 'location', '_status'],
+    defaultColumns: ['name', 'listingType', 'location'],
     group: 'Catalogue',
   },
   access: {
-    read: publishedOnly,
+    read: anyone,
     create: editorOrAdmin,
     update: editorOrAdmin,
     delete: editorOrAdmin,
@@ -77,7 +77,6 @@ export const Yachts: CollectionConfig = {
       },
     ],
   },
-  versions: { drafts: true, maxPerDoc: 25 },
   fields: [
     {
       name: 'name',
