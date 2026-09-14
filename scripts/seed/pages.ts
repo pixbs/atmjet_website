@@ -318,6 +318,44 @@ const ADVANTAGES: { en: [string, string]; ru: [string, string] }[] = [
   },
 ]
 
+/** The price promise the legacy business agents page closed on (issue #125, section 5). */
+const BEST_PRICE: Record<'en' | 'ru', [string, string, string]> = {
+  en: [
+    'The best price, or we say so',
+    'We quote the aircraft an operator will actually fly, at the price they will actually fly it for.',
+    'Ask for a quote',
+  ],
+  ru: [
+    'Лучшая цена или прямой ответ',
+    'Мы называем борт, который оператор действительно поднимет, и цену, по которой он это сделает.',
+    'Запросить расчёт',
+  ],
+}
+
+/** What the legacy yachts for sale page said it checks (issue #126, section 5). */
+const INSPECTIONS: { en: [string, string]; ru: [string, string] }[] = [
+  {
+    en: ['The hull', 'Out of the water, by a surveyor who works for you and not for the yard.'],
+    ru: ['Корпус', 'На суше, сюрвейером, который работает на вас, а не на верфь.'],
+  },
+  {
+    en: ['The engines', 'Hours read off the counters and compared with the log book.'],
+    ru: ['Двигатели', 'Часы снимаются со счётчиков и сверяются с судовым журналом.'],
+  },
+  {
+    en: ['The papers', 'Flag, registry and every lien against the boat, in writing.'],
+    ru: ['Документы', 'Флаг, регистр и все обременения — в письменном виде.'],
+  },
+  {
+    en: ['The interior', 'Every cabin photographed as it is, before anything is tidied away.'],
+    ru: ['Интерьер', 'Каждая каюта снимается как есть, до того как что-то уберут.'],
+  },
+  {
+    en: ['The sea trial', 'A day at sea with the systems under load, not at the dock.'],
+    ru: ['Ходовые испытания', 'День в море с нагрузкой на системы, а не у причала.'],
+  },
+]
+
 /** The sections a seeded page starts with; a page with no entry here starts with none. */
 function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout {
   const sections: Layout = []
@@ -450,7 +488,25 @@ function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout 
         file: fixture.photo,
       })),
     })
+    sections.push({
+      blockType: 'bestPrice',
+      title: BEST_PRICE[locale][0],
+      description: BEST_PRICE[locale][1],
+      image: fixture.photo,
+      cta: { label: BEST_PRICE[locale][2], source: 'Best_price' },
+    })
   }
+
+  if (slug === 'sales_yachts')
+    sections.push({
+      blockType: 'weInspect',
+      title: locale === 'en' ? 'What we inspect' : 'Что мы проверяем',
+      slides: INSPECTIONS.map((slide) => ({
+        title: slide[locale][0],
+        description: slide[locale][1],
+        image: fixture.photo,
+      })),
+    })
 
   if (slug === 'citizens')
     sections.push({
@@ -518,6 +574,8 @@ function translated(layout: Layout | null | undefined, slug: string, fixture: Fi
             written?.blockType === 'advantages' ? written.cards : undefined,
           ),
         }
+      case 'bestPrice':
+        return { ...block, id }
       case 'documents':
         return {
           ...block,
@@ -577,6 +635,15 @@ function translated(layout: Layout | null | undefined, slug: string, fixture: Fi
           tiles: withRowIds(
             block.tiles ?? [],
             written?.blockType === 'tiles' ? written.tiles : undefined,
+          ),
+        }
+      case 'weInspect':
+        return {
+          ...block,
+          id,
+          slides: withRowIds(
+            block.slides ?? [],
+            written?.blockType === 'weInspect' ? written.slides : undefined,
           ),
         }
       case 'whyUs':
