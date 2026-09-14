@@ -843,6 +843,8 @@ function translated(layout: Layout | null | undefined, slug: string, fixture: Fi
         }
       case 'heroSubpage':
         return { ...block, id }
+      case 'heroVideo':
+        return { ...block, id }
       case 'heroYachts':
         return { ...block, id }
       case 'keyFeatures':
@@ -902,10 +904,29 @@ function withRowIds<Row>(rows: Row[], written: { id?: string | null }[] | null |
 }
 
 /**
- * Gives a page that predates a block the sections that block's issue seeds, appended after the
- * ones it already has and leaving those alone: a database seeded between two block issues would
- * otherwise never see the second one, and an editor's words are not the fixture's to overwrite.
+ * Gives a page that predates a block the sections that block's issue seeds, leaving the ones it
+ * already has alone: a database seeded between two block issues would otherwise never see the
+ * second one, and an editor's words are not the fixture's to overwrite.
+ *
+ * A new section takes the place `layoutFor` composes it in rather than the end of the page: one
+ * that opens a page, as a full-screen hero does, cannot be appended below the sections it comes
+ * before. Anything the page holds that this file does not compose stays, at the end.
  */
+function withMissingSections(current: Layout, composed: Layout): Layout {
+  const composedTypes = new Set(composed.map((block) => block.blockType))
+  const placed = new Set<string>()
+  const layout: Layout = []
+
+  for (const block of composed) {
+    const kept = current.filter((entry) => entry.blockType === block.blockType)
+    if (kept.length === 0) layout.push(block)
+    else if (!placed.has(block.blockType)) layout.push(...kept)
+    placed.add(block.blockType)
+  }
+
+  return [...layout, ...current.filter((block) => !composedTypes.has(block.blockType))]
+}
+
 async function addSections(
   payload: Payload,
   page: Page,
@@ -914,14 +935,14 @@ async function addSections(
 ): Promise<'updated' | 'unchanged'> {
   const current = page.layout ?? []
   const has = new Set(current.map((block) => block.blockType))
-  const missing = layoutFor(slug, 'en', fixture).filter((block) => !has.has(block.blockType))
-  if (missing.length === 0) return 'unchanged'
+  const composed = layoutFor(slug, 'en', fixture)
+  if (composed.every((block) => has.has(block.blockType))) return 'unchanged'
 
   const id = page.id
   const written = await payload.update({
     collection: 'pages',
     id,
-    data: { layout: [...current, ...missing] },
+    data: { layout: withMissingSections(current, composed) },
     locale: 'en',
     overrideAccess: true,
     context: { skipRevalidation: true },
