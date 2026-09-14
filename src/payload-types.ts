@@ -267,6 +267,7 @@ export interface Page {
         | KeyFeaturesBlock
         | OptionsTilesBlock
         | PrivilegeBlock
+        | QuoteBlock
         | TilesBlock
         | WeInspectBlock
         | WhyUsBlock
@@ -508,6 +509,24 @@ export interface PrivilegeBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'privilege';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "QuoteBlock".
+ */
+export interface QuoteBlock {
+  /**
+   * Which wordmark stands over the quotation.
+   */
+  variant: 'press' | 'founder';
+  quote: string;
+  /**
+   * The line under the quotation, painted with the gold gradient.
+   */
+  attribution: string;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'quote';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1502,6 +1521,7 @@ export interface PagesSelect<T extends boolean = true> {
         keyFeatures?: T | KeyFeaturesBlockSelect<T>;
         optionsTiles?: T | OptionsTilesBlockSelect<T>;
         privilege?: T | PrivilegeBlockSelect<T>;
+        quote?: T | QuoteBlockSelect<T>;
         tiles?: T | TilesBlockSelect<T>;
         weInspect?: T | WeInspectBlockSelect<T>;
         whyUs?: T | WhyUsBlockSelect<T>;
@@ -1691,6 +1711,17 @@ export interface PrivilegeBlockSelect<T extends boolean = true> {
         whatsapp?: T;
         background?: T;
       };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "QuoteBlock_select".
+ */
+export interface QuoteBlockSelect<T extends boolean = true> {
+  variant?: T;
+  quote?: T;
+  attribution?: T;
   id?: T;
   blockName?: T;
 }

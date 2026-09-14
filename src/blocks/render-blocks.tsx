@@ -12,6 +12,7 @@ import { HeroSubpage } from './HeroSubpage/Component'
 import { KeyFeatures } from './KeyFeatures/Component'
 import { OptionsTiles } from './OptionsTiles/Component'
 import { Privilege } from './Privilege/Component'
+import { Quote } from './Quote/Component'
 import { Tiles } from './Tiles/Component'
 import { WeInspect } from './WeInspect/Component'
 import { YachtsPromo } from './YachtsPromo/Component'
@@ -183,6 +184,15 @@ function blockFor(block: LayoutBlock, key: string) {
           }}
           goldTitle={block.goldTitle}
           title={block.title}
+        />
+      )
+    case 'quote':
+      return (
+        <Quote
+          key={key}
+          attribution={block.attribution}
+          quote={block.quote}
+          variant={block.variant}
         />
       )
     case 'yachtsPromo': {
