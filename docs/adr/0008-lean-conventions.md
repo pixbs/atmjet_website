@@ -21,7 +21,7 @@ The rules produced this, not the people or the tools running them:
 3. **Payload's migration workflow.** Drizzle push runs only under `next dev` (`push: process.env.NODE_ENV === 'development'`; the adapter's own default would also push during seeding and tests, which the docs warn against mixing with migrations); seeding, tests, CI, previews and production apply committed migrations; one migration per finished slice. The CI drift check stays. Before the first production database exists, the accumulated migrations are squashed into one initial migration (#229).
 4. **Generated files are marked generated.** Migration snapshots, `src/payload-types.ts`, the admin import map and the legacy visual manifest carry `linguist-generated` in `.gitattributes`: hidden by default in pull request diffs and excluded from language statistics.
 5. **Fixed coverage thresholds.** The numbers in `vitest.config.mts` change only in a pull request that says why. No ratchet, no tests-required gate, no `no-tests-needed` label. A test asserts a behaviour the issue lists, never a constant, a type or an admin `condition` called directly.
-6. **Smallest diff that passes.** Only what the issue lists; reuse before adding; the framework default over a custom layer; no export without a caller; comments say why in one sentence with a link; admin descriptions are one line. An unused-export check (knip) becomes a CI step in #230.
+6. **Smallest diff that passes.** Only what the issue lists; reuse before adding; the framework default over a custom layer; no export without a caller; comments say why in one sentence with a link; admin descriptions are one line. An unused-export check (knip) becomes a CI step in #230. The same rule governs the manifest: a dependency arrives with the slice that first imports it, at its current version, and that pull request says which component needs it (#58, 2026-09-13). The legacy `package.json` is therefore not carried over as a block, and what it depended on that is dead or replaced — `@radix-ui/*`, `cmdk`, `lucide-react`, `usehooks-ts`, `next-sitemap`, `react-phone-input-2`, `axios`, `framer-motion`, `react-intersection-observer` (inventory section 1.1) — never arrives at all. knip fails the build on a dependency nothing imports, so one cannot sit in the manifest waiting for its caller.
 7. **One enforcement layer.** The `conventions` workflow is the required check for branch names, pull request titles, commit messages and attribution. The branch-guard workflow, the convention self-test and the tests-required job are removed. lefthook keeps prettier, eslint and commitlint as fast local feedback, nothing more.
 
 ## Consequences
@@ -30,6 +30,7 @@ The rules produced this, not the people or the tools running them:
 - Every future migration still writes a full snapshot; fewer migrations and the generated-file attribute keep that out of review.
 - Reviewers judge a pull request on its hand-written lines; the pull request template asks for that number when it is large.
 - The repository settings (merge method, ruleset import) are an owner action (#227).
+- A dependency is justified where it is added rather than in a list that goes stale: `git log -- package.json` is the record of why each one is there.
 
 ## Sources
 

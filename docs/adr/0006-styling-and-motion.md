@@ -1,6 +1,6 @@
 # ADR-0006: Tailwind discipline and `motion` as the only animation library
 
-Status: accepted (2026-09-11)
+Status: accepted (2026-09-11); the icon pipeline (E3.12, #58) decided and recorded 2026-09-13
 
 ## Context
 
@@ -86,6 +86,18 @@ Three Tailwind 3 preflight defaults are restored in the same layer, because the 
 Kept quirks: buttons with `.middle` and every `input` have **square** corners, because the legacy `rounded-lg`/`rounded-sm` pointed at an undefined variable. Not ported: the legacy `body` rule (it referenced three variables that never existed, so it did nothing), the `.react-tel-input` overrides (the library is unused, E6.21), `.text-balance` and `* { margin: 0 }` (native in Tailwind 4), and the `@font-face` block (E3.5 loads the font through `next/font`).
 
 `src/app/(frontend)/styleguide` renders every rule of the layer as a fixture page; it is unlinked and not indexed, and `tests/visual/styleguide.visual.spec.ts` pins it.
+
+### Icons (E3.12, issue #58)
+
+The legacy site imported its SVG assets through SVGR, configured as a webpack rule that re-applied the file loader for `*.svg?url` and turned every other `*.svg` import into a component (`docs/legacy-inventory.md` sections 1.3 and 12.3). Here the artwork is checked-in TSX components under `src/components/icons`, one file per icon: no SVGR, no bundler rule, nothing in the build that has to know what an `.svg` import means. The two files section 12.3 marks unreferenced (`car-gold`, commented out in Privilege, and `plane-two`) are not converted, as dead code is not ported.
+
+Converting once rather than keeping the loader buys three things:
+
+- the artwork is typed, so `size` and `className` mean the same on every icon and a caller cannot pass a prop the file ignores;
+- the ids inside a file can be namespaced, which the loader cannot do for you: all six icons that carry their own gold gradient used `id="a"`, so any two of them on a page collided and the second drew with the first one's gradient;
+- the next bundler has one fewer thing to port.
+
+The cost is that an icon changes by editing a component rather than by dropping in a file, which is why `tests/unit/icons.test.ts` snapshots what each one renders and the sheet on `/styleguide` is compared by the visual tier: the artwork moves only on purpose. An icon draws in `currentColor` wherever the legacy one did, and the six gradient icons are the exception that test enumerates.
 
 ### Other porting notes
 
