@@ -24,6 +24,7 @@ import { Header } from './globals/Header'
 import { Footer } from './globals/Footer'
 import { SiteSettings } from './globals/SiteSettings'
 import { DEFAULT_LOCALE, LOCALE_DEFINITIONS } from './i18n/locales'
+import { siteOrigin } from './lib/urls'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -31,8 +32,12 @@ const dirname = path.dirname(filename)
 /**
  * Where this deployment answers. CORS and CSRF are pinned to it so a page on another origin
  * cannot read the API or ride a logged-in editor's cookie (issue #70).
+ *
+ * Read through `siteOrigin` rather than straight from the environment (issue #265): deployments
+ * hold a bare host in that variable, and Payload cannot make a URL of one — it logged and fell
+ * back to `http://localhost`, which is where every live preview link pointed.
  */
-const serverURL = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+const serverURL = siteOrigin()
 const allowedOrigins = [serverURL]
 
 export default buildConfig({
