@@ -2,6 +2,7 @@ import { mediaSource } from '@/lib/media'
 import type { Page } from '@/payload-types'
 
 import { HeroSubpage } from './HeroSubpage/Component'
+import { KeyFeatures } from './KeyFeatures/Component'
 import { WhyUs } from './WhyUs/Component'
 
 /**
@@ -24,6 +25,23 @@ function blockFor(block: LayoutBlock, key: string) {
           key={key}
           description={block.description ?? undefined}
           image={image}
+          title={block.title}
+        />
+      )
+    }
+    case 'keyFeatures': {
+      // Every card draws a photograph, so a card without one is left out rather than drawn empty.
+      const cards = (block.cards ?? []).flatMap((card) => {
+        const image = mediaSource(typeof card.image === 'object' ? card.image : null)
+
+        return image === null ? [] : [{ ...card, description: card.description, image }]
+      })
+
+      return cards.length === 0 ? null : (
+        <KeyFeatures
+          key={key}
+          cards={cards}
+          description={block.description ?? undefined}
           title={block.title}
         />
       )

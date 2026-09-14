@@ -255,7 +255,7 @@ export interface Page {
   /**
    * The sections of this page, in the order they are rendered.
    */
-  layout?: (HeroSubpageBlock | WhyUsBlock)[] | null;
+  layout?: (HeroSubpageBlock | KeyFeaturesBlock | WhyUsBlock)[] | null;
   meta?: {
     title?: string | null;
     description?: string | null;
@@ -282,6 +282,25 @@ export interface HeroSubpageBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'heroSubpage';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "KeyFeaturesBlock".
+ */
+export interface KeyFeaturesBlock {
+  title: string;
+  description?: string | null;
+  cards?:
+    | {
+        title: string;
+        description: string;
+        image: number | Media;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'keyFeatures';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1194,6 +1213,7 @@ export interface PagesSelect<T extends boolean = true> {
     | T
     | {
         heroSubpage?: T | HeroSubpageBlockSelect<T>;
+        keyFeatures?: T | KeyFeaturesBlockSelect<T>;
         whyUs?: T | WhyUsBlockSelect<T>;
       };
   meta?:
@@ -1215,6 +1235,24 @@ export interface HeroSubpageBlockSelect<T extends boolean = true> {
   title?: T;
   description?: T;
   image?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "KeyFeaturesBlock_select".
+ */
+export interface KeyFeaturesBlockSelect<T extends boolean = true> {
+  title?: T;
+  description?: T;
+  cards?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        image?: T;
+        id?: T;
+      };
   id?: T;
   blockName?: T;
 }
