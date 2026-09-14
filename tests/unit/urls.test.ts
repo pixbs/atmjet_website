@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 import { localeUrl, localeUrls, siteOrigin } from '@/lib/urls'
 
@@ -18,6 +18,32 @@ describe('siteOrigin', () => {
   it('uses the development origin when the environment names none', () => {
     // A preview without the variable set advertises itself, never the legacy hard-coded host.
     expect(siteOrigin(undefined)).toBe('http://localhost:3000')
+    expect(siteOrigin('  ')).toBe('http://localhost:3000')
+  })
+
+  it('adds the scheme a deployment host variable does not carry', () => {
+    // Vercel's host variables hold a bare host, and `metadataBase` is a `new URL` that runs
+    // while a page is prerendered, so a bare host there failed the whole build.
+    expect(siteOrigin('atmjetwebsiterefactor.vercel.app')).toBe(
+      'https://atmjetwebsiterefactor.vercel.app',
+    )
+    expect(() => new URL(siteOrigin('atmjet.com'))).not.toThrow()
+  })
+
+  it('leaves an address that already names its scheme alone', () => {
+    expect(siteOrigin('http://localhost:3000')).toBe('http://localhost:3000')
+    expect(siteOrigin('https://atmjet.com')).toBe('https://atmjet.com')
+  })
+
+  it('serves the development origin rather than failing on a value that is not an address', () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined)
+
+    try {
+      expect(siteOrigin('https://')).toBe('http://localhost:3000')
+      expect(warn).toHaveBeenCalled()
+    } finally {
+      warn.mockRestore()
+    }
   })
 })
 

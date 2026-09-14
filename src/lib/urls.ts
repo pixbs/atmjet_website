@@ -7,9 +7,36 @@ import type { Locale } from '@/i18n/locales'
  * (`docs/legacy-inventory.md` section 2.3).
  */
 
-/** The canonical origin, without a trailing slash, from the variable `payload.config.ts` reads. */
+const DEVELOPMENT_ORIGIN = 'http://localhost:3000'
+
+/**
+ * The canonical origin, without a trailing slash, from the variable `payload.config.ts` reads.
+ *
+ * The scheme is added when the variable does not carry one. Vercel's own host variables hold a
+ * bare host — `VERCEL_PROJECT_PRODUCTION_URL` is documented as being without a scheme, and the
+ * legacy code wrote `https://${baseURL}` everywhere it used one (`docs/legacy-inventory.md`
+ * section 14) — so a bare host is what an environment is most likely to hold. Everything else
+ * tolerates one: Payload logs it and falls back, and a sitemap would merely list a relative URL.
+ * `new URL` does not, and `metadataBase` is a `new URL` that runs while a page is prerendered,
+ * so a bare host there fails the build rather than one page.
+ */
 export function siteOrigin(configured = process.env.NEXT_PUBLIC_SITE_URL): string {
-  return (configured || 'http://localhost:3000').replace(/\/+$/, '')
+  const named = (configured ?? '').trim()
+  if (named === '') return DEVELOPMENT_ORIGIN
+
+  // The scheme goes on before the trailing slash comes off, or `https://` loses its own slashes.
+  const absolute = /^[a-z][a-z\d+.-]*:\/\//i.test(named) ? named : `https://${named}`
+  const origin = absolute.replace(/\/+$/, '')
+
+  try {
+    new URL(origin)
+    return origin
+  } catch {
+    console.warn(
+      `[urls] NEXT_PUBLIC_SITE_URL is not an address (${named}); the site describes itself as ${DEVELOPMENT_ORIGIN}.`,
+    )
+    return DEVELOPMENT_ORIGIN
+  }
 }
 
 /** The URL a page is served at: `/en` for the home page, `/en/empty_legs` for the rest. */
