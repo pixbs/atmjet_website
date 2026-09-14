@@ -477,6 +477,21 @@ function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout 
           : 'Любой тип в любом регионе, с проверкой оператора до того, как уйдёт расчёт.',
     })
 
+  if (slug === 'aircraft')
+    sections.push({
+      blockType: 'contactCard',
+      title: locale === 'en' ? 'Not sure which aircraft?' : 'Не знаете, какой борт нужен?',
+      description:
+        locale === 'en'
+          ? 'Tell us the route, the party and the day, and a manager comes back with two or three that fit.'
+          : 'Назовите маршрут, состав и день — менеджер вернётся с двумя-тремя подходящими бортами.',
+      image: fixture.photo,
+      cta: {
+        label: locale === 'en' ? 'Ask a manager' : 'Спросить менеджера',
+        source: 'Contact_us_aircraft',
+      },
+    })
+
   if (slug === 'empty_legs')
     sections.push({
       blockType: 'heroEmptyLegs',
@@ -783,6 +798,8 @@ function translated(layout: Layout | null | undefined, slug: string, fixture: Fi
           ),
         }
       case 'bestPrice':
+        return { ...block, id }
+      case 'contactCard':
         return { ...block, id }
       case 'descriptor':
         return { ...block, id }

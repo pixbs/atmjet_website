@@ -3,6 +3,7 @@ import type { CollectionConfig } from 'payload'
 import { editorOrAdmin, publishedOnly } from '@/access'
 import { advantages } from '@/blocks/Advantages/config'
 import { bestPrice } from '@/blocks/BestPrice/config'
+import { contactCard } from '@/blocks/ContactCard/config'
 import { descriptor } from '@/blocks/Descriptor/config'
 import { documents } from '@/blocks/Documents/config'
 import { faq } from '@/blocks/Faq/config'
@@ -116,6 +117,7 @@ export const Pages: CollectionConfig = {
       blocks: [
         advantages,
         bestPrice,
+        contactCard,
         descriptor,
         documents,
         faq,

@@ -259,6 +259,7 @@ export interface Page {
     | (
         | AdvantagesBlock
         | BestPriceBlock
+        | ContactCardBlock
         | DescriptorBlock
         | DocumentsBlock
         | FaqBlock
@@ -331,6 +332,25 @@ export interface BestPriceBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'bestPrice';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ContactCardBlock".
+ */
+export interface ContactCardBlock {
+  title: string;
+  description: string;
+  image: number | Media;
+  cta: {
+    label: string;
+    /**
+     * Recorded with the lead so a request can be traced to its button.
+     */
+    source: string;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'contactCard';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1682,6 +1702,7 @@ export interface PagesSelect<T extends boolean = true> {
     | {
         advantages?: T | AdvantagesBlockSelect<T>;
         bestPrice?: T | BestPriceBlockSelect<T>;
+        contactCard?: T | ContactCardBlockSelect<T>;
         descriptor?: T | DescriptorBlockSelect<T>;
         documents?: T | DocumentsBlockSelect<T>;
         faq?: T | FaqBlockSelect<T>;
@@ -1738,6 +1759,23 @@ export interface AdvantagesBlockSelect<T extends boolean = true> {
  * via the `definition` "BestPriceBlock_select".
  */
 export interface BestPriceBlockSelect<T extends boolean = true> {
+  title?: T;
+  description?: T;
+  image?: T;
+  cta?:
+    | T
+    | {
+        label?: T;
+        source?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ContactCardBlock_select".
+ */
+export interface ContactCardBlockSelect<T extends boolean = true> {
   title?: T;
   description?: T;
   image?: T;
