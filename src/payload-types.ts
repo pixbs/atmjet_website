@@ -257,7 +257,9 @@ export interface Page {
    */
   layout?:
     | (
+        | DocumentsBlock
         | FaqBlock
+        | GuideBlock
         | HeroSubpageBlock
         | KeyFeaturesBlock
         | OptionsTilesBlock
@@ -281,6 +283,27 @@ export interface Page {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "DocumentsBlock".
+ */
+export interface DocumentsBlock {
+  documents?:
+    | {
+        title: string;
+        label: string;
+        image: number | Media;
+        /**
+         * The file this document opens, in this language.
+         */
+        file: number | Media;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'documents';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "FaqBlock".
  */
 export interface FaqBlock {
@@ -301,6 +324,30 @@ export interface FaqBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'faq';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "GuideBlock".
+ */
+export interface GuideBlock {
+  title: string;
+  /**
+   * The heading over the points, under the page title.
+   */
+  heading: string;
+  /**
+   * Each one carries the diamond, with a rule between them.
+   */
+  points?:
+    | {
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  image: number | Media;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'guide';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1358,7 +1405,9 @@ export interface PagesSelect<T extends boolean = true> {
   layout?:
     | T
     | {
+        documents?: T | DocumentsBlockSelect<T>;
         faq?: T | FaqBlockSelect<T>;
+        guide?: T | GuideBlockSelect<T>;
         heroSubpage?: T | HeroSubpageBlockSelect<T>;
         keyFeatures?: T | KeyFeaturesBlockSelect<T>;
         optionsTiles?: T | OptionsTilesBlockSelect<T>;
@@ -1380,6 +1429,23 @@ export interface PagesSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "DocumentsBlock_select".
+ */
+export interface DocumentsBlockSelect<T extends boolean = true> {
+  documents?:
+    | T
+    | {
+        title?: T;
+        label?: T;
+        image?: T;
+        file?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "FaqBlock_select".
  */
 export interface FaqBlockSelect<T extends boolean = true> {
@@ -1391,6 +1457,23 @@ export interface FaqBlockSelect<T extends boolean = true> {
         answer?: T;
         id?: T;
       };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "GuideBlock_select".
+ */
+export interface GuideBlockSelect<T extends boolean = true> {
+  title?: T;
+  heading?: T;
+  points?:
+    | T
+    | {
+        text?: T;
+        id?: T;
+      };
+  image?: T;
   id?: T;
   blockName?: T;
 }
