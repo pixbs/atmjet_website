@@ -28,6 +28,26 @@ const TITLES: Record<string, { en: string; ru: string }> = {
   yachts: { en: 'Yacht charter', ru: 'Аренда яхт' },
 }
 
+/**
+ * The metadata the legacy site intended (issue #170). Only its home page ever exported any
+ * (`docs/legacy-inventory.md` section 2.4); every other route falls back to its title and the
+ * site description, which is what an editor then replaces in the admin.
+ */
+const META: Record<string, Record<string, { title: string; description: string }>> = {
+  '': {
+    en: {
+      title: 'Private Jet Charter, Hire a Private Jet Worldwide',
+      description:
+        'Hire a private jet within a few hours.✈ Book a private jet London, and other cities and countries.',
+    },
+    ru: {
+      title: 'Аренда частного самолета, заказать самолет в Москве и любой точке мира',
+      description:
+        'Арендовать частный самолет в течение нескольких часов.✈ заказать частный самолет в Москве, других городах и странах.',
+    },
+  },
+}
+
 export async function seedPages(payload: Payload): Promise<SeedOutcome[]> {
   const outcomes: SeedOutcome[] = []
 
@@ -47,7 +67,13 @@ export async function seedPages(payload: Payload): Promise<SeedOutcome[]> {
 
     const created = await payload.create({
       collection: 'pages',
-      data: { title: TITLES[slug].en, slug, layout: [], _status: 'published' },
+      data: {
+        title: TITLES[slug].en,
+        slug,
+        layout: [],
+        _status: 'published',
+        meta: META[slug]?.en,
+      },
       locale: 'en',
       overrideAccess: true,
       // A bulk write has nothing to invalidate (docs/conventions/rendering.md).
@@ -59,7 +85,7 @@ export async function seedPages(payload: Payload): Promise<SeedOutcome[]> {
       await payload.update({
         collection: 'pages',
         id: created.id,
-        data: { title: TITLES[slug][locale as 'ru'] },
+        data: { title: TITLES[slug][locale as 'ru'], meta: META[slug]?.[locale] },
         locale,
         overrideAccess: true,
         context: { skipRevalidation: true },
