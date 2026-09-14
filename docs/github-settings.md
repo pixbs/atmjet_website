@@ -39,7 +39,7 @@ Settings that cannot live in code. Tick them in the epic issue (#3) as they are 
 
 ## Vercel (new project for the rewrite)
 
-- [ ] Create a new project from this repository: framework Next.js, package manager Bun (auto-detected from `bun.lock`), Node 22, build command `bun run ci` (runs migrations, then builds), root directory `/`.
+- [ ] Create a new project from this repository: framework Next.js, package manager Bun (auto-detected from `bun.lock`), Node 24, build command `bun run ci` (runs migrations, then builds), root directory `/`.
 - [ ] Environment variables per environment: `DATABASE_URL`, `PAYLOAD_SECRET`, `NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_GTM_ID`, `S3_*`, `TELEGRAM_*`, `PREVIEW_SECRET` (see `.env.example`).
 - [ ] Neon integration with preview branches so preview builds migrate a branch, never production.
 - [ ] Staging domain on the new project; the production domain moves only at cutover (ADR-0002).
