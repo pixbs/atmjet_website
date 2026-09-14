@@ -1,6 +1,6 @@
 import type { CollectionConfig } from 'payload'
 
-import { editorOrAdmin, publishedOnly } from '@/access'
+import { anyone, editorOrAdmin } from '@/access'
 import { provenanceGroup } from '@/fields/provenance'
 import { revalidateCollection } from '@/hooks/revalidate'
 import { canonicalRegistration } from '@/lib/aircraft'
@@ -33,11 +33,11 @@ export const Aircraft: CollectionConfig = {
   slug: 'aircraft',
   admin: {
     useAsTitle: 'registrationDisplay',
-    defaultColumns: ['registrationDisplay', 'model', 'category', 'passengers', '_status'],
+    defaultColumns: ['registrationDisplay', 'model', 'category', 'passengers', 'availability'],
     group: 'Catalogue',
   },
   access: {
-    read: publishedOnly,
+    read: anyone,
     create: editorOrAdmin,
     update: editorOrAdmin,
     delete: editorOrAdmin,
@@ -59,7 +59,6 @@ export const Aircraft: CollectionConfig = {
       },
     ],
   },
-  versions: { drafts: true, maxPerDoc: 25 },
   fields: [
     {
       name: 'registrationDisplay',
@@ -92,9 +91,8 @@ export const Aircraft: CollectionConfig = {
       },
     },
     {
-      // Not `status`: drafts are enabled, and Payload's own `_status` generates an enum of the
-      // same name, so a `status` field silently inherits draft/published and rejects its own
-      // values. `availability` is this aircraft's commercial state, separate from publication.
+      // This aircraft's commercial state, which is the only state the legacy catalogue had: a
+      // row was live the moment it was saved (issue #236).
       name: 'availability',
       type: 'select',
       defaultValue: 'available',

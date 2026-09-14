@@ -1,6 +1,6 @@
 import type { CollectionConfig } from 'payload'
 
-import { editorOrAdmin, publishedOnly } from '@/access'
+import { anyone, editorOrAdmin } from '@/access'
 import { provenanceGroup } from '@/fields/provenance'
 import { revalidateCollection } from '@/hooks/revalidate'
 import { normaliseCode } from '@/lib/airports'
@@ -35,14 +35,14 @@ export const EmptyLegs: CollectionConfig = {
   labels: { singular: 'Empty leg', plural: 'Empty legs' },
   admin: {
     useAsTitle: 'route',
-    defaultColumns: ['route', 'departureAt', 'price', 'order', '_status'],
+    defaultColumns: ['route', 'departureAt', 'price', 'order'],
     group: 'Catalogue',
   },
   // The list view opens on the order the listing renders in, so what an editor drags into place
   // is what a visitor sees. The legacy admin wrote this column and the site ignored it.
   defaultSort: ['order', 'departureAt'],
   access: {
-    read: publishedOnly,
+    read: anyone,
     create: editorOrAdmin,
     update: editorOrAdmin,
     delete: editorOrAdmin,
@@ -63,7 +63,6 @@ export const EmptyLegs: CollectionConfig = {
       },
     ],
   },
-  versions: { drafts: true, maxPerDoc: 10 },
   fields: [
     {
       name: 'route',
