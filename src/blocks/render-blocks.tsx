@@ -6,6 +6,7 @@ import { HeroSubpage } from './HeroSubpage/Component'
 import { KeyFeatures } from './KeyFeatures/Component'
 import { OptionsTiles } from './OptionsTiles/Component'
 import { Privilege } from './Privilege/Component'
+import { Tiles } from './Tiles/Component'
 import { YachtsPromo } from './YachtsPromo/Component'
 import { WhyUs } from './WhyUs/Component'
 
@@ -117,6 +118,17 @@ function blockFor(block: LayoutBlock, key: string) {
           title={block.title}
         />
       )
+    }
+    case 'tiles': {
+      // A tile is its photograph; one whose upload is gone leaves a hole in the grid, so it is
+      // left out, and a grid of none is left out altogether.
+      const photos = (block.tiles ?? []).flatMap((row) => {
+        const image = mediaSource(typeof row.image === 'object' ? row.image : null)
+
+        return image === null ? [] : [image]
+      })
+
+      return photos.length === 0 ? null : <Tiles key={key} tiles={photos} />
     }
     case 'whyUs':
       return (
