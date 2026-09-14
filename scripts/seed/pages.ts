@@ -268,6 +268,40 @@ const DOCUMENTS: { en: [string, string]; ru: [string, string] }[] = [
   },
 ]
 
+/**
+ * The two arms of the group the legacy `/atm_jet_group` page listed (issue #130, section 4),
+ * each opening the part of the site it belongs to.
+ */
+const GROUP_CARDS: { slug: string; en: [string, string, string]; ru: [string, string, string] }[] =
+  [
+    {
+      slug: 'aircraft',
+      en: [
+        'The fleet',
+        'Owned and managed aircraft, from light jets to airliners.',
+        'See the fleet',
+      ],
+      ru: [
+        'Флот',
+        'Собственные и управляемые борта, от лёгких джетов до лайнеров.',
+        'Посмотреть флот',
+      ],
+    },
+    {
+      slug: 'sales_dept',
+      en: [
+        'Sales',
+        'Buying, selling and managing an aircraft, with the paperwork.',
+        'Talk to sales',
+      ],
+      ru: [
+        'Продажи',
+        'Покупка, продажа и управление бортом, вместе с документами.',
+        'Связаться с отделом',
+      ],
+    },
+  ]
+
 /** The sections a seeded page starts with; a page with no entry here starts with none. */
 function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout {
   const sections: Layout = []
@@ -349,6 +383,26 @@ function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout 
                 label: tile[locale][1],
                 page,
                 dim: tile.dim,
+              },
+            ]
+      }),
+    })
+
+  if (slug === 'atm_jet_group')
+    sections.push({
+      blockType: 'groupCards',
+      cards: GROUP_CARDS.flatMap((card) => {
+        const page = fixture.pages.get(card.slug)
+
+        return page === undefined
+          ? []
+          : [
+              {
+                title: card[locale][0],
+                description: card[locale][1],
+                label: card[locale][2],
+                image: fixture.photo,
+                page,
               },
             ]
       }),
@@ -447,6 +501,15 @@ function translated(layout: Layout | null | undefined, slug: string, fixture: Fi
           questions: withRowIds(
             block.questions ?? [],
             written?.blockType === 'faq' ? written.questions : undefined,
+          ),
+        }
+      case 'groupCards':
+        return {
+          ...block,
+          id,
+          cards: withRowIds(
+            block.cards ?? [],
+            written?.blockType === 'groupCards' ? written.cards : undefined,
           ),
         }
       case 'guide':

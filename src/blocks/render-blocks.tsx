@@ -4,6 +4,7 @@ import type { Page } from '@/payload-types'
 
 import { Documents } from './Documents/Component'
 import { Faq } from './Faq/Component'
+import { GroupCards } from './GroupCards/Component'
 import { Guide } from './Guide/Component'
 import { HeroSubpage } from './HeroSubpage/Component'
 import { KeyFeatures } from './KeyFeatures/Component'
@@ -48,6 +49,26 @@ function blockFor(block: LayoutBlock, key: string) {
           title={block.title}
         />
       )
+    case 'groupCards': {
+      // A card needs its photograph and somewhere to lead; one without either is left out, and
+      // a section of none is left out altogether.
+      const cards = (block.cards ?? []).flatMap((card) => {
+        const image = mediaSource(typeof card.image === 'object' ? card.image : null)
+        const page = typeof card.page === 'object' ? card.page : null
+        if (image === null || page === null) return []
+
+        return [
+          {
+            action: { href: hrefForSlug(page.slug ?? ''), label: card.label },
+            description: card.description,
+            image,
+            title: card.title,
+          },
+        ]
+      })
+
+      return cards.length === 0 ? null : <GroupCards key={key} cards={cards} />
+    }
     case 'guide': {
       const image = mediaSource(typeof block.image === 'object' ? block.image : null)
 
