@@ -257,6 +257,7 @@ export interface Page {
    */
   layout?:
     | (
+        | FaqBlock
         | HeroSubpageBlock
         | KeyFeaturesBlock
         | OptionsTilesBlock
@@ -277,6 +278,29 @@ export interface Page {
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FaqBlock".
+ */
+export interface FaqBlock {
+  title: string;
+  /**
+   * The first one is open when the page arrives, as the legacy list was.
+   */
+  questions?:
+    | {
+        question: string;
+        /**
+         * Each line break is kept, which is how the legacy answers read.
+         */
+        answer: string;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'faq';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1334,6 +1358,7 @@ export interface PagesSelect<T extends boolean = true> {
   layout?:
     | T
     | {
+        faq?: T | FaqBlockSelect<T>;
         heroSubpage?: T | HeroSubpageBlockSelect<T>;
         keyFeatures?: T | KeyFeaturesBlockSelect<T>;
         optionsTiles?: T | OptionsTilesBlockSelect<T>;
@@ -1352,6 +1377,22 @@ export interface PagesSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FaqBlock_select".
+ */
+export interface FaqBlockSelect<T extends boolean = true> {
+  title?: T;
+  questions?:
+    | T
+    | {
+        question?: T;
+        answer?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
