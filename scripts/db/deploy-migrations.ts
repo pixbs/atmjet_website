@@ -1,8 +1,7 @@
 /**
- * The migration step of the Vercel build, `bun run ci` (issue #307): `payload migrate` exits 0 without
- * migrating when nobody answers its dev-push prompt, so the build ran on an empty database.
- *
- *   bun run scripts/db/deploy-migrations.ts
+ * What the migration step of the Vercel build decides (issue #307): `payload migrate` exits 0
+ * without migrating when nobody answers its dev-push prompt, so the build ran on an empty database.
+ * `run-deploy-migrations.ts` acts on it; this file stays free of the config so the unit tier loads it alone.
  */
 import type { Payload } from 'payload'
 
@@ -24,29 +23,4 @@ export async function pushedByDev(payload: Pick<Payload, 'count'>): Promise<bool
     if ((error as { cause?: { code?: string } }).cause?.code === '42P01') return false
     throw error
   }
-}
-
-async function main(): Promise<void> {
-  const vercelEnv = process.env.VERCEL_ENV
-  if (!migratesOn(vercelEnv)) {
-    console.log(`deploy-migrations: skipped on a ${vercelEnv} build (issue #18)`)
-    process.exit(0)
-  }
-  const [{ getPayload }, { default: config }] = await Promise.all([
-    import('payload'),
-    import('../../src/payload.config'),
-  ])
-  const payload = await getPayload({ config })
-  if (await pushedByDev(payload)) {
-    console.error(
-      'deploy-migrations: `bun run dev` pushed this database, so the migrations cannot apply; reset it and deploy again (issue #307)',
-    )
-    process.exit(1)
-  }
-  await payload.db.migrate()
-  process.exit(0)
-}
-
-if (import.meta.main) {
-  await main()
 }
