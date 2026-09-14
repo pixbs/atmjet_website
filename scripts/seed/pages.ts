@@ -386,6 +386,72 @@ const QUOTES: { variant: 'press' | 'founder'; en: [string, string]; ru: [string,
   },
 ]
 
+/**
+ * The two full-screen heroes (issues #113 and #114, section 5). The sales one counts its
+ * figures up; the charter page's shows no button at all, which is the shape the block keeps.
+ */
+const HERO_SALES: Record<
+  'en' | 'ru',
+  { overline: string; lines: [string, string][]; description: string; button: string }
+> = {
+  en: {
+    overline: 'Aircraft sales',
+    lines: [
+      ['20+', 'years of deals'],
+      ['500+', 'aircraft placed'],
+    ],
+    description: 'We sell the aircraft you fly.\nAnd we buy the one you fly next.',
+    button: 'Talk to the desk',
+  },
+  ru: {
+    overline: 'Продажа самолётов',
+    lines: [
+      ['20+', 'лет сделок'],
+      ['500+', 'бортов продано'],
+    ],
+    description: 'Мы продаём борт, на котором вы летаете.\nИ покупаем тот, на котором полетите.',
+    button: 'Связаться с отделом',
+  },
+}
+
+/** The yachts hero, with the button on the sales page and without it on the charter one. */
+const HERO_YACHTS: Record<
+  'sales_yachts' | 'yachts',
+  Record<
+    'en' | 'ru',
+    { overline: string; title: string; description: string; description2?: string; button?: string }
+  >
+> = {
+  sales_yachts: {
+    en: {
+      overline: 'Yachts for sale',
+      title: 'A yacht bought the way an aircraft is',
+      description: 'Surveyed, valued and closed by the people who do it every week.',
+      button: 'Ask about a yacht',
+    },
+    ru: {
+      overline: 'Яхты на продажу',
+      title: 'Яхта покупается так же, как борт',
+      description: 'Осмотр, оценка и сделка — теми, кто делает это каждую неделю.',
+      button: 'Спросить о яхте',
+    },
+  },
+  yachts: {
+    en: {
+      overline: 'Yacht charter',
+      title: 'The week that follows the flight',
+      description: 'Motor and sailing yachts from 20 to 100 metres, crewed and provisioned.',
+      description2: 'Berths, permits and the transfer from the airport are arranged here.',
+    },
+    ru: {
+      overline: 'Аренда яхт',
+      title: 'Неделя, которая следует за перелётом',
+      description: 'Моторные и парусные яхты от 20 до 100 метров, с экипажем и снабжением.',
+      description2: 'Стоянки, разрешения и трансфер из аэропорта — на нас.',
+    },
+  },
+}
+
 /** The sections a seeded page starts with; a page with no entry here starts with none. */
 function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout {
   const sections: Layout = []
@@ -398,6 +464,31 @@ function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout 
       description,
       image: fixture.photo,
     })
+
+  if (slug === 'sales_dept') {
+    const hero = HERO_SALES[locale]
+    sections.push({
+      blockType: 'heroSales',
+      overline: hero.overline,
+      lines: hero.lines.map(([figure, text]) => ({ figure, text })),
+      description: hero.description,
+      image: fixture.photo,
+      cta: { label: hero.button, source: 'Hero_sales' },
+    })
+  }
+
+  if (slug === 'sales_yachts' || slug === 'yachts') {
+    const hero = HERO_YACHTS[slug][locale]
+    sections.push({
+      blockType: 'heroYachts',
+      overline: hero.overline,
+      title: hero.title,
+      description: hero.description,
+      description2: hero.description2,
+      image: fixture.surface,
+      cta: { label: hero.button, source: 'Hero_yachts' },
+    })
+  }
 
   if (slug === 'medical_aviation')
     sections.push({
@@ -650,7 +741,18 @@ function translated(layout: Layout | null | undefined, slug: string, fixture: Fi
             written?.blockType === 'guide' ? written.points : undefined,
           ),
         }
+      case 'heroSales':
+        return {
+          ...block,
+          id,
+          lines: withRowIds(
+            block.lines ?? [],
+            written?.blockType === 'heroSales' ? written.lines : undefined,
+          ),
+        }
       case 'heroSubpage':
+        return { ...block, id }
+      case 'heroYachts':
         return { ...block, id }
       case 'keyFeatures':
         return { ...block, id, cards: withRowIds(block.cards ?? [], rows) }

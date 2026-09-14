@@ -263,7 +263,9 @@ export interface Page {
         | FaqBlock
         | GroupCardsBlock
         | GuideBlock
+        | HeroSalesBlock
         | HeroSubpageBlock
+        | HeroYachtsBlock
         | KeyFeaturesBlock
         | OptionsTilesBlock
         | PrivilegeBlock
@@ -418,6 +420,38 @@ export interface GuideBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "HeroSalesBlock".
+ */
+export interface HeroSalesBlock {
+  overline: string;
+  lines?:
+    | {
+        /**
+         * Counted up when the hero arrives, as `20+`.
+         */
+        figure: string;
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * The lines are kept where they are typed, as the legacy split them.
+   */
+  description: string;
+  image: number | Media;
+  cta: {
+    label: string;
+    /**
+     * Recorded with the lead so a request can be traced to its button.
+     */
+    source: string;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'heroSales';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "HeroSubpageBlock".
  */
 export interface HeroSubpageBlock {
@@ -430,6 +464,30 @@ export interface HeroSubpageBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'heroSubpage';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "HeroYachtsBlock".
+ */
+export interface HeroYachtsBlock {
+  overline: string;
+  title: string;
+  description: string;
+  /**
+   * A second paragraph; the legacy charter page had one, sales none.
+   */
+  description2?: string | null;
+  image: number | Media;
+  cta: {
+    label?: string | null;
+    /**
+     * Recorded with the lead so a request can be traced to its button.
+     */
+    source: string;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'heroYachts';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1517,7 +1575,9 @@ export interface PagesSelect<T extends boolean = true> {
         faq?: T | FaqBlockSelect<T>;
         groupCards?: T | GroupCardsBlockSelect<T>;
         guide?: T | GuideBlockSelect<T>;
+        heroSales?: T | HeroSalesBlockSelect<T>;
         heroSubpage?: T | HeroSubpageBlockSelect<T>;
+        heroYachts?: T | HeroYachtsBlockSelect<T>;
         keyFeatures?: T | KeyFeaturesBlockSelect<T>;
         optionsTiles?: T | OptionsTilesBlockSelect<T>;
         privilege?: T | PrivilegeBlockSelect<T>;
@@ -1642,12 +1702,55 @@ export interface GuideBlockSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "HeroSalesBlock_select".
+ */
+export interface HeroSalesBlockSelect<T extends boolean = true> {
+  overline?: T;
+  lines?:
+    | T
+    | {
+        figure?: T;
+        text?: T;
+        id?: T;
+      };
+  description?: T;
+  image?: T;
+  cta?:
+    | T
+    | {
+        label?: T;
+        source?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "HeroSubpageBlock_select".
  */
 export interface HeroSubpageBlockSelect<T extends boolean = true> {
   title?: T;
   description?: T;
   image?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "HeroYachtsBlock_select".
+ */
+export interface HeroYachtsBlockSelect<T extends boolean = true> {
+  overline?: T;
+  title?: T;
+  description?: T;
+  description2?: T;
+  image?: T;
+  cta?:
+    | T
+    | {
+        label?: T;
+        source?: T;
+      };
   id?: T;
   blockName?: T;
 }
