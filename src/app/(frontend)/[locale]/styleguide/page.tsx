@@ -24,8 +24,10 @@ import { CounterInput } from '@/components/ui/counter-input'
 import { Gallery } from '@/components/ui/gallery'
 import { Input } from '@/components/ui/input'
 import { LocaleSwitch } from '@/components/ui/locale-switch'
+import { PhoneInput } from '@/components/ui/phone-input'
 import { Select } from '@/components/ui/select'
 import type { Locale } from '@/i18n/locales'
+import { defaultCountry } from '@/lib/countries'
 import { listMediaImages } from '@/lib/data/media'
 import { getEnabledLocales } from '@/lib/data/site-settings'
 
@@ -610,6 +612,24 @@ export default async function StyleguidePage({ params }: { params: Promise<{ loc
             </div>
           </div>
         )}
+      </section>
+
+      <section id="phone" data-section="phone" className="container items-start gap-4">
+        <h3>Phone</h3>
+        <p>
+          Formats as it is typed and follows the country the code belongs to. The field opens on the
+          visitor&rsquo;s country in production; here it opens on the one the language falls back
+          to, so the page stays static.
+        </p>
+        <div className="w-full max-w-screen-sm gap-4">
+          <PhoneInput
+            defaultCountry={defaultCountry(null, locale as Locale)}
+            id="phone-number"
+            label="Phone"
+            labels={{ search: 'Search', noResults: 'No results', countries: 'Countries' }}
+            locale={locale as Locale}
+          />
+        </div>
       </section>
 
       <section
