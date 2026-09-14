@@ -2,10 +2,12 @@ import { mediaSource } from '@/lib/media'
 import type { Page } from '@/payload-types'
 
 import { HeroSubpage } from './HeroSubpage/Component'
+import { WhyUs } from './WhyUs/Component'
 
 /**
  * The sections of a page, in the order an editor put them (issue #112, E7). One case per block
- * type; a block whose image is missing draws nothing rather than a broken one.
+ * type; a block that cannot draw without its photograph draws nothing rather than a broken one,
+ * and one that can — the why us card — simply leaves it out, as the legacy pages did.
  *
  * The page reads its layout at `depth: 1`, so an upload arrives as the document rather than as
  * its id.
@@ -26,6 +28,20 @@ function blockFor(block: LayoutBlock, key: string) {
         />
       )
     }
+    case 'whyUs':
+      return (
+        <WhyUs
+          key={key}
+          cards={(block.cards ?? []).map((card) => ({
+            description: card.description,
+            figure: card.figure ?? undefined,
+            image: mediaSource(typeof card.image === 'object' ? card.image : null) ?? undefined,
+            title: card.title,
+          }))}
+          description={block.description ?? undefined}
+          title={block.title}
+        />
+      )
   }
 }
 
