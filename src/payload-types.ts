@@ -255,7 +255,8 @@ export interface Page {
   /**
    * The sections of this page, in the order they are rendered.
    */
-  layout?: (HeroSubpageBlock | KeyFeaturesBlock | PrivilegeBlock | WhyUsBlock | YachtsPromoBlock)[] | null;
+  layout?:
+    (HeroSubpageBlock | KeyFeaturesBlock | OptionsTilesBlock | PrivilegeBlock | WhyUsBlock | YachtsPromoBlock)[] | null;
   meta?: {
     title?: string | null;
     description?: string | null;
@@ -301,6 +302,31 @@ export interface KeyFeaturesBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'keyFeatures';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "OptionsTilesBlock".
+ */
+export interface OptionsTilesBlock {
+  tiles?:
+    | {
+        image: number | Media;
+        title: string;
+        label: string;
+        /**
+         * The page this tile opens. Its slug decides the URL.
+         */
+        page?: (number | null) | Page;
+        /**
+         * Darkens the photograph further, as the second legacy tile was.
+         */
+        dim?: boolean | null;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'optionsTiles';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1283,6 +1309,7 @@ export interface PagesSelect<T extends boolean = true> {
     | {
         heroSubpage?: T | HeroSubpageBlockSelect<T>;
         keyFeatures?: T | KeyFeaturesBlockSelect<T>;
+        optionsTiles?: T | OptionsTilesBlockSelect<T>;
         privilege?: T | PrivilegeBlockSelect<T>;
         whyUs?: T | WhyUsBlockSelect<T>;
         yachtsPromo?: T | YachtsPromoBlockSelect<T>;
@@ -1322,6 +1349,24 @@ export interface KeyFeaturesBlockSelect<T extends boolean = true> {
         title?: T;
         description?: T;
         image?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "OptionsTilesBlock_select".
+ */
+export interface OptionsTilesBlockSelect<T extends boolean = true> {
+  tiles?:
+    | T
+    | {
+        image?: T;
+        title?: T;
+        label?: T;
+        page?: T;
+        dim?: T;
         id?: T;
       };
   id?: T;
