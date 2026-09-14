@@ -6,6 +6,7 @@ import * as icons from '@/components/icons'
 import { Counter } from '@/components/motion/counter'
 import { Line } from '@/components/motion/line'
 import { Reveal } from '@/components/motion/reveal'
+import { Accordion, AccordionItem } from '@/components/ui/accordion'
 import { Button, buttonVariants } from '@/components/ui/button'
 
 /**
@@ -149,6 +150,18 @@ export default async function StyleguidePage({ params }: { params: Promise<{ loc
             </div>
           ))}
         </div>
+      </section>
+
+      <section id="accordion" data-section="accordion" className="container items-start gap-4">
+        <h3>Accordion</h3>
+        <Accordion className="w-full max-w-screen-sm" defaultValue="first">
+          <AccordionItem title="The first question" value="first">
+            <p>The answer to the first question, which is open when the page arrives.</p>
+          </AccordionItem>
+          <AccordionItem title="The second question" value="second">
+            <p>Opening this one closes the other: one answer shows at a time.</p>
+          </AccordionItem>
+        </Accordion>
       </section>
 
       <section id="palette" className="container items-start gap-4">
