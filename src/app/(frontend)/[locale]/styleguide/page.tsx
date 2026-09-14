@@ -8,6 +8,8 @@ import { Line } from '@/components/motion/line'
 import { Reveal } from '@/components/motion/reveal'
 import { Accordion, AccordionItem } from '@/components/ui/accordion'
 import { EmptyLegCard } from '@/components/cards/empty-leg-card'
+import { FileCard } from '@/components/cards/file-card'
+import { GroupCard } from '@/components/cards/group-card'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { Carousel, CarouselArrows, CarouselDots, CarouselProgress } from '@/components/ui/carousel'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -86,6 +88,41 @@ const EMPTY_LEGS = [
     currency: 'USD',
     from: { icao: 'EGGW', airport: 'Luton' },
     to: { icao: 'LSGG', airport: 'Geneva' },
+  },
+]
+
+/**
+ * The two arms of the group. One href starts with a slash and one does not, because the legacy
+ * card put the locale in front of both and produced `/en//aircraft` from the first.
+ */
+const GROUP_CARDS = [
+  {
+    title: 'Charter',
+    description: 'A fleet on call, from a light jet to an airliner.',
+    action: { label: 'See the aircraft', href: '/aircraft' },
+  },
+  {
+    title: 'Sales',
+    description: 'Buying, selling and managing an aircraft of your own.',
+    action: { label: 'Talk to sales', href: 'sales_dept' },
+  },
+]
+
+/** The two documents `/business_agents` offers, at the addresses the legacy page linked to. */
+const FILE_CARDS = [
+  {
+    title: 'Checklist for ordering a private jet',
+    file: {
+      label: 'Download',
+      href: 'https://atmjet.ams3.cdn.digitaloceanspaces.com/Checklist%20for%20ordering%20%20a%20private%20jet%20for%20an%20executive%20EN.pdf',
+    },
+  },
+  {
+    title: 'ATM JET presentation',
+    file: {
+      label: 'Download',
+      href: 'https://atmjet.ams3.cdn.digitaloceanspaces.com/presentation/ATM%20JET%20Presentation.pdf',
+    },
   },
 ]
 
@@ -322,6 +359,32 @@ export default async function StyleguidePage({ params }: { params: Promise<{ loc
             <Swatch key={colour.token} className={colour.className} label={colour.token} />
           ))}
         </div>
+      </section>
+
+      <section id="cards" data-section="cards" className="container items-start gap-4">
+        <h3>Cards</h3>
+        {uploads.length === 0 ? (
+          <p>No uploads to show. Run the seed.</p>
+        ) : (
+          <div className="w-full gap-10">
+            {/* `/atm_jet_group` stacks the group cards in one rounded box, with a rule between. */}
+            <div className="overflow-hidden rounded-2xl" data-cards="group">
+              {GROUP_CARDS.map((card, index) => (
+                <React.Fragment key={card.action.href}>
+                  {index > 0 && <hr />}
+                  {/* Every card takes the same upload: the seed's other placeholder is the
+                      colour of the page, so a card drawn on it would show nothing. */}
+                  <GroupCard {...card} image={uploads[0]!} />
+                </React.Fragment>
+              ))}
+            </div>
+            <div className="gap-6 md:flex-row" data-cards="file">
+              {FILE_CARDS.map((card) => (
+                <FileCard key={card.file.href} {...card} image={uploads[0]!} />
+              ))}
+            </div>
+          </div>
+        )}
       </section>
     </div>
   )
