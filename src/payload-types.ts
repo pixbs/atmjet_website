@@ -259,8 +259,10 @@ export interface Page {
     | (
         | AdvantagesBlock
         | BestPriceBlock
+        | DescriptorBlock
         | DocumentsBlock
         | FaqBlock
+        | FramedDescriptorBlock
         | GroupCardsBlock
         | GuideBlock
         | HeroSalesBlock
@@ -268,6 +270,7 @@ export interface Page {
         | HeroYachtsBlock
         | KeyFeaturesBlock
         | OptionsTilesBlock
+        | PhotoDescriptorBlock
         | PrivilegeBlock
         | QuoteBlock
         | TilesBlock
@@ -327,6 +330,17 @@ export interface BestPriceBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "DescriptorBlock".
+ */
+export interface DescriptorBlock {
+  title: string;
+  description: string;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'descriptor';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "DocumentsBlock".
  */
 export interface DocumentsBlock {
@@ -368,6 +382,16 @@ export interface FaqBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'faq';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FramedDescriptorBlock".
+ */
+export interface FramedDescriptorBlock {
+  title: string;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'framedDescriptor';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -532,6 +556,18 @@ export interface OptionsTilesBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'optionsTiles';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PhotoDescriptorBlock".
+ */
+export interface PhotoDescriptorBlock {
+  title: string;
+  description: string;
+  image: number | Media;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'photoDescriptor';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1571,8 +1607,10 @@ export interface PagesSelect<T extends boolean = true> {
     | {
         advantages?: T | AdvantagesBlockSelect<T>;
         bestPrice?: T | BestPriceBlockSelect<T>;
+        descriptor?: T | DescriptorBlockSelect<T>;
         documents?: T | DocumentsBlockSelect<T>;
         faq?: T | FaqBlockSelect<T>;
+        framedDescriptor?: T | FramedDescriptorBlockSelect<T>;
         groupCards?: T | GroupCardsBlockSelect<T>;
         guide?: T | GuideBlockSelect<T>;
         heroSales?: T | HeroSalesBlockSelect<T>;
@@ -1580,6 +1618,7 @@ export interface PagesSelect<T extends boolean = true> {
         heroYachts?: T | HeroYachtsBlockSelect<T>;
         keyFeatures?: T | KeyFeaturesBlockSelect<T>;
         optionsTiles?: T | OptionsTilesBlockSelect<T>;
+        photoDescriptor?: T | PhotoDescriptorBlockSelect<T>;
         privilege?: T | PrivilegeBlockSelect<T>;
         quote?: T | QuoteBlockSelect<T>;
         tiles?: T | TilesBlockSelect<T>;
@@ -1634,6 +1673,16 @@ export interface BestPriceBlockSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "DescriptorBlock_select".
+ */
+export interface DescriptorBlockSelect<T extends boolean = true> {
+  title?: T;
+  description?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "DocumentsBlock_select".
  */
 export interface DocumentsBlockSelect<T extends boolean = true> {
@@ -1662,6 +1711,15 @@ export interface FaqBlockSelect<T extends boolean = true> {
         answer?: T;
         id?: T;
       };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FramedDescriptorBlock_select".
+ */
+export interface FramedDescriptorBlockSelect<T extends boolean = true> {
+  title?: T;
   id?: T;
   blockName?: T;
 }
@@ -1787,6 +1845,17 @@ export interface OptionsTilesBlockSelect<T extends boolean = true> {
         dim?: T;
         id?: T;
       };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PhotoDescriptorBlock_select".
+ */
+export interface PhotoDescriptorBlockSelect<T extends boolean = true> {
+  title?: T;
+  description?: T;
+  image?: T;
   id?: T;
   blockName?: T;
 }
