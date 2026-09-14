@@ -9,6 +9,10 @@ import { faq } from '@/blocks/Faq/config'
 import { framedDescriptor } from '@/blocks/FramedDescriptor/config'
 import { groupCards } from '@/blocks/GroupCards/config'
 import { guide } from '@/blocks/Guide/config'
+import { heroAircraft } from '@/blocks/HeroAircraft/config'
+import { heroEmptyLegs } from '@/blocks/HeroEmptyLegs/config'
+import { heroGroup } from '@/blocks/HeroGroup/config'
+import { heroPartners } from '@/blocks/HeroPartners/config'
 import { heroSales } from '@/blocks/HeroSales/config'
 import { heroSubpage } from '@/blocks/HeroSubpage/config'
 import { heroYachts } from '@/blocks/HeroYachts/config'
@@ -118,6 +122,10 @@ export const Pages: CollectionConfig = {
         framedDescriptor,
         groupCards,
         guide,
+        heroAircraft,
+        heroEmptyLegs,
+        heroGroup,
+        heroPartners,
         heroSales,
         heroSubpage,
         heroYachts,

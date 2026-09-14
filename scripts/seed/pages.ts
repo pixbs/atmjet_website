@@ -465,6 +465,55 @@ function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout 
       image: fixture.photo,
     })
 
+  if (slug === 'aircraft')
+    sections.push({
+      blockType: 'heroAircraft',
+      title: locale === 'en' ? 'We have access to over ' : 'Нам доступно более ',
+      figure: '50,000',
+      title2: locale === 'en' ? ' aircraft' : ' бортов',
+      description:
+        locale === 'en'
+          ? 'Every type, in every region, with the operator vetted before the quote goes out.'
+          : 'Любой тип в любом регионе, с проверкой оператора до того, как уйдёт расчёт.',
+    })
+
+  if (slug === 'empty_legs')
+    sections.push({
+      blockType: 'heroEmptyLegs',
+      figure: '75%',
+      title: locale === 'en' ? 'off the charter price' : 'от цены чартера',
+      image: fixture.photo,
+      subtitle: locale === 'en' ? 'The aircraft is going anyway' : 'Борт всё равно летит',
+      description:
+        locale === 'en'
+          ? 'A repositioning flight sells its cabin at a fraction of what the same route costs chartered.'
+          : 'Перегоночный рейс продаёт салон за долю того, во что обходится тот же маршрут в чартере.',
+    })
+
+  if (slug === 'partners')
+    sections.push({
+      blockType: 'heroPartners',
+      title: locale === 'en' ? 'Clients who fly with us fly ' : 'Клиенты, летающие с нами, летают ',
+      figure: '4x',
+      title2: locale === 'en' ? ' more often' : ' чаще',
+      description:
+        locale === 'en'
+          ? 'White label, insurance and payment handled by us, under your name.'
+          : 'White label, страхование и платежи — на нас, под вашим именем.',
+      image: fixture.photo,
+    })
+
+  if (slug === 'atm_jet_group')
+    sections.push({
+      blockType: 'heroGroup',
+      chip: locale === 'en' ? 'Since 2004' : 'С 2004 года',
+      title: locale === 'en' ? 'The group behind the flight' : 'Группа, которая стоит за рейсом',
+      description:
+        locale === 'en'
+          ? 'Charter, sales, management and yachts, run by the people who answer your call.'
+          : 'Чартер, продажи, управление и яхты — теми, кто отвечает на ваш звонок.',
+    })
+
   if (slug === 'sales_dept') {
     const hero = HERO_SALES[locale]
     sections.push({
@@ -775,6 +824,14 @@ function translated(layout: Layout | null | undefined, slug: string, fixture: Fi
             written?.blockType === 'guide' ? written.points : undefined,
           ),
         }
+      case 'heroAircraft':
+        return { ...block, id }
+      case 'heroEmptyLegs':
+        return { ...block, id }
+      case 'heroGroup':
+        return { ...block, id }
+      case 'heroPartners':
+        return { ...block, id }
       case 'heroSales':
         return {
           ...block,
