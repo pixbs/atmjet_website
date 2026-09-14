@@ -356,6 +356,36 @@ const INSPECTIONS: { en: [string, string]; ru: [string, string] }[] = [
   },
 ]
 
+/**
+ * The two quotations the legacy citizens page carried (issue #132, section 4): the press one
+ * under the Forbes wordmark and the founder's under the company's own. His words were written
+ * into the page in Russian only; here both languages have them.
+ */
+const QUOTES: { variant: 'press' | 'founder'; en: [string, string]; ru: [string, string] }[] = [
+  {
+    variant: 'press',
+    en: [
+      'The brokers who keep flying when the routes close are the ones who own the relationships, not the aircraft.',
+      'Forbes on the private aviation market',
+    ],
+    ru: [
+      'Летают дальше те брокеры, у кого есть связи, а не борта в собственности.',
+      'Forbes о рынке деловой авиации',
+    ],
+  },
+  {
+    variant: 'founder',
+    en: [
+      'Since 2004 our mission at ATM JET has been to let clients fly without limits anywhere in the world, sanctions and restrictions notwithstanding. We cross any border so that our clients enjoy the best service on every flight.',
+      'Artem Rumyantsev - founder of ATM JET',
+    ],
+    ru: [
+      'С 2004 года наша миссия в ATM JET — обеспечивать клиентам возможность летать без ограничений по всему миру несмотря на санкции и ограничения. Мы преодолеваем любые границы, чтобы наши клиенты могли наслаждаться лучшим сервисом в каждом полете',
+      'Артем Румянцев - основатель ATM JET',
+    ],
+  },
+]
+
 /** The sections a seeded page starts with; a page with no entry here starts with none. */
 function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout {
   const sections: Layout = []
@@ -508,12 +538,20 @@ function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout 
       })),
     })
 
-  if (slug === 'citizens')
+  if (slug === 'citizens') {
+    for (const entry of QUOTES)
+      sections.push({
+        blockType: 'quote',
+        variant: entry.variant,
+        quote: entry[locale][0],
+        attribution: entry[locale][1],
+      })
     sections.push({
       blockType: 'faq',
       title: locale === 'en' ? 'Questions we are asked' : 'Что нас спрашивают',
       questions: FAQ.map((entry) => ({ question: entry[locale][0], answer: entry[locale][1] })),
     })
+  }
 
   // Eight, as the legacy grid sliced one picture into eight. Below the sections above it, as
   // the legacy grid sat far down the home page: it is scrolled to, not landed on.
@@ -627,6 +665,8 @@ function translated(layout: Layout | null | undefined, slug: string, fixture: Fi
         }
       case 'privilege':
         return { ...block, id, cards: withRowIds(block.cards ?? [], rows) }
+      case 'quote':
+        return { ...block, id }
       case 'tiles':
         return {
           ...block,

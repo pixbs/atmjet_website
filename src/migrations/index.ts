@@ -13,6 +13,7 @@ import * as migration_20260914_154856_guide_and_documents_blocks from './2026091
 import * as migration_20260914_162727_group_cards_block from './20260914_162727_group_cards_block';
 import * as migration_20260914_165619_advantages_block from './20260914_165619_advantages_block';
 import * as migration_20260914_173438_best_price_we_inspect_blocks from './20260914_173438_best_price_we_inspect_blocks';
+import * as migration_20260914_175735_quote_block from './20260914_175735_quote_block';
 
 export const migrations = [
   {
@@ -88,6 +89,11 @@ export const migrations = [
   {
     up: migration_20260914_173438_best_price_we_inspect_blocks.up,
     down: migration_20260914_173438_best_price_we_inspect_blocks.down,
-    name: '20260914_173438_best_price_we_inspect_blocks'
+    name: '20260914_173438_best_price_we_inspect_blocks',
+  },
+  {
+    up: migration_20260914_175735_quote_block.up,
+    down: migration_20260914_175735_quote_block.down,
+    name: '20260914_175735_quote_block'
   },
 ];

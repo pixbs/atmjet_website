@@ -11,6 +11,7 @@ import { heroSubpage } from '@/blocks/HeroSubpage/config'
 import { keyFeatures } from '@/blocks/KeyFeatures/config'
 import { optionsTiles } from '@/blocks/OptionsTiles/config'
 import { privilege } from '@/blocks/Privilege/config'
+import { quote } from '@/blocks/Quote/config'
 import { tiles } from '@/blocks/Tiles/config'
 import { weInspect } from '@/blocks/WeInspect/config'
 import { whyUs } from '@/blocks/WhyUs/config'
@@ -114,6 +115,7 @@ export const Pages: CollectionConfig = {
         keyFeatures,
         optionsTiles,
         privilege,
+        quote,
         tiles,
         weInspect,
         whyUs,
