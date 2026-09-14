@@ -1,5 +1,5 @@
 import { NextIntlClientProvider } from 'next-intl'
-import { setRequestLocale } from 'next-intl/server'
+import { getTranslations, setRequestLocale } from 'next-intl/server'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import React from 'react'
@@ -7,12 +7,32 @@ import React from 'react'
 import { MotionProvider } from '@/components/providers/motion-provider'
 import type { Locale } from '@/i18n/locales'
 import { getEnabledLocales } from '@/lib/data/site-settings'
+import { siteOrigin } from '@/lib/urls'
 
 import '../globals.css'
 
-export const metadata: Metadata = {
-  title: 'ATM JET',
-  description: 'Private jet charter, yachts and cargo. Rebuilt on Payload 3 and Next.js 16.',
+/**
+ * What a route inherits when it says nothing of its own (issue #170). The legacy layout computed
+ * exactly these two strings and then never returned them, so every page of the site shipped an
+ * empty title (`docs/legacy-inventory.md` section 2.4); they are restored here, in the locale
+ * the visitor asked for rather than in English only.
+ *
+ * `metadataBase` is what resolves a relative image or canonical into an absolute URL, and its
+ * absence is what makes Next warn on every build that it is falling back to localhost.
+ */
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>
+}): Promise<Metadata> {
+  const { locale } = await params
+  const t = await getTranslations({ locale, namespace: 'seo' })
+
+  return {
+    metadataBase: new URL(siteOrigin()),
+    title: t('siteTitle'),
+    description: t('siteDescription'),
+  }
 }
 
 /**

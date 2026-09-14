@@ -9,5 +9,10 @@
     "cabins": "{count, plural, one {# cabin} other {# cabins}}",
     "bathrooms": "{count, plural, one {# bathroom} other {# bathrooms}}",
     "passengers": "{count, plural, one {# passenger} other {# passengers}}"
+  },
+  "seo": {
+    "siteName": "ATM JET",
+    "siteTitle": "ATM JET - Flying private made simple",
+    "siteDescription": "Renting a plane is the best solution for those who value comfort and time. ATM JET provides the opportunity to order a private plane for a flight to any point on the planet. We have been working for you for over 16 years and have vast experience in organizing business aviation flights."
   }
 }

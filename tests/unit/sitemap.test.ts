@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { pageEntries, siteOrigin, type Listable } from '@/lib/sitemap'
+import { pageEntries, type Listable } from '@/lib/sitemap'
 
 /**
  * What `/sitemap.xml` offers a crawler (issue #171). The legacy sitemap was a written list of
@@ -16,17 +16,6 @@ const PAGES: Listable[] = [
 ]
 
 const urls = (entries: ReturnType<typeof pageEntries>) => entries.map((entry) => entry.url)
-
-describe('siteOrigin', () => {
-  it('drops a trailing slash, so a URL never doubles up on one', () => {
-    expect(siteOrigin('https://atmjet.com/')).toBe('https://atmjet.com')
-  })
-
-  it('uses the development origin when the environment names none', () => {
-    // A preview without the variable set advertises itself, never the legacy hard-coded host.
-    expect(siteOrigin(undefined)).toBe('http://localhost:3000')
-  })
-})
 
 describe('pageEntries', () => {
   it('lists the pages the collection holds, so a path nobody created cannot appear', () => {

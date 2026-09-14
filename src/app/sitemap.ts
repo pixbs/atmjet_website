@@ -2,7 +2,8 @@ import type { MetadataRoute } from 'next'
 
 import { listPagesForSitemap } from '@/lib/data/pages'
 import { getEnabledLocales } from '@/lib/data/site-settings'
-import { pageEntries, siteOrigin } from '@/lib/sitemap'
+import { pageEntries } from '@/lib/sitemap'
+import { siteOrigin } from '@/lib/urls'
 
 /**
  * `/sitemap.xml` (issue #171), built from the pages collection rather than written by hand, so

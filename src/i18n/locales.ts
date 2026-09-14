@@ -24,6 +24,8 @@ export interface LocaleDefinition {
   /** Shown in the admin locale selector and in the public locale switcher (E6.3). */
   label: string
   direction: 'ltr' | 'rtl'
+  /** What `og:locale` calls this language; Open Graph wants a territory, `hreflang` does not. */
+  openGraph: string
 }
 
 /**
@@ -31,7 +33,7 @@ export interface LocaleDefinition {
  * is what the legacy switcher did and what editors expect in the admin selector.
  */
 export const LOCALE_DEFINITIONS: readonly LocaleDefinition[] = [
-  { code: 'en', label: 'English', direction: 'ltr' },
-  { code: 'ru', label: 'Русский', direction: 'ltr' },
-  { code: 'uk', label: 'Українська', direction: 'ltr' },
+  { code: 'en', label: 'English', direction: 'ltr', openGraph: 'en_US' },
+  { code: 'ru', label: 'Русский', direction: 'ltr', openGraph: 'ru_RU' },
+  { code: 'uk', label: 'Українська', direction: 'ltr', openGraph: 'uk_UA' },
 ]
