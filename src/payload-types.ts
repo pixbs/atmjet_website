@@ -255,7 +255,7 @@ export interface Page {
   /**
    * The sections of this page, in the order they are rendered.
    */
-  layout?: (HeroSubpageBlock | KeyFeaturesBlock | WhyUsBlock)[] | null;
+  layout?: (HeroSubpageBlock | KeyFeaturesBlock | PrivilegeBlock | WhyUsBlock)[] | null;
   meta?: {
     title?: string | null;
     description?: string | null;
@@ -301,6 +301,41 @@ export interface KeyFeaturesBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'keyFeatures';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PrivilegeBlock".
+ */
+export interface PrivilegeBlock {
+  title: string;
+  /**
+   * The second line of the heading, painted with the gold gradient.
+   */
+  goldTitle: string;
+  cards?:
+    | {
+        icon: 'plane' | 'exchange' | 'diamond';
+        title: string;
+        description: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * The panel under the stack. Where the buttons lead is in Site settings.
+   */
+  contact: {
+    title: string;
+    description: string;
+    telegram: string;
+    whatsapp: string;
+    /**
+     * The pattern behind the panel; it is plain without one.
+     */
+    background?: (number | null) | Media;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'privilege';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1214,6 +1249,7 @@ export interface PagesSelect<T extends boolean = true> {
     | {
         heroSubpage?: T | HeroSubpageBlockSelect<T>;
         keyFeatures?: T | KeyFeaturesBlockSelect<T>;
+        privilege?: T | PrivilegeBlockSelect<T>;
         whyUs?: T | WhyUsBlockSelect<T>;
       };
   meta?:
@@ -1252,6 +1288,33 @@ export interface KeyFeaturesBlockSelect<T extends boolean = true> {
         description?: T;
         image?: T;
         id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PrivilegeBlock_select".
+ */
+export interface PrivilegeBlockSelect<T extends boolean = true> {
+  title?: T;
+  goldTitle?: T;
+  cards?:
+    | T
+    | {
+        icon?: T;
+        title?: T;
+        description?: T;
+        id?: T;
+      };
+  contact?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        telegram?: T;
+        whatsapp?: T;
+        background?: T;
       };
   id?: T;
   blockName?: T;

@@ -3,6 +3,7 @@ import type { Page } from '@/payload-types'
 
 import { HeroSubpage } from './HeroSubpage/Component'
 import { KeyFeatures } from './KeyFeatures/Component'
+import { Privilege } from './Privilege/Component'
 import { WhyUs } from './WhyUs/Component'
 
 /**
@@ -46,6 +47,26 @@ function blockFor(block: LayoutBlock, key: string) {
         />
       )
     }
+    case 'privilege':
+      return (
+        <Privilege
+          key={key}
+          cards={(block.cards ?? []).map((card) => ({
+            description: card.description,
+            icon: card.icon,
+            title: card.title,
+          }))}
+          contact={{
+            ...block.contact,
+            background:
+              mediaSource(
+                typeof block.contact.background === 'object' ? block.contact.background : null,
+              ) ?? undefined,
+          }}
+          goldTitle={block.goldTitle}
+          title={block.title}
+        />
+      )
     case 'whyUs':
       return (
         <WhyUs

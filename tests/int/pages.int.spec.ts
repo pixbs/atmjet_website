@@ -305,8 +305,8 @@ describe('the subpage hero block', () => {
       depth: 0,
     })
 
-    expect(english.layout?.[0]?.description).toBe('By air')
-    expect(russian.layout?.[0]?.description).toBe('По воздуху')
+    expect(heroOf(english)?.description).toBe('By air')
+    expect(heroOf(russian)?.description).toBe('По воздуху')
     // The photograph is not localized, so the Russian page draws the same document.
     expect(heroOf(russian)?.image).toBe(image.id)
   })
