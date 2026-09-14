@@ -64,3 +64,14 @@ export function localeUrls(
     ['x-default', localeUrl(origin, canonical, slug)],
   ])
 }
+
+/**
+ * The URL the language links point at (issue #90): the path being read, with whatever the query
+ * holds. The legacy switcher appended a bare `?` even when there was nothing to carry
+ * (`docs/legacy-inventory.md` section 13, entry 74).
+ */
+export function localeSwitchHref(pathname: string, search: string): string {
+  const query = search.replace(/^\?/, '')
+
+  return query === '' ? pathname : `${pathname}?${query}`
+}
