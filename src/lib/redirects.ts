@@ -121,3 +121,74 @@ export function bySpecificity(a: RedirectRule, b: RedirectRule): number {
 
   return fromA.localeCompare(fromB)
 }
+
+/**
+ * How far a chain is followed before it is called a loop. A browser gives up at around twenty;
+ * a redirect map that needs more than a handful of hops is already a mistake.
+ */
+const MAX_HOPS = 10
+
+/** The locale-free path a localised destination points at, or nothing if it leaves the site. */
+function withoutLocale(destination: string, locale: string): string | undefined {
+  if (isAbsolute(destination)) return undefined
+  if (destination === `/${locale}`) return '/'
+
+  return destination.startsWith(`/${locale}/`) ? destination.slice(locale.length + 1) : undefined
+}
+
+/**
+ * Every path a visitor is sent through, starting at `from` (issue #172).
+ *
+ * The trail ends where nothing matches, where it leaves the site, or where it arrives somewhere
+ * it has already been — which is a loop, and which the last entry repeating an earlier one says.
+ */
+function redirectTrail(rules: readonly RedirectRule[], from: string, locale: string): string[] {
+  const trail = [normaliseRedirectPath(from)]
+
+  for (let hop = 0; hop < MAX_HOPS; hop += 1) {
+    const match = matchRedirect(rules, trail[trail.length - 1], locale)
+    if (!match) break
+
+    const next = withoutLocale(match.destination, locale)
+    if (next === undefined) break
+
+    const seen = trail.includes(next)
+    trail.push(next)
+    if (seen) break
+  }
+
+  return trail
+}
+
+/**
+ * The first trail that comes back to a path it has already visited, or nothing when the rules
+ * are sound. A loop looks perfectly reasonable on the row that closes it, and the visitor is the
+ * one who finds out, so it is worth refusing at the door.
+ */
+export function findRedirectLoop(
+  rules: readonly RedirectRule[],
+  locale: string,
+): string[] | undefined {
+  for (const rule of rules) {
+    const trail = redirectTrail(rules, rule.from, locale)
+    const destination = trail[trail.length - 1]
+
+    if (trail.length > 1 && trail.indexOf(destination) < trail.length - 1) return trail
+  }
+
+  return undefined
+}
+
+/**
+ * The paths a rule set catches that a page is served at, which would make that page
+ * unreachable: the redirect answers first, and an editor sees their page 308 away from itself.
+ */
+export function shadowedPaths(
+  rules: readonly RedirectRule[],
+  slugs: readonly string[],
+  locale: string,
+): string[] {
+  const paths = slugs.map((slug) => normaliseRedirectPath(`/${slug}`))
+
+  return paths.filter((path) => matchRedirect(rules, path, locale) !== undefined)
+}
