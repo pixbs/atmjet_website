@@ -1,6 +1,7 @@
 import { cache } from 'react'
 
 import { ALL_LOCALES, DEFAULT_LOCALE, DEFAULT_LOCALES, type Locale } from '@/i18n/locales'
+import { instagramHref, telegramHref, whatsAppHref, type SocialNetwork } from '@/lib/links'
 import type { SiteContact } from '@/lib/structured-data'
 import type { SiteSetting } from '@/payload-types'
 
@@ -69,5 +70,33 @@ export async function getSiteContact(
       error,
     )
     return null
+  }
+}
+
+/**
+ * Where the chrome links when a visitor wants to talk to someone (issue #88), built from the
+ * handles an editor keeps rather than from a scheme they typed (src/lib/links.ts).
+ *
+ * A network whose handle is empty returns an empty string, and the caller leaves that link out:
+ * the legacy menu always rendered all three, including the Telegram link no browser could open.
+ */
+export async function getSocialLinks(
+  // Injected so the unreachable-database path can be tested without breaking the database.
+  read: () => Promise<Pick<SiteSetting, 'telegram' | 'whatsapp' | 'instagram'>> = getSiteSettings,
+): Promise<Record<SocialNetwork, string>> {
+  try {
+    const { telegram, whatsapp, instagram } = await read()
+
+    return {
+      telegram: telegramHref(telegram),
+      whatsapp: whatsAppHref(whatsapp),
+      instagram: instagramHref(instagram),
+    }
+  } catch (error) {
+    console.warn(
+      '[site-settings] the database was unreachable, so the chrome links nowhere.',
+      error,
+    )
+    return { telegram: '', whatsapp: '', instagram: '' }
   }
 }

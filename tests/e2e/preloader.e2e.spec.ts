@@ -34,7 +34,7 @@ test.describe('the preloader', () => {
 
     // The legacy layers were z-[998] and z-[999] (inventory section 10.3), which are tokens here.
     await expect(page.getByTestId('preloader-backdrop')).toHaveCSS('z-index', '998')
-    await expect(page.locator('svg').first().locator('..')).toHaveCSS('z-index', '999')
+    await expect(page.getByTestId('preloader-logo')).toHaveCSS('z-index', '999')
   })
 
   test('is a curtain, not content: assistive technology reads the page instead', async ({
