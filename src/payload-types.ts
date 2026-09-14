@@ -257,6 +257,7 @@ export interface Page {
    */
   layout?:
     | (
+        | AdvantagesBlock
         | DocumentsBlock
         | FaqBlock
         | GroupCardsBlock
@@ -281,6 +282,24 @@ export interface Page {
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "AdvantagesBlock".
+ */
+export interface AdvantagesBlock {
+  title: string;
+  image: number | Media;
+  cards?:
+    | {
+        title: string;
+        description: string;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'advantages';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1431,6 +1450,7 @@ export interface PagesSelect<T extends boolean = true> {
   layout?:
     | T
     | {
+        advantages?: T | AdvantagesBlockSelect<T>;
         documents?: T | DocumentsBlockSelect<T>;
         faq?: T | FaqBlockSelect<T>;
         groupCards?: T | GroupCardsBlockSelect<T>;
@@ -1453,6 +1473,23 @@ export interface PagesSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "AdvantagesBlock_select".
+ */
+export interface AdvantagesBlockSelect<T extends boolean = true> {
+  title?: T;
+  image?: T;
+  cards?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

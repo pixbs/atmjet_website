@@ -1,6 +1,7 @@
 import type { CollectionConfig } from 'payload'
 
 import { editorOrAdmin, publishedOnly } from '@/access'
+import { advantages } from '@/blocks/Advantages/config'
 import { documents } from '@/blocks/Documents/config'
 import { faq } from '@/blocks/Faq/config'
 import { groupCards } from '@/blocks/GroupCards/config'
@@ -101,6 +102,7 @@ export const Pages: CollectionConfig = {
       type: 'blocks',
       // Sections land here one at a time in E7, each with its own issue.
       blocks: [
+        advantages,
         documents,
         faq,
         groupCards,

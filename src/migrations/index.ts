@@ -11,6 +11,7 @@ import * as migration_20260914_143330_tiles_block from './20260914_143330_tiles_
 import * as migration_20260914_150937_faq_block from './20260914_150937_faq_block';
 import * as migration_20260914_154856_guide_and_documents_blocks from './20260914_154856_guide_and_documents_blocks';
 import * as migration_20260914_162727_group_cards_block from './20260914_162727_group_cards_block';
+import * as migration_20260914_165619_advantages_block from './20260914_165619_advantages_block';
 
 export const migrations = [
   {
@@ -76,6 +77,11 @@ export const migrations = [
   {
     up: migration_20260914_162727_group_cards_block.up,
     down: migration_20260914_162727_group_cards_block.down,
-    name: '20260914_162727_group_cards_block'
+    name: '20260914_162727_group_cards_block',
+  },
+  {
+    up: migration_20260914_165619_advantages_block.up,
+    down: migration_20260914_165619_advantages_block.down,
+    name: '20260914_165619_advantages_block'
   },
 ];

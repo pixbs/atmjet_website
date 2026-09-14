@@ -2,6 +2,7 @@ import { mediaSource } from '@/lib/media'
 import { hrefForSlug } from '@/lib/nav'
 import type { Page } from '@/payload-types'
 
+import { Advantages } from './Advantages/Component'
 import { Documents } from './Documents/Component'
 import { Faq } from './Faq/Component'
 import { GroupCards } from './GroupCards/Component'
@@ -26,6 +27,21 @@ type LayoutBlock = NonNullable<Page['layout']>[number]
 
 function blockFor(block: LayoutBlock, key: string) {
   switch (block.blockType) {
+    case 'advantages': {
+      const image = mediaSource(typeof block.image === 'object' ? block.image : null)
+
+      return image === null ? null : (
+        <Advantages
+          key={key}
+          cards={(block.cards ?? []).map((card) => ({
+            description: card.description,
+            title: card.title,
+          }))}
+          image={image}
+          title={block.title}
+        />
+      )
+    }
     case 'documents': {
       // A document is its file and its cover; one missing either cannot be offered.
       const offered = (block.documents ?? []).flatMap((entry) => {
