@@ -31,7 +31,7 @@ bun run dev                 # http://localhost:3000, admin at /admin
 | Script                                                                | Purpose                                                    |
 | --------------------------------------------------------------------- | ---------------------------------------------------------- |
 | `bun run dev` / `bun run build` / `bun run start`                     | develop, build, serve                                      |
-| `bun run ci`                                                          | migrate and build (Vercel build command)                   |
+| `bun run ci`                                                          | migrate (production only) and build (Vercel build command) |
 | `bun run lint` / `lint:fix` / `format` / `format:check` / `typecheck` | static checks                                              |
 | `bun run migrate` / `migrate:create <name>` / `migrate:status`        | Payload migrations (Drizzle push only under `bun run dev`) |
 | `bun run generate:types` / `generate:importmap`                       | regenerate Payload artefacts after config changes          |
