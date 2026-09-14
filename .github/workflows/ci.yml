@@ -101,6 +101,11 @@ jobs:
           fi
       - name: Unit and integration tests with coverage
         run: bun run test:int
+      - name: Restore the fixture content the integration tests clean up
+        # tests/int/seed.int.spec.ts runs the seed and registers what it creates with the test
+        # registry, so the pages are gone by the time the build reads them and it prerenders
+        # nothing (issue #252). The seed is idempotent, so this costs seconds.
+        run: bun run seed
       - name: Production build
         run: bun run build
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
