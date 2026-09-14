@@ -11,6 +11,10 @@ import type { SeedOutcome } from './report'
  * Idempotent like the rest of the seed: a global that already has navigation is left alone, so
  * an editor's changes survive a re-run. `SiteSettings` needs no seed — its legacy values are the
  * field defaults.
+ *
+ * The one thing a re-run does rewrite is a menu that has lost every page it pointed at
+ * (issue #260), which is what the integration tier leaves behind when it deletes the pages the
+ * seed created.
  */
 
 /** A string per locale. English is required: it is what a locale without a translation falls back to. */
@@ -77,6 +81,48 @@ const LEGAL: Record<'location' | 'copyright', Translated> = {
   },
 }
 
+/** A saved navigation row: with `depth: 0` the page is its id, or nothing once it is deleted. */
+interface SavedRow {
+  label?: string | null
+  page?: number | string | { id: number | string } | null
+}
+
+interface SavedMenus {
+  primaryNav?: SavedRow[] | null
+  secondaryNav?: SavedRow[] | null
+}
+
+/** The labels this seed writes into one menu, in the language a global is read in by default. */
+const seededLabels = (slugs: string[]): string[] =>
+  slugs.map((slug) => translate(NAV_LABELS[slug], DEFAULT_LOCALE))
+
+const sameLabels = (rows: SavedRow[], slugs: string[]): boolean => {
+  const labels = seededLabels(slugs)
+
+  return rows.length === labels.length && rows.every((row, index) => row.label === labels[index])
+}
+
+/**
+ * Whether a saved global is this seed's own menu with every page gone (issue #260), which is
+ * what the integration tier leaves behind when it deletes the pages the seed created: deleting a
+ * page clears the links to it, the relationship being optional so that a delete cannot fail on a
+ * not-null column.
+ *
+ * Both halves are needed. An editor's menu is left alone because it still opens something, or
+ * because it is empty, or because its wording is theirs rather than the wording below — and a
+ * suite that has written its own rows over the global owns them for as long as it holds them.
+ */
+export function isTheSeedsOwnWreck(global: SavedMenus, slug: (typeof SEEDED_GLOBALS)[number]) {
+  const rows = [...(global.primaryNav ?? []), ...(global.secondaryNav ?? [])]
+  if (rows.length === 0) return false
+  if (!rows.every((row) => row.page === null || row.page === undefined)) return false
+
+  return (
+    sameLabels(global.primaryNav ?? [], SERVICES) &&
+    sameLabels(global.secondaryNav ?? [], slug === 'footer' ? FOOTER_SECOND_ROW : COMPANY)
+  )
+}
+
 async function pageIdsBySlug(payload: Payload): Promise<Map<string, number>> {
   const pages = await payload.find({
     collection: 'pages',
@@ -119,9 +165,13 @@ export async function seedGlobals(payload: Payload): Promise<SeedOutcome[]> {
 
   for (const slug of SEEDED_GLOBALS) {
     // A global that has been saved once is an editor's, whatever it holds now: a re-run must not
-    // write the legacy menu back over a navigation someone has deliberately emptied.
+    // write the legacy menu back over a navigation someone has deliberately emptied. The one
+    // exception is this seed's own menu with every page deleted out from under it, which is
+    // nobody's work (issue #260); the whole global is written again there, the wording of its
+    // button included, because that state is the seed's pages going missing rather than an edit.
     const existing = await payload.findGlobal({ slug, depth: 0, overrideAccess: true })
-    if (existing.id !== undefined) {
+    const lost = isTheSeedsOwnWreck(existing, slug)
+    if (existing.id !== undefined && !lost) {
       outcomes.push({ collection: 'globals', key: slug, action: 'unchanged' })
       continue
     }
@@ -160,7 +210,7 @@ export async function seedGlobals(payload: Payload): Promise<SeedOutcome[]> {
       })
     }
 
-    outcomes.push({ collection: 'globals', key: slug, action: 'created' })
+    outcomes.push({ collection: 'globals', key: slug, action: lost ? 'updated' : 'created' })
   }
 
   return outcomes
