@@ -7,7 +7,9 @@
     "openMenu": "Открыть меню",
     "closeMenu": "Закрыть меню",
     "logo": "ATM JET, на главную страницу",
-    "notAvailable": "Н/Д"
+    "notAvailable": "Н/Д",
+    "previous": "Назад",
+    "next": "Вперёд"
   },
   "social": {
     "telegram": "Telegram",

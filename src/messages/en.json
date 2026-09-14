@@ -7,7 +7,9 @@
     "openMenu": "Open the menu",
     "closeMenu": "Close the menu",
     "logo": "ATM JET, back to the home page",
-    "notAvailable": "N/A"
+    "notAvailable": "N/A",
+    "previous": "Previous",
+    "next": "Next"
   },
   "social": {
     "telegram": "Telegram",
