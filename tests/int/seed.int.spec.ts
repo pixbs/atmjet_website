@@ -41,7 +41,10 @@ describe('seed', () => {
             outcome.collection as 'users' | 'media' | 'pages' | 'redirects',
             outcome.id,
           )
-      expect(first.created + first.unchanged).toBe(EXPECTED_DOCUMENTS)
+      // Every expected document is reported in exactly one bucket. `updated` is in the sum
+      // because a run that starts after the previous one's cleanup finds the chrome pointing at
+      // pages that no longer exist, and repairs it rather than leaving it (issue #260).
+      expect(first.created + first.unchanged + first.updated).toBe(EXPECTED_DOCUMENTS)
 
       const second = await runSeed(registry.payload)
       expect(second.created).toBe(0)
