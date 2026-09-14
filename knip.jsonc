@@ -13,6 +13,10 @@
     // The chrome link builders (issue #61): the globals hold the handles today and the Header,
     // Footer and MenuBar components of E6 build the URLs; tests/unit/links.test.ts pins them.
     "src/lib/links.ts",
+    // The country list (issue #160), which the backlog separates from the phone field that reads
+    // it (#108, E6.21) because each carries its own decision; tests/unit/countries.test.ts pins
+    // the rules until that field arrives.
+    "src/lib/countries.ts",
   ],
   // A type that only its own module uses stays exported when it is part of an exported signature.
   "ignoreExportsUsedInFile": { "interface": true, "type": true },
@@ -21,6 +25,9 @@
     "@payloadcms/ui",
     // Imported from globals.css, which knip does not read.
     "tailwindcss",
+    // The metadata src/lib/countries.ts derives the list from (issue #160); the phone field that
+    // will also validate and format with it is #108.
+    "libphonenumber-js",
   ],
   // knip's Payload plugin treats payload.config.ts as a config file and drops it from the production
   // graph; the config is the root of the content model, so it is a plain production entry instead.
