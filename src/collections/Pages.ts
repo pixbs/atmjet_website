@@ -18,6 +18,7 @@ import { heroSubpage } from '@/blocks/HeroSubpage/config'
 import { heroYachts } from '@/blocks/HeroYachts/config'
 import { keyFeatures } from '@/blocks/KeyFeatures/config'
 import { optionsTiles } from '@/blocks/OptionsTiles/config'
+import { personalManager } from '@/blocks/PersonalManager/config'
 import { photoDescriptor } from '@/blocks/PhotoDescriptor/config'
 import { privilege } from '@/blocks/Privilege/config'
 import { quote } from '@/blocks/Quote/config'
@@ -131,6 +132,7 @@ export const Pages: CollectionConfig = {
         heroYachts,
         keyFeatures,
         optionsTiles,
+        personalManager,
         photoDescriptor,
         privilege,
         quote,

@@ -452,6 +452,25 @@ const HERO_YACHTS: Record<
   },
 }
 
+/** The manager the legacy sales and partners pages both introduced (issue #124, section 5). */
+const PERSONAL_MANAGER: Record<
+  'en' | 'ru',
+  { title: string; description: string; chips: string[] }
+> = {
+  en: {
+    title: 'A manager of your own',
+    description:
+      'One person who knows the route, the aircraft and the party, from the first question to the landing.',
+    chips: ['Any hour', 'One number', 'Every leg', 'No call centre', 'Both languages'],
+  },
+  ru: {
+    title: 'Персональный менеджер',
+    description:
+      'Один человек, который знает маршрут, борт и состав — от первого вопроса до посадки.',
+    chips: ['Любой час', 'Один номер', 'Каждое плечо', 'Без колл-центра', 'Оба языка'],
+  },
+}
+
 /** The sections a seeded page starts with; a page with no entry here starts with none. */
 function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout {
   const sections: Layout = []
@@ -546,6 +565,18 @@ function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout 
       description2: hero.description2,
       image: fixture.surface,
       cta: { label: hero.button, source: 'Hero_yachts' },
+    })
+  }
+
+  // Both pages the legacy introduced the manager on, in the place it sat on each.
+  if (slug === 'sales_dept' || slug === 'partners') {
+    const manager = PERSONAL_MANAGER[locale]
+    sections.push({
+      blockType: 'personalManager',
+      title: manager.title,
+      description: manager.description,
+      image: fixture.photo,
+      chips: manager.chips.map((text) => ({ text })),
     })
   }
 
@@ -854,6 +885,15 @@ function translated(layout: Layout | null | undefined, slug: string, fixture: Fi
           tiles: withRowIds(
             block.tiles ?? [],
             written?.blockType === 'optionsTiles' ? written.tiles : undefined,
+          ),
+        }
+      case 'personalManager':
+        return {
+          ...block,
+          id,
+          chips: withRowIds(
+            block.chips ?? [],
+            written?.blockType === 'personalManager' ? written.chips : undefined,
           ),
         }
       case 'photoDescriptor':

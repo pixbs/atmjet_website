@@ -17,6 +17,7 @@ import * as migration_20260914_175735_quote_block from './20260914_175735_quote_
 import * as migration_20260914_183254_hero_sales_and_yachts_blocks from './20260914_183254_hero_sales_and_yachts_blocks';
 import * as migration_20260914_192256_descriptor_blocks from './20260914_192256_descriptor_blocks';
 import * as migration_20260914_193505_small_hero_blocks from './20260914_193505_small_hero_blocks';
+import * as migration_20260914_205214_personal_manager_block from './20260914_205214_personal_manager_block';
 
 export const migrations = [
   {
@@ -112,6 +113,11 @@ export const migrations = [
   {
     up: migration_20260914_193505_small_hero_blocks.up,
     down: migration_20260914_193505_small_hero_blocks.down,
-    name: '20260914_193505_small_hero_blocks'
+    name: '20260914_193505_small_hero_blocks',
+  },
+  {
+    up: migration_20260914_205214_personal_manager_block.up,
+    down: migration_20260914_205214_personal_manager_block.down,
+    name: '20260914_205214_personal_manager_block'
   },
 ];
