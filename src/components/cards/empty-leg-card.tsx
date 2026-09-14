@@ -2,6 +2,7 @@ import Link from 'next/link'
 
 import { Counter } from '@/components/motion/counter'
 import { Reveal } from '@/components/motion/reveal'
+import { buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/cn'
 import {
   departureLabel,
@@ -63,8 +64,8 @@ export function EmptyLegCard({
         {/* The caller builds the href, because a query-only link needs the page it sits on
             and this card is rendered on the server. `next/link` rather than the locale-aware
             one: the path it is given already carries the prefix. */}
-        <Link href={booking.href} scroll={false}>
-          <button type="button">{booking.label}</button>
+        <Link className={buttonVariants({ as: 'link' })} href={booking.href} scroll={false}>
+          {booking.label}
         </Link>
       </div>
       <div className="flex-row items-start gap-2">

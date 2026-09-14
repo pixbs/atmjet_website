@@ -27,6 +27,16 @@ describe('button variants', () => {
     expect(buttonVariants({ tone: 'dark' })).toBe('')
   })
 
+  it('gives a link the class the parity layer styles, and a button none', () => {
+    // A real button is dressed by the element rule, where a caller's own utility still wins;
+    // the unlayered `.button` class would beat it, so only a link wears it (issue #262).
+    expect(buttonVariants({ as: 'link' }).split(' ').filter(Boolean)).toEqual(['button'])
+    expect(
+      buttonVariants({ as: 'link', size: 'middle' }).split(' ').filter(Boolean).sort(),
+    ).toEqual(['button', 'middle'])
+    expect(buttonVariants({ as: 'button' })).toBe('')
+  })
+
   it('combines a size with the gold gradient, as the legacy call to action did', () => {
     const classes = buttonVariants({ size: 'big', tone: 'gold' }).split(' ').filter(Boolean)
 

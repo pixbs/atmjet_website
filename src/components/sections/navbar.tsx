@@ -3,9 +3,11 @@
 import { m } from 'motion/react'
 
 import { ArrowTopRight } from '@/components/icons'
+import { buttonVariants } from '@/components/ui/button'
 import { LocaleSwitch } from '@/components/ui/locale-switch'
 import type { Locale } from '@/i18n/locales'
 import { Link, usePathname } from '@/i18n/navigation'
+import { cn } from '@/lib/cn'
 import type { HeaderNav } from '@/lib/data/header'
 import { fade, overlay } from '@/lib/motion'
 import type { NavLink } from '@/lib/nav'
@@ -74,8 +76,12 @@ export function Navbar({
             ))}
             {booking && (
               <m.div variants={fade} className="hidden lg:flex">
-                <Link href={booking.href} scroll={false} className="self-start">
-                  <button className="mt-4">{booking.label}</button>
+                <Link
+                  className={cn(buttonVariants({ as: 'link' }), 'mt-4 self-start')}
+                  href={booking.href}
+                  scroll={false}
+                >
+                  {booking.label}
                 </Link>
               </m.div>
             )}
@@ -91,8 +97,12 @@ export function Navbar({
             ))}
             {booking && (
               <m.div variants={fade} className="lg:hidden">
-                <Link href={booking.href} scroll={false} className="self-start">
-                  <button className="mt-4">{booking.label}</button>
+                <Link
+                  className={cn(buttonVariants({ as: 'link' }), 'mt-4 self-start')}
+                  href={booking.href}
+                  scroll={false}
+                >
+                  {booking.label}
                 </Link>
               </m.div>
             )}
