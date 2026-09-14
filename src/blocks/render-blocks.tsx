@@ -4,8 +4,10 @@ import type { Page } from '@/payload-types'
 
 import { Advantages } from './Advantages/Component'
 import { BestPrice } from './BestPrice/Component'
+import { Descriptor } from './Descriptor/Component'
 import { Documents } from './Documents/Component'
 import { Faq } from './Faq/Component'
+import { FramedDescriptor } from './FramedDescriptor/Component'
 import { GroupCards } from './GroupCards/Component'
 import { Guide } from './Guide/Component'
 import { HeroSales } from './HeroSales/Component'
@@ -13,6 +15,7 @@ import { HeroSubpage } from './HeroSubpage/Component'
 import { HeroYachts } from './HeroYachts/Component'
 import { KeyFeatures } from './KeyFeatures/Component'
 import { OptionsTiles } from './OptionsTiles/Component'
+import { PhotoDescriptor } from './PhotoDescriptor/Component'
 import { Privilege } from './Privilege/Component'
 import { Quote } from './Quote/Component'
 import { Tiles } from './Tiles/Component'
@@ -62,6 +65,8 @@ function blockFor(block: LayoutBlock, key: string) {
         />
       )
     }
+    case 'descriptor':
+      return <Descriptor key={key} description={block.description} title={block.title} />
     case 'documents': {
       // A document is its file and its cover; one missing either cannot be offered.
       const offered = (block.documents ?? []).flatMap((entry) => {
@@ -85,6 +90,8 @@ function blockFor(block: LayoutBlock, key: string) {
           title={block.title}
         />
       )
+    case 'framedDescriptor':
+      return <FramedDescriptor key={key} title={block.title} />
     case 'groupCards': {
       // A card needs its photograph and somewhere to lead; one without either is left out, and
       // a section of none is left out altogether.
@@ -198,6 +205,18 @@ function blockFor(block: LayoutBlock, key: string) {
       })
 
       return tiles.length === 0 ? null : <OptionsTiles key={key} tiles={tiles} />
+    }
+    case 'photoDescriptor': {
+      const image = mediaSource(typeof block.image === 'object' ? block.image : null)
+
+      return image === null ? null : (
+        <PhotoDescriptor
+          key={key}
+          description={block.description}
+          image={image}
+          title={block.title}
+        />
+      )
     }
     case 'privilege':
       return (
