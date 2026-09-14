@@ -2,6 +2,7 @@ import { setRequestLocale } from 'next-intl/server'
 import type { Metadata } from 'next'
 import React from 'react'
 
+import * as icons from '@/components/icons'
 import { Counter } from '@/components/motion/counter'
 import { Line } from '@/components/motion/line'
 import { Reveal } from '@/components/motion/reveal'
@@ -47,6 +48,9 @@ const ACCENTS = [
 ]
 
 const RADII = ['rounded-sm', 'rounded-xl', 'rounded-2xl', 'rounded-3xl', 'rounded-full']
+
+/** Every ported icon (issue #109), in the order `src/components/icons/index.ts` exports them. */
+const ICONS = Object.entries(icons)
 
 function Swatch({ label, className }: { label: string; className: string }) {
   return (
@@ -133,6 +137,18 @@ export default async function StyleguidePage({ params }: { params: Promise<{ loc
           <h4>Revealed on scroll</h4>
           <p>Fades and rises into place when it enters the viewport, and again when it returns.</p>
         </Reveal>
+      </section>
+
+      <section id="icons" className="container items-start gap-4">
+        <h3>Icons</h3>
+        <div className="flex-row flex-wrap items-start gap-6 text-white">
+          {ICONS.map(([name, Icon]) => (
+            <div key={name} className="w-32 items-center gap-2">
+              <Icon className="h-8 w-auto" />
+              <span className="text-center text-graphite-400">{name}</span>
+            </div>
+          ))}
+        </div>
       </section>
 
       <section id="palette" className="container items-start gap-4">

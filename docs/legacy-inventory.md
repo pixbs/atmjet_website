@@ -1473,7 +1473,7 @@ Live namespaces: `aircraft-hero`, `aircraft-contact-us`, `vehicle` (11 of 21 key
 | `icons/clock.svg`                     | 511   | 0 0 24 24    | stroke currentColor          | yacht detail, charter YachtCard ("Hours")                              |
 | `icons/bathrooms.svg`                 | 1,170 | 0 0 25 24    | stroke currentColor          | yacht detail, charter YachtCard                                        |
 
-Gradient icons keep their own fills (Tailwind text colour has no effect); the three gradient icons in `elements/yacht_card.tsx` receive no size class (intrinsic 33×32 viewBox, no width/height → scale to container; **UNVERIFIED** rendered size). `exchange.svg` has no `viewBox`.
+Gradient icons keep their own fills (Tailwind text colour has no effect); the three gradient icons in `elements/yacht_card.tsx` receive no size class and carry `width="33" height="32"` beside the viewBox, so they render at that size (verified while porting them, issue #109). `exchange.svg` has `width="44" height="44"` and no `viewBox`.
 
 ### 12.4 Remote hosts
 

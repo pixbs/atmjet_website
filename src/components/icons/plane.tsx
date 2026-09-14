@@ -1,0 +1,16 @@
+import type { IconProps } from './icon'
+import { svgProps } from './icon'
+
+/** The floating action button on the home page. Legacy: `src/assets/svg/plane.svg` (docs/legacy-inventory.md section 12.3). */
+export function Plane(props: IconProps) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 16" {...svgProps(props)}>
+      <path
+        fill="currentColor"
+        fillRule="evenodd"
+        d="m10.12 4.63-2.8.75-1.52-.5c-.88-.29-1.9-.53-2.43-.58-.54-.05-.87.13-.87.13l1.41.62v.44s-.56-.23-1.16-.5C1.5 4.38 1.21 4.35.8 4.74-.57 6.02 2.54 7.97 8.81 9.77c3.74 1.08 6.11 1.55 6.7 1.32.55-.21.65-.55.3-.97l-.3-.35.5-.85c.51-.91.56-1.1.32-1.3-.41-.33-.79-.28-1.82.24l-1.03.52-1.06-.54a7.15 7.15 0 0 1-1.06-.61c0-.04.76-.55 1.69-1.15 1.84-1.2 1.97-1.37 1.3-1.84-.66-.47-1.2-.42-4.23.4Zm-6.2 4.23c-.08.25-.3 2.06-.3 2.48 0 .26.12.5.42.8.67.67.86.6 2.12-.82.6-.68 1.08-1.3 1.05-1.38a5.53 5.53 0 0 0-1.36-.6c-1.89-.67-1.86-.66-1.92-.48Z"
+        clipRule="evenodd"
+      />
+    </svg>
+  )
+}
