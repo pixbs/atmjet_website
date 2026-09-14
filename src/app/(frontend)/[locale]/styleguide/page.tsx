@@ -12,7 +12,9 @@ import { Accordion, AccordionItem } from '@/components/ui/accordion'
 import { EmptyLegCard } from '@/components/cards/empty-leg-card'
 import { FileCard } from '@/components/cards/file-card'
 import { GroupCard } from '@/components/cards/group-card'
+import { KeyFeatureCard } from '@/components/cards/key-feature-card'
 import { PrivilegeCard } from '@/components/cards/privilege-card'
+import { VehicleCard } from '@/components/cards/vehicle-card'
 import { WhyUsCard } from '@/components/cards/why-us-card'
 import { YachtsCard } from '@/components/cards/yachts-card'
 import { Button, buttonVariants } from '@/components/ui/button'
@@ -194,6 +196,72 @@ const WHY_US = [
     title: 'A price agreed once',
     description: 'What is quoted is what is invoiced, with nothing added on landing.',
     withImage: false,
+  },
+]
+
+/** Four features, as the medical aviation page carries them. */
+const KEY_FEATURES = [
+  {
+    title: 'A flying intensive care unit',
+    description: 'A stretcher, a ventilator and the monitoring a transfer needs.',
+  },
+  {
+    title: 'A doctor on board',
+    description: 'An intensive care physician and a paramedic on every flight.',
+  },
+  { title: 'Bed to bed', description: 'The ambulance at both ends is part of the booking.' },
+  {
+    title: 'Any airport that will take us',
+    description: 'Landing permits arranged inside the hour where the state allows it.',
+  },
+]
+
+/**
+ * Five aircraft, which is more than the three a wide screen shows at once, so the carousel has
+ * somewhere to go. The first registration is spelled the way a legacy row spells it, in lower
+ * case and with a dash, to show that the link is the same either way.
+ */
+const VEHICLES = [
+  {
+    registration: 'n-123ab',
+    model: 'Gulfstream G650ER',
+    specs: [
+      { label: 'Year:', value: '2019' },
+      { label: 'Pax:', value: '14' },
+    ],
+  },
+  {
+    registration: 'M-YACHT',
+    model: 'Bombardier Global 7500',
+    specs: [
+      { label: 'Year:', value: '2021' },
+      { label: 'Pax:', value: '17' },
+    ],
+  },
+  {
+    registration: 'D-AHOP',
+    model: 'Cessna Citation XLS+',
+    specs: [
+      { label: 'Year:', value: '2017' },
+      { label: 'Pax:', value: '9' },
+    ],
+  },
+  {
+    registration: 'OE-LFA',
+    model: 'Dassault Falcon 8X',
+    specs: [
+      { label: 'Year:', value: '2020' },
+      { label: 'Pax:', value: '12' },
+    ],
+  },
+  {
+    registration: 'VP-BDX',
+    model: 'Embraer Legacy 650',
+    // The row keeps its rule where the legacy column holds nothing.
+    specs: [
+      { label: 'Year:', value: '2014' },
+      { label: 'Pax:', value: '' },
+    ],
   },
 ]
 
@@ -496,6 +564,52 @@ export default async function StyleguidePage({ params }: { params: Promise<{ loc
             />
           ))}
         </div>
+      </section>
+
+      <section
+        id="carousel-cards"
+        data-section="carousel-cards"
+        className="container items-start gap-4"
+      >
+        <h3>Cards in a carousel</h3>
+        {uploads.length === 0 ? (
+          <p>No uploads to show. Run the seed.</p>
+        ) : (
+          <div className="w-full gap-10">
+            <div data-cards="key-feature">
+              {/* No gap between the slides: the legacy carousel had none, and the card's own
+                  `pr-10` is what holds its words off the next one. */}
+              <Carousel
+                className="w-full"
+                controls={
+                  <CarouselArrows
+                    className="justify-end pt-4"
+                    labels={{ previous: 'Previous feature', next: 'Next feature' }}
+                  />
+                }
+              >
+                {KEY_FEATURES.map((feature) => (
+                  <KeyFeatureCard key={feature.title} {...feature} image={uploads[0]!} />
+                ))}
+              </Carousel>
+            </div>
+            <div data-cards="vehicle">
+              <Carousel
+                className="w-full"
+                controls={
+                  <CarouselArrows
+                    className="justify-end pt-4"
+                    labels={{ previous: 'Previous aircraft', next: 'Next aircraft' }}
+                  />
+                }
+              >
+                {VEHICLES.map((vehicle) => (
+                  <VehicleCard key={vehicle.registration} {...vehicle} image={uploads[0]!} />
+                ))}
+              </Carousel>
+            </div>
+          </div>
+        )}
       </section>
 
       <section
