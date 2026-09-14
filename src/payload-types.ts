@@ -271,6 +271,7 @@ export interface Page {
         | HeroPartnersBlock
         | HeroSalesBlock
         | HeroSubpageBlock
+        | HeroVideoBlock
         | HeroYachtsBlock
         | KeyFeaturesBlock
         | OptionsTilesBlock
@@ -563,6 +564,29 @@ export interface HeroSubpageBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'heroSubpage';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "HeroVideoBlock".
+ */
+export interface HeroVideoBlock {
+  overline: string;
+  title: string;
+  /**
+   * Where the film is served from, as `/video/background_full.mp4`.
+   */
+  video: string;
+  /**
+   * Played instead on a narrow screen. Without one the wide film plays.
+   */
+  videoMobile?: string | null;
+  /**
+   * Held on the screen until the film has enough of itself to play.
+   */
+  poster: number | Media;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'heroVideo';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1694,6 +1718,7 @@ export interface PagesSelect<T extends boolean = true> {
         heroPartners?: T | HeroPartnersBlockSelect<T>;
         heroSales?: T | HeroSalesBlockSelect<T>;
         heroSubpage?: T | HeroSubpageBlockSelect<T>;
+        heroVideo?: T | HeroVideoBlockSelect<T>;
         heroYachts?: T | HeroYachtsBlockSelect<T>;
         keyFeatures?: T | KeyFeaturesBlockSelect<T>;
         optionsTiles?: T | OptionsTilesBlockSelect<T>;
@@ -1918,6 +1943,19 @@ export interface HeroSubpageBlockSelect<T extends boolean = true> {
   title?: T;
   description?: T;
   image?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "HeroVideoBlock_select".
+ */
+export interface HeroVideoBlockSelect<T extends boolean = true> {
+  overline?: T;
+  title?: T;
+  video?: T;
+  videoMobile?: T;
+  poster?: T;
   id?: T;
   blockName?: T;
 }

@@ -16,6 +16,7 @@ import { HeroGroup } from './HeroGroup/Component'
 import { HeroPartners } from './HeroPartners/Component'
 import { HeroSales } from './HeroSales/Component'
 import { HeroSubpage } from './HeroSubpage/Component'
+import { HeroVideo } from './HeroVideo/Component'
 import { HeroYachts } from './HeroYachts/Component'
 import { KeyFeatures } from './KeyFeatures/Component'
 import { OptionsTiles } from './OptionsTiles/Component'
@@ -216,6 +217,22 @@ function blockFor(block: LayoutBlock, key: string) {
           description={block.description ?? undefined}
           image={image}
           title={block.title}
+        />
+      )
+    }
+    case 'heroVideo': {
+      const poster = mediaSource(typeof block.poster === 'object' ? block.poster : null)
+
+      // The poster is what holds the screen until the film plays, so a hero without one is a
+      // black screen with the heading on it; the section is left out instead.
+      return poster === null ? null : (
+        <HeroVideo
+          key={key}
+          overline={block.overline}
+          poster={poster}
+          title={block.title}
+          video={block.video}
+          videoMobile={block.videoMobile ?? undefined}
         />
       )
     }
