@@ -2,6 +2,8 @@ import { getTranslations, setRequestLocale } from 'next-intl/server'
 import type { Metadata } from 'next'
 import React from 'react'
 
+import { AirportSearch } from './airport-search'
+
 import * as icons from '@/components/icons'
 import { Counter } from '@/components/motion/counter'
 import { Line } from '@/components/motion/line'
@@ -608,6 +610,21 @@ export default async function StyleguidePage({ params }: { params: Promise<{ loc
             </div>
           </div>
         )}
+      </section>
+
+      <section
+        id="autocomplete"
+        data-section="autocomplete"
+        className="container items-start gap-4"
+      >
+        <h3>Autocomplete</h3>
+        <p>
+          Offers what it finds from two characters on. The airports behind it are a handful in{' '}
+          <code>airport-search.tsx</code> until the search endpoint arrives (E9.9).
+        </p>
+        <div className="w-full max-w-screen-sm gap-4">
+          <AirportSearch id="airport-from" label="From" />
+        </div>
       </section>
     </div>
   )
