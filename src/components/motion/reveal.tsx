@@ -1,7 +1,7 @@
 'use client'
 
 import { m, type Variants } from 'motion/react'
-import type { ReactNode } from 'react'
+import type { CSSProperties, ReactNode } from 'react'
 
 import { cardReveal, inViewOnce, inViewRepeat } from '@/lib/motion'
 
@@ -13,17 +13,21 @@ import { cardReveal, inViewOnce, inViewRepeat } from '@/lib/motion'
 export function Reveal({
   children,
   className,
+  style,
   variants = cardReveal,
   once = false,
 }: {
   children: ReactNode
   className?: string
+  /** For what a class cannot say: the offset a card in a sticky stack comes to rest at. */
+  style?: CSSProperties
   variants?: Variants
   once?: boolean
 }) {
   return (
     <m.div
       className={className}
+      style={style}
       variants={variants}
       initial="hidden"
       whileInView="visible"
