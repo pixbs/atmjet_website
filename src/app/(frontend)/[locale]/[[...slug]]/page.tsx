@@ -4,12 +4,14 @@ import { getTranslations, setRequestLocale } from 'next-intl/server'
 import React from 'react'
 
 import { servedStatusFor } from '@/collections/Redirects'
+import { JsonLd } from '@/components/ui/json-ld'
 import type { Locale } from '@/i18n/locales'
 import { listPageParams } from '@/lib/data/pages'
 import { getPayloadClient } from '@/lib/data/payload'
 import { findRedirect } from '@/lib/data/redirects'
 import { getEnabledLocales } from '@/lib/data/site-settings'
 import { pageMetadata } from '@/lib/metadata'
+import { breadcrumbs } from '@/lib/structured-data'
 import { siteOrigin } from '@/lib/urls'
 
 /**
@@ -127,10 +129,18 @@ export default async function CatchAllPage({ params }: { params: Promise<PagePar
   // awaited: the helper is typed `Promise<never>`, which narrows `page` only through a `return`.
   if (!page) return redirectOrNotFound(locale as Locale, slug)
 
+  const t = await getTranslations({ locale, namespace: 'common' })
+  // The trail a search result shows instead of a bare URL; the home page is not its own trail.
+  const trail = breadcrumbs(siteOrigin(), locale as Locale, t('home'), {
+    slug: slugFrom(slug),
+    title: page.title,
+  })
+
   return (
     <article className="container gap-8 py-16">
       <h1>{page.title}</h1>
       {/* Sections render here from `page.layout` once the blocks of E7 exist. */}
+      {trail && <JsonLd data={trail} />}
     </article>
   )
 }

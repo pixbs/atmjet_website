@@ -5,8 +5,10 @@ import { notFound } from 'next/navigation'
 import React from 'react'
 
 import { MotionProvider } from '@/components/providers/motion-provider'
+import { JsonLd } from '@/components/ui/json-ld'
 import type { Locale } from '@/i18n/locales'
-import { getEnabledLocales } from '@/lib/data/site-settings'
+import { getEnabledLocales, getSiteContact } from '@/lib/data/site-settings'
+import { organisation, webSite } from '@/lib/structured-data'
 import { siteOrigin } from '@/lib/urls'
 
 import '../globals.css'
@@ -62,6 +64,13 @@ export default async function LocaleLayout({
   // Opts the segment into static rendering; without it every page below is dynamic.
   setRequestLocale(locale)
 
+  // Who the site belongs to and how to reach them, on every page (issue #173).
+  const origin = siteOrigin()
+  const [contact, t] = await Promise.all([
+    getSiteContact(),
+    getTranslations({ locale, namespace: 'seo' }),
+  ])
+
   return (
     <html lang={locale}>
       <body className="min-h-dvh bg-graphite-900 font-sans text-white antialiased">
@@ -70,6 +79,8 @@ export default async function LocaleLayout({
             <main>{children}</main>
           </MotionProvider>
         </NextIntlClientProvider>
+        {contact && <JsonLd data={organisation(origin, t('siteName'), contact)} />}
+        <JsonLd data={webSite(origin, locale as Locale, t('siteName'), t('siteDescription'))} />
       </body>
     </html>
   )
