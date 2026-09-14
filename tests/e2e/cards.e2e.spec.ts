@@ -67,3 +67,36 @@ test.describe('the file card', () => {
     await expect(document).toHaveAttribute('target', '_blank')
   })
 })
+
+test.describe('the privilege card', () => {
+  test('stops a little further down the page for each card in the stack', async ({ page }) => {
+    await page.goto(pathFor('/styleguide', 'en'))
+    const cards = page.locator('[data-cards="privilege"] > div')
+
+    await expect(cards).toHaveCount(3)
+    // The stack reads as a stack because each card sticks lower than the one above it.
+    for (const [index, card] of (await cards.all()).entries()) {
+      await expect(card).toHaveCSS('position', 'sticky')
+      await expect(card).toHaveCSS('top', `${(index + 1) * 32}px`)
+    }
+  })
+})
+
+test.describe('the yachts card', () => {
+  test('is in the HTML the server sends, columns and all', async ({ request }) => {
+    const html = await (await request.get(pathFor('/styleguide', 'en'))).text()
+
+    // The legacy card animated, so it was a client component; here only the reveals are.
+    expect(html).toContain('The fleet')
+    expect(html).toContain('A week in the Mediterranean or a crossing, planned around you.')
+  })
+
+  test('opens the yachts page of the locale being read', async ({ page }) => {
+    await page.goto(pathFor('/styleguide', 'ru'))
+
+    // The legacy card linked a bare `/yachts`, which only answers with a redirect (section 3.3).
+    await expect(
+      page.locator('[data-cards="yachts"]').getByRole('link', { name: 'See the yachts' }),
+    ).toHaveAttribute('href', '/ru/yachts')
+  })
+})
