@@ -11,9 +11,12 @@ import { Button, buttonVariants } from '@/components/ui/button'
 import { Carousel, CarouselArrows, CarouselDots, CarouselProgress } from '@/components/ui/carousel'
 import { Checkbox } from '@/components/ui/checkbox'
 import { CounterInput } from '@/components/ui/counter-input'
+import { Gallery } from '@/components/ui/gallery'
 import { Input } from '@/components/ui/input'
 import { LocaleSwitch } from '@/components/ui/locale-switch'
 import { Select } from '@/components/ui/select'
+import type { Locale } from '@/i18n/locales'
+import { listMediaImages } from '@/lib/data/media'
 import { getEnabledLocales } from '@/lib/data/site-settings'
 
 /**
@@ -60,6 +63,10 @@ const RADII = ['rounded-sm', 'rounded-xl', 'rounded-2xl', 'rounded-3xl', 'rounde
 /** Enough slides for the dots to have something to count and the progress bar somewhere to go. */
 const SLIDES = ['One', 'Two', 'Three', 'Four', 'Five']
 
+/** The seed ships two placeholder uploads, so a longer strip is made by going round them. */
+const repeat = <T,>(items: readonly T[], count: number): T[] =>
+  Array.from({ length: count }, (_, index) => items[index % items.length]!)
+
 /** Every ported icon (issue #109), in the order `src/components/icons/index.ts` exports them. */
 const ICONS = Object.entries(icons)
 
@@ -77,7 +84,15 @@ export default async function StyleguidePage({ params }: { params: Promise<{ loc
   setRequestLocale(locale)
 
   // The switcher offers the languages the settings enable, which is what the chrome will pass it.
-  const locales = await getEnabledLocales()
+  const [locales, uploads] = await Promise.all([
+    getEnabledLocales(),
+    // The gallery needs real files; the seed's placeholders stand in until the media migration
+    // brings the aircraft photos over (issue #84).
+    listMediaImages(locale as Locale, 4),
+  ])
+
+  /** One photo, four and a strip that has to scroll: the three cases the gallery is drawn for. */
+  const galleries = uploads.length === 0 ? [] : [1, 4, 12].map((count) => repeat(uploads, count))
 
   return (
     <div className="gap-16 py-16">
@@ -170,6 +185,21 @@ export default async function StyleguidePage({ params }: { params: Promise<{ loc
           <h4>Revealed on scroll</h4>
           <p>Fades and rises into place when it enters the viewport, and again when it returns.</p>
         </Reveal>
+      </section>
+
+      <section id="gallery" data-section="gallery" className="container items-start gap-4">
+        <h3>Gallery</h3>
+        {galleries.length === 0 ? (
+          <p>No uploads to show. Run the seed.</p>
+        ) : (
+          <div className="w-full gap-10 md:flex-row">
+            {galleries.map((images) => (
+              <div key={images.length} data-gallery={images.length} className="w-full max-w-xs">
+                <Gallery images={images} />
+              </div>
+            ))}
+          </div>
+        )}
       </section>
 
       <section id="carousel" data-section="carousel" className="container items-start gap-4">
