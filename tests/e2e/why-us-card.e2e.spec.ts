@@ -35,7 +35,17 @@ test.describe('the why us card', () => {
     await page.goto(pathFor('/styleguide', 'en'))
     const first = page.locator(CARDS).first()
 
-    await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight))
+    // Scrolled through the stack, counted from the stack rather than from the end of the page,
+    // so whatever is added to the styleguide after it cannot move this test. `instant` because
+    // the parity layer carries the legacy `scroll-smooth` and a measurement would catch the page
+    // still moving.
+    await page.locator('[data-cards="why-us"]').evaluate((stack) =>
+      window.scrollTo({
+        top: stack.getBoundingClientRect().bottom + window.scrollY - window.innerHeight,
+        behavior: 'instant',
+      }),
+    )
+
     // Pinned at its own offset rather than carried off the top of the screen with the section.
     await expect.poll(async () => Math.round((await first.boundingBox())?.y ?? -1)).toBe(32)
   })
