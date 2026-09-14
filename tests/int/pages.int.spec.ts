@@ -1,6 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
 
 import { PAGE_SLUGS, pathForPage } from '@/collections/Pages'
+import type { Page } from '@/payload-types'
 import { createAdmin, createMedia, createUser } from '../factories'
 import { createRegistry, uniqueSuffix, type TestRegistry } from '../helpers/payload'
 
@@ -21,6 +22,14 @@ beforeAll(async () => {
 })
 
 afterAll(() => registry.cleanup())
+
+/** The hero of a page's layout, narrowed out of the union the blocks field has become. */
+const heroOf = (page: { layout?: Page['layout'] }) =>
+  page.layout?.find((block) => block.blockType === 'heroSubpage')
+
+/** The reasons of the why us section, likewise. */
+const reasonsOf = (page: { layout?: Page['layout'] }) =>
+  page.layout?.find((block) => block.blockType === 'whyUs')?.cards
 
 const pageData = (overrides: Record<string, unknown> = {}) => ({
   title: `Page ${uniqueSuffix()}`,
@@ -298,7 +307,8 @@ describe('the subpage hero block', () => {
 
     expect(english.layout?.[0]?.description).toBe('By air')
     expect(russian.layout?.[0]?.description).toBe('По воздуху')
-    expect(russian.layout?.[0]?.image).toBe(image.id)
+    // The photograph is not localized, so the Russian page draws the same document.
+    expect(heroOf(russian)?.image).toBe(image.id)
   })
 
   it('refuses a hero with no photograph, which would render as a hole in the page', async () => {
@@ -308,5 +318,64 @@ describe('the subpage hero block', () => {
         pageData({ layout: [{ blockType: 'heroSubpage', title: 'No image' }] }),
       ),
     ).rejects.toThrow()
+  })
+})
+
+/**
+ * The why us block (issue #116). Its reasons are rows, and a row belongs to the document rather
+ * than to one language: writing the Russian words without the ids the English write handed out
+ * replaces the rows and takes the English words with them.
+ */
+describe('the why us block', () => {
+  it('keeps both languages in one set of rows', async () => {
+    const page = await registry.create(
+      'pages',
+      pageData({
+        layout: [
+          {
+            blockType: 'whyUs',
+            title: 'Why us',
+            cards: [{ figure: '20+', title: 'Years in the air', description: 'Two decades.' }],
+          },
+        ],
+      }),
+    )
+    const written = page.layout?.[0]
+
+    await registry.payload.update({
+      collection: 'pages',
+      id: page.id,
+      data: {
+        title: 'Почему мы',
+        layout: [
+          {
+            blockType: 'whyUs',
+            id: written?.id,
+            title: 'Почему мы',
+            cards: [
+              {
+                id: written?.blockType === 'whyUs' ? written.cards?.[0]?.id : undefined,
+                figure: '20+',
+                title: 'Лет в воздухе',
+                description: 'Двадцать лет.',
+              },
+            ],
+          },
+        ],
+      },
+      locale: 'ru',
+      overrideAccess: true,
+    })
+
+    const english = await registry.payload.findByID({ collection: 'pages', id: page.id })
+    const russian = await registry.payload.findByID({
+      collection: 'pages',
+      id: page.id,
+      locale: 'ru',
+    })
+
+    expect(reasonsOf(english)?.[0]?.title).toBe('Years in the air')
+    expect(reasonsOf(russian)?.[0]?.title).toBe('Лет в воздухе')
+    expect(reasonsOf(russian)).toHaveLength(1)
   })
 })

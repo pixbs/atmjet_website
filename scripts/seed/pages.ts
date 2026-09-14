@@ -69,44 +69,114 @@ const HERO_PAGES: Record<string, Record<'en' | 'ru', string>> = {
   },
 }
 
-/** The sections a seeded page starts with; a page with no entry here starts with none. */
-function layoutFor(slug: string, locale: 'en' | 'ru', image: number) {
-  const description = HERO_PAGES[slug]?.[locale]
-  if (description === undefined) return []
-
-  return [{ blockType: 'heroSubpage' as const, title: TITLES[slug][locale], description, image }]
-}
+/**
+ * The reasons the cargo charter page stacks (issue #116, section 5). Three of them, because the
+ * three shapes the card comes in are what a fixture is for: with a figure and a photograph, and
+ * with neither.
+ */
+const WHY_US: {
+  figure?: string
+  withImage: boolean
+  en: [string, string]
+  ru: [string, string]
+}[] = [
+  {
+    figure: '20+',
+    withImage: true,
+    en: ['Years in the air', 'Two decades of charters out of the Gulf, Europe and the CIS.'],
+    ru: ['Лет в воздухе', 'Двадцать лет чартеров из Залива, Европы и СНГ.'],
+  },
+  {
+    figure: '24/7',
+    withImage: true,
+    en: ['Answered at any hour', 'A manager who knows the flight, not a call centre.'],
+    ru: ['Отвечаем в любой час', 'Менеджер, который знает рейс, а не колл-центр.'],
+  },
+  {
+    withImage: false,
+    en: ['A price agreed once', 'What is quoted is what is invoiced, fuel and handling in.'],
+    ru: [
+      'Цена, согласованная один раз',
+      'Сколько названо, столько и в счёте, с топливом и наземкой.',
+    ],
+  },
+]
 
 type Layout = NonNullable<Page['layout']>
 
-/** The same sections in another language, keeping the ids the English write gave the blocks. */
-function translated(layout: Layout | null | undefined, slug: string, locale: 'ru'): Layout {
-  return (layout ?? []).map((block) => ({
-    ...block,
+/** The sections a seeded page starts with; a page with no entry here starts with none. */
+function layoutFor(slug: string, locale: 'en' | 'ru', image: number): Layout {
+  const description = HERO_PAGES[slug]?.[locale]
+  if (description === undefined) return []
+
+  const hero = {
+    blockType: 'heroSubpage' as const,
     title: TITLES[slug][locale],
-    description: HERO_PAGES[slug]?.[locale] ?? '',
-    // The create answered at its own depth, where an upload is the document rather than its id.
-    image: typeof block.image === 'object' ? block.image.id : block.image,
-  }))
+    description,
+    image,
+  }
+  if (slug !== 'cargo_charter') return [hero]
+
+  return [
+    hero,
+    {
+      blockType: 'whyUs' as const,
+      title: locale === 'en' ? 'Why us' : 'Почему мы',
+      description:
+        locale === 'en'
+          ? 'What a charter with us comes with, whatever is in the hold.'
+          : 'Что входит в чартер с нами, что бы ни было в трюме.',
+      cards: WHY_US.map((card) => ({
+        figure: card.figure,
+        title: card[locale][0],
+        description: card[locale][1],
+        image: card.withImage ? image : undefined,
+      })),
+    },
+  ]
 }
 
 /**
- * Gives a page that predates a block the sections that block's issue seeds. A database seeded
- * before E7 started would otherwise keep an empty layout for good.
+ * The same sections in another language, keeping every id the English write handed out. Payload
+ * matches a block, and a row inside it, by id; a write without them replaces the rows instead of
+ * translating them, and the English words go with the rows that held them.
+ */
+function translated(layout: Layout | null | undefined, slug: string, image: number): Layout {
+  return layoutFor(slug, 'ru', image).map((block, index) => {
+    const written = layout?.[index]
+
+    if (block.blockType !== 'whyUs' || written?.blockType !== 'whyUs')
+      return { ...block, id: written?.id }
+
+    return {
+      ...block,
+      id: written.id,
+      cards: (block.cards ?? []).map((card, row) => ({ ...card, id: written.cards?.[row]?.id })),
+    }
+  })
+}
+
+/**
+ * Gives a page that predates a block the sections that block's issue seeds, appended after the
+ * ones it already has and leaving those alone: a database seeded between two block issues would
+ * otherwise never see the second one, and an editor's words are not the fixture's to overwrite.
  */
 async function addSections(
   payload: Payload,
-  id: number,
+  page: Page,
   slug: string,
   image: number,
 ): Promise<'updated' | 'unchanged'> {
-  const layout = layoutFor(slug, 'en', image)
-  if (layout.length === 0) return 'unchanged'
+  const current = page.layout ?? []
+  const has = new Set(current.map((block) => block.blockType))
+  const missing = layoutFor(slug, 'en', image).filter((block) => !has.has(block.blockType))
+  if (missing.length === 0) return 'unchanged'
 
-  const page = await payload.update({
+  const id = page.id
+  const written = await payload.update({
     collection: 'pages',
     id,
-    data: { layout },
+    data: { layout: [...current, ...missing] },
     locale: 'en',
     overrideAccess: true,
     context: { skipRevalidation: true },
@@ -116,7 +186,7 @@ async function addSections(
     await payload.update({
       collection: 'pages',
       id,
-      data: { layout: translated(page.layout, slug, locale as 'ru') },
+      data: { layout: translated(written.layout, slug, image) },
       locale,
       overrideAccess: true,
       context: { skipRevalidation: true },
@@ -152,12 +222,9 @@ export async function seedPages(payload: Payload): Promise<SeedOutcome[]> {
 
     if (existing.totalDocs > 0) {
       const page = existing.docs[0]
-      // A database seeded before a block existed takes the sections that block's issue adds,
-      // which is what keeps the fixture reconciled rather than only idempotent (AGENTS.md §1.5).
-      const action =
-        (page.layout ?? []).length === 0
-          ? await addSections(payload, page.id, slug, image)
-          : 'unchanged'
+      // A page that predates a block takes the sections that block's issue adds, which is what
+      // keeps the fixture reconciled rather than only idempotent (AGENTS.md §1.5).
+      const action = await addSections(payload, page, slug, image)
 
       outcomes.push({ collection: 'pages', key, action, id: page.id })
       continue
@@ -188,7 +255,7 @@ export async function seedPages(payload: Payload): Promise<SeedOutcome[]> {
           meta: META[slug]?.[locale],
           // The blocks keep the ids the English write gave them, so this translates the
           // sections rather than adding a second set.
-          layout: translated(created.layout, slug, locale as 'ru'),
+          layout: translated(created.layout, slug, image),
         },
         locale,
         overrideAccess: true,
