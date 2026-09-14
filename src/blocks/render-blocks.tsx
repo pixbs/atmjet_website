@@ -4,6 +4,7 @@ import type { Page } from '@/payload-types'
 
 import { Advantages } from './Advantages/Component'
 import { BestPrice } from './BestPrice/Component'
+import { ContactCard } from './ContactCard/Component'
 import { Descriptor } from './Descriptor/Component'
 import { Documents } from './Documents/Component'
 import { Faq } from './Faq/Component'
@@ -62,6 +63,19 @@ function blockFor(block: LayoutBlock, key: string) {
           key={key}
           // The query is the whole of the href, so the dialog opens on the page it is read on,
           // which is what the legacy link did (`docs/legacy-inventory.md` section 3.9).
+          action={{ href: `?showBooking=${block.cta.source}`, label: block.cta.label }}
+          description={block.description}
+          image={image}
+          title={block.title}
+        />
+      )
+    }
+    case 'contactCard': {
+      const image = mediaSource(typeof block.image === 'object' ? block.image : null)
+
+      return image === null ? null : (
+        <ContactCard
+          key={key}
           action={{ href: `?showBooking=${block.cta.source}`, label: block.cta.label }}
           description={block.description}
           image={image}
