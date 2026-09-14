@@ -112,7 +112,7 @@ const sameLabels = (rows: SavedRow[], slugs: string[]): boolean => {
  * because it is empty, or because its wording is theirs rather than the wording below — and a
  * suite that has written its own rows over the global owns them for as long as it holds them.
  */
-export function isTheSeedsOwnWreck(global: SavedMenus, slug: (typeof SEEDED_GLOBALS)[number]) {
+function isTheSeedsOwnWreck(global: SavedMenus, slug: (typeof SEEDED_GLOBALS)[number]) {
   const rows = [...(global.primaryNav ?? []), ...(global.secondaryNav ?? [])]
   if (rows.length === 0) return false
   if (!rows.every((row) => row.page === null || row.page === undefined)) return false
