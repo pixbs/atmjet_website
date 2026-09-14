@@ -1,9 +1,11 @@
 import { mediaSource } from '@/lib/media'
+import { hrefForSlug } from '@/lib/nav'
 import type { Page } from '@/payload-types'
 
 import { HeroSubpage } from './HeroSubpage/Component'
 import { KeyFeatures } from './KeyFeatures/Component'
 import { Privilege } from './Privilege/Component'
+import { YachtsPromo } from './YachtsPromo/Component'
 import { WhyUs } from './WhyUs/Component'
 
 /**
@@ -67,6 +69,33 @@ function blockFor(block: LayoutBlock, key: string) {
           title={block.title}
         />
       )
+    case 'yachtsPromo': {
+      const image = mediaSource(typeof block.image === 'object' ? block.image : null)
+      const picture = mediaSource(
+        typeof block.invitation.image === 'object' ? block.invitation.image : null,
+      )
+      // The page arrives as the document, this read being at depth 1; a promotion whose page
+      // has been deleted, or is a draft, is not a promotion, so the section is left out.
+      const page = typeof block.invitation.page === 'object' ? block.invitation.page : null
+
+      return image === null || picture === null || page === null ? null : (
+        <YachtsPromo
+          key={key}
+          columns={(block.columns ?? []).map((column) => ({
+            description: column.description,
+            title: column.title,
+          }))}
+          description={block.description ?? undefined}
+          image={image}
+          invitation={{
+            action: { label: block.invitation.label, href: hrefForSlug(page.slug ?? '') },
+            image: picture,
+            title: block.invitation.title,
+          }}
+          title={block.title}
+        />
+      )
+    }
     case 'whyUs':
       return (
         <WhyUs
