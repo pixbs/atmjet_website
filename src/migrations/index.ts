@@ -16,6 +16,7 @@ import * as migration_20260914_173438_best_price_we_inspect_blocks from './20260
 import * as migration_20260914_175735_quote_block from './20260914_175735_quote_block';
 import * as migration_20260914_183254_hero_sales_and_yachts_blocks from './20260914_183254_hero_sales_and_yachts_blocks';
 import * as migration_20260914_192256_descriptor_blocks from './20260914_192256_descriptor_blocks';
+import * as migration_20260914_193505_small_hero_blocks from './20260914_193505_small_hero_blocks';
 
 export const migrations = [
   {
@@ -106,6 +107,11 @@ export const migrations = [
   {
     up: migration_20260914_192256_descriptor_blocks.up,
     down: migration_20260914_192256_descriptor_blocks.down,
-    name: '20260914_192256_descriptor_blocks'
+    name: '20260914_192256_descriptor_blocks',
+  },
+  {
+    up: migration_20260914_193505_small_hero_blocks.up,
+    down: migration_20260914_193505_small_hero_blocks.down,
+    name: '20260914_193505_small_hero_blocks'
   },
 ];

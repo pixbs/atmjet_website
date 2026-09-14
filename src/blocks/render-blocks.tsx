@@ -10,6 +10,10 @@ import { Faq } from './Faq/Component'
 import { FramedDescriptor } from './FramedDescriptor/Component'
 import { GroupCards } from './GroupCards/Component'
 import { Guide } from './Guide/Component'
+import { HeroAircraft } from './HeroAircraft/Component'
+import { HeroEmptyLegs } from './HeroEmptyLegs/Component'
+import { HeroGroup } from './HeroGroup/Component'
+import { HeroPartners } from './HeroPartners/Component'
 import { HeroSales } from './HeroSales/Component'
 import { HeroSubpage } from './HeroSubpage/Component'
 import { HeroYachts } from './HeroYachts/Component'
@@ -122,6 +126,53 @@ function blockFor(block: LayoutBlock, key: string) {
           image={image}
           points={(block.points ?? []).map((point) => point.text)}
           title={block.title}
+        />
+      )
+    }
+    case 'heroAircraft':
+      return (
+        <HeroAircraft
+          key={key}
+          description={block.description}
+          figure={block.figure}
+          title={block.title}
+          title2={block.title2}
+        />
+      )
+    case 'heroEmptyLegs': {
+      const image = mediaSource(typeof block.image === 'object' ? block.image : null)
+
+      return image === null ? null : (
+        <HeroEmptyLegs
+          key={key}
+          description={block.description}
+          figure={block.figure}
+          image={image}
+          subtitle={block.subtitle}
+          title={block.title}
+        />
+      )
+    }
+    case 'heroGroup':
+      return (
+        <HeroGroup
+          key={key}
+          chip={block.chip}
+          description={block.description}
+          title={block.title}
+        />
+      )
+    case 'heroPartners': {
+      const image = mediaSource(typeof block.image === 'object' ? block.image : null)
+
+      return image === null ? null : (
+        <HeroPartners
+          key={key}
+          description={block.description}
+          figure={block.figure}
+          image={image}
+          title={block.title}
+          title2={block.title2}
         />
       )
     }

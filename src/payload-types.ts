@@ -265,6 +265,10 @@ export interface Page {
         | FramedDescriptorBlock
         | GroupCardsBlock
         | GuideBlock
+        | HeroAircraftBlock
+        | HeroEmptyLegsBlock
+        | HeroGroupBlock
+        | HeroPartnersBlock
         | HeroSalesBlock
         | HeroSubpageBlock
         | HeroYachtsBlock
@@ -441,6 +445,77 @@ export interface GuideBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'guide';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "HeroAircraftBlock".
+ */
+export interface HeroAircraftBlock {
+  title: string;
+  /**
+   * Counted up when the hero arrives, as `50,000`.
+   */
+  figure: string;
+  /**
+   * The rest of the heading, after the figure.
+   */
+  title2: string;
+  description: string;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'heroAircraft';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "HeroEmptyLegsBlock".
+ */
+export interface HeroEmptyLegsBlock {
+  /**
+   * Counted up over the heading, as `75%`.
+   */
+  figure: string;
+  title: string;
+  image: number | Media;
+  subtitle: string;
+  description: string;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'heroEmptyLegs';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "HeroGroupBlock".
+ */
+export interface HeroGroupBlock {
+  /**
+   * The word in the pill over the heading.
+   */
+  chip: string;
+  title: string;
+  description: string;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'heroGroup';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "HeroPartnersBlock".
+ */
+export interface HeroPartnersBlock {
+  title: string;
+  /**
+   * Counted up when the hero arrives, painted with the gold gradient.
+   */
+  figure: string;
+  /**
+   * The rest of the heading, after the figure.
+   */
+  title2: string;
+  description: string;
+  image: number | Media;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'heroPartners';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1613,6 +1688,10 @@ export interface PagesSelect<T extends boolean = true> {
         framedDescriptor?: T | FramedDescriptorBlockSelect<T>;
         groupCards?: T | GroupCardsBlockSelect<T>;
         guide?: T | GuideBlockSelect<T>;
+        heroAircraft?: T | HeroAircraftBlockSelect<T>;
+        heroEmptyLegs?: T | HeroEmptyLegsBlockSelect<T>;
+        heroGroup?: T | HeroGroupBlockSelect<T>;
+        heroPartners?: T | HeroPartnersBlockSelect<T>;
         heroSales?: T | HeroSalesBlockSelect<T>;
         heroSubpage?: T | HeroSubpageBlockSelect<T>;
         heroYachts?: T | HeroYachtsBlockSelect<T>;
@@ -1754,6 +1833,55 @@ export interface GuideBlockSelect<T extends boolean = true> {
         text?: T;
         id?: T;
       };
+  image?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "HeroAircraftBlock_select".
+ */
+export interface HeroAircraftBlockSelect<T extends boolean = true> {
+  title?: T;
+  figure?: T;
+  title2?: T;
+  description?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "HeroEmptyLegsBlock_select".
+ */
+export interface HeroEmptyLegsBlockSelect<T extends boolean = true> {
+  figure?: T;
+  title?: T;
+  image?: T;
+  subtitle?: T;
+  description?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "HeroGroupBlock_select".
+ */
+export interface HeroGroupBlockSelect<T extends boolean = true> {
+  chip?: T;
+  title?: T;
+  description?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "HeroPartnersBlock_select".
+ */
+export interface HeroPartnersBlockSelect<T extends boolean = true> {
+  title?: T;
+  figure?: T;
+  title2?: T;
+  description?: T;
   image?: T;
   id?: T;
   blockName?: T;
