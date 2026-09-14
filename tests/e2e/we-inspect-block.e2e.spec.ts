@@ -30,12 +30,22 @@ test.describe('the we inspect section', () => {
     const section = page.locator(SECTION)
     const first = section.locator('[data-card="inspect"]').first()
     await expect(first).toBeVisible()
+    // The hero above this section is a screen tall, so the cards have to be brought onto the
+    // screen before the pointer can be put on them.
+    await section.scrollIntoViewIfNeeded()
     const box = await first.boundingBox()
     expect(box).not.toBeNull()
 
     const bar = section.locator('[aria-hidden="true"]').last()
     const filled = async () => Number((await bar.getAttribute('style'))?.match(/[\d.]+/)?.[0] ?? -1)
     expect(await filled()).toBe(0)
+
+    // A drag is dispatched rather than clicked, so it waits for nothing on its own: the row has
+    // to be in the carousel's hands first, which is when a transform of its own appears on it.
+    const track = first.locator('..')
+    await expect
+      .poll(() => track.evaluate((element: HTMLElement) => element.style.transform))
+      .not.toBe('')
 
     // The legacy carousel had no arrows and no dots: dragging is the only way through it.
     const middle = box!.y + box!.height / 2

@@ -8,13 +8,11 @@ import { hideDevOverlay, hideFloatingHeader, waitForPhotos } from './chrome'
  * the row of cards as it rests on the first of them, running into the gutter as the legacy row
  * did. The gold line under them has no width until they move, so it is the e2e that pins it.
  *
- * A clip of the screen taken from the section's own corner rather than from the screen's, so
- * what is captured cannot move when a section above it changes.
+ * The section itself is captured rather than a clip of the screen, as the other sections are:
+ * this one sits at the foot of its page under a hero a whole screen tall (issue #114), so there
+ * is not enough page under it to scroll it to the top of a screen clip.
  */
 const SECTION = '[data-section="we-inspect"]'
-
-/** The heading, the cards, and the strip below them the line is drawn in. */
-const HEIGHT = 510
 
 test('the we inspect section matches its baseline', async ({ page }) => {
   await page.goto(pathFor('/sales_yachts', 'en'))
@@ -25,23 +23,8 @@ test('the we inspect section matches its baseline', async ({ page }) => {
   await hideDevOverlay(page)
 
   // The scroll comes first: a picture that has not been near the screen has not been fetched.
-  const toTheTop = () =>
-    section.evaluate((element) =>
-      window.scrollTo({
-        top: element.getBoundingClientRect().top + window.scrollY,
-        behavior: 'instant',
-      }),
-    )
-
-  await toTheTop()
+  await section.scrollIntoViewIfNeeded()
   await waitForPhotos(section)
-  await toTheTop()
 
-  const box = await section.boundingBox()
-  expect(box).not.toBeNull()
-  expect(box!.y + HEIGHT).toBeLessThanOrEqual(page.viewportSize()!.height)
-
-  await expect(page).toHaveScreenshot('we-inspect.png', {
-    clip: { x: box!.x, y: box!.y, width: box!.width, height: HEIGHT },
-  })
+  await expect(section).toHaveScreenshot('we-inspect.png')
 })
