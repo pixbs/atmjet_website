@@ -3,6 +3,7 @@ import { notFound, permanentRedirect, redirect } from 'next/navigation'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import React from 'react'
 
+import { RenderBlocks } from '@/blocks/render-blocks'
 import { servedStatusFor } from '@/collections/Redirects'
 import { JsonLd } from '@/components/ui/json-ld'
 import type { Locale } from '@/i18n/locales'
@@ -20,15 +21,15 @@ import { siteOrigin } from '@/lib/urls'
  *
  * An optional catch-all, so a purpose-built route added later for a database-driven listing
  * (the aircraft and yachts pages of E8) takes precedence over this one automatically. The
- * sections themselves arrive in E7; until then a page renders its title, which is what the
- * acceptance test checks reaches the browser in the server response.
+ * sections are the blocks of the page's layout (E7), rendered in the order an editor put them;
+ * a page with none renders its title alone, which is what it did before the blocks existed.
  */
 interface PageParams {
   locale: string
   slug?: string[]
 }
 
-/** The `plugin-seo` fields on a page; `image` is populated only when the read asks for depth. */
+/** The `plugin-seo` fields on a page; `image` is the document, not its id, at this depth. */
 interface PageSeo {
   title?: string | null
   description?: string | null
@@ -37,9 +38,9 @@ interface PageSeo {
 
 const slugFrom = (segments: string[] | undefined): string => (segments ?? []).join('/')
 
-// `depth` is 1 only where the share image is read: a relationship the markup does not render
-// costs a join on every request (docs/conventions/rendering.md).
-async function findPage(locale: string, slug: string, depth = 0) {
+// `depth` is 1: the blocks of the layout draw their own uploads, and `generateMetadata` reads
+// the share image off the same document (docs/conventions/rendering.md).
+async function findPage(locale: string, slug: string) {
   const payload = await getPayloadClient()
 
   const result = await payload.find({
@@ -47,7 +48,7 @@ async function findPage(locale: string, slug: string, depth = 0) {
     where: { slug: { equals: slug } },
     locale: locale as 'en',
     limit: 1,
-    depth,
+    depth: 1,
     // Drafts stay invisible here: this is a public read, so `publishedOnly` applies.
     overrideAccess: false,
   })
@@ -77,7 +78,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale, slug } = await params
   const [page, locales, t] = await Promise.all([
-    findPage(locale, slugFrom(slug), 1),
+    findPage(locale, slugFrom(slug)),
     getEnabledLocales(),
     getTranslations({ locale, namespace: 'seo' }),
   ])
@@ -137,10 +138,17 @@ export default async function CatchAllPage({ params }: { params: Promise<PagePar
   })
 
   return (
-    <article className="container gap-8 py-16">
-      <h1>{page.title}</h1>
-      {/* Sections render here from `page.layout` once the blocks of E7 exist. */}
+    <>
+      {(page.layout ?? []).length === 0 ? (
+        // A page whose sections have not been ported yet renders its title, as it did before
+        // any block existed (issue #60).
+        <article className="container gap-8 py-16">
+          <h1>{page.title}</h1>
+        </article>
+      ) : (
+        <RenderBlocks layout={page.layout} />
+      )}
       {trail && <JsonLd data={trail} />}
-    </article>
+    </>
   )
 }

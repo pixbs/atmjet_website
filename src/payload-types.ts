@@ -255,7 +255,7 @@ export interface Page {
   /**
    * The sections of this page, in the order they are rendered.
    */
-  layout?: unknown[] | null;
+  layout?: HeroSubpageBlock[] | null;
   meta?: {
     title?: string | null;
     description?: string | null;
@@ -267,6 +267,21 @@ export interface Page {
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "HeroSubpageBlock".
+ */
+export interface HeroSubpageBlock {
+  title: string;
+  /**
+   * The sentence under the heading; the legacy citizens page had none.
+   */
+  description?: string | null;
+  image: number | Media;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'heroSubpage';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1149,7 +1164,11 @@ export interface MediaSelect<T extends boolean = true> {
 export interface PagesSelect<T extends boolean = true> {
   title?: T;
   slug?: T;
-  layout?: T | {};
+  layout?:
+    | T
+    | {
+        heroSubpage?: T | HeroSubpageBlockSelect<T>;
+      };
   meta?:
     | T
     | {
@@ -1160,6 +1179,17 @@ export interface PagesSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "HeroSubpageBlock_select".
+ */
+export interface HeroSubpageBlockSelect<T extends boolean = true> {
+  title?: T;
+  description?: T;
+  image?: T;
+  id?: T;
+  blockName?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
