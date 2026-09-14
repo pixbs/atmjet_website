@@ -259,6 +259,7 @@ export interface Page {
     | (
         | DocumentsBlock
         | FaqBlock
+        | GroupCardsBlock
         | GuideBlock
         | HeroSubpageBlock
         | KeyFeaturesBlock
@@ -324,6 +325,31 @@ export interface FaqBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'faq';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "GroupCardsBlock".
+ */
+export interface GroupCardsBlock {
+  /**
+   * One under the next, with a rule between them.
+   */
+  cards?:
+    | {
+        title: string;
+        description: string;
+        label: string;
+        image: number | Media;
+        /**
+         * The page this card opens. Its slug decides the URL.
+         */
+        page?: (number | null) | Page;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'groupCards';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1407,6 +1433,7 @@ export interface PagesSelect<T extends boolean = true> {
     | {
         documents?: T | DocumentsBlockSelect<T>;
         faq?: T | FaqBlockSelect<T>;
+        groupCards?: T | GroupCardsBlockSelect<T>;
         guide?: T | GuideBlockSelect<T>;
         heroSubpage?: T | HeroSubpageBlockSelect<T>;
         keyFeatures?: T | KeyFeaturesBlockSelect<T>;
@@ -1455,6 +1482,24 @@ export interface FaqBlockSelect<T extends boolean = true> {
     | {
         question?: T;
         answer?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "GroupCardsBlock_select".
+ */
+export interface GroupCardsBlockSelect<T extends boolean = true> {
+  cards?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        label?: T;
+        image?: T;
+        page?: T;
         id?: T;
       };
   id?: T;

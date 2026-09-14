@@ -3,6 +3,7 @@ import type { CollectionConfig } from 'payload'
 import { editorOrAdmin, publishedOnly } from '@/access'
 import { documents } from '@/blocks/Documents/config'
 import { faq } from '@/blocks/Faq/config'
+import { groupCards } from '@/blocks/GroupCards/config'
 import { guide } from '@/blocks/Guide/config'
 import { heroSubpage } from '@/blocks/HeroSubpage/config'
 import { keyFeatures } from '@/blocks/KeyFeatures/config'
@@ -102,6 +103,7 @@ export const Pages: CollectionConfig = {
       blocks: [
         documents,
         faq,
+        groupCards,
         guide,
         heroSubpage,
         keyFeatures,

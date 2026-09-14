@@ -10,6 +10,7 @@ import * as migration_20260914_134329_options_tiles_block from './20260914_13432
 import * as migration_20260914_143330_tiles_block from './20260914_143330_tiles_block';
 import * as migration_20260914_150937_faq_block from './20260914_150937_faq_block';
 import * as migration_20260914_154856_guide_and_documents_blocks from './20260914_154856_guide_and_documents_blocks';
+import * as migration_20260914_162727_group_cards_block from './20260914_162727_group_cards_block';
 
 export const migrations = [
   {
@@ -70,6 +71,11 @@ export const migrations = [
   {
     up: migration_20260914_154856_guide_and_documents_blocks.up,
     down: migration_20260914_154856_guide_and_documents_blocks.down,
-    name: '20260914_154856_guide_and_documents_blocks'
+    name: '20260914_154856_guide_and_documents_blocks',
+  },
+  {
+    up: migration_20260914_162727_group_cards_block.up,
+    down: migration_20260914_162727_group_cards_block.down,
+    name: '20260914_162727_group_cards_block'
   },
 ];
