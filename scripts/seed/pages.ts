@@ -302,6 +302,22 @@ const GROUP_CARDS: { slug: string; en: [string, string, string]; ru: [string, st
     },
   ]
 
+/** The three advantages the legacy sales department page listed (issue #128, section 5). */
+const ADVANTAGES: { en: [string, string]; ru: [string, string] }[] = [
+  {
+    en: ['Valued honestly', 'What the aircraft is worth on the day, not what it cost to buy.'],
+    ru: ['Честная оценка', 'Сколько борт стоит сегодня, а не сколько за него заплатили.'],
+  },
+  {
+    en: ['Shown to buyers', 'A list of people who fly the type, not an advertisement.'],
+    ru: ['Показ покупателям', 'Список тех, кто летает на этом типе, а не объявление.'],
+  },
+  {
+    en: ['Closed properly', 'Escrow, export papers and the pre-buy inspection arranged here.'],
+    ru: ['Корректное закрытие', 'Эскроу, экспортные документы и предпродажная инспекция — на нас.'],
+  },
+]
+
 /** The sections a seeded page starts with; a page with no entry here starts with none. */
 function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout {
   const sections: Layout = []
@@ -344,6 +360,14 @@ function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout 
         description: card[locale][1],
         image: card.withImage ? fixture.photo : undefined,
       })),
+    })
+
+  if (slug === 'sales_dept')
+    sections.push({
+      blockType: 'advantages',
+      title: locale === 'en' ? 'Selling through us' : 'Продажа через нас',
+      image: fixture.photo,
+      cards: ADVANTAGES.map((card) => ({ title: card[locale][0], description: card[locale][1] })),
     })
 
   if (slug === 'atm_jet_group')
@@ -485,6 +509,15 @@ function translated(layout: Layout | null | undefined, slug: string, fixture: Fi
 
     // One case per block type: a spread over the union widens every field back to optional.
     switch (block.blockType) {
+      case 'advantages':
+        return {
+          ...block,
+          id,
+          cards: withRowIds(
+            block.cards ?? [],
+            written?.blockType === 'advantages' ? written.cards : undefined,
+          ),
+        }
       case 'documents':
         return {
           ...block,
