@@ -10,6 +10,8 @@ import { Accordion, AccordionItem } from '@/components/ui/accordion'
 import { EmptyLegCard } from '@/components/cards/empty-leg-card'
 import { FileCard } from '@/components/cards/file-card'
 import { GroupCard } from '@/components/cards/group-card'
+import { PrivilegeCard } from '@/components/cards/privilege-card'
+import { YachtsCard } from '@/components/cards/yachts-card'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { Carousel, CarouselArrows, CarouselDots, CarouselProgress } from '@/components/ui/carousel'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -123,6 +125,35 @@ const FILE_CARDS = [
       label: 'Download',
       href: 'https://atmjet.ams3.cdn.digitaloceanspaces.com/presentation/ATM%20JET%20Presentation.pdf',
     },
+  },
+]
+
+/** The three privileges the section stacks, with the icons the legacy gave them. */
+const PRIVILEGES = [
+  {
+    Icon: icons.PlaneGold,
+    title: 'A jet within three hours',
+    description: 'An aircraft ready at the nearest airport, whatever the hour.',
+  },
+  {
+    Icon: icons.Exchange,
+    title: 'One price, agreed once',
+    description: 'What is quoted is what is invoiced, with no fuel or handling added later.',
+  },
+  {
+    Icon: icons.DiamondGold,
+    title: 'The cabin as you left it',
+    description: 'Crew, catering and cabin kept to the standard you set on the first flight.',
+  },
+]
+
+/** What the yachts promotion says in its three columns. */
+const YACHT_COLUMNS = [
+  { title: 'The fleet', description: 'Motor yachts and sailing yachts from 20 to 100 metres.' },
+  { title: 'The crew', description: 'A captain and a crew who know the water you are sailing.' },
+  {
+    title: 'The route',
+    description: 'A week in the Mediterranean or a crossing, planned around you.',
   },
 ]
 
@@ -382,6 +413,30 @@ export default async function StyleguidePage({ params }: { params: Promise<{ loc
               {FILE_CARDS.map((card) => (
                 <FileCard key={card.file.href} {...card} image={uploads[0]!} />
               ))}
+            </div>
+            {/* The privileges section gives the stack a clipped box to slide inside. */}
+            <div className="overflow-clip rounded-2xl" data-cards="privilege">
+              {PRIVILEGES.map(({ Icon, title, description }, index) => (
+                <PrivilegeCard
+                  key={title}
+                  description={description}
+                  icon={<Icon className="size-11 shrink-0" />}
+                  title={title}
+                  // Each card stops a little further down than the one above it.
+                  top={(index + 1) * 32}
+                />
+              ))}
+            </div>
+            <div data-cards="yachts">
+              <YachtsCard
+                columns={YACHT_COLUMNS}
+                image={uploads[0]!}
+                invitation={{
+                  image: uploads[0]!,
+                  title: 'A yacht for the week after the flight',
+                  action: { label: 'See the yachts', href: 'yachts' },
+                }}
+              />
             </div>
           </div>
         )}
