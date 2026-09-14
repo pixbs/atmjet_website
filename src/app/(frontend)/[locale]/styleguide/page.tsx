@@ -8,7 +8,10 @@ import { Line } from '@/components/motion/line'
 import { Reveal } from '@/components/motion/reveal'
 import { Accordion, AccordionItem } from '@/components/ui/accordion'
 import { Button, buttonVariants } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
+import { Input } from '@/components/ui/input'
 import { LocaleSwitch } from '@/components/ui/locale-switch'
+import { Select } from '@/components/ui/select'
 import { getEnabledLocales } from '@/lib/data/site-settings'
 
 /**
@@ -107,6 +110,24 @@ export default async function StyleguidePage({ params }: { params: Promise<{ loc
         <div className="w-full max-w-screen-sm gap-4">
           <input aria-label="Default input" placeholder="Default input" />
           <input aria-label="Dark input" className="dark" placeholder="Dark input" />
+        </div>
+      </section>
+
+      <section id="fields" data-section="fields" className="container items-start gap-4">
+        <h3>Fields</h3>
+        <div className="w-full max-w-screen-sm gap-4">
+          <Input id="field-from" label="From" placeholder="City or airport" />
+          <Select id="field-sort" label="Sort by" defaultValue="size">
+            <option value="size">Size</option>
+            <option value="passengers">Passengers</option>
+            <option value="range">Range</option>
+          </Select>
+          <div className="flex-row items-center gap-4">
+            <Checkbox id="field-consent" defaultChecked />
+            <label htmlFor="field-consent">Checked</label>
+            <Checkbox id="field-optional" />
+            <label htmlFor="field-optional">Unchecked</label>
+          </div>
         </div>
       </section>
 
