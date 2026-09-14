@@ -8,7 +8,8 @@ import { routing } from './routing'
  * which is how the legacy navbar ended up linking home without a prefix
  * (`docs/legacy-inventory.md` section 3.3).
  *
- * The other members of `createNavigation` (`redirect`, `useRouter`, `usePathname`) are exported
- * when the first component needs one.
+ * `usePathname` returns the path without the locale prefix, which is what a link that switches
+ * language needs (issue #90). The remaining members (`redirect`, `useRouter`) are exported when
+ * the first component needs one.
  */
-export const { Link } = createNavigation(routing)
+export const { Link, usePathname } = createNavigation(routing)

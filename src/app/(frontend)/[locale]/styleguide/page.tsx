@@ -8,6 +8,8 @@ import { Line } from '@/components/motion/line'
 import { Reveal } from '@/components/motion/reveal'
 import { Accordion, AccordionItem } from '@/components/ui/accordion'
 import { Button, buttonVariants } from '@/components/ui/button'
+import { LocaleSwitch } from '@/components/ui/locale-switch'
+import { getEnabledLocales } from '@/lib/data/site-settings'
 
 /**
  * Fixture page for the parity base layer (issue #48). It renders every global rule the
@@ -65,6 +67,9 @@ function Swatch({ label, className }: { label: string; className: string }) {
 export default async function StyleguidePage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params
   setRequestLocale(locale)
+
+  // The switcher offers the languages the settings enable, which is what the chrome will pass it.
+  const locales = await getEnabledLocales()
 
   return (
     <div className="gap-16 py-16">
@@ -162,6 +167,15 @@ export default async function StyleguidePage({ params }: { params: Promise<{ loc
             <p>Opening this one closes the other: one answer shows at a time.</p>
           </AccordionItem>
         </Accordion>
+      </section>
+
+      <section
+        id="locale-switch"
+        data-section="locale-switch"
+        className="container items-start gap-4"
+      >
+        <h3>Language</h3>
+        <LocaleSwitch locales={locales} />
       </section>
 
       <section id="palette" className="container items-start gap-4">

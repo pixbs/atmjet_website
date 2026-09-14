@@ -2,7 +2,8 @@
   "common": {
     "skipToContent": "Skip to content",
     "loading": "Loading",
-    "home": "Home"
+    "home": "Home",
+    "language": "Language"
   },
   "errors": {
     "notFound": {
