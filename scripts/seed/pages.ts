@@ -185,6 +185,27 @@ const YACHT_COLUMNS: { en: [string, string]; ru: [string, string] }[] = [
   },
 ]
 
+/**
+ * The two tiles the legacy home page offered its trade visitors (issue #119, section 5). The
+ * home page's own composition is E8.1's to settle (#134), so the fixture shows them on the
+ * partners page, which has no sections of its own yet.
+ */
+const OPTIONS_TILES: { slug: string; dim: boolean; en: [string, string]; ru: [string, string] }[] =
+  [
+    {
+      slug: 'business_agents',
+      dim: false,
+      en: ['For personal assistants', 'What we offer'],
+      ru: ['Персональным ассистентам', 'Что мы предлагаем'],
+    },
+    {
+      slug: 'partners',
+      dim: true,
+      en: ['For agencies', 'How we work together'],
+      ru: ['Агентствам', 'Как мы работаем вместе'],
+    },
+  ]
+
 /** The sections a seeded page starts with; a page with no entry here starts with none. */
 function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout {
   const sections: Layout = []
@@ -251,6 +272,26 @@ function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout 
       },
     })
 
+  if (slug === 'partners')
+    sections.push({
+      blockType: 'optionsTiles',
+      tiles: OPTIONS_TILES.flatMap((tile) => {
+        const page = fixture.pages.get(tile.slug)
+
+        return page === undefined
+          ? []
+          : [
+              {
+                image: fixture.photo,
+                title: tile[locale][0],
+                label: tile[locale][1],
+                page,
+                dim: tile.dim,
+              },
+            ]
+      }),
+    })
+
   const yachts = fixture.pages.get('yachts')
   if (slug === 'atm_jet_group' && yachts !== undefined)
     sections.push({
@@ -293,6 +334,15 @@ function translated(layout: Layout | null | undefined, slug: string, fixture: Fi
         return { ...block, id }
       case 'keyFeatures':
         return { ...block, id, cards: withRowIds(block.cards ?? [], rows) }
+      case 'optionsTiles':
+        return {
+          ...block,
+          id,
+          tiles: withRowIds(
+            block.tiles ?? [],
+            written?.blockType === 'optionsTiles' ? written.tiles : undefined,
+          ),
+        }
       case 'privilege':
         return { ...block, id, cards: withRowIds(block.cards ?? [], rows) }
       case 'whyUs':

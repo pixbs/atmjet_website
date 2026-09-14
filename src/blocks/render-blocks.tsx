@@ -4,6 +4,7 @@ import type { Page } from '@/payload-types'
 
 import { HeroSubpage } from './HeroSubpage/Component'
 import { KeyFeatures } from './KeyFeatures/Component'
+import { OptionsTiles } from './OptionsTiles/Component'
 import { Privilege } from './Privilege/Component'
 import { YachtsPromo } from './YachtsPromo/Component'
 import { WhyUs } from './WhyUs/Component'
@@ -48,6 +49,27 @@ function blockFor(block: LayoutBlock, key: string) {
           title={block.title}
         />
       )
+    }
+    case 'optionsTiles': {
+      // A tile needs both its photograph and somewhere to lead; one without either is left out
+      // rather than drawn as a dead square, and a section of none is left out altogether.
+      const tiles = (block.tiles ?? []).flatMap((tile) => {
+        const image = mediaSource(typeof tile.image === 'object' ? tile.image : null)
+        const page = typeof tile.page === 'object' ? tile.page : null
+        if (image === null || page === null) return []
+
+        return [
+          {
+            dim: tile.dim ?? false,
+            href: hrefForSlug(page.slug ?? ''),
+            image,
+            label: tile.label,
+            title: tile.title,
+          },
+        ]
+      })
+
+      return tiles.length === 0 ? null : <OptionsTiles key={key} tiles={tiles} />
     }
     case 'privilege':
       return (
