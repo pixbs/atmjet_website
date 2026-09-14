@@ -4,15 +4,16 @@ How to add a component to this project (issue #49). The decisions behind it are 
 
 ## Where code goes
 
-| Folder                     | What lives there                                                                  |
-| -------------------------- | --------------------------------------------------------------------------------- |
-| `src/components/ui`        | primitives with no domain knowledge: button, input, checkbox, carousel arrows     |
-| `src/components/motion`    | the animation primitives built on `src/lib/motion.ts`: reveal, line, counter      |
-| `src/components/icons`     | the ported SVG artwork, one component per legacy file, all sharing `IconProps`    |
-| `src/components/sections`  | shells shared by several sections: headers, footers, dialogs                      |
-| `src/components/providers` | context providers mounted once in the layout                                      |
-| `src/blocks/<Block>`       | a Payload block: `config.ts` (field definitions) next to `Component.tsx` (its UI) |
-| `src/lib`                  | pure helpers, no JSX: `cn`, the motion vocabulary, formatting, parsing            |
+| Folder                     | What lives there                                                                         |
+| -------------------------- | ---------------------------------------------------------------------------------------- |
+| `src/components/ui`        | primitives with no domain knowledge: button, input, checkbox, carousel arrows            |
+| `src/components/motion`    | the animation primitives built on `src/lib/motion.ts`: reveal, line, counter             |
+| `src/components/icons`     | the ported SVG artwork, one component per legacy file, all sharing `IconProps`           |
+| `src/components/cards`     | a card that renders one document of a collection: empty leg, vehicle, yacht (issue #104) |
+| `src/components/sections`  | shells shared by several sections: headers, footers, dialogs                             |
+| `src/components/providers` | context providers mounted once in the layout                                             |
+| `src/blocks/<Block>`       | a Payload block: `config.ts` (field definitions) next to `Component.tsx` (its UI)        |
+| `src/lib`                  | pure helpers, no JSX: `cn`, the motion vocabulary, formatting, parsing                   |
 
 One component per file, named after the file (`button.tsx` exports `Button`). A component that is only used by one block lives next to that block, not in `ui`.
 

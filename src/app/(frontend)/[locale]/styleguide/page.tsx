@@ -1,4 +1,4 @@
-import { setRequestLocale } from 'next-intl/server'
+import { getTranslations, setRequestLocale } from 'next-intl/server'
 import type { Metadata } from 'next'
 import React from 'react'
 
@@ -7,6 +7,7 @@ import { Counter } from '@/components/motion/counter'
 import { Line } from '@/components/motion/line'
 import { Reveal } from '@/components/motion/reveal'
 import { Accordion, AccordionItem } from '@/components/ui/accordion'
+import { EmptyLegCard } from '@/components/cards/empty-leg-card'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { Carousel, CarouselArrows, CarouselDots, CarouselProgress } from '@/components/ui/carousel'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -63,6 +64,31 @@ const RADII = ['rounded-sm', 'rounded-xl', 'rounded-2xl', 'rounded-3xl', 'rounde
 /** Enough slides for the dots to have something to count and the progress bar somewhere to go. */
 const SLIDES = ['One', 'Two', 'Three', 'Four', 'Five']
 
+/** Three legs: one priced in dollars, one in dirhams, one the legacy admin never priced. */
+const EMPTY_LEGS = [
+  {
+    departureAt: '2026-03-05T09:00:00.000Z',
+    price: 12_000,
+    currency: 'USD',
+    from: { icao: 'OMDB', airport: 'Dubai' },
+    to: { icao: 'LFPB', airport: 'Paris Le Bourget' },
+  },
+  {
+    departureAt: '2026-04-18T15:30:00.000Z',
+    price: 8_500,
+    currency: 'AED',
+    from: { icao: 'OMDW', airport: 'Al Maktoum' },
+    to: { icao: 'UUWW' },
+  },
+  {
+    departureAt: '2026-05-02T06:15:00.000Z',
+    price: null,
+    currency: 'USD',
+    from: { icao: 'EGGW', airport: 'Luton' },
+    to: { icao: 'LSGG', airport: 'Geneva' },
+  },
+]
+
 /** The seed ships two placeholder uploads, so a longer strip is made by going round them. */
 const repeat = <T,>(items: readonly T[], count: number): T[] =>
   Array.from({ length: count }, (_, index) => items[index % items.length]!)
@@ -84,6 +110,7 @@ export default async function StyleguidePage({ params }: { params: Promise<{ loc
   setRequestLocale(locale)
 
   // The switcher offers the languages the settings enable, which is what the chrome will pass it.
+  const t = await getTranslations({ locale, namespace: 'common' })
   const [locales, uploads] = await Promise.all([
     getEnabledLocales(),
     // The gallery needs real files; the seed's placeholders stand in until the media migration
@@ -185,6 +212,23 @@ export default async function StyleguidePage({ params }: { params: Promise<{ loc
           <h4>Revealed on scroll</h4>
           <p>Fades and rises into place when it enters the viewport, and again when it returns.</p>
         </Reveal>
+      </section>
+
+      {/* The legacy section sat on the darker surface, which is what the card is read against. */}
+      <section id="empty-legs" data-section="empty-legs" className="w-full bg-graphite-950 py-10">
+        <div className="container items-start gap-4">
+          <h3>Empty legs</h3>
+          <div className="w-full max-w-screen-sm gap-4">
+            {EMPTY_LEGS.map((leg) => (
+              <EmptyLegCard
+                key={leg.from.icao}
+                {...leg}
+                booking={{ label: 'Make a booking', href: '?showBooking=Empty-legs' }}
+                noPriceLabel={t('notAvailable')}
+              />
+            ))}
+          </div>
+        </div>
       </section>
 
       <section id="gallery" data-section="gallery" className="container items-start gap-4">

@@ -6,7 +6,8 @@
     "language": "Мова",
     "openMenu": "Відкрити меню",
     "closeMenu": "Закрити меню",
-    "logo": "ATM JET, на головну сторінку"
+    "logo": "ATM JET, на головну сторінку",
+    "notAvailable": "Н/Д"
   },
   "social": {
     "telegram": "Telegram",
