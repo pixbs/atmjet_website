@@ -159,3 +159,94 @@ describe('a database that cannot be reached', () => {
     warn.mockRestore()
   })
 })
+
+/**
+ * The map as a whole, rather than one rule at a time (issue #172). A loop reads perfectly well on
+ * the row that closes it, and a rule that catches a page's own path hides that page, so the seed
+ * checks the collection against the pages before it reports success.
+ */
+describe('the map as a whole', () => {
+  /** Writes rules, runs the seed's check through it, and takes them away again. */
+  async function seedWith(rules: Array<{ from: string; to: string; matchSubPaths?: boolean }>) {
+    const created = []
+
+    for (const rule of rules) {
+      created.push(
+        await registry.payload.create({
+          collection: 'redirects',
+          data: {
+            from: rule.from,
+            to: { type: 'custom', url: rule.to },
+            type: '308',
+            matchSubPaths: rule.matchSubPaths ?? false,
+          },
+          overrideAccess: true,
+          context: { skipRevalidation: true },
+        }),
+      )
+    }
+
+    try {
+      return await seedRedirects(registry.payload)
+    } finally {
+      for (const document of created) {
+        await registry.payload
+          .delete({ collection: 'redirects', id: document.id, overrideAccess: true })
+          .catch(() => undefined)
+      }
+    }
+  }
+
+  it('accepts the map the site ships with', async () => {
+    await expect(seedWith([])).resolves.toHaveLength(LEGACY_REDIRECTS.length)
+  })
+
+  it('refuses a map that sends a visitor round in circles', async () => {
+    const suffix = uniqueSuffix()
+
+    await expect(
+      seedWith([
+        { from: `/${suffix}-here`, to: `/${suffix}-there` },
+        { from: `/${suffix}-there`, to: `/${suffix}-here` },
+      ]),
+    ).rejects.toThrow(/loop/i)
+  })
+
+  it('refuses a map that hides a page behind a redirect', async () => {
+    const slug = `shadowed-${uniqueSuffix()}`
+    const page = await registry.create('pages', {
+      title: 'Shadowed',
+      slug,
+      layout: [],
+      _status: 'published',
+    })
+
+    await expect(seedWith([{ from: `/${slug}`, to: '/' }])).rejects.toThrow(/unreachable/i)
+    expect(page.slug).toBe(slug)
+  })
+
+  it('sees a loop that only exists in one language', async () => {
+    // A rule may be scoped to a locale, so a map that is sound in English can still loop in
+    // Russian; the check runs for each language the content model knows.
+    const suffix = uniqueSuffix()
+    const created = await registry.payload.create({
+      collection: 'redirects',
+      data: {
+        from: `/${suffix}-ru`,
+        to: { type: 'custom', url: `/${suffix}-ru` },
+        type: '308',
+        locale: 'ru',
+      },
+      overrideAccess: true,
+      context: { skipRevalidation: true },
+    })
+
+    try {
+      await expect(seedRedirects(registry.payload)).rejects.toThrow(/loop in ru/i)
+    } finally {
+      await registry.payload
+        .delete({ collection: 'redirects', id: created.id, overrideAccess: true })
+        .catch(() => undefined)
+    }
+  })
+})

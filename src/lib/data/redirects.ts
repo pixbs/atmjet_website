@@ -20,7 +20,7 @@ import { getPayloadClient } from './payload'
  */
 
 /** The shape of a stored redirect, as much of it as matching needs. */
-interface StoredRedirect {
+export interface StoredRedirect {
   from?: unknown
   matchSubPaths?: boolean | null
   locale?: string | null
@@ -47,8 +47,11 @@ function targetOf(redirect: StoredRedirect): string | undefined {
   return typeof slug === 'string' ? pathForPage('', slug).replace(/^\/+/, '/') : undefined
 }
 
-/** Every usable rule, most specific first, in the shape `matchRedirect` takes. */
-function rulesFrom(documents: readonly StoredRedirect[]): RedirectRule[] {
+/**
+ * Every usable rule, most specific first, in the shape `matchRedirect` takes. Exported for the
+ * soundness check the seed runs over the map it has just written (issue #172).
+ */
+export function redirectRulesFrom(documents: readonly StoredRedirect[]): RedirectRule[] {
   const rules: RedirectRule[] = []
 
   for (const document of documents) {
@@ -86,7 +89,7 @@ export async function findRedirect(
       overrideAccess: false,
     })
 
-    return matchRedirect(rulesFrom(result.docs as StoredRedirect[]), pathname, locale)
+    return matchRedirect(redirectRulesFrom(result.docs as StoredRedirect[]), pathname, locale)
   } catch (error) {
     // A 404 that cannot reach the database is still a 404, and a redirect lookup is not worth
     // turning it into a 500. The same reasoning as `listPageParams` at build time.

@@ -3,8 +3,10 @@ import { describe, expect, it } from 'vitest'
 import { servedStatusFor } from '@/collections/Redirects'
 import {
   bySpecificity,
+  findRedirectLoop,
   matchRedirect,
   normaliseRedirectPath,
+  shadowedPaths,
   type RedirectRule,
 } from '@/lib/redirects'
 
@@ -150,5 +152,81 @@ describe('servedStatusFor', () => {
     expect(servedStatusFor(307)).toBe(307)
     expect(servedStatusFor(302)).toBe(307)
     expect(servedStatusFor(303)).toBe(307)
+  })
+})
+
+/**
+ * Whether a rule set is sound (issue #172). A loop reads perfectly well on the row that closes
+ * it and a shadowed page looks fine in the list, so both are found before an editor saves rather
+ * than by the visitor whose browser gives up.
+ */
+describe('findRedirectLoop', () => {
+  it('accepts the legacy map, which is what the site ships with', () => {
+    // `/jets` lands on the locale root, which is a destination and not a step in a circle.
+    expect(findRedirectLoop(legacy, 'en')).toBeUndefined()
+    expect(findRedirectLoop(legacy, 'ru')).toBeUndefined()
+  })
+
+  it('follows a chain of rules to its end without calling it a loop', () => {
+    const rules: RedirectRule[] = [
+      { from: '/old', to: '/newer' },
+      { from: '/newer', to: '/newest' },
+    ]
+
+    expect(findRedirectLoop(rules, 'en')).toBeUndefined()
+  })
+
+  it('does not follow a visitor off the site', () => {
+    // Where they go after leaving is not ours to follow, however the path is spelled there.
+    const rules: RedirectRule[] = [{ from: '/brochure', to: 'https://example.com/brochure' }]
+
+    expect(findRedirectLoop(rules, 'en')).toBeUndefined()
+  })
+
+  it('finds two rules that send a visitor back and forth', () => {
+    const rules: RedirectRule[] = [
+      { from: '/here', to: '/there' },
+      { from: '/there', to: '/here' },
+    ]
+
+    expect(findRedirectLoop(rules, 'en')).toEqual(['/here', '/there', '/here'])
+  })
+
+  it('finds a rule that points at itself', () => {
+    expect(findRedirectLoop([{ from: '/round', to: '/round' }], 'en')).toEqual(['/round', '/round'])
+  })
+
+  it('finds a loop a sub-path rule closes without naming the path', () => {
+    // `/planes/x` lands on `/aircraft/x`, which this rule sends back under `/planes`.
+    const rules: RedirectRule[] = [
+      { from: '/planes', to: '/aircraft', matchSubPaths: true },
+      { from: '/aircraft', to: '/planes', matchSubPaths: true },
+    ]
+
+    expect(findRedirectLoop(rules, 'en')).toBeDefined()
+  })
+})
+
+describe('shadowedPaths', () => {
+  it('names a page a redirect answers for, which nobody could otherwise reach', () => {
+    const rules: RedirectRule[] = [{ from: '/partners', to: '/' }]
+
+    expect(shadowedPaths(rules, ['partners', 'yachts'], 'en')).toEqual(['/partners'])
+  })
+
+  it('leaves the legacy map alone, which catches no page the site serves', () => {
+    expect(shadowedPaths(legacy, ['', 'aircraft', 'yachts', 'partners'], 'en')).toEqual([])
+  })
+
+  it('sees a page caught by a rule written for the path above it', () => {
+    const rules: RedirectRule[] = [{ from: '/sales', to: '/', matchSubPaths: true }]
+
+    expect(shadowedPaths(rules, ['sales/yachts'], 'en')).toEqual(['/sales/yachts'])
+  })
+
+  it('counts the home page, whose path is the locale root', () => {
+    const rules: RedirectRule[] = [{ from: '/', to: '/aircraft' }]
+
+    expect(shadowedPaths(rules, [''], 'en')).toEqual(['/'])
   })
 })
