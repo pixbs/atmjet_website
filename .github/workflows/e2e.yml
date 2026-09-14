@@ -126,9 +126,12 @@ jobs:
         with:
           ref: ${{ needs.gate.outputs.sha }}
       - uses: treosh/lighthouse-ci-action@3e7e23fb74242897f95c0ba9cabad3d0227b9b18 # 12.6.2
+        env:
+          # Without it Lighthouse is redirected to the Vercel login and scores that (issue #246).
+          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
         with:
           urls: |
             ${{ needs.gate.outputs.base_url }}/
-          configPath: ./lighthouserc.json
+          configPath: ./lighthouserc.cjs
           uploadArtifacts: true
           temporaryPublicStorage: false

@@ -28,7 +28,7 @@
     "test:a11y": "cross-env NODE_OPTIONS=\"--no-deprecation --import=tsx/esm\" playwright test --project=a11y",
     "test:e2e": "cross-env NODE_OPTIONS=\"--no-deprecation --import=tsx/esm\" playwright test --project=e2e",
     "test:int": "cross-env NODE_OPTIONS=--no-deprecation vitest run --config ./vitest.config.mts --coverage",
-    "test:lighthouse": "lhci autorun --config=lighthouserc.json",
+    "test:lighthouse": "lhci autorun --config=lighthouserc.cjs",
     "test:visual": "cross-env NODE_OPTIONS=\"--no-deprecation --import=tsx/esm\" playwright test --project=visual",
     "test:visual:update": "bash scripts/ci/visual-update.sh",
     "typecheck": "next typegen && tsc --noEmit",
