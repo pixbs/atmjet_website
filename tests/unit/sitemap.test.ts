@@ -1,0 +1,83 @@
+import { describe, expect, it } from 'vitest'
+
+import { pageEntries, siteOrigin, type Listable } from '@/lib/sitemap'
+
+/**
+ * What `/sitemap.xml` offers a crawler (issue #171). The legacy sitemap was a written list of
+ * paths and listed `/citezens`, nothing at `/sales_yachts` and unprefixed URLs that redirect
+ * (`docs/legacy-inventory.md` section 2.3); these pin the behaviours that replace it.
+ */
+const ORIGIN = 'https://atmjet.com'
+
+const PAGES: Listable[] = [
+  { slug: '', updatedAt: '2026-09-01T10:00:00.000Z' },
+  { slug: 'citizens', updatedAt: '2026-09-02T10:00:00.000Z' },
+  { slug: 'sales_yachts', updatedAt: '2026-09-03T10:00:00.000Z' },
+]
+
+const urls = (entries: ReturnType<typeof pageEntries>) => entries.map((entry) => entry.url)
+
+describe('siteOrigin', () => {
+  it('drops a trailing slash, so a URL never doubles up on one', () => {
+    expect(siteOrigin('https://atmjet.com/')).toBe('https://atmjet.com')
+  })
+
+  it('uses the development origin when the environment names none', () => {
+    // A preview without the variable set advertises itself, never the legacy hard-coded host.
+    expect(siteOrigin(undefined)).toBe('http://localhost:3000')
+  })
+})
+
+describe('pageEntries', () => {
+  it('lists the pages the collection holds, so a path nobody created cannot appear', () => {
+    // The home page is the locale root, not `/en/home`; the legacy sitemap listed the
+    // unprefixed `/` and `/citezens`, neither of which resolves without a redirect.
+    expect(urls(pageEntries(ORIGIN, ['en'], PAGES))).toEqual([
+      'https://atmjet.com/en',
+      'https://atmjet.com/en/citizens',
+      'https://atmjet.com/en/sales_yachts',
+    ])
+  })
+
+  it('prefixes every locale it offers', () => {
+    expect(urls(pageEntries(ORIGIN, ['ru'], PAGES))).toContain('https://atmjet.com/ru/citizens')
+  })
+
+  it('offers each served locale as an alternate, and x-default for the rest', () => {
+    const [home] = pageEntries(ORIGIN, ['en', 'ru'], PAGES)
+
+    expect(home.alternates?.languages).toEqual({
+      en: 'https://atmjet.com/en',
+      ru: 'https://atmjet.com/ru',
+      'x-default': 'https://atmjet.com/en',
+    })
+  })
+
+  it('says nothing about a language the site does not serve', () => {
+    const [home] = pageEntries(ORIGIN, ['en', 'ru'], PAGES)
+
+    expect(Object.keys(home.alternates?.languages ?? {})).not.toContain('uk')
+  })
+
+  it('reports when an editor last changed the page, not when the build ran', () => {
+    const [, citizens] = pageEntries(ORIGIN, ['en'], PAGES)
+
+    expect(citizens.lastModified).toBe('2026-09-02T10:00:00.000Z')
+  })
+
+  it('asks a crawler for the home page first', () => {
+    const [home, citizens] = pageEntries(ORIGIN, ['en'], PAGES)
+
+    expect(home.priority).toBeGreaterThan(citizens.priority ?? 0)
+  })
+
+  it('leaves out a page an editor has not given a slug yet', () => {
+    const entries = pageEntries(ORIGIN, ['en'], [...PAGES, { slug: null, updatedAt: null }])
+
+    expect(entries).toHaveLength(PAGES.length)
+  })
+
+  it('offers nothing while the site serves no locale', () => {
+    expect(pageEntries(ORIGIN, [], PAGES)).toEqual([])
+  })
+})
