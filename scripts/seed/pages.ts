@@ -457,6 +457,20 @@ function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout 
   const sections: Layout = []
   const description = HERO_PAGES[slug]?.[locale]
 
+  // The film opens the legacy home page, whose own composition is E8.1's to settle (#134); the
+  // fixture opens the group charters page instead, which no other section's test reads. The
+  // paths are the ones the legacy served and the files arrive with E11.6 (#175); until they do,
+  // the poster is what the screen holds.
+  if (slug === 'group_charters')
+    sections.push({
+      blockType: 'heroVideo',
+      overline: 'ATM JET',
+      title: locale === 'en' ? 'Flying private made simple' : 'Частные перелёты — это просто',
+      video: '/video/background_full.mp4',
+      videoMobile: '/video/background.mp4',
+      poster: fixture.photo,
+    })
+
   if (description !== undefined)
     sections.push({
       blockType: 'heroSubpage',
