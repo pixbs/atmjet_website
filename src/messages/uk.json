@@ -1,7 +1,8 @@
 {
   "common": {
     "skipToContent": "Перейти до вмісту",
-    "loading": "Завантаження"
+    "loading": "Завантаження",
+    "home": "Головна"
   },
   "errors": {
     "notFound": {

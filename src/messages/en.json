@@ -1,7 +1,8 @@
 {
   "common": {
     "skipToContent": "Skip to content",
-    "loading": "Loading"
+    "loading": "Loading",
+    "home": "Home"
   },
   "errors": {
     "notFound": {

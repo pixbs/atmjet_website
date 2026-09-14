@@ -1,6 +1,7 @@
 import { cache } from 'react'
 
 import { ALL_LOCALES, DEFAULT_LOCALE, DEFAULT_LOCALES, type Locale } from '@/i18n/locales'
+import type { SiteContact } from '@/lib/structured-data'
 import type { SiteSetting } from '@/payload-types'
 
 import { getPayloadClient } from './payload'
@@ -42,5 +43,31 @@ export async function getEnabledLocales(
       error,
     )
     return [...DEFAULT_LOCALES]
+  }
+}
+
+/**
+ * The contact details the structured data names (issue #173), from the same document the visible
+ * chrome reads, so the two can never disagree about a phone number.
+ *
+ * `null` rather than a guess when the database cannot be reached: a search engine is better told
+ * nothing about the company than told something invented.
+ */
+export async function getSiteContact(
+  // Injected so the unreachable-database path can be tested without breaking the database.
+  read: () => Promise<
+    Pick<SiteSetting, 'phone' | 'email' | 'telegram' | 'instagram'>
+  > = getSiteSettings,
+): Promise<SiteContact | null> {
+  try {
+    const { phone, email, telegram, instagram } = await read()
+
+    return { phone, email, telegram, instagram }
+  } catch (error) {
+    console.warn(
+      '[site-settings] the database was unreachable, so no organisation is described.',
+      error,
+    )
+    return null
   }
 }
