@@ -1,6 +1,6 @@
 import type { MetadataRoute } from 'next'
 
-import { siteOrigin } from '@/lib/sitemap'
+import { siteOrigin } from '@/lib/urls'
 
 /**
  * `robots.txt` (issue #171). The legacy one disallowed `/private/`, a path that never existed,
