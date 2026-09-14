@@ -255,7 +255,7 @@ export interface Page {
   /**
    * The sections of this page, in the order they are rendered.
    */
-  layout?: (HeroSubpageBlock | KeyFeaturesBlock | PrivilegeBlock | WhyUsBlock)[] | null;
+  layout?: (HeroSubpageBlock | KeyFeaturesBlock | PrivilegeBlock | WhyUsBlock | YachtsPromoBlock)[] | null;
   meta?: {
     title?: string | null;
     description?: string | null;
@@ -362,6 +362,40 @@ export interface WhyUsBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'whyUs';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "YachtsPromoBlock".
+ */
+export interface YachtsPromoBlock {
+  title: string;
+  description?: string | null;
+  image: number | Media;
+  /**
+   * The three the legacy card carried, side by side from the medium width up.
+   */
+  columns?:
+    | {
+        title: string;
+        description: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * The card inside the card: a picture, a line and the way through.
+   */
+  invitation: {
+    image: number | Media;
+    title: string;
+    label: string;
+    /**
+     * The page the button opens. Its slug decides the URL.
+     */
+    page?: (number | null) | Page;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'yachtsPromo';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1251,6 +1285,7 @@ export interface PagesSelect<T extends boolean = true> {
         keyFeatures?: T | KeyFeaturesBlockSelect<T>;
         privilege?: T | PrivilegeBlockSelect<T>;
         whyUs?: T | WhyUsBlockSelect<T>;
+        yachtsPromo?: T | YachtsPromoBlockSelect<T>;
       };
   meta?:
     | T
@@ -1334,6 +1369,32 @@ export interface WhyUsBlockSelect<T extends boolean = true> {
         description?: T;
         image?: T;
         id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "YachtsPromoBlock_select".
+ */
+export interface YachtsPromoBlockSelect<T extends boolean = true> {
+  title?: T;
+  description?: T;
+  image?: T;
+  columns?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        id?: T;
+      };
+  invitation?:
+    | T
+    | {
+        image?: T;
+        title?: T;
+        label?: T;
+        page?: T;
       };
   id?: T;
   blockName?: T;
