@@ -41,12 +41,14 @@ export function navLinks(name: string, description: string): ArrayField {
  * (`Header`, `Footer`, `Angle_bar`) and is passed on to Telegram as the lead's origin
  * (`docs/legacy-inventory.md` section 3.9), so it stays editable next to the label it belongs to.
  */
-export function bookingCta(source: string): Field {
+export function bookingCta(source: string, { optional = false } = {}): Field {
   return {
     name: 'cta',
     type: 'group',
     fields: [
-      { name: 'label', type: 'text', required: true, localized: true },
+      // Optional where a section is drawn both with the button and without it, as the yachts
+      // hero is (issue #114): no wording, no button.
+      { name: 'label', type: 'text', required: !optional, localized: true },
       {
         name: 'source',
         type: 'text',

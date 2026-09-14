@@ -8,7 +8,9 @@ import { Documents } from './Documents/Component'
 import { Faq } from './Faq/Component'
 import { GroupCards } from './GroupCards/Component'
 import { Guide } from './Guide/Component'
+import { HeroSales } from './HeroSales/Component'
 import { HeroSubpage } from './HeroSubpage/Component'
+import { HeroYachts } from './HeroYachts/Component'
 import { KeyFeatures } from './KeyFeatures/Component'
 import { OptionsTiles } from './OptionsTiles/Component'
 import { Privilege } from './Privilege/Component'
@@ -112,6 +114,37 @@ function blockFor(block: LayoutBlock, key: string) {
           heading={block.heading}
           image={image}
           points={(block.points ?? []).map((point) => point.text)}
+          title={block.title}
+        />
+      )
+    }
+    case 'heroSales': {
+      const image = mediaSource(typeof block.image === 'object' ? block.image : null)
+
+      return image === null ? null : (
+        <HeroSales
+          key={key}
+          action={{ href: `?showBooking=${block.cta.source}`, label: block.cta.label }}
+          description={block.description}
+          image={image}
+          lines={(block.lines ?? []).map((line) => ({ figure: line.figure, text: line.text }))}
+          overline={block.overline}
+        />
+      )
+    }
+    case 'heroYachts': {
+      const image = mediaSource(typeof block.image === 'object' ? block.image : null)
+      // No wording, no button: the legacy charter page drew this hero without one.
+      const label = block.cta.label ?? ''
+
+      return image === null ? null : (
+        <HeroYachts
+          key={key}
+          action={label === '' ? undefined : { href: `?showBooking=${block.cta.source}`, label }}
+          description={block.description}
+          description2={block.description2 ?? undefined}
+          image={image}
+          overline={block.overline}
           title={block.title}
         />
       )

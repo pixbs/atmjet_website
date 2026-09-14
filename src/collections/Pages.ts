@@ -7,7 +7,9 @@ import { documents } from '@/blocks/Documents/config'
 import { faq } from '@/blocks/Faq/config'
 import { groupCards } from '@/blocks/GroupCards/config'
 import { guide } from '@/blocks/Guide/config'
+import { heroSales } from '@/blocks/HeroSales/config'
 import { heroSubpage } from '@/blocks/HeroSubpage/config'
+import { heroYachts } from '@/blocks/HeroYachts/config'
 import { keyFeatures } from '@/blocks/KeyFeatures/config'
 import { optionsTiles } from '@/blocks/OptionsTiles/config'
 import { privilege } from '@/blocks/Privilege/config'
@@ -111,7 +113,9 @@ export const Pages: CollectionConfig = {
         faq,
         groupCards,
         guide,
+        heroSales,
         heroSubpage,
+        heroYachts,
         keyFeatures,
         optionsTiles,
         privilege,
