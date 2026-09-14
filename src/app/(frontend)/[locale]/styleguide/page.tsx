@@ -11,6 +11,7 @@ import { EmptyLegCard } from '@/components/cards/empty-leg-card'
 import { FileCard } from '@/components/cards/file-card'
 import { GroupCard } from '@/components/cards/group-card'
 import { PrivilegeCard } from '@/components/cards/privilege-card'
+import { WhyUsCard } from '@/components/cards/why-us-card'
 import { YachtsCard } from '@/components/cards/yachts-card'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { Carousel, CarouselArrows, CarouselDots, CarouselProgress } from '@/components/ui/carousel'
@@ -154,6 +155,43 @@ const YACHT_COLUMNS = [
   {
     title: 'The route',
     description: 'A week in the Mediterranean or a crossing, planned around you.',
+  },
+]
+
+/**
+ * Five reasons, as the home section carries them, in the shapes the legacy sections use: with a
+ * figure and a photograph, and with neither on the group charters page. Five rather than three
+ * so the stack is taller than the screen, which is the only way to see a card come to rest.
+ */
+const WHY_US = [
+  {
+    num: '20+',
+    title: 'Years in the air',
+    description: 'Two decades of charters out of the Gulf, Europe and the CIS.',
+    withImage: true,
+  },
+  {
+    num: '1,000 flights',
+    title: 'Flown last year',
+    description: 'From a two-hour hop to an intercontinental crossing.',
+    withImage: true,
+  },
+  {
+    num: '3 hours',
+    title: 'From the call to the wheels up',
+    description: 'An aircraft and a crew ready at the nearest airport.',
+    withImage: true,
+  },
+  {
+    num: '24/7',
+    title: 'One manager, at any hour',
+    description: 'The same person on your account, night flights included.',
+    withImage: false,
+  },
+  {
+    title: 'A price agreed once',
+    description: 'What is quoted is what is invoiced, with nothing added on landing.',
+    withImage: false,
   },
 ]
 
@@ -440,6 +478,22 @@ export default async function StyleguidePage({ params }: { params: Promise<{ loc
             </div>
           </div>
         )}
+      </section>
+
+      <section id="why-us" data-section="why-us" className="container items-start gap-4">
+        <h3>Why us</h3>
+        {/* The sections give the stack a clipped box to slide inside. */}
+        <div className="relative w-full self-stretch overflow-clip rounded-2xl" data-cards="why-us">
+          {WHY_US.map(({ withImage, ...card }, index) => (
+            <WhyUsCard
+              key={card.title}
+              {...card}
+              image={withImage ? uploads[0] : undefined}
+              // Each card stops a little further down than the one above it.
+              top={(index + 1) * 32}
+            />
+          ))}
+        </div>
       </section>
     </div>
   )

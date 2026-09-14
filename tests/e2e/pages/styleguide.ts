@@ -19,7 +19,8 @@ export class StyleguidePage {
     this.revealedCard = page
       .getByRole('heading', { level: 4, name: 'Revealed on scroll' })
       .locator('..')
-    this.counter = page.getByText(/^[\d,]+\+$/)
+    // In the motion section, because the cards further down the page count up as well.
+    this.counter = page.locator('#motion').getByText(/^[\d,]+\+$/)
   }
 
   get path(): string {
