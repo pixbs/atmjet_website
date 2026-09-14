@@ -1,48 +1,30 @@
-import { getPayload } from 'payload'
-import config from '../../src/payload.config.js'
+import { execFileSync } from 'node:child_process'
 
+/**
+ * The administrator the admin specs sign in as (issue #70).
+ *
+ * The seeding runs in a child process: it needs the Payload config, and loading that in the
+ * test runner means resolving the extensionless `next/cache` of `@/hooks/revalidate`, which
+ * only a loader that guesses extensions can do — bun does, the runner's does not (issue #275).
+ * Keeping the browser tiers clear of `src/` is what lets them load at all.
+ */
 export const testUser = {
   email: 'dev@payloadcms.com',
   password: 'test',
-  // The admin e2e specs walk the collection views, which only an admin may reach (issue #70).
   roles: ['admin' as const],
 }
 
-/**
- * Seeds a test user for e2e admin tests.
- */
-export async function seedTestUser(): Promise<void> {
-  const payload = await getPayload({ config })
+const SCRIPT = 'scripts/test/admin-user.ts'
 
-  // Delete existing test user if any
-  await payload.delete({
-    collection: 'users',
-    where: {
-      email: {
-        equals: testUser.email,
-      },
-    },
-  })
-
-  // Create fresh test user
-  await payload.create({
-    collection: 'users',
-    data: testUser,
-  })
+function run(action: 'create' | 'delete'): void {
+  execFileSync('bun', ['run', SCRIPT, action], { stdio: 'inherit' })
 }
 
-/**
- * Cleans up test user after tests
- */
-export async function cleanupTestUser(): Promise<void> {
-  const payload = await getPayload({ config })
+/** A fresh administrator, whatever the last run left behind. */
+export function seedTestUser(): void {
+  run('create')
+}
 
-  await payload.delete({
-    collection: 'users',
-    where: {
-      email: {
-        equals: testUser.email,
-      },
-    },
-  })
+export function cleanupTestUser(): void {
+  run('delete')
 }
