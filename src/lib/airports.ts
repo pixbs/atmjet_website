@@ -60,3 +60,68 @@ export function airportOption(airport: AirportOption): string {
   if (head === '') return name ?? ''
   return name === undefined ? head : `${head}, ${name}`
 }
+
+/**
+ * The airport search (issue #159, `docs/legacy-inventory.md` section 8.5).
+ *
+ * Below two characters the legacy search returned nothing but the term itself, so a single
+ * letter never queried the table; that bound is kept, because a letter matches thousands of
+ * rows in ten columns.
+ */
+export const MIN_SEARCH_LENGTH = 2
+
+/** How many options the list offers. The legacy query took twenty before de-duplicating. */
+export const SEARCH_LIMIT = 20
+
+/**
+ * One row per airport a visitor would call the same thing: the legacy search returned Dubai
+ * twice, once from each of the two tables it had merged, and de-duplicated on the city and the
+ * two codes. An airport with neither code and no city cannot be told apart from another, so the
+ * first of those wins, as it did there.
+ *
+ * Not exported: `rankAirports` is the only way to ask, so a caller cannot rank a list it has not
+ * de-duplicated (ADR-0008).
+ */
+function dedupeAirports<T extends AirportOption>(airports: readonly T[]): T[] {
+  const seen = new Set<string>()
+
+  return airports.filter((airport) => {
+    const key = [
+      normaliseText(airport.city)?.toLowerCase() ?? '',
+      normaliseCode(airport.icao) ?? '',
+      normaliseCode(airport.iata) ?? '',
+    ].join('|')
+    if (seen.has(key)) return false
+
+    seen.add(key)
+    return true
+  })
+}
+
+/** An airport as the search ranks them: the option's fields, which airport it is, and how busy. */
+export interface RankedAirport extends AirportOption {
+  id?: number | string
+  passengersPerYear?: number | null
+}
+
+/**
+ * The busiest airports first (issue #159). The legacy search ordered by `passengers_per_year`,
+ * a text column, ascending, so the smallest airports came first and `9` sorted above `1000000`
+ * (`docs/legacy-inventory.md` section 13, entry 69).
+ *
+ * An airport whose traffic nobody recorded goes last rather than first, which is what a database
+ * sorting nulls first would do with the same column, and the order it arrived in is kept among
+ * equals so the two languages a term was matched in do not shuffle between keystrokes.
+ */
+export function rankAirports<T extends RankedAirport>(airports: readonly T[], limit: number): T[] {
+  const traffic = (airport: T): number =>
+    typeof airport.passengersPerYear === 'number' && Number.isFinite(airport.passengersPerYear)
+      ? airport.passengersPerYear
+      : -1
+
+  return dedupeAirports(airports)
+    .map((airport, index) => ({ airport, index }))
+    .sort((one, two) => traffic(two.airport) - traffic(one.airport) || one.index - two.index)
+    .slice(0, Math.max(0, limit))
+    .map((entry) => entry.airport)
+}

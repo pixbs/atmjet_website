@@ -19,10 +19,12 @@ import { Contacts } from './collections/Contacts'
 import { Yachts } from './collections/Yachts'
 import { EmptyLegs } from './collections/EmptyLegs'
 import { Leads } from './collections/Leads'
+import { sendTelegramLead } from './jobs/send-telegram-lead'
 import { redirectsOverrides, REDIRECT_TYPES } from './collections/Redirects'
 import { Header } from './globals/Header'
 import { Footer } from './globals/Footer'
 import { SiteSettings } from './globals/SiteSettings'
+import { hasRole } from './access'
 import { DEFAULT_LOCALE, LOCALE_DEFINITIONS } from './i18n/locales'
 import { siteOrigin } from './lib/urls'
 
@@ -60,6 +62,26 @@ export default buildConfig({
   // nothing to list and nothing to publish.
   globals: [Header, Footer, SiteSettings],
   editor: lexicalEditor(),
+  /**
+   * The queue a lead's delivery runs on (issue #155). `autoRun` is deliberately not set: it is a
+   * timer inside the server, and this one is serverless, so the queue is drained by the cron in
+   * `vercel.json` calling `/api/payload-jobs/run`.
+   *
+   * Vercel signs that call with `CRON_SECRET`; an administrator signed into the admin may drain
+   * it by hand as well, and nobody else can.
+   */
+  jobs: {
+    tasks: [sendTelegramLead],
+    access: {
+      run: ({ req }) => {
+        const secret = process.env.CRON_SECRET
+
+        if (secret && req.headers.get('authorization') === `Bearer ${secret}`) return true
+
+        return hasRole(req.user, 'admin')
+      },
+    },
+  },
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),

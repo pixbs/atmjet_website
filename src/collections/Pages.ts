@@ -17,9 +17,11 @@ import { heroGroup } from '@/blocks/HeroGroup/config'
 import { heroPartners } from '@/blocks/HeroPartners/config'
 import { heroSales } from '@/blocks/HeroSales/config'
 import { heroSubpage } from '@/blocks/HeroSubpage/config'
+import { heroVideo } from '@/blocks/HeroVideo/config'
 import { heroYachts } from '@/blocks/HeroYachts/config'
 import { keyFeatures } from '@/blocks/KeyFeatures/config'
 import { optionsTiles } from '@/blocks/OptionsTiles/config'
+import { personalManager } from '@/blocks/PersonalManager/config'
 import { photoDescriptor } from '@/blocks/PhotoDescriptor/config'
 import { privilege } from '@/blocks/Privilege/config'
 import { quote } from '@/blocks/Quote/config'
@@ -133,9 +135,11 @@ export const Pages: CollectionConfig = {
         heroPartners,
         heroSales,
         heroSubpage,
+        heroVideo,
         heroYachts,
         keyFeatures,
         optionsTiles,
+        personalManager,
         photoDescriptor,
         privilege,
         quote,

@@ -8,12 +8,16 @@ import type { SeedOutcome } from './report'
  * (issues #117 and #66, E2.5). Without them the section on `/empty_legs` draws its channel card
  * and nothing else, and the legacy page it is ported from was never empty.
  *
- * Four of the five route ends are airports; the fifth is a code with no airport behind it,
- * because the legacy section dropped such a row from the page altogether and this one has to
- * keep drawing it (`docs/legacy-inventory.md` section 6).
+ * Most of the route ends are airports; one is a code with no airport behind it, because the
+ * legacy section dropped such a row from the page altogether and this one has to keep drawing it
+ * (`docs/legacy-inventory.md` section 6). The rest are what the airport search is exercised
+ * against (issue #159): two cities with two airports each, and one airport whose traffic nobody
+ * recorded.
  */
 interface SeedAirport {
   icao: string
+  /** What ranks it in the search (issue #159). The legacy column was text and sorted the other way. */
+  passengersPerYear?: number
   en: { city: string; country: string; name: string }
   ru: { city: string; country: string; name: string }
 }
@@ -21,23 +25,45 @@ interface SeedAirport {
 export const SEED_AIRPORTS: readonly SeedAirport[] = [
   {
     icao: 'OMDB',
+    passengersPerYear: 86_900_000,
     en: { city: 'Dubai', country: 'United Arab Emirates', name: 'Dubai International' },
     ru: { city: 'Дубай', country: 'ОАЭ', name: 'Дубай Интернешнл' },
   },
   {
+    icao: 'OMDW',
+    passengersPerYear: 1_300_000,
+    en: { city: 'Dubai', country: 'United Arab Emirates', name: 'Al Maktoum' },
+    ru: { city: 'Дубай', country: 'ОАЭ', name: 'Аль-Мактум' },
+  },
+  {
     icao: 'LFPB',
+    passengersPerYear: 50_000,
     en: { city: 'Paris', country: 'France', name: 'Le Bourget' },
     ru: { city: 'Париж', country: 'Франция', name: 'Ле Бурже' },
   },
   {
+    icao: 'LFPG',
+    passengersPerYear: 57_500_000,
+    en: { city: 'Paris', country: 'France', name: 'Charles de Gaulle' },
+    ru: { city: 'Париж', country: 'Франция', name: 'Шарль-де-Голль' },
+  },
+  {
     icao: 'UUWW',
+    passengersPerYear: 15_800_000,
     en: { city: 'Moscow', country: 'Russia', name: 'Vnukovo' },
     ru: { city: 'Москва', country: 'Россия', name: 'Внуково' },
   },
   {
     icao: 'LSGG',
+    passengersPerYear: 16_500_000,
     en: { city: 'Geneva', country: 'Switzerland', name: 'Cointrin' },
     ru: { city: 'Женева', country: 'Швейцария', name: 'Куантрен' },
+  },
+  {
+    // No traffic recorded, so the search lists it behind the airports that have some.
+    icao: 'EGGW',
+    en: { city: 'London', country: 'United Kingdom', name: 'Luton' },
+    ru: { city: 'Лондон', country: 'Великобритания', name: 'Лутон' },
   },
 ]
 
@@ -101,7 +127,7 @@ export async function seedEmptyLegs(payload: Payload): Promise<SeedOutcome[]> {
 
     const created = await payload.create({
       collection: 'airports',
-      data: { icao: airport.icao, ...airport.en },
+      data: { icao: airport.icao, passengersPerYear: airport.passengersPerYear, ...airport.en },
       locale: 'en',
       overrideAccess: true,
       // A bulk write has nothing to invalidate (docs/conventions/rendering.md).

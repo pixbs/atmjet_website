@@ -18,9 +18,11 @@ import { HeroGroup } from './HeroGroup/Component'
 import { HeroPartners } from './HeroPartners/Component'
 import { HeroSales } from './HeroSales/Component'
 import { HeroSubpage } from './HeroSubpage/Component'
+import { HeroVideo } from './HeroVideo/Component'
 import { HeroYachts } from './HeroYachts/Component'
 import { KeyFeatures } from './KeyFeatures/Component'
 import { OptionsTiles } from './OptionsTiles/Component'
+import { PersonalManager } from './PersonalManager/Component'
 import { PhotoDescriptor } from './PhotoDescriptor/Component'
 import { Privilege } from './Privilege/Component'
 import { Quote } from './Quote/Component'
@@ -250,6 +252,21 @@ function blockFor(block: LayoutBlock, key: string) {
         />
       )
     }
+    case 'heroVideo': {
+      // The still is optional, as the legacy hero was drawn without one.
+      const poster = mediaSource(typeof block.poster === 'object' ? block.poster : null)
+
+      return (
+        <HeroVideo
+          key={key}
+          overline={block.overline}
+          poster={poster ?? undefined}
+          title={block.title}
+          video={block.video}
+          videoMobile={block.videoMobile ?? undefined}
+        />
+      )
+    }
     case 'keyFeatures': {
       // Every card draws a photograph, so a card without one is left out rather than drawn empty.
       const cards = (block.cards ?? []).flatMap((card) => {
@@ -287,6 +304,19 @@ function blockFor(block: LayoutBlock, key: string) {
       })
 
       return tiles.length === 0 ? null : <OptionsTiles key={key} tiles={tiles} />
+    }
+    case 'personalManager': {
+      const image = mediaSource(typeof block.image === 'object' ? block.image : null)
+
+      return image === null ? null : (
+        <PersonalManager
+          key={key}
+          chips={(block.chips ?? []).map((chip) => chip.label)}
+          description={block.description}
+          image={image}
+          title={block.title}
+        />
+      )
     }
     case 'photoDescriptor': {
       const image = mediaSource(typeof block.image === 'object' ? block.image : null)

@@ -1,5 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
 
+import { searchAirports } from '@/lib/data/airports'
 import { createUser } from '../factories'
 import { createRegistry, uniqueSuffix, type TestRegistry } from '../helpers/payload'
 
@@ -9,7 +10,7 @@ vi.mock('next/cache', () => ({ revalidateTag }))
 /**
  * The Airports collection (issue #64). It is reference data the public reads without a session,
  * so what is pinned here is the shape the empty legs block (E7.7) and the airport search
- * endpoint (E9.9) will query, and that the normalisation actually runs on a write.
+ * endpoint (E9.9) query, and that the normalisation actually runs on a write.
  */
 let registry: TestRegistry
 
@@ -222,5 +223,126 @@ describe('coordinates', () => {
     )
 
     expect(created.latitude).toBeCloseTo(55.972642)
+  })
+})
+
+/**
+ * The search behind the airport field (issue #159, `docs/legacy-inventory.md` section 8.5). The
+ * legacy query matched ten columns — five fields in each of its two languages — and ordered by a
+ * text column ascending, so the smallest airports came first.
+ */
+describe('the search the airport field reads', () => {
+  const client = () => Promise.resolve(registry.payload)
+
+  /** An airport in both languages, as the import of E5.5 leaves them. */
+  async function airportIn(
+    icao: string,
+    en: [string, string, string],
+    ru: [string, string, string],
+    passengersPerYear?: number,
+  ) {
+    const created = await registry.create('airports', {
+      icao,
+      city: en[0],
+      country: en[1],
+      name: en[2],
+      passengersPerYear,
+    })
+
+    await registry.payload.update({
+      collection: 'airports',
+      id: created.id,
+      locale: 'ru',
+      data: { city: ru[0], country: ru[1], name: ru[2] },
+      overrideAccess: true,
+    })
+
+    return created
+  }
+
+  it('offers nothing until there are two characters to look up', async () => {
+    // The legacy search returned the term itself below two characters and queried nothing.
+    await expect(searchAirports({ term: 'd', locale: 'en' }, client)).resolves.toEqual([])
+    await expect(searchAirports({ term: '  ', locale: 'en' }, client)).resolves.toEqual([])
+  })
+
+  it('ranks the busiest airport of a city first, where the legacy ranked the smallest', async () => {
+    const marker = `Zarafshan${uniqueSuffix().slice(-5)}`
+    await airportIn('ZZ01', [marker, 'Nowhere', 'Small field'], [marker, 'Нигде', 'Малое поле'], 9)
+    await airportIn(
+      'ZZ02',
+      [marker, 'Nowhere', 'Big field'],
+      [marker, 'Нигде', 'Большое поле'],
+      1_000_000,
+    )
+
+    const options = await searchAirports({ term: marker, locale: 'en' }, client)
+
+    expect(options).toEqual([
+      `${marker} (ZZ02) Nowhere, Big field`,
+      `${marker} (ZZ01) Nowhere, Small field`,
+    ])
+  })
+
+  it('lists an airport nobody counted behind the ones that were counted', async () => {
+    const marker = `Uncounted${uniqueSuffix().slice(-5)}`
+    await airportIn('ZZ03', [marker, 'Nowhere', 'Unknown'], [marker, 'Нигде', 'Неизвестно'])
+    await airportIn('ZZ04', [marker, 'Nowhere', 'Counted'], [marker, 'Нигде', 'Сосчитано'], 5)
+
+    const options = await searchAirports({ term: marker, locale: 'en' }, client)
+
+    expect(options[0]).toContain('Counted')
+  })
+
+  it('finds an airport by a name in the other language, and answers in this one', async () => {
+    const marker = `Zvezda${uniqueSuffix().slice(-5)}`
+    const cyrillic = `Звезда${uniqueSuffix().slice(-5)}`
+    await airportIn('ZZ05', [marker, 'Nowhere', 'Star field'], [cyrillic, 'Нигде', 'Поле звезды'])
+
+    // The legacy search matched both language columns and printed the page's language.
+    await expect(searchAirports({ term: cyrillic, locale: 'en' }, client)).resolves.toEqual([
+      `${marker} (ZZ05) Nowhere, Star field`,
+    ])
+    await expect(searchAirports({ term: marker, locale: 'ru' }, client)).resolves.toEqual([
+      `${cyrillic} (ZZ05) Нигде, Поле звезды`,
+    ])
+  })
+
+  it('matches a code as well as a name', async () => {
+    const marker = `Coded${uniqueSuffix().slice(-5)}`
+    const icao = `Z${uniqueSuffix().slice(-3).toUpperCase()}`
+    await airportIn(icao, [marker, 'Nowhere', 'Coded field'], [marker, 'Нигде', 'Поле кода'], 7)
+
+    await expect(searchAirports({ term: icao, locale: 'en' }, client)).resolves.toContain(
+      `${marker} (${icao}) Nowhere, Coded field`,
+    )
+  })
+
+  it('offers no more than the list has room for', async () => {
+    const marker = `Crowded${uniqueSuffix().slice(-5)}`
+    for (const index of [1, 2, 3]) {
+      await airportIn(
+        `ZY0${index}`,
+        [`${marker} ${index}`, 'Nowhere', `Field ${index}`],
+        [`${marker} ${index}`, 'Нигде', `Поле ${index}`],
+        index,
+      )
+    }
+
+    await expect(
+      searchAirports({ term: marker, locale: 'en', limit: 2 }, client),
+    ).resolves.toHaveLength(2)
+  })
+
+  it('offers nothing rather than an error when the database cannot be reached', async () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined)
+
+    await expect(
+      searchAirports({ term: 'dubai', locale: 'en' }, () =>
+        Promise.reject(new Error('connection refused')),
+      ),
+    ).resolves.toEqual([])
+    expect(warn).toHaveBeenCalled()
+    warn.mockRestore()
   })
 })

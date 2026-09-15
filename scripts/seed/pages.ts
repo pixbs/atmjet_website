@@ -452,6 +452,28 @@ const HERO_YACHTS: Record<
   },
 }
 
+/**
+ * The manager the partners and sales pages both introduce (issue #124, section 5), and the five
+ * things they take off your hands. The legacy section read one string and split it on `;`.
+ */
+const PERSONAL_MANAGER: Record<
+  'en' | 'ru',
+  { title: string; description: string; chips: string[] }
+> = {
+  en: {
+    title: 'A manager who knows the flight',
+    description:
+      'One person answers, whatever the hour and whatever the question: the aircraft, the permits, the car at the steps.',
+    chips: ['Permits', 'Slots', 'Catering', 'Handling', 'Transfers'],
+  },
+  ru: {
+    title: 'Менеджер, который знает рейс',
+    description:
+      'Отвечает один человек — в любой час и на любой вопрос: борт, разрешения, машина у трапа.',
+    chips: ['Разрешения', 'Слоты', 'Кейтеринг', 'Наземка', 'Трансферы'],
+  },
+}
+
 /** The sections a seeded page starts with; a page with no entry here starts with none. */
 function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout {
   const sections: Layout = []
@@ -463,6 +485,17 @@ function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout 
       title: TITLES[slug][locale],
       description,
       image: fixture.photo,
+    })
+
+  if (slug === '')
+    sections.push({
+      blockType: 'heroVideo',
+      // The legacy overline, and the legacy headline, which its Russian and Ukrainian
+      // catalogues left in English; the fixture carries the translation the site wanted.
+      overline: 'ATM JET',
+      title: locale === 'en' ? 'Flying private made simple' : 'Частные перелёты — это просто',
+      // The path the legacy markup named; the file arrives with the assets of E5.12.
+      video: '/video/background_full.mp4',
     })
 
   if (slug === 'aircraft')
@@ -795,6 +828,17 @@ function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout 
       },
     })
 
+  if (slug === 'partners' || slug === 'sales_dept') {
+    const manager = PERSONAL_MANAGER[locale]
+    sections.push({
+      blockType: 'personalManager',
+      title: manager.title,
+      description: manager.description,
+      image: fixture.photo,
+      chips: manager.chips.map((label) => ({ label })),
+    })
+  }
+
   if (slug === 'sales_yachts')
     sections.push({
       blockType: 'recentYachts',
@@ -892,6 +936,8 @@ function translated(layout: Layout | null | undefined, slug: string, fixture: Fi
         }
       case 'heroSubpage':
         return { ...block, id }
+      case 'heroVideo':
+        return { ...block, id }
       case 'heroYachts':
         return { ...block, id }
       case 'keyFeatures':
@@ -903,6 +949,15 @@ function translated(layout: Layout | null | undefined, slug: string, fixture: Fi
           tiles: withRowIds(
             block.tiles ?? [],
             written?.blockType === 'optionsTiles' ? written.tiles : undefined,
+          ),
+        }
+      case 'personalManager':
+        return {
+          ...block,
+          id,
+          chips: withRowIds(
+            block.chips ?? [],
+            written?.blockType === 'personalManager' ? written.chips : undefined,
           ),
         }
       case 'photoDescriptor':

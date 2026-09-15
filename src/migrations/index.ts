@@ -19,7 +19,10 @@ import * as migration_20260914_192256_descriptor_blocks from './20260914_192256_
 import * as migration_20260914_193505_small_hero_blocks from './20260914_193505_small_hero_blocks';
 import * as migration_20260914_194732_contact_card_block from './20260914_194732_contact_card_block';
 import * as migration_20260915_022850_empty_legs_block from './20260915_022850_empty_legs_block';
-import * as migration_20260915_025618_recent_yachts_block from './20260915_025618_recent_yachts_block';
+import * as migration_20260915_024225_personal_manager_block from './20260915_024225_personal_manager_block';
+import * as migration_20260915_033955_hero_video_block from './20260915_033955_hero_video_block';
+import * as migration_20260915_043206_telegram_lead_jobs from './20260915_043206_telegram_lead_jobs';
+import * as migration_20260915_044518_recent_yachts_block from './20260915_044518_recent_yachts_block';
 
 export const migrations = [
   {
@@ -128,8 +131,23 @@ export const migrations = [
     name: '20260915_022850_empty_legs_block',
   },
   {
-    up: migration_20260915_025618_recent_yachts_block.up,
-    down: migration_20260915_025618_recent_yachts_block.down,
-    name: '20260915_025618_recent_yachts_block'
+    up: migration_20260915_024225_personal_manager_block.up,
+    down: migration_20260915_024225_personal_manager_block.down,
+    name: '20260915_024225_personal_manager_block',
+  },
+  {
+    up: migration_20260915_033955_hero_video_block.up,
+    down: migration_20260915_033955_hero_video_block.down,
+    name: '20260915_033955_hero_video_block',
+  },
+  {
+    up: migration_20260915_043206_telegram_lead_jobs.up,
+    down: migration_20260915_043206_telegram_lead_jobs.down,
+    name: '20260915_043206_telegram_lead_jobs',
+  },
+  {
+    up: migration_20260915_044518_recent_yachts_block.up,
+    down: migration_20260915_044518_recent_yachts_block.down,
+    name: '20260915_044518_recent_yachts_block'
   },
 ];

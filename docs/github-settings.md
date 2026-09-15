@@ -40,7 +40,8 @@ Settings that cannot live in code. Tick them in the epic issue (#3) as they are 
 ## Vercel (new project for the rewrite)
 
 - [ ] Create a new project from this repository: framework Next.js, package manager Bun (auto-detected from `bun.lock`), Node 24, build command `bun run ci` (runs migrations, then builds), root directory `/`.
-- [ ] Environment variables per environment: `DATABASE_URL`, `PAYLOAD_SECRET`, `NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_GTM_ID`, `S3_*`, `TELEGRAM_*`, `PREVIEW_SECRET` (see `.env.example`).
+- [ ] Environment variables per environment: `DATABASE_URL`, `PAYLOAD_SECRET`, `NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_GTM_ID`, `S3_*`, `TELEGRAM_*`, `PREVIEW_SECRET`, `CRON_SECRET` (see `.env.example`).
+- [ ] Cron: `vercel.json` runs `/api/payload-jobs/run` every minute, which is the queue that sends leads to Telegram (E9.5). Vercel signs the call with `CRON_SECRET`, so the variable has to be set for the run to be allowed; a plan without minute-level crons needs the schedule widened.
 - [ ] Neon integration with preview branches so preview builds migrate a branch, never production.
 - [ ] Staging domain on the new project; the production domain moves only at cutover (ADR-0002).
 

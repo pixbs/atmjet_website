@@ -1,6 +1,8 @@
 import type { CollectionConfig } from 'payload'
 
 import { anyone, editorOrAdmin } from '@/access'
+import { ALL_LOCALES, DEFAULT_LOCALE, type Locale } from '@/i18n/locales'
+import { searchAirports } from '@/lib/data/airports'
 import { revalidateCollection } from '@/hooks/revalidate'
 import { normaliseCode, normaliseText } from '@/lib/airports'
 
@@ -15,6 +17,17 @@ import { normaliseCode, normaliseText } from '@/lib/airports'
  * a lookup does not need a wildcard `ILIKE` to find an exact match.
  */
 const revalidation = revalidateCollection('airports')
+
+/**
+ * How long a browser and the edge may keep a list of airports. The table changes when an import
+ * runs, not while somebody is typing (issue #159).
+ */
+const SEARCH_CACHE = 'public, max-age=60, s-maxage=600, stale-while-revalidate=86400'
+
+/** The locale a request asks for, or the default one: a locale nobody serves searches nothing. */
+function searchLocale(value: string | null): Locale {
+  return ALL_LOCALES.find((locale) => locale === value) ?? DEFAULT_LOCALE
+}
 
 export const Airports: CollectionConfig = {
   slug: 'airports',
@@ -31,6 +44,27 @@ export const Airports: CollectionConfig = {
     update: editorOrAdmin,
     delete: editorOrAdmin,
   },
+  endpoints: [
+    {
+      // `/api/airports/search?q=dub&locale=ru`, which is what the field behind the autocomplete
+      // asks (issue #159). A collection endpoint rather than a route of its own: the search is
+      // this collection's, and Payload already owns `/api/airports`.
+      path: '/search',
+      method: 'get',
+      handler: async (req) => {
+        const options = await searchAirports(
+          {
+            term: req.searchParams.get('q') ?? '',
+            locale: searchLocale(req.searchParams.get('locale')),
+          },
+          // The request's own Payload, so the search runs inside its transaction and user.
+          async () => req.payload,
+        )
+
+        return Response.json({ options }, { headers: { 'cache-control': SEARCH_CACHE } })
+      },
+    },
+  ],
   hooks: {
     afterChange: [revalidation.afterChange],
     afterDelete: [revalidation.afterDelete],
