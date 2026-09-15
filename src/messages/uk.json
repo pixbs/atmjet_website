@@ -1,4 +1,7 @@
 {
+  "angleBar": {
+    "citizens": ""
+  },
   "common": {
     "skipToContent": "Перейти до вмісту",
     "loading": "Завантаження",
