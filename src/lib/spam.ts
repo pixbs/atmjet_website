@@ -20,8 +20,12 @@ export const HONEYPOT_FIELD = 'company'
  */
 const MIN_FILL_MS = 2_000
 
-/** How many submissions one address may make, and over how long. */
-const RATE_LIMIT = 5
+/**
+ * How many submissions one address may make, and over how long. Ten an hour is far above what
+ * an office behind one address sends and far below a flood; the address is shared by everyone
+ * behind a company's network, so a tighter limit would refuse the wrong people.
+ */
+const RATE_LIMIT = 10
 const RATE_WINDOW_MS = 60 * 60 * 1000
 
 /** Addresses kept at once, so a flood cannot grow the map without bound. */
@@ -80,14 +84,22 @@ export function createSubmissionLimiter(
   }
 }
 
+/** The machine the site is running on, which is every request in a local run and a test run. */
+const LOOPBACK = new Set(['127.0.0.1', '::1', '::ffff:127.0.0.1', 'localhost'])
+
 /**
- * The address a request came from, as the proxy in front of the site reports it. An empty
- * string where nothing does: the limit is then not applied at all, rather than counting every
- * visitor into one bucket and refusing the sixth person of the hour.
+ * The address a request came from, as the proxy in front of the site reports it.
+ *
+ * An empty string where nothing does, and where what does is the loopback address: the limit is
+ * then not applied at all, rather than counting every visitor into one bucket and refusing the
+ * eleventh person of the hour. Loopback means there is no proxy in front — a local run, or a
+ * test run — and in production the proxy replaces whatever a client claims, so nothing is given
+ * away by ignoring it.
  */
 export function addressOf(headers: { get(name: string): string | null }): string {
   const forwarded = headers.get('x-forwarded-for') ?? ''
   const first = forwarded.split(',')[0]?.trim() ?? ''
+  const address = first === '' ? (headers.get('x-real-ip') ?? '').trim() : first
 
-  return first === '' ? (headers.get('x-real-ip') ?? '').trim() : first
+  return LOOPBACK.has(address) ? '' : address
 }

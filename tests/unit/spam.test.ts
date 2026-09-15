@@ -81,7 +81,15 @@ describe('the address a request came from', () => {
   })
 
   it('says nothing where nothing does, so the limit is left off rather than shared', () => {
-    // One bucket for every visitor would refuse the sixth person of the hour, whoever they are.
+    // One bucket for every visitor would refuse the eleventh person of the hour, whoever
+    // they are.
     expect(addressOf(new Headers())).toBe('')
+  })
+
+  it('says nothing for the loopback address, which is a machine talking to itself', () => {
+    // No proxy in front means a local run or a test run, and every request of it is one
+    // address; in production the proxy replaces whatever a client claims.
+    expect(addressOf(new Headers({ 'x-forwarded-for': '127.0.0.1' }))).toBe('')
+    expect(addressOf(new Headers({ 'x-real-ip': '::1' }))).toBe('')
   })
 })

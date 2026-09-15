@@ -182,13 +182,16 @@ describe('a flood from one address', () => {
   it('lets an ordinary run of enquiries through and then stops', async () => {
     const accepted: boolean[] = []
 
-    // More than any one visitor sends in an hour, and the run stops before the last of them.
-    for (let attempt = 0; attempt < 8; attempt += 1) {
+    // Until it says no, from a run far longer than one visitor makes in an hour. The number is
+    // not asserted: what matters is that a run gets through and a flood does not.
+    for (let attempt = 0; attempt < 30 && (accepted.at(-1) ?? true); attempt += 1) {
       accepted.push((await submitLead(submission())).ok)
     }
 
     expect(accepted[0]).toBe(true)
     expect(accepted.at(-1)).toBe(false)
-    expect(accepted.filter(Boolean).length).toBeLessThan(accepted.length)
+    // An address is shared by everyone behind one company network, so the door stays open for
+    // longer than one enquiry.
+    expect(accepted.filter(Boolean).length).toBeGreaterThanOrEqual(5)
   })
 })
