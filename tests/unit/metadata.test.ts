@@ -71,3 +71,29 @@ describe('pageMetadata', () => {
     expect(twitter && 'images' in twitter ? twitter.images : undefined).toBeUndefined()
   })
 })
+
+describe('the video a page opens on', () => {
+  it('names the file and the container it is in', () => {
+    const { openGraph } = build({ video: 'https://atmjet.com/video/background_full.mp4' })
+
+    expect(openGraph).toMatchObject({
+      videos: [{ url: 'https://atmjet.com/video/background_full.mp4', type: 'video/mp4' }],
+    })
+  })
+
+  it('reads the container off the path rather than assuming the legacy one', () => {
+    const { openGraph } = build({ video: 'https://atmjet.com/video/hero.WEBM' })
+
+    expect(openGraph).toMatchObject({ videos: [{ type: 'video/webm' }] })
+  })
+
+  it('says nothing about a container it does not know', () => {
+    const { openGraph } = build({ video: 'https://atmjet.com/video/hero.mov' })
+
+    expect(openGraph?.videos).toEqual([{ url: 'https://atmjet.com/video/hero.mov' }])
+  })
+
+  it('names no video on a page that opens on none', () => {
+    expect(build().openGraph?.videos).toBeUndefined()
+  })
+})

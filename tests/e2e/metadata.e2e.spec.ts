@@ -109,4 +109,25 @@ test.describe('page metadata', () => {
     expect(attribute(head, /<title>([^<]*)<\/title>/)).toBe('Partners')
     expect(metaContent(head, 'description')).toContain('ATM JET')
   })
+
+  test('names the film the home page opens on, as the legacy home page did', async ({
+    request,
+  }) => {
+    const head = await documentOf(request, pathFor('/', 'en'))
+    const video = metaContent(head, 'og:video')
+
+    // An absolute URL, because a scraper reads the tag away from the page it came from: the
+    // legacy path resolved against the page it was written on (section 13, entry 13).
+    expect(video).toMatch(/^https?:\/\/.+\.mp4$/)
+    expect(metaContent(head, 'og:video:type')).toBe('video/mp4')
+
+    // The same file the hero itself plays, rather than a second copy of the path.
+    expect(head).toContain(`<source src="${new URL(String(video)).pathname}"`)
+  })
+
+  test('names no film on a page that opens on none', async ({ request }) => {
+    const head = await documentOf(request, pathFor('/partners', 'en'))
+
+    expect(metaContent(head, 'og:video')).toBeUndefined()
+  })
 })
