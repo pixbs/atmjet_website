@@ -1,3 +1,5 @@
+import type { Page } from '@playwright/test'
+
 import { cleanupTestUser, seedTestUser, testUser } from '../helpers/seedUser'
 import { expect, test } from './fixtures'
 import { pathFor } from './routes'
@@ -11,6 +13,13 @@ const FORM = '[data-section="booking-form"]'
 
 /** Unique, so a run can find its own lead in a list every run adds to. */
 const visitor = () => `A visitor ${Date.now().toString(36)}`
+
+/**
+ * A browser fills three fields in faster than any person, and the action refuses a submission
+ * sent inside the first couple of seconds (issue #157). A test that means to be taken for a
+ * visitor spends a visitor's time over it.
+ */
+const asAVisitor = (page: Page) => page.waitForTimeout(2_500)
 
 test.describe('the booking form', () => {
   test('says what is wrong with a field once it is left, and not before', async ({ page }) => {
@@ -65,6 +74,7 @@ test.describe('a lead', () => {
     await form.getByLabel('Phone number').fill('+971504589926')
     // The chip is a checkbox with its box taken away, so it is the label that is clicked.
     await form.getByText('Partnership request').click()
+    await asAVisitor(page)
     await form.getByRole('button', { name: 'Send' }).click()
 
     await expect(form.getByRole('status')).toHaveText('Successfully sent')
@@ -82,5 +92,53 @@ test.describe('a lead', () => {
     // The columns the desk looks at first (issue #154).
     await expect(row).toContainText('Header')
     await expect(row).toContainText('pending')
+  })
+})
+
+/**
+ * The invisible measures of issue #157, from the browser's side: the honeypot is out of the way
+ * of anybody filling the form in, and a submission that fills it in is refused without a word.
+ */
+test.describe('a submission that looks automated', () => {
+  test('leaves the honeypot out of the way of anyone filling the form in', async ({ page }) => {
+    await page.goto(pathFor('/styleguide', 'en'))
+    const form = page.locator(FORM)
+    const trap = form.locator('input[name="company"]')
+
+    await expect(trap).toHaveCount(1)
+    // Out of the page for a person: no box, and nothing a tab can land on.
+    await expect(trap).not.toBeInViewport()
+    await expect(trap).toHaveAttribute('tabindex', '-1')
+  })
+
+  test('is refused, with nothing said, when the honeypot has been filled in', async ({ page }) => {
+    await page.goto(pathFor('/styleguide', 'en'))
+    const form = page.locator(FORM)
+
+    await form.getByLabel('Name').fill(visitor())
+    await form.getByLabel('Email').fill('script@example.test')
+    await form.getByLabel('Phone number').fill('+971504589926')
+    await form
+      .locator('input[name="company"]')
+      .evaluate((field: HTMLInputElement) => (field.value = 'ATM JET'))
+    await asAVisitor(page)
+
+    await form.getByRole('button', { name: 'Send' }).click()
+
+    // Nothing is said either way: the confirm state is what a lead that was written gets.
+    await expect(form.getByRole('status')).toHaveCount(0)
+    await expect(form.getByLabel('Email')).toHaveValue('script@example.test')
+  })
+
+  test('is refused when the form is sent the instant it is reached', async ({ page }) => {
+    await page.goto(pathFor('/styleguide', 'en'))
+    const form = page.locator(FORM)
+
+    await form.getByLabel('Name').fill(visitor())
+    await form.getByLabel('Email').fill('hurried@example.test')
+    await form.getByLabel('Phone number').fill('+971504589926')
+    await form.getByRole('button', { name: 'Send' }).click()
+
+    await expect(form.getByRole('status')).toHaveCount(0)
   })
 })

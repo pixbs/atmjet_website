@@ -40,6 +40,8 @@ const submission = (overrides: Record<string, unknown> = {}) => ({
   source: 'Header',
   locale: 'en' as const,
   url: 'https://atmjet.com/en/empty_legs?utm_source=telegram&utm_campaign=empty-legs',
+  // As long as a visitor who is not hurrying takes over the three fields (issue #157).
+  elapsedMs: 30_000,
   ...overrides,
 })
 
@@ -130,5 +132,63 @@ describe('a submission', () => {
       submitLead({ ...sent, values: { ...sent.values, phone: '+971 50' } }),
     ).resolves.toEqual({ ok: false })
     expect(await leadFor(sent.values.email)).toBeUndefined()
+  })
+})
+
+/**
+ * The invisible measures of issue #157, where they are actually applied: the one server action
+ * every form goes through. A refusal writes nothing at all — not the lead, and not the address
+ * it came from.
+ */
+describe('a submission that looks automated', () => {
+  it('is refused when it filled in the field nothing shows', async () => {
+    const sent = submission({ trap: 'ATM JET' })
+
+    await expect(submitLead(sent)).resolves.toEqual({ ok: false })
+    expect(await leadFor(sent.values.email)).toBeUndefined()
+  })
+
+  it('is refused when the form was sent the instant it was reached', async () => {
+    const sent = submission({ elapsedMs: 0 })
+
+    await expect(submitLead(sent)).resolves.toEqual({ ok: false })
+    expect(await leadFor(sent.values.email)).toBeUndefined()
+  })
+
+  it('is refused when the time it claims is not a time at all', async () => {
+    // A number outside the range becomes nought rather than a reason to trust it.
+    const sent = submission({ elapsedMs: -5 })
+
+    await expect(submitLead(sent as never)).resolves.toEqual({ ok: false })
+    expect(await leadFor(sent.values.email)).toBeUndefined()
+  })
+})
+
+/**
+ * The limit per address (issue #157). The other suites here submit with no address at all, so
+ * the window is untouched until this one writes one on the request.
+ */
+describe('a flood from one address', () => {
+  const address = '203.0.113.42'
+
+  beforeAll(() => {
+    requestHeaders.set('x-forwarded-for', address)
+  })
+
+  afterAll(() => {
+    requestHeaders.delete('x-forwarded-for')
+  })
+
+  it('lets an ordinary run of enquiries through and then stops', async () => {
+    const accepted: boolean[] = []
+
+    // More than any one visitor sends in an hour, and the run stops before the last of them.
+    for (let attempt = 0; attempt < 8; attempt += 1) {
+      accepted.push((await submitLead(submission())).ok)
+    }
+
+    expect(accepted[0]).toBe(true)
+    expect(accepted.at(-1)).toBe(false)
+    expect(accepted.filter(Boolean).length).toBeLessThan(accepted.length)
   })
 })
