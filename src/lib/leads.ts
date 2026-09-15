@@ -31,6 +31,16 @@ export type LeadDeliveryStatus = (typeof LEAD_DELIVERY_STATUSES)[number]
 /** The longest name the legacy form accepted (`z.string().min(1).max(32)`). */
 export const LEAD_NAME_MAX_LENGTH = 32
 
+/**
+ * What a lead may carry, so that the message built from it still fits the 4,096 characters
+ * Telegram accepts in one send (`src/lib/telegram.ts`). The legacy form bounded only the name,
+ * and an unbounded field is not merely untidy here: a lead too long to send fails on every
+ * attempt the job makes and is never delivered at all.
+ */
+const LEAD_EMAIL_MAX_LENGTH = 254
+export const LEAD_TAG_MAX_LENGTH = 64
+export const LEAD_TAGS_MAX = 8
+
 /** The digit count the legacy phone rule allowed, before any formatting. */
 export const LEAD_PHONE_MIN_DIGITS = 8
 export const LEAD_PHONE_MAX_DIGITS = 15
@@ -53,9 +63,15 @@ export function isSubmittablePhone(value: unknown): boolean {
   return digits >= LEAD_PHONE_MIN_DIGITS && digits <= LEAD_PHONE_MAX_DIGITS
 }
 
-/** The legacy form's e-mail rule was `z.string().email()`; this is the same shape, no stricter. */
+/**
+ * The legacy form's e-mail rule was `z.string().email()`; this is the same shape, with the one
+ * addition that it has to fit in a message (`LEAD_EMAIL_MAX_LENGTH`, itself the longest address
+ * the standards allow).
+ */
 export function isSubmittableEmail(value: unknown): boolean {
-  return typeof value === 'string' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
+  if (typeof value !== 'string' || value.length > LEAD_EMAIL_MAX_LENGTH) return false
+
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
 }
 
 export interface DeliveryAttempt {

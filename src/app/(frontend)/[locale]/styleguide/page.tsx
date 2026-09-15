@@ -2,6 +2,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server'
 import type { Metadata } from 'next'
 import React from 'react'
 
+import { BookingForm } from '@/components/form/booking-form'
 import { RequestForm } from '@/components/form/request-form'
 import * as icons from '@/components/icons'
 import { Counter } from '@/components/motion/counter'
@@ -332,6 +333,7 @@ export default async function StyleguidePage({ params }: { params: Promise<{ loc
 
   // The switcher offers the languages the settings enable, which is what the chrome will pass it.
   const t = await getTranslations({ locale, namespace: 'common' })
+  const tBooking = await getTranslations({ locale, namespace: 'booking' })
   const [locales, uploads] = await Promise.all([
     getEnabledLocales(),
     // The gallery needs real files; the seed's placeholders stand in until the media migration
@@ -732,6 +734,26 @@ export default async function StyleguidePage({ params }: { params: Promise<{ loc
           in the query.
         </p>
         <RequestForm locale={locale as Locale} />
+      </section>
+
+      <section
+        id="booking-form"
+        data-section="booking-form-example"
+        className="container items-start gap-4"
+      >
+        <h3>Booking form</h3>
+        <p>
+          A name, a telephone number and an address, judged when each field is left, as the legacy
+          form judged them. Submitting it writes a lead and queues the message to Telegram.
+        </p>
+        <div className="w-full max-w-screen-sm">
+          <BookingForm
+            defaultCountry={defaultCountry(null, locale as Locale)}
+            formType="booking-dialog"
+            locale={locale as Locale}
+            tags={[tBooking('tagPartnership'), tBooking('tagPress'), tBooking('tagOther')]}
+          />
+        </div>
       </section>
     </div>
   )

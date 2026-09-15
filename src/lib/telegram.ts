@@ -92,6 +92,25 @@ function itinerary(directions: LeadMessageFields['directions']): string {
     .join('\n\n')
 }
 
+/** What Telegram accepts in one `sendMessage`; anything longer is refused, every attempt. */
+const MESSAGE_MAX_LENGTH = 4096
+
+/**
+ * The address the lead was submitted from, shortened to whatever room is left. Every other field
+ * is bounded where it is submitted (`src/lib/leads.ts`), and the URL is the one part that can
+ * still run long — it carries the itinerary as a query — so it is the part that yields. The
+ * lead itself keeps the whole address either way.
+ *
+ * Trimmed before escaping, never after: escaping puts a backslash in front of a character, and
+ * a cut between the two would end the message on a lone backslash. Escaping adds at most one
+ * character per character, so half the room always fits.
+ */
+function fromLine(url: string, room: number): string {
+  if (escape(url).length <= room) return `🔗 From ${escape(url)}`
+
+  return `🔗 From ${escape(url.slice(0, Math.max(Math.floor(room / 2) - 1, 0)))}…`
+}
+
 /**
  * The message as `booking.tsx` built it (section 7.4, verbatim), from the stored lead rather
  * than from the form state that no longer exists by the time this runs.
@@ -99,7 +118,7 @@ function itinerary(directions: LeadMessageFields['directions']): string {
 export function leadMessage(lead: LeadMessageFields): string {
   const tags = lead.tags ?? []
 
-  return [
+  const body = [
     '*🚀  New Booking Request*',
     '──────────────',
     `👤 *Name:* ${escape(lead.name)}`,
@@ -113,7 +132,10 @@ export function leadMessage(lead: LeadMessageFields): string {
     tags.length > 0 ? `🏷️ *Tags:* ${escape(tags.join(', '))}` : '🏷️ *Tags:* None',
     '',
     itinerary(lead.directions),
+    // The blank line the legacy message left between the itinerary and the address.
     '',
-    `🔗 From ${escape(lead.page?.url ?? '')}`,
+    '',
   ].join('\n')
+
+  return `${body}${fromLine(lead.page?.url ?? '', MESSAGE_MAX_LENGTH - body.length - '🔗 From '.length)}`
 }

@@ -1499,7 +1499,7 @@ export interface Lead {
    */
   deliveryStatus?: string | null;
   /**
-   * One row per channel. The legacy site had none of this: a failed send was an unhandled rejection and the lead was gone.
+   * One row per channel, written by the queue. The legacy site had none of this: a failed send was an unhandled rejection and the lead was gone.
    */
   delivery?:
     | {

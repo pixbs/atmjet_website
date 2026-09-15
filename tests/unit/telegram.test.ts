@@ -1,5 +1,8 @@
 import { describe, expect, it } from 'vitest'
 
+import { bookingSchema, submissionSchema } from '@/lib/booking'
+import { legSchema, MAX_LEGS } from '@/lib/flight-request'
+import { LEAD_TAGS_MAX } from '@/lib/leads'
 import { leadMessage, readTelegramSettings } from '@/lib/telegram'
 import type { Lead } from '@/payload-types'
 
@@ -133,5 +136,102 @@ describe('the variables the dispatch needs', () => {
     expect(
       readTelegramSettings({ TELEGRAM_BOT_TOKEN: '123:abc', TELEGRAM_CHAT_IDS: ' , ' }),
     ).toEqual({ ok: false, missing: ['TELEGRAM_CHAT_IDS'] })
+  })
+})
+
+/**
+ * A lead that is too long to send is not delivered late, it is never delivered: the job's three
+ * attempts all fail the same way (issue #154). So every field a visitor fills in is bounded
+ * where it is submitted, and this is the check that the bounds are the right ones — the largest
+ * submission the schemas accept still fits in one message.
+ *
+ * The lengths are asked of the schemas rather than copied from them, so this keeps testing the
+ * rule that is actually enforced rather than a number written down twice.
+ */
+describe('the longest lead a visitor can submit', () => {
+  /** The longest value of this shape the schema still accepts. */
+  function longestAccepted(accepts: (length: number) => boolean): number {
+    let length = 1
+    while (length < 4096 && accepts(length + 1)) length += 1
+
+    return length
+  }
+
+  const filled = (length: number) => 'ю'.repeat(length)
+
+  const nameLength = longestAccepted(
+    (length) =>
+      bookingSchema.safeParse({
+        name: filled(length),
+        email: 'a@b.co',
+        phone: '+971504589926',
+      }).success,
+  )
+
+  const tagLength = longestAccepted(
+    (length) =>
+      bookingSchema.safeParse({
+        name: 'A',
+        email: 'a@b.co',
+        phone: '+971504589926',
+        tags: [filled(length)],
+      }).success,
+  )
+
+  const airportLength = longestAccepted(
+    (length) =>
+      legSchema.safeParse({ from: filled(length), date: '2026-09-15', passengers: 1 }).success,
+  )
+
+  const passengers = longestAccepted(
+    (count) => legSchema.safeParse({ from: 'A', date: '2026-09-15', passengers: count }).success,
+  )
+
+  const values = bookingSchema.parse({
+    name: filled(nameLength),
+    email: `${'e'.repeat(240)}@example.com`,
+    phone: '+971 (50) 458-99-26',
+    tags: Array.from({ length: LEAD_TAGS_MAX }, () => filled(tagLength)),
+  })
+
+  const directions = submissionSchema.shape.directions.unwrap().parse(
+    Array.from({ length: MAX_LEGS }, () => ({
+      from: filled(airportLength),
+      to: filled(airportLength),
+      date: '2026-09-15',
+      returnDate: '2026-09-22',
+      passengers,
+    })),
+  )
+
+  const longest = (url: string) =>
+    leadMessage({
+      ...values,
+      tags: values.tags ?? [],
+      directions,
+      locale: 'ru',
+      source: '.'.repeat(64),
+      page: { url },
+    } as Lead)
+
+  it('still fits in the one message Telegram accepts, escaping and all', () => {
+    // `sendMessage` refuses anything over 4,096 characters, every attempt alike.
+    expect(longest(`https://atmjet.com/ru?${'.'.repeat(2000)}`).length).toBeLessThanOrEqual(4096)
+  })
+
+  it('shortens the address rather than any of what the visitor wrote', () => {
+    const message = longest(`https://atmjet.com/ru?${'.'.repeat(2000)}`)
+
+    expect(message).toContain(filled(nameLength))
+    expect(message).toContain('…')
+    // A trimmed address never ends on the backslash half of an escape pair.
+    expect(message).not.toMatch(/\\…/)
+  })
+
+  it('leaves an address that fits exactly as it is', () => {
+    const message = longest('https://atmjet.com/ru')
+
+    expect(message).toContain('🔗 From https://atmjet\\.com/ru')
+    expect(message).not.toContain('…')
   })
 })

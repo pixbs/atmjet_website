@@ -45,6 +45,24 @@
       "retry": "Повторити"
     }
   },
+  "booking": {
+    "name": "Ім'я",
+    "namePlaceholder": "Введіть ваше ім'я",
+    "phone": "Номер телефону",
+    "email": "Email",
+    "emailPlaceholder": "example@example.com",
+    "send": "Надіслати",
+    "sent": "Успішно надіслано",
+    "search": "Пошук",
+    "noResults": "Немає результатів",
+    "countries": "Країни",
+    "tagPartnership": "Запит на партнерство",
+    "tagPress": "преса",
+    "tagOther": "інше",
+    "nameRequired": "Обов'язкове поле",
+    "emailInvalid": "Невірна адреса",
+    "phoneInvalid": "Невірний номер телефону"
+  },
   "form": {
     "from": "Звідки",
     "to": "Куди",

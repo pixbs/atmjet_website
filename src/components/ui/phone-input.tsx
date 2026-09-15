@@ -49,6 +49,8 @@ export interface PhoneInputProps {
   defaultCountry: CountryCode
   value?: string
   onChange?: (value: string) => void
+  /** Told when the field is left, which is when a form built on it judges what is in it. */
+  onBlur?: () => void
   /**
    * English-only on the legacy site, so the caller says them (E10.4). `countries` names the list
    * itself, which a screen reader announces when it opens and the legacy `ul` never had.
@@ -69,6 +71,7 @@ export function PhoneInput({
   defaultCountry,
   value,
   onChange,
+  onBlur,
   labels,
   invalid,
   className,
@@ -153,7 +156,10 @@ export function PhoneInput({
             put(next)
             setCountry(countryForNumber(next) ?? country)
           }}
-          onBlur={() => setIsTouched(true)}
+          onBlur={() => {
+            setIsTouched(true)
+            onBlur?.()
+          }}
           onFocus={() => {
             if (number === '') put('+')
           }}
