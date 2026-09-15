@@ -31,6 +31,10 @@ const heroOf = (page: { layout?: Page['layout'] }) =>
 const reasonsOf = (page: { layout?: Page['layout'] }) =>
   page.layout?.find((block) => block.blockType === 'whyUs')?.cards
 
+/** The booking invitation, likewise. */
+const bookingOf = (page: { layout?: Page['layout'] }) =>
+  page.layout?.find((block) => block.blockType === 'makeBooking')
+
 const pageData = (overrides: Record<string, unknown> = {}) => ({
   title: `Page ${uniqueSuffix()}`,
   slug: `page-${uniqueSuffix()}`,
@@ -377,5 +381,59 @@ describe('the why us block', () => {
     expect(reasonsOf(english)?.[0]?.title).toBe('Years in the air')
     expect(reasonsOf(russian)?.[0]?.title).toBe('Лет в воздухе')
     expect(reasonsOf(russian)).toHaveLength(1)
+  })
+})
+
+/**
+ * The two sections that carry the flight request (issue #115). Which of the two looks the
+ * invitation takes is the whole of the legacy `isCard`, and it is a property of the section
+ * rather than of a language: an editor who translates the heading must not be able to give the
+ * Russian page a card and the English one none.
+ */
+describe('the booking invitation and the transfer', () => {
+  it('keeps one look across the languages while the heading is translated', async () => {
+    const page = await registry.create(
+      'pages',
+      pageData({ layout: [{ blockType: 'makeBooking', title: 'Book a flight', variant: 'card' }] }),
+    )
+
+    await registry.payload.update({
+      collection: 'pages',
+      id: page.id,
+      data: {
+        title: 'Групповые перевозки',
+        layout: [
+          {
+            blockType: 'makeBooking',
+            id: bookingOf(page)?.id,
+            title: 'Забронировать перелет',
+            variant: 'plain',
+          },
+        ],
+      },
+      locale: 'ru',
+      overrideAccess: true,
+    })
+
+    const english = await registry.payload.findByID({ collection: 'pages', id: page.id })
+    const russian = await registry.payload.findByID({
+      collection: 'pages',
+      id: page.id,
+      locale: 'ru',
+    })
+
+    expect(bookingOf(english)?.title).toBe('Book a flight')
+    expect(bookingOf(russian)?.title).toBe('Забронировать перелет')
+    // `variant` is not localized, so the Russian write moved both pages to the plain look.
+    expect(bookingOf(english)?.variant).toBe('plain')
+  })
+
+  it('refuses a transfer with no photograph, which is half of what it draws', async () => {
+    await expect(
+      registry.create(
+        'pages',
+        pageData({ layout: [{ blockType: 'transfer', title: 'Transfer' }] }),
+      ),
+    ).rejects.toThrow()
   })
 })
