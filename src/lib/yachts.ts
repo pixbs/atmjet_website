@@ -104,3 +104,59 @@ export function listingProblems(data: YachtListing): ListingProblem[] {
 
   return problems
 }
+
+/**
+ * The rows the sale card prints, in the order the legacy card printed them (issue #100,
+ * `docs/legacy-inventory.md` section 6).
+ *
+ * The labels come from the caller, because the legacy card wrote all eight in English on a site
+ * served in three languages (section 10.4). A row whose value an editor has not filled in is
+ * printed empty rather than left out: the legacy card drew all eight whatever the row held, and
+ * the ruled lines are what give the card its height.
+ */
+export interface SaleYachtFacts {
+  /** Metres on the charter listings and feet on the sale ones, as the legacy tables held them. */
+  length?: number | null
+  location?: string | null
+  sale?: {
+    shipyard?: string | null
+    year?: number | null
+    beam?: number | null
+    draft?: number | null
+    cruisingSpeed?: number | null
+    maxSpeed?: number | null
+  } | null
+}
+
+export type SaleYachtSpecName =
+  'shipyard' | 'year' | 'length' | 'beam' | 'draft' | 'cruisingSpeed' | 'maxSpeed' | 'location'
+
+/** The wording of each row, and the unit the legacy card printed the length in. */
+export type SaleYachtLabels = Record<SaleYachtSpecName, string> & { feet: string }
+
+const printable = (value: string | number | null | undefined): string =>
+  value === null || value === undefined ? '' : String(value).trim()
+
+export function saleYachtSpecs(
+  yacht: SaleYachtFacts,
+  labels: SaleYachtLabels,
+): { label: string; value: string }[] {
+  const length = printable(yacht.length)
+
+  const values: Record<SaleYachtSpecName, string> = {
+    shipyard: printable(yacht.sale?.shipyard),
+    year: printable(yacht.sale?.year),
+    // `120 feet`, as the legacy card composed it.
+    length: length === '' ? '' : `${length} ${labels.feet}`,
+    beam: printable(yacht.sale?.beam),
+    draft: printable(yacht.sale?.draft),
+    cruisingSpeed: printable(yacht.sale?.cruisingSpeed),
+    maxSpeed: printable(yacht.sale?.maxSpeed),
+    location: printable(yacht.location),
+  }
+
+  return (Object.keys(values) as SaleYachtSpecName[]).map((name) => ({
+    label: labels[name],
+    value: values[name],
+  }))
+}

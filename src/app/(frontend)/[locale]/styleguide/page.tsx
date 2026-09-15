@@ -15,6 +15,8 @@ import { GroupCard } from '@/components/cards/group-card'
 import { KeyFeatureCard } from '@/components/cards/key-feature-card'
 import { PrivilegeCard } from '@/components/cards/privilege-card'
 import { VehicleCard } from '@/components/cards/vehicle-card'
+import { YachtCard } from '@/components/cards/yacht-card'
+import { YachtCarousel } from '@/components/cards/yacht-carousel'
 import { WhyUsCard } from '@/components/cards/why-us-card'
 import { YachtsCard } from '@/components/cards/yachts-card'
 import { Button, buttonVariants } from '@/components/ui/button'
@@ -29,6 +31,7 @@ import { Select } from '@/components/ui/select'
 import type { Locale } from '@/i18n/locales'
 import { defaultCountry } from '@/lib/countries'
 import { listMediaImages } from '@/lib/data/media'
+import { saleYachtSpecs, type SaleYachtLabels } from '@/lib/yachts'
 import { getEnabledLocales } from '@/lib/data/site-settings'
 
 /**
@@ -264,6 +267,46 @@ const VEHICLES = [
       { label: 'Year:', value: '2014' },
       { label: 'Pax:', value: '' },
     ],
+  },
+]
+
+/** The eight rows the sale card prints, as the legacy card wrote them (issue #100). */
+const YACHT_LABELS: SaleYachtLabels = {
+  shipyard: 'Shipyard:',
+  year: 'Year built:',
+  length: 'Length:',
+  beam: 'Beam:',
+  draft: 'Draft:',
+  cruisingSpeed: 'Cruising speed:',
+  maxSpeed: 'Max speed:',
+  location: 'Location:',
+  feet: 'feet',
+}
+
+/** Two yachts for sale: one filled in, and one an editor has only started. */
+const SALE_YACHTS = [
+  {
+    guests: '12',
+    cabins: '6',
+    crew: '9',
+    facts: {
+      length: 120,
+      location: 'Monaco',
+      sale: {
+        shipyard: 'Benetti',
+        year: 2019,
+        beam: 25,
+        draft: 8,
+        cruisingSpeed: 12,
+        maxSpeed: 16,
+      },
+    },
+  },
+  {
+    guests: '8',
+    cabins: '4',
+    crew: '5',
+    facts: { length: 88, location: 'Dubai', sale: { shipyard: 'Sunseeker' } },
   },
 ]
 
@@ -611,6 +654,36 @@ export default async function StyleguidePage({ params }: { params: Promise<{ loc
               </Carousel>
             </div>
           </div>
+        )}
+      </section>
+
+      <section id="yacht-cards" data-section="yacht-cards" className="container items-start gap-4">
+        <h3>Yachts for sale</h3>
+        {uploads.length === 0 ? (
+          <p>No uploads to show. Run the seed.</p>
+        ) : (
+          <YachtCarousel
+            className="w-full"
+            labels={{ previous: 'Previous yacht', next: 'Next yacht' }}
+          >
+            {SALE_YACHTS.map((yacht) => (
+              <YachtCard
+                key={yacht.facts.location}
+                figures={[
+                  { label: 'Guests:', value: yacht.guests, icon: <icons.People /> },
+                  { label: 'Cabins:', value: yacht.cabins, icon: <icons.BedDouble /> },
+                  { label: 'Crew:', value: yacht.crew, icon: <icons.SecurityWorker /> },
+                ]}
+                labels={{
+                  previous: 'Previous photograph',
+                  next: 'Next photograph',
+                  slides: 'Photographs',
+                }}
+                photos={uploads}
+                specs={saleYachtSpecs(yacht.facts, YACHT_LABELS)}
+              />
+            ))}
+          </YachtCarousel>
         )}
       </section>
 

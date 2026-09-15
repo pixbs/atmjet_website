@@ -1,6 +1,11 @@
 import { describe, expect, it } from 'vitest'
 
-import { listingProblems, type YachtListing } from '@/lib/yachts'
+import {
+  listingProblems,
+  saleYachtSpecs,
+  type SaleYachtLabels,
+  type YachtListing,
+} from '@/lib/yachts'
 
 /**
  * What makes a listing coherent (issue #65). Every column of both legacy tables is nullable, so
@@ -121,5 +126,69 @@ describe('a price and its currency', () => {
     })
 
     expect(problems.map((problem) => problem.path)).toEqual(['charter', 'sale.currency'])
+  })
+})
+
+/**
+ * The rows the sale card prints (issue #100, `docs/legacy-inventory.md` section 6). The legacy
+ * card drew all eight whatever the row held, and composed the length as `120 feet`.
+ */
+const LABELS: SaleYachtLabels = {
+  shipyard: 'Shipyard:',
+  year: 'Year built:',
+  length: 'Length:',
+  beam: 'Beam:',
+  draft: 'Draft:',
+  cruisingSpeed: 'Cruising speed:',
+  maxSpeed: 'Max speed:',
+  location: 'Location:',
+  feet: 'feet',
+}
+
+describe('saleYachtSpecs', () => {
+  it('prints the eight rows in the order the legacy card printed them', () => {
+    const specs = saleYachtSpecs(
+      {
+        length: 120,
+        location: 'Monaco',
+        sale: {
+          shipyard: 'Benetti',
+          year: 2019,
+          beam: 25,
+          draft: 8,
+          cruisingSpeed: 12,
+          maxSpeed: 16,
+        },
+      },
+      LABELS,
+    )
+
+    expect(specs).toEqual([
+      { label: 'Shipyard:', value: 'Benetti' },
+      { label: 'Year built:', value: '2019' },
+      { label: 'Length:', value: '120 feet' },
+      { label: 'Beam:', value: '25' },
+      { label: 'Draft:', value: '8' },
+      { label: 'Cruising speed:', value: '12' },
+      { label: 'Max speed:', value: '16' },
+      { label: 'Location:', value: 'Monaco' },
+    ])
+  })
+
+  it('keeps the row and empties the value where a listing has nothing to say', () => {
+    // The ruled lines are what give the card its height, so the legacy drew them regardless.
+    const specs = saleYachtSpecs({ sale: { shipyard: 'Sunseeker' } }, LABELS)
+
+    expect(specs).toHaveLength(8)
+    expect(specs.filter((spec) => spec.value !== '')).toEqual([
+      { label: 'Shipyard:', value: 'Sunseeker' },
+    ])
+  })
+
+  it('prints a measurement of zero rather than reading it as nothing', () => {
+    const specs = saleYachtSpecs({ length: 0, sale: { draft: 0 } }, LABELS)
+
+    expect(specs).toContainEqual({ label: 'Length:', value: '0 feet' })
+    expect(specs).toContainEqual({ label: 'Draft:', value: '0' })
   })
 })

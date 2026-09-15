@@ -26,7 +26,10 @@ test('styleguide matches its baseline', async ({ page }) => {
   const revealed = page.getByRole('heading', { level: 4, name: 'Revealed on scroll' }).locator('..')
   await expect(revealed).toHaveCSS('opacity', '1')
   await expect(page.locator('[data-cards="yachts"] > div')).toHaveCSS('opacity', '1')
-  for (const photo of await page.locator('img').all()) {
+  // A slide waiting its turn inside a carousel is lazy, as the legacy slides were (issue #100),
+  // and a browser never fetches one it has not had to draw; every photograph the capture
+  // contains is eager, so those are the ones waited for.
+  for (const photo of await page.locator('img:not([loading="lazy"])').all()) {
     await expect(photo).toHaveJSProperty('complete', true)
   }
 
