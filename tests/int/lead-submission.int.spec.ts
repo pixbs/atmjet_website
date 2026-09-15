@@ -155,12 +155,16 @@ describe('a submission that looks automated', () => {
     expect(await leadFor(sent.values.email)).toBeUndefined()
   })
 
-  it('is refused when the time it claims is not a time at all', async () => {
-    // A number outside the range becomes nought rather than a reason to trust it.
-    const sent = submission({ elapsedMs: -5 })
+  it('is written down when the browser said nothing believable about the time', async () => {
+    // A tab open since yesterday, or one whose clock says something impossible: the reading is
+    // dropped rather than read as the fastest submission there is, which would lose the lead.
+    const stale = submission({ elapsedMs: 3 * 24 * 60 * 60 * 1_000 })
+    const impossible = submission({ elapsedMs: -5 })
 
-    await expect(submitLead(sent as never)).resolves.toEqual({ ok: false })
-    expect(await leadFor(sent.values.email)).toBeUndefined()
+    await expect(submitLead(stale as never)).resolves.toEqual({ ok: true })
+    await expect(submitLead(impossible as never)).resolves.toEqual({ ok: true })
+    expect(await leadFor(stale.values.email)).toBeDefined()
+    expect(await leadFor(impossible.values.email)).toBeDefined()
   })
 })
 

@@ -10,13 +10,18 @@
  * as they can, which is what a form on a public site actually receives.
  */
 
-/** The field a person never sees, named as something a script would expect to fill in. */
-export const HONEYPOT_FIELD = 'company'
+/**
+ * The field a person never sees. Named so that no browser recognises it: a honeypot called
+ * `company` or `address` is one an address autofill fills in, and the visitor whose browser
+ * filled it is then the one refused.
+ */
+export const HONEYPOT_FIELD = 'reference'
 
 /**
- * The floor under how long filling in three fields takes. Two seconds is below any real
- * visitor — the legacy form asked for a name, a telephone number and an address — and above
- * what a script that posts the moment the page arrives spends.
+ * The floor under how long a form is on screen before it is sent. Two seconds is below any real
+ * visitor — the legacy form asked for a name, a telephone number and an address, and reaching
+ * the send button alone takes longer — and above what a script that posts the moment the page
+ * arrives spends.
  */
 const MIN_FILL_MS = 2_000
 
@@ -38,13 +43,18 @@ export type SpamReason = 'honeypot' | 'too-fast' | 'too-many'
 export interface FillEvidence {
   /** The honeypot's value. Anything at all in it is a script. */
   trap?: string
-  /** Milliseconds between the form appearing and the visitor sending it. */
-  elapsedMs: number
+  /**
+   * Milliseconds between the form appearing and the visitor sending it, where the browser said.
+   * Absent where it said nothing believable — a tab open since yesterday, most of all.
+   */
+  elapsedMs?: number
 }
 
 export function looksAutomated({ trap, elapsedMs }: FillEvidence): SpamReason | null {
   if ((trap ?? '') !== '') return 'honeypot'
-  if (elapsedMs < MIN_FILL_MS) return 'too-fast'
+  // No reading is no evidence, and no evidence is not a reason to refuse somebody: a tab left
+  // open overnight sends nothing believable, and the honeypot and the limit still stand over it.
+  if (elapsedMs !== undefined && elapsedMs < MIN_FILL_MS) return 'too-fast'
 
   return null
 }

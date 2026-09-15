@@ -38,14 +38,26 @@ const CHIP =
   'cursor-pointer rounded-full border border-graphite-700 px-5 py-2 font-semibold uppercase transition-colors hover:border-graphite-100 peer-checked:border-transparent peer-checked:bg-gold peer-checked:text-graphite-900'
 
 /**
- * How long the visitor spent on the form, measured between the event that first focused it and
- * the one that sent it — both from the same clock, and neither a reading taken during render.
- * Nothing focused means nothing filled it in by hand, which is nought and refused (issue #157).
+ * How long the form was on screen before it was sent, measured between the moment it appeared
+ * and the event that sent it — both from the same clock, and neither a reading taken during
+ * render (issue #157).
+ *
+ * From when it appeared rather than from when it was first touched: a browser that fills every
+ * field from a saved address does it in the instant after the first one is focused, so a
+ * visitor whose browser knows them would otherwise be the one refused. Nothing to measure
+ * against is no reading at all, which the action reads as no evidence rather than as haste.
  */
-function elapsedSince(touchedAt: number | null, sentAt: number | undefined): number {
-  if (touchedAt === null || sentAt === undefined) return 0
+const SHOWN_AT = new WeakMap<HTMLFormElement, number>()
 
-  return Math.max(0, Math.round(sentAt - touchedAt))
+/** The moment a form reached the document, taken there rather than during a render. */
+function noteShown(form: HTMLFormElement | null) {
+  if (form !== null && !SHOWN_AT.has(form)) SHOWN_AT.set(form, performance.now())
+}
+
+function elapsedSince(shownAt: number | null, sentAt: number | undefined): number | undefined {
+  if (shownAt === null || sentAt === undefined) return undefined
+
+  return Math.max(0, Math.round(sentAt - shownAt))
 }
 
 export function BookingForm({
@@ -71,10 +83,6 @@ export function BookingForm({
   const chipId = useId()
   const [isSent, setIsSent] = useState(false)
   const [hasFailed, setHasFailed] = useState(false)
-  // When the visitor first touched the form, from the event's own clock; what the action
-  // measures a script's haste against (issue #157).
-  const [touchedAt, setTouchedAt] = useState<number | null>(null)
-
   const {
     control,
     formState: { errors, isSubmitting, touchedFields },
@@ -97,7 +105,10 @@ export function BookingForm({
     const { ok } = await submitLead({
       values,
       formType,
-      elapsedMs: elapsedSince(touchedAt, event?.timeStamp),
+      elapsedMs: elapsedSince(
+        form === undefined ? null : (SHOWN_AT.get(form) ?? null),
+        event?.timeStamp,
+      ),
       trap: honeypot instanceof HTMLInputElement ? honeypot.value : '',
       // The legacy carried the name of the button that opened the form (section 3.9); a form
       // nothing opened sent an empty string, so this one says where it stands instead.
@@ -145,8 +156,8 @@ export function BookingForm({
       data-section="booking-form"
       // The legacy form asked the browser not to validate it: the rules are zod's.
       noValidate
-      onFocusCapture={(event) => setTouchedAt((at) => at ?? event.timeStamp)}
       onSubmit={handleSubmit(submit)}
+      ref={noteShown}
     >
       {/* The honeypot (issue #157): out of the page for a person and out of the tab order, so
           the only thing that fills it in is something reading the markup. */}

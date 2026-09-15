@@ -38,8 +38,9 @@ const URL_MAX = 2048
 
 /**
  * A day, as the longest elapsed time worth believing: a tab left open overnight sends a number
- * nothing can be concluded from, and a number outside the range becomes 0 rather than refusing
- * the submission, which would turn a stale tab into a lost lead.
+ * nothing can be concluded from. A number outside the range is dropped rather than floored to
+ * nought, which the floor under it would have read as the fastest submission there is and
+ * refused — turning a stale tab into a lost lead.
  */
 const MAX_ELAPSED_MS = 24 * 60 * 60 * 1000
 
@@ -58,7 +59,7 @@ export const submissionSchema = z.object({
   /** The legs of a flight request, where one was handed over (section 7.6). */
   directions: z.array(legSchema).max(4).optional(),
   /** How long the form was on screen before it was sent, and the honeypot (issue #157). */
-  elapsedMs: z.number().int().nonnegative().max(MAX_ELAPSED_MS).catch(0),
+  elapsedMs: z.number().int().nonnegative().max(MAX_ELAPSED_MS).optional().catch(undefined),
   trap: z.string().max(LEAD_NAME_MAX_LENGTH).optional(),
 })
 

@@ -1,13 +1,13 @@
 import { describe, expect, it } from 'vitest'
 
-import { addressOf, createSubmissionLimiter, looksAutomated } from '@/lib/spam'
+import { addressOf, createSubmissionLimiter, HONEYPOT_FIELD, looksAutomated } from '@/lib/spam'
 
 /**
  * What tells a visitor from a script (issue #157, decided 2026-09-13: invisible measures only).
  * Nothing here reads a constant: what matters is which submissions are refused and which get
  * through, so the floor is found by asking rather than by importing it.
  */
-const filled = (elapsedMs: number, trap?: string) => looksAutomated({ elapsedMs, trap })
+const filled = (elapsedMs: number | undefined, trap?: string) => looksAutomated({ elapsedMs, trap })
 
 /** The shortest fill the measures let through, found by asking rather than by importing it. */
 function shortestAccepted(): number {
@@ -41,6 +41,23 @@ describe('how fast a form can be filled in', () => {
     // near that would refuse them, which costs a real lead rather than a script.
     expect(shortestAccepted()).toBeLessThanOrEqual(5_000)
     expect(shortestAccepted()).toBeGreaterThan(0)
+  })
+
+  it('lets through a form whose browser said nothing believable about the time', () => {
+    // A tab left open since yesterday sends a number nothing can be concluded from, and the
+    // action drops it; reading no number as the fastest submission there is would refuse the
+    // visitor who came back to it.
+    expect(filled(undefined)).toBeNull()
+  })
+})
+
+describe('the field nothing shows', () => {
+  it('is named something no browser fills in for a visitor', () => {
+    // A honeypot called `company` or `address` is one an address autofill fills, and then the
+    // visitor whose browser knows them is the one refused.
+    expect(HONEYPOT_FIELD).not.toMatch(
+      /name|company|organi[sz]ation|address|email|phone|tel|country|postal|zip|city/i,
+    )
   })
 })
 

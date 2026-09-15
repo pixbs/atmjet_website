@@ -151,7 +151,9 @@ test.describe('a submission that looks automated', () => {
   test('leaves the honeypot out of the way of anyone filling the form in', async ({ page }) => {
     await page.goto(pathFor('/styleguide', 'en'))
     const form = page.locator(FORM)
-    const trap = form.locator('input[name="company"]')
+    // By what it is rather than by what it is called: the name is chosen so that no browser
+    // recognises it, and naming it here would pin the one thing that has to stay free to change.
+    const trap = form.locator('input[aria-hidden="true"]')
 
     await expect(trap).toHaveCount(1)
     // Out of the page for a person: no box, and nothing a tab can land on.
@@ -167,7 +169,7 @@ test.describe('a submission that looks automated', () => {
     await form.getByLabel('Email').fill('script@example.test')
     await form.getByLabel('Phone number').fill('+971504589926')
     await form
-      .locator('input[name="company"]')
+      .locator('input[aria-hidden="true"]')
       .evaluate((field: HTMLInputElement) => (field.value = 'ATM JET'))
     await asAVisitor(page)
 
