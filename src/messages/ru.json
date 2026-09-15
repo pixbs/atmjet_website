@@ -28,6 +28,24 @@
       "retry": "Повторить"
     }
   },
+  "booking": {
+    "name": "Имя",
+    "namePlaceholder": "Введите ваше имя",
+    "phone": "Номер телефона",
+    "email": "Email",
+    "emailPlaceholder": "example@example.com",
+    "send": "Отправить",
+    "sent": "Успешно отправлено",
+    "search": "Поиск",
+    "noResults": "Нет результатов",
+    "countries": "Страны",
+    "tagPartnership": "Запрос на партнерство",
+    "tagPress": "пресс",
+    "tagOther": "другое",
+    "nameRequired": "Обязательное поле",
+    "emailInvalid": "Неверный адрес",
+    "phoneInvalid": "Неверный номер телефона"
+  },
   "form": {
     "from": "Откуда",
     "to": "Куда",

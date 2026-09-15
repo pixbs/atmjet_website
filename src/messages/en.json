@@ -28,6 +28,24 @@
       "retry": "Try again"
     }
   },
+  "booking": {
+    "name": "Name",
+    "namePlaceholder": "John Snow",
+    "phone": "Phone number",
+    "email": "Email",
+    "emailPlaceholder": "example@example.com",
+    "send": "Send",
+    "sent": "Successfully sent",
+    "search": "Search",
+    "noResults": "No results",
+    "countries": "Countries",
+    "tagPartnership": "Partnership request",
+    "tagPress": "press",
+    "tagOther": "other",
+    "nameRequired": "Required",
+    "emailInvalid": "Invalid email",
+    "phoneInvalid": "Invalid phone number"
+  },
   "form": {
     "from": "From",
     "to": "To",
