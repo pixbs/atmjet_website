@@ -9,7 +9,11 @@ import { pathFor } from './routes'
  * `docs/legacy-inventory.md` section 7.2): what it says while it is being filled in, and what it
  * leaves behind once it is sent — which on the legacy site was nothing at all (section 9.1).
  */
-const FORM = '[data-section="booking-form"]'
+/**
+ * The styleguide's own copy, not the one the booking dialog carries: a page opened with
+ * `?showBooking=` now has both (issue #93).
+ */
+const FORM = '[data-section="booking-form-example"] [data-section="booking-form"]'
 
 /** Unique, so a run can find its own lead in a list every run adds to. */
 const visitor = () => `A visitor ${Date.now().toString(36)}`
@@ -65,8 +69,9 @@ test.describe('a lead', () => {
   })
 
   test('is written down when the form is sent', async ({ page }) => {
-    // The query the button that opened the form carried, which the lead is traced back through.
-    await page.goto(`${pathFor('/styleguide', 'en')}?showBooking=Header`)
+    // Without `?showBooking=`, which now opens the dialog over the page (issue #93); the query
+    // a lead is traced back through is that dialog's story, in `booking-dialog.e2e.spec.ts`.
+    await page.goto(pathFor('/styleguide', 'en'))
     const form = page.locator(FORM)
 
     await form.getByLabel('Name').fill(name)
@@ -90,7 +95,7 @@ test.describe('a lead', () => {
     const row = page.locator('tr', { hasText: name }).first()
     await expect(row).toBeVisible()
     // The columns the desk looks at first (issue #154).
-    await expect(row).toContainText('Header')
+    await expect(row).toContainText('+971 50 458 9926')
     await expect(row).toContainText('pending')
   })
 })

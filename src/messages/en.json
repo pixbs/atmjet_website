@@ -46,6 +46,8 @@
     }
   },
   "booking": {
+    "title": "Make a booking",
+    "close": "Close",
     "name": "Name",
     "namePlaceholder": "John Snow",
     "phone": "Phone number",

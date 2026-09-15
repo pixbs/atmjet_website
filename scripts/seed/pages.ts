@@ -977,9 +977,9 @@ function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout 
     })
   }
 
-  // Eight, as the legacy grid sliced one picture into eight. Below the sections above it, as
-  // the legacy grid sat far down the home page: it is scrolled to, not landed on.
-  if (slug === 'cargo_charter')
+  // Eight, as the legacy grid sliced one picture into eight, on the one page that had it. Far
+  // down it, as the legacy grid was: it is scrolled to, not landed on.
+  if (slug === '')
     sections.push({
       blockType: 'tiles',
       // The two placeholders in turn, so the cells of the grid can be told apart; the legacy

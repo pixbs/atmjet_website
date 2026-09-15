@@ -14,20 +14,20 @@ const TILES = '[data-tiles] > div'
 
 test.describe('the tiles grid', () => {
   test('is in the HTML the server sends, before any script runs', async ({ request }) => {
-    const html = await (await request.get(pathFor('/cargo_charter', 'en'))).text()
+    const html = await (await request.get(pathFor('/', 'en'))).text()
 
     expect(html).toContain('data-section="tiles"')
   })
 
   test('draws one tile per row the block carries', async ({ page }) => {
-    await page.goto(pathFor('/cargo_charter', 'en'))
+    await page.goto(pathFor('/', 'en'))
 
     // Eight, as the legacy grid sliced one picture into eight.
     await expect(page.locator(TILES)).toHaveCount(8)
   })
 
   test('holds the tiles back until the grid is scrolled to', async ({ page }) => {
-    await page.goto(pathFor('/cargo_charter', 'en'))
+    await page.goto(pathFor('/', 'en'))
     const first = page.locator(TILES).first()
 
     await expect(first).toHaveCount(1)
@@ -39,7 +39,7 @@ test.describe('the tiles grid', () => {
   })
 
   test('leaves them in once they have arrived', async ({ page }) => {
-    await page.goto(pathFor('/cargo_charter', 'en'))
+    await page.goto(pathFor('/', 'en'))
     const first = page.locator(TILES).first()
 
     await first.scrollIntoViewIfNeeded()
