@@ -17,6 +17,7 @@ const PAGES: { slug: string; locales: readonly Locale[] }[] = [
   { slug: 'atm_jet_group', locales: ENABLED_LOCALES },
   { slug: 'business_agents', locales: ENABLED_LOCALES },
   { slug: 'group_charters', locales: ENABLED_LOCALES },
+  { slug: 'sales_yachts', locales: ENABLED_LOCALES },
   // The citizens page answers in Russian alone (issue #149), so there is one capture of it.
   { slug: 'citizens', locales: ['ru'] },
 ]
