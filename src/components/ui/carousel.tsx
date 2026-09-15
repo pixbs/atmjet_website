@@ -124,29 +124,58 @@ export function CarouselArrows({
   /** What a screen reader calls them; the legacy arrows were two unnamed buttons. */
   labels: { previous: string; next: string }
 }) {
-  const { api, canScrollPrev, canScrollNext } = useCarousel()
-
   return (
     <div className={cn('flex-row gap-2', className)}>
-      <button
-        aria-label={labels.previous}
-        className={ARROW}
-        disabled={!canScrollPrev}
-        onClick={() => api?.scrollPrev()}
-        type="button"
-      >
-        <LeftAngle className="h-3.5 w-7" />
-      </button>
-      <button
-        aria-label={labels.next}
-        className={ARROW}
-        disabled={!canScrollNext}
-        onClick={() => api?.scrollNext()}
-        type="button"
-      >
-        <LeftAngle className="h-3.5 w-7 rotate-180" />
-      </button>
+      <Arrow label={labels.previous} towards="previous" />
+      <Arrow label={labels.next} towards="next" />
     </div>
+  )
+}
+
+/**
+ * The same two arrows, one against each edge of the frame and out of it from `lg` up: the
+ * vehicles carousel of the sales department page hung them there rather than under the slides
+ * (`docs/legacy-inventory.md` section 6).
+ */
+export function CarouselSideArrows({ labels }: { labels: { previous: string; next: string } }) {
+  return (
+    <>
+      <Arrow
+        className="absolute top-1/2 -left-4 -translate-y-1/2 lg:-translate-x-full"
+        label={labels.previous}
+        towards="previous"
+      />
+      <Arrow
+        className="absolute top-1/2 -right-4 -translate-y-1/2 lg:translate-x-full"
+        label={labels.next}
+        towards="next"
+      />
+    </>
+  )
+}
+
+function Arrow({
+  className,
+  label,
+  towards,
+}: {
+  className?: string
+  label: string
+  towards: 'previous' | 'next'
+}) {
+  const { api, canScrollPrev, canScrollNext } = useCarousel()
+  const back = towards === 'previous'
+
+  return (
+    <button
+      aria-label={label}
+      className={cn(ARROW, className)}
+      disabled={back ? !canScrollPrev : !canScrollNext}
+      onClick={() => (back ? api?.scrollPrev() : api?.scrollNext())}
+      type="button"
+    >
+      <LeftAngle className={cn('h-3.5 w-7', !back && 'rotate-180')} />
+    </button>
   )
 }
 
