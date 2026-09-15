@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
 import {
+  airportName,
   departureLabel,
   discountLabel,
   priceLabel,
@@ -86,5 +87,24 @@ describe('routeEndLabel', () => {
 
   it('names the airport alone when the leg carries no code', () => {
     expect(routeEndLabel('', 'Geneva')).toBe('Geneva')
+  })
+})
+
+describe('airportName', () => {
+  it('names the city and the country, as the legacy section read them', () => {
+    expect(airportName({ city: 'Dubai', country: 'United Arab Emirates' })).toBe(
+      'Dubai, United Arab Emirates',
+    )
+  })
+
+  it('leaves out what the airport does not have, rather than printing the comma', () => {
+    // The legacy template returned `, Russia` for an airport it knew only the country of.
+    expect(airportName({ country: 'Russia' })).toBe('Russia')
+    expect(airportName({ city: 'Geneva', country: '  ' })).toBe('Geneva')
+  })
+
+  it('has no name for an airport it knows nothing about, so the code stands alone', () => {
+    expect(airportName({})).toBeUndefined()
+    expect(airportName({ city: null, country: null })).toBeUndefined()
   })
 })
