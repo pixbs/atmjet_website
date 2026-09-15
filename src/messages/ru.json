@@ -28,6 +28,19 @@
       "retry": "Повторить"
     }
   },
+  "form": {
+    "from": "Откуда",
+    "to": "Куда",
+    "date": "Дата",
+    "when": "Когда",
+    "returnDate": "Обратно",
+    "passengers": "Пассажиры",
+    "requestQuote": "Отправить запрос",
+    "deleteLeg": "Удалить остановку",
+    "addLeg": "Добавить остановку",
+    "roundTrip": "Туда-обратно",
+    "multiLeg": "Сложный маршрут"
+  },
   "units": {
     "hours": "{count, plural, one {# час} few {# часа} many {# часов} other {# часа}}",
     "guests": "{count, plural, one {# гость} few {# гостя} many {# гостей} other {# гостя}}",

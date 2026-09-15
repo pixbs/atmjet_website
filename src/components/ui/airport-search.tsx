@@ -2,7 +2,7 @@
 
 import { useCallback, useRef, useState } from 'react'
 
-import { Autocomplete } from '@/components/ui/autocomplete'
+import { Autocomplete, type AutocompleteProps } from '@/components/ui/autocomplete'
 import type { Locale } from '@/i18n/locales'
 
 /**
@@ -16,15 +16,12 @@ import type { Locale } from '@/i18n/locales'
  * whichever response arrived last, so typing quickly could leave the list showing another term's
  * airports.
  */
-export function AirportSearch({
-  label,
-  id,
-  locale,
-}: {
-  label: string
-  id: string
+export interface AirportSearchProps extends Omit<AutocompleteProps, 'onSearch' | 'options'> {
+  /** The language an airport is named in; the endpoint ranks the same airports in every one. */
   locale: Locale
-}) {
+}
+
+export function AirportSearch({ locale, ...props }: AirportSearchProps) {
   const [options, setOptions] = useState<readonly string[]>([])
   const latest = useRef('')
 
@@ -50,5 +47,5 @@ export function AirportSearch({
     [locale],
   )
 
-  return <Autocomplete id={id} label={label} onSearch={search} options={options} />
+  return <Autocomplete {...props} onSearch={search} options={options} />
 }

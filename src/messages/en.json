@@ -28,6 +28,19 @@
       "retry": "Try again"
     }
   },
+  "form": {
+    "from": "From",
+    "to": "To",
+    "date": "Date",
+    "when": "When",
+    "returnDate": "Return",
+    "passengers": "passengers",
+    "requestQuote": "Request Quote",
+    "deleteLeg": "Delete leg",
+    "addLeg": "Add leg",
+    "roundTrip": "Round trip",
+    "multiLeg": "Multi-leg"
+  },
   "units": {
     "hours": "{count, plural, one {# hour} other {# hours}}",
     "guests": "{count, plural, one {# guest} other {# guests}}",

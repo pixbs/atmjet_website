@@ -1,19 +1,24 @@
-import { expect, test } from '@playwright/test'
+import { expect, test, type Page } from '@playwright/test'
 
 import { pathFor } from './routes'
 
 /**
  * The passenger stepper (issue #97, `docs/legacy-inventory.md` section 6): the two buttons and
  * the field agree on one number, and it never leaves the range the legacy allowed.
+ *
+ * Scoped to the field section, because the flight request further down the page has a stepper
+ * of its own on every leg (issue #151).
  */
 const STYLEGUIDE = pathFor('/styleguide', 'en')
+
+const fields = (page: Page) => page.locator('[data-section="fields"]')
 
 test.describe('the passenger stepper', () => {
   test('starts at one passenger, with nothing to take away', async ({ page }) => {
     await page.goto(STYLEGUIDE)
 
-    await expect(page.getByLabel('Passengers', { exact: true })).toHaveValue('1')
-    await expect(page.getByRole('button', { name: 'Passengers −' })).toHaveAttribute(
+    await expect(fields(page).getByLabel('Passengers', { exact: true })).toHaveValue('1')
+    await expect(fields(page).getByRole('button', { name: 'Passengers −' })).toHaveAttribute(
       'aria-disabled',
       'true',
     )
@@ -21,21 +26,21 @@ test.describe('the passenger stepper', () => {
 
   test('counts up and down on the buttons', async ({ page }) => {
     await page.goto(STYLEGUIDE)
-    const field = page.getByLabel('Passengers', { exact: true })
-    const more = page.getByRole('button', { name: 'Passengers +' })
+    const field = fields(page).getByLabel('Passengers', { exact: true })
+    const more = fields(page).getByRole('button', { name: 'Passengers +' })
 
     await more.click()
     await more.click()
     await expect(field).toHaveValue('3')
 
-    await page.getByRole('button', { name: 'Passengers −' }).click()
+    await fields(page).getByRole('button', { name: 'Passengers −' }).click()
     await expect(field).toHaveValue('2')
   })
 
   test('holds at one however often it is taken away from', async ({ page }) => {
     await page.goto(STYLEGUIDE)
-    const field = page.getByLabel('Passengers', { exact: true })
-    const fewer = page.getByRole('button', { name: 'Passengers −' })
+    const field = fields(page).getByLabel('Passengers', { exact: true })
+    const fewer = fields(page).getByRole('button', { name: 'Passengers −' })
 
     await expect(fewer).toHaveAttribute('aria-disabled', 'true')
 
@@ -49,11 +54,11 @@ test.describe('the passenger stepper', () => {
 
   test('takes a typed number and clamps it to the range', async ({ page }) => {
     await page.goto(STYLEGUIDE)
-    const field = page.getByLabel('Passengers', { exact: true })
+    const field = fields(page).getByLabel('Passengers', { exact: true })
 
     await field.fill('99')
     await expect(field).toHaveValue('25')
-    await expect(page.getByRole('button', { name: 'Passengers +' })).toHaveAttribute(
+    await expect(fields(page).getByRole('button', { name: 'Passengers +' })).toHaveAttribute(
       'aria-disabled',
       'true',
     )
@@ -61,9 +66,9 @@ test.describe('the passenger stepper', () => {
 
   test('keeps its number while a new one is being typed', async ({ page }) => {
     await page.goto(STYLEGUIDE)
-    const field = page.getByLabel('Passengers', { exact: true })
+    const field = fields(page).getByLabel('Passengers', { exact: true })
 
-    await page.getByRole('button', { name: 'Passengers +' }).click()
+    await fields(page).getByRole('button', { name: 'Passengers +' }).click()
     await expect(field).toHaveValue('2')
 
     // Clearing the field to type another number leaves it empty for a keystroke.
