@@ -1,16 +1,8 @@
-import { cleanupTestUser, seedTestUser, testUser } from '../helpers/seedUser'
+import { testUser } from '../helpers/seedUser'
 import { expect, test } from './fixtures'
 
 test.describe('Admin panel', () => {
   test.describe.configure({ mode: 'serial' })
-
-  test.beforeAll(async () => {
-    await seedTestUser()
-  })
-
-  test.afterAll(async () => {
-    await cleanupTestUser()
-  })
 
   test.beforeEach(async ({ admin }) => {
     await admin.login(testUser)

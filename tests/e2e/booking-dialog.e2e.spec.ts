@@ -1,6 +1,6 @@
 import type { Page } from '@playwright/test'
 
-import { cleanupTestUser, seedTestUser, testUser } from '../helpers/seedUser'
+import { testUser } from '../helpers/seedUser'
 import { expect, test } from './fixtures'
 import { pathFor } from './routes'
 
@@ -110,14 +110,6 @@ test.describe('a lead left in the dialog', () => {
   test.describe.configure({ mode: 'serial' })
 
   const name = visitor()
-
-  test.beforeAll(() => {
-    seedTestUser()
-  })
-
-  test.afterAll(() => {
-    cleanupTestUser()
-  })
 
   test('carries the legs the flight request handed over', async ({ page }) => {
     const legs = JSON.stringify([{ from: 'Dubai (OMDB)', date: '2026-10-01', passengers: 3 }])
