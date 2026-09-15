@@ -15,6 +15,7 @@ const SLUGS = [
   'business_agents',
   'group_charters',
   'sales_dept',
+  'sales_yachts',
 ] as const
 
 forEachLocale((locale) => {

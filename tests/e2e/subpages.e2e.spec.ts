@@ -3,7 +3,7 @@ import { expect, test, type APIRequestContext } from '@playwright/test'
 import { ENABLED_LOCALES, pathFor, type Locale } from './routes'
 
 /**
- * The subpages that are their sections and nothing else (issues #144, #146, #143, #150, #147 and #145,
+ * The subpages that are their sections and nothing else (issues #144, #146, #143, #150, #147, #145 and #141,
  * `docs/legacy-inventory.md` section 4): what they are made of, in the order the legacy page
  * had them, and what they tell a crawler.
  *
@@ -61,6 +61,25 @@ const PAGES = [
     sections: ['hero-subpage', 'make-booking', 'why-us', 'contact-us'],
     titles: { en: 'Group charters', ru: 'Групповые перевозки' },
     words: { en: 'One aircraft, one price', ru: 'Один борт, одна цена' },
+  },
+  {
+    slug: 'sales_yachts',
+    sections: [
+      'hero-yachts',
+      'key-features',
+      'framed-descriptor',
+      'recent-yachts',
+      'we-inspect',
+      'options-selection',
+      'photo-descriptor',
+      'why-us',
+      'contact-us',
+    ],
+    titles: { en: 'Yachts for sale', ru: 'Яхты на продажу' },
+    words: {
+      en: 'Every yacht we list, we have stood on',
+      ru: 'На каждой яхте из списка мы стояли сами',
+    },
   },
 ] as const
 
