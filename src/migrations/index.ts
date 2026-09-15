@@ -18,6 +18,7 @@ import * as migration_20260914_183254_hero_sales_and_yachts_blocks from './20260
 import * as migration_20260914_192256_descriptor_blocks from './20260914_192256_descriptor_blocks';
 import * as migration_20260914_193505_small_hero_blocks from './20260914_193505_small_hero_blocks';
 import * as migration_20260914_194732_contact_card_block from './20260914_194732_contact_card_block';
+import * as migration_20260915_005423_empty_legs_block from './20260915_005423_empty_legs_block';
 
 export const migrations = [
   {
@@ -118,6 +119,11 @@ export const migrations = [
   {
     up: migration_20260914_194732_contact_card_block.up,
     down: migration_20260914_194732_contact_card_block.down,
-    name: '20260914_194732_contact_card_block'
+    name: '20260914_194732_contact_card_block',
+  },
+  {
+    up: migration_20260915_005423_empty_legs_block.up,
+    down: migration_20260915_005423_empty_legs_block.down,
+    name: '20260915_005423_empty_legs_block'
   },
 ];

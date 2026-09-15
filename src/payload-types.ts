@@ -262,6 +262,7 @@ export interface Page {
         | ContactCardBlock
         | DescriptorBlock
         | DocumentsBlock
+        | EmptyLegsBlock
         | FaqBlock
         | FramedDescriptorBlock
         | GroupCardsBlock
@@ -383,6 +384,37 @@ export interface DocumentsBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'documents';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "EmptyLegsBlock".
+ */
+export interface EmptyLegsBlock {
+  title: string;
+  description: string;
+  /**
+   * How many flights to list, lowest order first. The legacy section listed the whole table, however long it had grown.
+   */
+  limit: number;
+  cta: {
+    label: string;
+    /**
+     * Recorded with the lead so a request can be traced to its button.
+     */
+    source: string;
+  };
+  channel: {
+    title: string;
+    description: string;
+    label: string;
+    /**
+     * The channel the new flights are posted to, as a bare handle. The legacy link was typed as a scheme no browser follows (section 13, entry 54).
+     */
+    account: string;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'emptyLegs';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1705,6 +1737,7 @@ export interface PagesSelect<T extends boolean = true> {
         contactCard?: T | ContactCardBlockSelect<T>;
         descriptor?: T | DescriptorBlockSelect<T>;
         documents?: T | DocumentsBlockSelect<T>;
+        emptyLegs?: T | EmptyLegsBlockSelect<T>;
         faq?: T | FaqBlockSelect<T>;
         framedDescriptor?: T | FramedDescriptorBlockSelect<T>;
         groupCards?: T | GroupCardsBlockSelect<T>;
@@ -1811,6 +1844,31 @@ export interface DocumentsBlockSelect<T extends boolean = true> {
         image?: T;
         file?: T;
         id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "EmptyLegsBlock_select".
+ */
+export interface EmptyLegsBlockSelect<T extends boolean = true> {
+  title?: T;
+  description?: T;
+  limit?: T;
+  cta?:
+    | T
+    | {
+        label?: T;
+        source?: T;
+      };
+  channel?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        label?: T;
+        account?: T;
       };
   id?: T;
   blockName?: T;

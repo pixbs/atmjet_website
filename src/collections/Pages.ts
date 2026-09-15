@@ -6,6 +6,7 @@ import { bestPrice } from '@/blocks/BestPrice/config'
 import { contactCard } from '@/blocks/ContactCard/config'
 import { descriptor } from '@/blocks/Descriptor/config'
 import { documents } from '@/blocks/Documents/config'
+import { emptyLegs } from '@/blocks/EmptyLegs/config'
 import { faq } from '@/blocks/Faq/config'
 import { framedDescriptor } from '@/blocks/FramedDescriptor/config'
 import { groupCards } from '@/blocks/GroupCards/config'
@@ -120,6 +121,7 @@ export const Pages: CollectionConfig = {
         contactCard,
         descriptor,
         documents,
+        emptyLegs,
         faq,
         framedDescriptor,
         groupCards,

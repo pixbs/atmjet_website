@@ -1,5 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { runSeed } from '../../scripts/seed'
+import { SEED_AIRPORTS, SEED_EMPTY_LEGS } from '../../scripts/seed/empty-legs'
 import { SEEDED_GLOBALS } from '../../scripts/seed/globals'
 import { SEED_IMAGES } from '../../scripts/seed/media'
 import { LEGACY_REDIRECTS } from '../../scripts/seed/redirects'
@@ -8,11 +9,18 @@ import { PAGE_SLUGS } from '../../src/collections/Pages'
 import { createRegistry, type TestRegistry } from '../helpers/payload'
 
 /**
- * One admin, the placeholder images, one page per static route, the chrome globals and the
- * legacy redirect map (issues #41, #60, #61 and #69).
+ * One admin, the placeholder images, the airports and the flights between them, one page per
+ * static route, the chrome globals and the legacy redirect map (issues #41, #60, #61, #69
+ * and #117).
  */
 const EXPECTED_DOCUMENTS =
-  1 + SEED_IMAGES.length + PAGE_SLUGS.length + SEEDED_GLOBALS.length + LEGACY_REDIRECTS.length
+  1 +
+  SEED_IMAGES.length +
+  SEED_AIRPORTS.length +
+  SEED_EMPTY_LEGS.length +
+  PAGE_SLUGS.length +
+  SEEDED_GLOBALS.length +
+  LEGACY_REDIRECTS.length
 
 let registry: TestRegistry
 
@@ -38,7 +46,8 @@ describe('seed', () => {
       for (const outcome of first.outcomes)
         if (outcome.id !== undefined)
           registry.track(
-            outcome.collection as 'users' | 'media' | 'pages' | 'redirects',
+            outcome.collection as
+              'airports' | 'empty-legs' | 'media' | 'pages' | 'redirects' | 'users',
             outcome.id,
           )
       // Every expected document is reported in exactly one bucket. `updated` is in the sum
