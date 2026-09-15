@@ -2,7 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useTranslations } from 'next-intl'
-import { useId, useState } from 'react'
+import { useId, useState, type BaseSyntheticEvent } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 
 import { PhoneInput, type PhoneInputProps } from '@/components/ui/phone-input'
@@ -11,6 +11,7 @@ import { bookingSchema, parseDirections, type Booking } from '@/lib/booking'
 import { cn } from '@/lib/cn'
 import { submitLead } from '@/lib/data/leads'
 import type { LEAD_FORM_TYPES } from '@/lib/leads'
+import { HONEYPOT_FIELD } from '@/lib/spam'
 
 /**
  * The form that turns a visitor into a lead (issue #152, `docs/legacy-inventory.md` section
@@ -28,6 +29,17 @@ const FIELD =
 
 const CHIP =
   'cursor-pointer rounded-full border border-graphite-700 px-5 py-2 font-semibold uppercase transition-colors hover:border-graphite-100 peer-checked:border-transparent peer-checked:bg-gold peer-checked:text-graphite-900'
+
+/**
+ * How long the visitor spent on the form, measured between the event that first focused it and
+ * the one that sent it — both from the same clock, and neither a reading taken during render.
+ * Nothing focused means nothing filled it in by hand, which is nought and refused (issue #157).
+ */
+function elapsedSince(touchedAt: number | null, sentAt: number | undefined): number {
+  if (touchedAt === null || sentAt === undefined) return 0
+
+  return Math.max(0, Math.round(sentAt - touchedAt))
+}
 
 export function BookingForm({
   locale,
@@ -48,6 +60,9 @@ export function BookingForm({
   const t = useTranslations('booking')
   const chipId = useId()
   const [isSent, setIsSent] = useState(false)
+  // When the visitor first touched the form, from the event's own clock; what the action
+  // measures a script's haste against (issue #157).
+  const [touchedAt, setTouchedAt] = useState<number | null>(null)
 
   const {
     control,
@@ -62,13 +77,17 @@ export function BookingForm({
     defaultValues: { name: '', email: '', phone: '', tags: [] },
   })
 
-  const submit = async (values: Booking) => {
+  const submit = async (values: Booking, event?: BaseSyntheticEvent) => {
     // The query is read here rather than through `useSearchParams`, which would make the whole
     // page render on the client unless every caller wrapped this in a Suspense boundary.
     const query = new URLSearchParams(window.location.search)
+    const form = event?.target as HTMLFormElement | undefined
+    const honeypot = form?.elements.namedItem(HONEYPOT_FIELD)
     const { ok } = await submitLead({
       values,
       formType,
+      elapsedMs: elapsedSince(touchedAt, event?.timeStamp),
+      trap: honeypot instanceof HTMLInputElement ? honeypot.value : '',
       // The legacy carried the name of the button that opened the form (section 3.9).
       source: query.get('showBooking') ?? undefined,
       locale,
@@ -95,8 +114,18 @@ export function BookingForm({
       data-section="booking-form"
       // The legacy form asked the browser not to validate it: the rules are zod's.
       noValidate
+      onFocusCapture={(event) => setTouchedAt((at) => at ?? event.timeStamp)}
       onSubmit={handleSubmit(submit)}
     >
+      {/* The honeypot (issue #157): out of the page for a person and out of the tab order, so
+          the only thing that fills it in is something reading the markup. */}
+      <input
+        aria-hidden
+        autoComplete="off"
+        className="sr-only"
+        name={HONEYPOT_FIELD}
+        tabIndex={-1}
+      />
       <div className="gap-1">
         <label className="text-sm text-white" htmlFor={`${chipId}-name`}>
           {t('name')}
