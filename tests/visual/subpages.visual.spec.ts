@@ -4,12 +4,12 @@ import { ENABLED_LOCALES, pathFor } from '../e2e/routes'
 import { hideDevOverlay, hideFloatingHeader, settlePage } from './chrome'
 
 /**
- * The two subpages that are a hero, one section and the contact card, whole (issues #144 and
- * #146). Their sections have baselines of their own; this is the page around them — the order,
+ * The subpages that are their sections and nothing else, whole (issues #144, #146 and #143).
+ * Their sections have baselines of their own; this is the page around them — the order,
  * the spacing between sections and the gutter — in both languages, because the words are what
  * decides how tall each section grows.
  */
-const SLUGS = ['cargo_charter', 'medical_aviation'] as const
+const SLUGS = ['cargo_charter', 'medical_aviation', 'empty_legs'] as const
 
 const VIEWPORTS = {
   mobile: { width: 390, height: 844 },

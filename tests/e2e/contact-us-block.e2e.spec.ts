@@ -1,6 +1,6 @@
 import type { Page } from '@playwright/test'
 
-import { cleanupTestUser, seedTestUser, testUser } from '../helpers/seedUser'
+import { testUser } from '../helpers/seedUser'
 import { expect, test } from './fixtures'
 import { pathFor } from './routes'
 
@@ -71,14 +71,6 @@ test.describe('a lead left on a page', () => {
   test.describe.configure({ mode: 'serial' })
 
   const name = visitor()
-
-  test.beforeAll(() => {
-    seedTestUser()
-  })
-
-  test.afterAll(() => {
-    cleanupTestUser()
-  })
 
   test('is sent from the section itself, with no dialog to open it', async ({ page }) => {
     await page.goto(pathFor('/cargo_charter', 'en'))
