@@ -158,6 +158,7 @@ const HOME_WHY_US: {
 ]
 
 /**
+<<<<<<< HEAD
  * What the partners page offers, under a heading of its own (issue #148, section 4). Four of
  * them, none with a figure, which is the shape the legacy cards had there.
  */
@@ -184,6 +185,8 @@ const WE_OFFER: { en: [string, string]; ru: [string, string] }[] = [
 ]
 
 /**
+=======
+>>>>>>> origin/master
  * The reasons the cargo charter page stacks (issue #116, section 5). Three of them, because the
  * three shapes the card comes in are what a fixture is for: with a figure and a photograph, and
  * with neither.
