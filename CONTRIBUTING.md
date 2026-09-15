@@ -41,7 +41,7 @@ A change is done when (see `tests/README.md` for the test conventions):
 | fast  | `bun run test:int` and the `ci` workflow                                         | every push to a pull request and every push to `master`                         |
 | heavy | `test:e2e`, `test:visual`, `test:a11y`, `test:lighthouse` and the `e2e` workflow | Vercel previews of PRs labelled `run-e2e`, every `master` push, nightly, manual |
 
-Run the browser tiers locally against the dev server, or against a deployment with `PLAYWRIGHT_BASE_URL=https://... bun run test:e2e`. Visual baselines are generated on Linux only (`bun run test:visual:update`); review baseline changes like code.
+Run the browser tiers locally — they build the site and serve it themselves, on a database you have migrated and seeded — or against a deployment with `PLAYWRIGHT_BASE_URL=https://... bun run test:e2e`. Not against `next dev`: it rebuilds Payload as it re-evaluates its modules, and a request that lands during the drizzle push that follows is answered with the error page (issue #292). Visual baselines are generated on Linux only (`bun run test:visual:update`); review baseline changes like code.
 
 ## Migrations and data
 
