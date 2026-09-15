@@ -6,6 +6,8 @@ import {
   isSubmittablePhone,
   LEAD_FORM_TYPES,
   LEAD_NAME_MAX_LENGTH,
+  LEAD_TAG_MAX_LENGTH,
+  LEAD_TAGS_MAX,
 } from './leads'
 import { ALL_LOCALES } from '@/i18n/locales'
 
@@ -17,12 +19,16 @@ import { ALL_LOCALES } from '@/i18n/locales'
  * (`src/lib/leads.ts`): a name of at most thirty-two characters, an address with an at-sign in
  * it, and between eight and fifteen digits however they are punctuated. One set of rules, so a
  * submission the form accepts is one the collection accepts.
+ *
+ * What the legacy left unbounded is bounded here — the address, the chips and the legs — because
+ * a lead is only useful once it has been delivered, and a message too long for Telegram fails on
+ * every attempt the job makes rather than arriving late.
  */
 export const bookingSchema = z.object({
   name: z.string().trim().min(1).max(LEAD_NAME_MAX_LENGTH),
   email: z.string().trim().refine(isSubmittableEmail, 'email'),
   phone: z.string().trim().refine(isSubmittablePhone, 'phone'),
-  tags: z.array(z.string()).optional(),
+  tags: z.array(z.string().trim().max(LEAD_TAG_MAX_LENGTH)).max(LEAD_TAGS_MAX).optional(),
 })
 
 export type Booking = z.infer<typeof bookingSchema>

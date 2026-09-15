@@ -13,20 +13,29 @@ import { z } from 'zod'
 /** The most legs the legacy form offered to add. */
 export const MAX_LEGS = 4
 
+/**
+ * What a leg may carry. The legacy schema bounded none of it, which matters once a leg is on its
+ * way to Telegram: a message too long to send fails on every attempt (`src/lib/leads.ts`). An
+ * airport reads `Dubai (OMDB) United Arab Emirates, Dubai International`, so 128 is room to
+ * spare; the passengers are the counter's own range (`src/components/ui/counter-input.tsx`).
+ */
+const AIRPORT_MAX_LENGTH = 128
+const PASSENGERS_MAX = 25
+
 /** A date the browser's date field produced, which is what `Date.parse` was given. */
 const isDate = (value: string) => !Number.isNaN(Date.parse(value))
 
 export const legSchema = z.object({
-  from: z.string().trim().min(1, 'from'),
+  from: z.string().trim().min(1, 'from').max(AIRPORT_MAX_LENGTH),
   // The legacy destination is optional: a request may name only where it starts.
-  to: z.string().trim().optional(),
+  to: z.string().trim().max(AIRPORT_MAX_LENGTH).optional(),
   date: z.string().trim().min(1, 'date').refine(isDate, 'date'),
   returnDate: z
     .string()
     .trim()
     .refine((value) => value === '' || isDate(value), 'date')
     .optional(),
-  passengers: z.number().int().positive(),
+  passengers: z.number().int().positive().max(PASSENGERS_MAX),
 })
 
 export const flightRequestSchema = z.object({ legs: z.array(legSchema).min(1).max(MAX_LEGS) })

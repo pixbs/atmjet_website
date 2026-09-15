@@ -10,6 +10,8 @@ import {
   LEAD_DELIVERY_STATUSES,
   LEAD_FORM_TYPES,
   LEAD_NAME_MAX_LENGTH,
+  LEAD_TAG_MAX_LENGTH,
+  LEAD_TAGS_MAX,
   LEAD_PHONE_MAX_DIGITS,
   LEAD_PHONE_MIN_DIGITS,
 } from '@/lib/leads'
@@ -103,6 +105,8 @@ export const Leads: CollectionConfig = {
       name: 'tags',
       type: 'text',
       hasMany: true,
+      maxRows: LEAD_TAGS_MAX,
+      maxLength: LEAD_TAG_MAX_LENGTH,
       admin: {
         description:
           'The chips the visitor ticked. The legacy list was hard-coded per language (section 7.2).',
