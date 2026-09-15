@@ -1,4 +1,4 @@
-import type { CollectionConfig } from 'payload'
+import type { CollectionAfterChangeHook, CollectionConfig } from 'payload'
 
 import { admin, hasRole } from '@/access'
 import { ALL_LOCALES } from '@/i18n/locales'
@@ -13,6 +13,23 @@ import {
   LEAD_PHONE_MAX_DIGITS,
   LEAD_PHONE_MIN_DIGITS,
 } from '@/lib/leads'
+
+/**
+ * Puts a new lead on the queue that sends it to Telegram (issue #155). Only on create: the job
+ * writes its attempt back onto the same document, and an update that queued another job would
+ * send the lead again every time somebody looked at it.
+ *
+ * The job row is written through the same request, so it commits with the lead or not at all;
+ * the queue itself is drained by the cron (`vercel.json`), because nothing can read the lead
+ * until the transaction this hook runs inside has committed.
+ */
+const queueTelegramDelivery: CollectionAfterChangeHook = async ({ doc, operation, req }) => {
+  if (operation !== 'create') return doc
+
+  await req.payload.jobs.queue({ task: 'sendTelegramLead', input: { leadId: doc.id }, req })
+
+  return doc
+}
 
 /**
  * Leads (issue #68). The legacy site stored none: a submission became a Telegram message and, if
@@ -40,6 +57,7 @@ export const Leads: CollectionConfig = {
     hidden: ({ user }) => !hasRole(user, 'admin'),
   },
   defaultSort: '-createdAt',
+  hooks: { afterChange: [queueTelegramDelivery] },
   access: {
     // Not `authenticated`: a lead is a stranger's phone number and itinerary. The server action
     // creates them through the Local API, which does not go through this.
