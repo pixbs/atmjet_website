@@ -111,7 +111,7 @@ export default async function LocaleLayout({
             <Suspense>
               <BookingDialog
                 defaultCountry={defaultCountry(null, locale as Locale)}
-                labels={{ title: tBooking('title'), close: tBooking('close') }}
+                labels={{ title: tBooking('dialog'), close: tBooking('close') }}
                 locale={locale as Locale}
                 phone={contact && { label: contact.phone, href: telHref(contact.phone) }}
                 social={accounts}
