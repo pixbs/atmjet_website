@@ -3,11 +3,11 @@ import { pathFor } from '../e2e/routes'
 import { expectNoA11yViolations } from './axe'
 
 /**
- * The subpages that are their sections and nothing else (issues #144, #146 and #150).
+ * The subpages that are their sections and nothing else (issues #144, #146, #143 and #150).
  * A whole page rather than a component: what a section passes on its own it can still fail
- * beside another, and these are the first two pages ported end to end.
+ * beside another, and these are the pages ported end to end.
  */
-const SLUGS = ['cargo_charter', 'medical_aviation', 'atm_jet_group'] as const
+const SLUGS = ['cargo_charter', 'medical_aviation', 'empty_legs', 'atm_jet_group'] as const
 
 forEachLocale((locale) => {
   for (const slug of SLUGS) {
