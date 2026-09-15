@@ -133,7 +133,7 @@ Engineering rules that apply to every issue: visual parity, SSR-first (ADR-0007)
 | E6.20 | Single airport Autocomplete                                                        | type:feature, area:forms                    | `elements/autocomplete.tsx`, `form/autocomplete.tsx`                                                                                                                              |
 | E6.21 | Phone input with country dropdown                                                  | type:feature, area:forms, needs-decision    | `form/booking.tsx`, `src/countries.ts` (default-country bug)                                                                                                                      |
 | E6.22 | SVG icon set                                                                       | type:feature, area:design, needs-decision   | `src/assets/svg`, `src/assets/icons`                                                                                                                                              |
-| E6.23 | Disposition of dead legacy components                                              | type:chore, area:frontend, needs-decision   | Testimonials, PersonalFlightManager, ContactUsSection, CargoRequest, AllAircrafts, RangeSlider, `ui/*`, `phone-input`, `use-toast`, `drizzle-ssr`, `app/actions.ts`, `arrows.css` |
+| E6.23 | Disposition of dead legacy components                                              | type:chore, area:frontend                   | Testimonials, PersonalFlightManager, ContactUsSection, CargoRequest, AllAircrafts, RangeSlider, `ui/*`, `phone-input`, `use-toast`, `drizzle-ssr`, `app/actions.ts`, `arrows.css` |
 
 ## E7 Sections as Payload blocks
 

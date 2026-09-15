@@ -45,6 +45,19 @@
       "retry": "Повторити"
     }
   },
+  "form": {
+    "from": "Звідки",
+    "to": "Куди",
+    "date": "Дата",
+    "when": "Коли",
+    "returnDate": "Повернення",
+    "passengers": "Пасажири",
+    "requestQuote": "Надіслати запит",
+    "deleteLeg": "Видалити зупинку",
+    "addLeg": "Додати зупинку",
+    "roundTrip": "Туди-назад",
+    "multiLeg": "Багато зупинок"
+  },
   "units": {
     "hours": "{count, plural, one {# година} few {# години} many {# годин} other {# години}}",
     "guests": "{count, plural, one {# гість} few {# гостя} many {# гостей} other {# гостя}}",
