@@ -1,3 +1,5 @@
+import type { Page } from '@playwright/test'
+
 import { testUser } from '../helpers/seedUser'
 import { expect, test } from './fixtures'
 import { pathFor } from './routes'
@@ -15,6 +17,12 @@ const FORM = '[data-section="booking-form-example"] [data-section="booking-form"
 
 /** Unique, so a run can find its own lead in a list every run adds to. */
 const visitor = () => `A visitor ${Date.now().toString(36)}`
+
+/**
+ * A browser fills three fields in faster than any person. Issue #157 puts a floor under that in
+ * the server action, so the wait is here already and this spec needs no change when it lands.
+ */
+const asAVisitor = (page: Page) => page.waitForTimeout(2_500)
 
 test.describe('the booking form', () => {
   test('says what is wrong with a field once it is left, and not before', async ({ page }) => {
@@ -64,10 +72,11 @@ test.describe('a lead', () => {
     await form.getByText('Partnership request').click()
     await form.getByRole('button', { name: 'Send' }).click()
 
+    // The confirm view the legacy wrote and nobody could reach (section 13, entry 59): it is
+    // what the form becomes, so there is nothing left to type into.
     await expect(form.getByRole('status')).toHaveText('Successfully sent')
-    // The legacy inline form kept what had been typed after a send; this one is ready for the
-    // next visitor.
-    await expect(form.getByLabel('Name')).toHaveValue('')
+    await expect(form).toHaveAttribute('data-state', 'sent')
+    await expect(form.getByLabel('Name')).toHaveCount(0)
   })
 
   test('appears in the admin, with how it was delivered', async ({ admin, page }) => {
@@ -79,5 +88,56 @@ test.describe('a lead', () => {
     // The columns the desk looks at first (issue #154).
     await expect(row).toContainText('+971 50 458 9926')
     await expect(row).toContainText('pending')
+  })
+})
+
+/**
+ * What a form says when the enquiry does not get away (issue #158). The legacy said nothing
+ * and closed the dialog anyway, so a lead that never arrived looked exactly like one that did
+ * (`docs/legacy-inventory.md` section 13, entry 59).
+ */
+test.describe('a submission that does not get through', () => {
+  /** The action posts back to the page it is on; nothing else on these specs does. */
+  const refuseTheAction = (page: Page) =>
+    page.route('**/en/styleguide**', (route) =>
+      route.request().method() === 'POST' ? route.abort('failed') : route.continue(),
+    )
+
+  test('says so, and keeps what was typed so it can be sent again', async ({ page }) => {
+    await refuseTheAction(page)
+    await page.goto(pathFor('/styleguide', 'en'))
+    const form = page.locator(FORM)
+    const name = visitor()
+
+    await form.getByLabel('Name').fill(name)
+    await form.getByLabel('Email').fill('unlucky@example.test')
+    await form.getByLabel('Phone number').fill('+971504589926')
+    await asAVisitor(page)
+    await form.getByRole('button', { name: 'Send' }).click()
+
+    await expect(form.getByRole('alert')).toHaveText('Something went wrong. Please try again.')
+    // Not the confirm view: the enquiry is not away, and the form does not pretend it is.
+    await expect(form.getByRole('status')).toHaveCount(0)
+    await expect(form.getByLabel('Name')).toHaveValue(name)
+    await expect(form.getByRole('button', { name: 'Try again' })).toBeVisible()
+  })
+
+  test('sends it once the second press gets through', async ({ page }) => {
+    await refuseTheAction(page)
+    await page.goto(pathFor('/styleguide', 'en'))
+    const form = page.locator(FORM)
+
+    await form.getByLabel('Name').fill(visitor())
+    await form.getByLabel('Email').fill('second-try@example.test')
+    await form.getByLabel('Phone number').fill('+971504589926')
+    await asAVisitor(page)
+    await form.getByRole('button', { name: 'Send' }).click()
+    await expect(form.getByRole('button', { name: 'Try again' })).toBeVisible()
+
+    await page.unroute('**/en/styleguide**')
+    await asAVisitor(page)
+    await form.getByRole('button', { name: 'Try again' }).click()
+
+    await expect(form.getByRole('status')).toHaveText('Successfully sent')
   })
 })
