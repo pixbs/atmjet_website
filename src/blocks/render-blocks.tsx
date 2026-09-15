@@ -1,3 +1,4 @@
+import type { Locale } from '@/i18n/locales'
 import { mediaSource } from '@/lib/media'
 import { hrefForSlug } from '@/lib/nav'
 import type { Page } from '@/payload-types'
@@ -21,6 +22,7 @@ import { HeroSubpage } from './HeroSubpage/Component'
 import { HeroVideo } from './HeroVideo/Component'
 import { HeroYachts } from './HeroYachts/Component'
 import { KeyFeatures } from './KeyFeatures/Component'
+import { MakeBooking } from './MakeBooking/Component'
 import { OptionsSelection } from './OptionsSelection/Component'
 import { OptionsTiles } from './OptionsTiles/Component'
 import { PersonalManager } from './PersonalManager/Component'
@@ -29,6 +31,7 @@ import { Privilege } from './Privilege/Component'
 import { Quote } from './Quote/Component'
 import { RecentYachts } from './RecentYachts/Component'
 import { Tiles } from './Tiles/Component'
+import { Transfer } from './Transfer/Component'
 import { WeInspect } from './WeInspect/Component'
 import { YachtsPromo } from './YachtsPromo/Component'
 import { WhyUs } from './WhyUs/Component'
@@ -43,7 +46,7 @@ import { WhyUs } from './WhyUs/Component'
  */
 type LayoutBlock = NonNullable<Page['layout']>[number]
 
-function blockFor(block: LayoutBlock, key: string) {
+function blockFor(block: LayoutBlock, key: string, locale: Locale) {
   switch (block.blockType) {
     case 'advantages': {
       const image = mediaSource(typeof block.image === 'object' ? block.image : null)
@@ -285,6 +288,8 @@ function blockFor(block: LayoutBlock, key: string) {
         />
       )
     }
+    case 'makeBooking':
+      return <MakeBooking key={key} locale={locale} title={block.title} variant={block.variant} />
     case 'optionsSelection': {
       // A card without its photograph is left out rather than drawn as an empty box, and a
       // section with no card left is left out altogether.
@@ -421,6 +426,13 @@ function blockFor(block: LayoutBlock, key: string) {
 
       return photos.length === 0 ? null : <Tiles key={key} tiles={photos} />
     }
+    case 'transfer': {
+      const image = mediaSource(typeof block.image === 'object' ? block.image : null)
+
+      return image === null ? null : (
+        <Transfer key={key} image={image} locale={locale} title={block.title} />
+      )
+    }
     case 'weInspect': {
       // Every card draws a photograph, so one whose upload is gone is left out rather than drawn
       // empty, and a row of none is left out altogether.
@@ -451,6 +463,6 @@ function blockFor(block: LayoutBlock, key: string) {
   }
 }
 
-export function RenderBlocks({ layout }: { layout: Page['layout'] }) {
-  return (layout ?? []).map((block, index) => blockFor(block, block.id ?? String(index)))
+export function RenderBlocks({ layout, locale }: { layout: Page['layout']; locale: Locale }) {
+  return (layout ?? []).map((block, index) => blockFor(block, block.id ?? String(index), locale))
 }
