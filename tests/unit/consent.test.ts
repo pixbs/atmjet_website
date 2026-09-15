@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { ACCEPT_ALL, consentCookies, readConsent, REJECT_ALL } from '@/lib/consent'
+import { ACCEPT_ALL, consentCookies, consentSignals, readConsent, REJECT_ALL } from '@/lib/consent'
 
 /**
  * What a visitor has agreed to (issue #91, `docs/legacy-inventory.md` section 3.7). The legacy
@@ -60,5 +60,38 @@ describe('writing an answer', () => {
       .join('; ')
 
     expect(readConsent(written)).toEqual({ marketing: true, personal: false })
+  })
+})
+
+/**
+ * What the answer says to Google Consent Mode (issue #174). The legacy site sent no signal at
+ * all, so a refusal and an acceptance looked the same to every tag it loaded.
+ */
+describe('saying the answer to Google', () => {
+  it('denies everything that measures a visit until it is agreed to', () => {
+    const denied = consentSignals(REJECT_ALL)
+
+    expect(denied.ad_storage).toBe('denied')
+    expect(denied.ad_user_data).toBe('denied')
+    expect(denied.ad_personalization).toBe('denied')
+    expect(denied.analytics_storage).toBe('denied')
+    expect(denied.personalization_storage).toBe('denied')
+  })
+
+  it('grants what the two answers cover, and each only what it covers', () => {
+    expect(consentSignals(ACCEPT_ALL).ad_storage).toBe('granted')
+    // The settings let a visitor agree to one and not the other.
+    expect(consentSignals({ marketing: false, personal: true })).toMatchObject({
+      ad_storage: 'denied',
+      analytics_storage: 'denied',
+      personalization_storage: 'granted',
+    })
+  })
+
+  it('never withholds what the settings call necessary', () => {
+    for (const consent of [ACCEPT_ALL, REJECT_ALL]) {
+      expect(consentSignals(consent).functionality_storage).toBe('granted')
+      expect(consentSignals(consent).security_storage).toBe('granted')
+    }
   })
 })

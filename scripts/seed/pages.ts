@@ -474,6 +474,131 @@ const PERSONAL_MANAGER: Record<
   },
 }
 
+/** One card of the options selection: the words, without the photograph behind them. */
+interface OptionCard {
+  title: string
+  description: string
+  items: string[]
+}
+
+/**
+ * What each department does for a buyer (issue #127, section 5), on the two pages the legacy
+ * section appeared on. The legacy read one string per card and split it on ` \n`; these are rows.
+ */
+const OPTIONS: Record<
+  'sales_dept' | 'sales_yachts',
+  Record<'en' | 'ru', { title: string; cards: [OptionCard, OptionCard] }>
+> = {
+  sales_dept: {
+    en: {
+      title: 'Buying an aircraft, start to finish',
+      cards: [
+        {
+          title: 'Legal department',
+          description: 'Everything the transfer of an aircraft needs, prepared before you sign:',
+          items: [
+            'A letter of intent with its guarantees',
+            'A lien check on the airframe',
+            'The purchase agreement',
+            'The change of ownership on the register',
+            'Export and airworthiness certificates',
+          ],
+        },
+        {
+          title: 'Finance department',
+          description: 'We negotiate on your side of the table and cost the years after it:',
+          items: [
+            'The tax jurisdiction the deal is best held in',
+            'The insurance that covers how you fly',
+            'What a year of ownership costs',
+            'What the aircraft earns when you are not on it',
+          ],
+        },
+      ],
+    },
+    ru: {
+      title: 'Покупка самолёта — от первого письма до передачи',
+      cards: [
+        {
+          title: 'Юридический отдел',
+          description: 'Всё, что нужно для передачи борта, готово до вашей подписи:',
+          items: [
+            'Письмо о намерениях с гарантиями',
+            'Проверка залога по борту',
+            'Договор купли-продажи',
+            'Смена собственника в реестре',
+            'Экспортный сертификат и сертификат лётной годности',
+          ],
+        },
+        {
+          title: 'Финансовый отдел',
+          description: 'Мы ведём переговоры на вашей стороне стола и считаем годы после сделки:',
+          items: [
+            'Налоговая юрисдикция, в которой сделку выгоднее держать',
+            'Страхование под то, как вы летаете',
+            'Стоимость года владения',
+            'Доход от борта, когда вы не на нём',
+          ],
+        },
+      ],
+    },
+  },
+  sales_yachts: {
+    en: {
+      title: 'Buying a yacht, start to finish',
+      cards: [
+        {
+          title: 'Legal department',
+          description: 'The paperwork a hull changes hands on, ready before the survey ends:',
+          items: [
+            'A letter of intent with its guarantees',
+            'A lien check on the hull',
+            'The sale and purchase agreement',
+            'The change of ownership on the register',
+            'Registration under the flag that suits you',
+          ],
+        },
+        {
+          title: 'Finance department',
+          description: 'What the yacht costs after the price is agreed:',
+          items: [
+            'The tax jurisdiction the deal is best held in',
+            'The insurance that covers where you sail',
+            'What a season of ownership costs',
+            'The crew the yacht needs, and what they cost',
+          ],
+        },
+      ],
+    },
+    ru: {
+      title: 'Покупка яхты — от первого письма до передачи',
+      cards: [
+        {
+          title: 'Юридический отдел',
+          description: 'Документы, по которым яхта меняет владельца, готовы до конца осмотра:',
+          items: [
+            'Письмо о намерениях с гарантиями',
+            'Проверка залога по корпусу',
+            'Договор купли-продажи',
+            'Смена собственника в реестре',
+            'Регистрация под подходящим флагом',
+          ],
+        },
+        {
+          title: 'Финансовый отдел',
+          description: 'Во что обходится яхта после того, как цена согласована:',
+          items: [
+            'Налоговая юрисдикция, в которой сделку выгоднее держать',
+            'Страхование под то, где вы ходите',
+            'Стоимость сезона владения',
+            'Экипаж, который нужен яхте, и его стоимость',
+          ],
+        },
+      ],
+    },
+  },
+}
+
 /** The sections a seeded page starts with; a page with no entry here starts with none. */
 function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout {
   const sections: Layout = []
@@ -839,6 +964,20 @@ function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout 
     })
   }
 
+  if (slug === 'sales_dept' || slug === 'sales_yachts') {
+    const options = OPTIONS[slug][locale]
+    sections.push({
+      blockType: 'optionsSelection',
+      title: options.title,
+      cards: options.cards.map((card) => ({
+        title: card.title,
+        description: card.description,
+        image: fixture.photo,
+        items: card.items.map((text) => ({ text })),
+      })),
+    })
+  }
+
   if (slug === 'sales_yachts')
     sections.push({
       blockType: 'recentYachts',
@@ -942,6 +1081,20 @@ function translated(layout: Layout | null | undefined, slug: string, fixture: Fi
         return { ...block, id }
       case 'keyFeatures':
         return { ...block, id, cards: withRowIds(block.cards ?? [], rows) }
+      case 'optionsSelection': {
+        const cards = written?.blockType === 'optionsSelection' ? written.cards : undefined
+
+        return {
+          ...block,
+          id,
+          // Two levels: a card keeps its id, and so does every row inside it.
+          cards: (block.cards ?? []).map((card, index) => ({
+            ...card,
+            id: cards?.[index]?.id,
+            items: withRowIds(card.items ?? [], cards?.[index]?.items),
+          })),
+        }
+      }
       case 'optionsTiles':
         return {
           ...block,

@@ -21,6 +21,7 @@ import { HeroSubpage } from './HeroSubpage/Component'
 import { HeroVideo } from './HeroVideo/Component'
 import { HeroYachts } from './HeroYachts/Component'
 import { KeyFeatures } from './KeyFeatures/Component'
+import { OptionsSelection } from './OptionsSelection/Component'
 import { OptionsTiles } from './OptionsTiles/Component'
 import { PersonalManager } from './PersonalManager/Component'
 import { PhotoDescriptor } from './PhotoDescriptor/Component'
@@ -282,6 +283,27 @@ function blockFor(block: LayoutBlock, key: string) {
           description={block.description ?? undefined}
           title={block.title}
         />
+      )
+    }
+    case 'optionsSelection': {
+      // A card without its photograph is left out rather than drawn as an empty box, and a
+      // section with no card left is left out altogether.
+      const cards = (block.cards ?? []).flatMap((card) => {
+        const image = mediaSource(typeof card.image === 'object' ? card.image : null)
+        if (image === null) return []
+
+        return [
+          {
+            description: card.description,
+            image,
+            items: (card.items ?? []).map((item) => item.text),
+            title: card.title,
+          },
+        ]
+      })
+
+      return cards.length === 0 ? null : (
+        <OptionsSelection key={key} cards={cards} title={block.title} />
       )
     }
     case 'optionsTiles': {

@@ -277,6 +277,7 @@ export interface Page {
         | HeroVideoBlock
         | HeroYachtsBlock
         | KeyFeaturesBlock
+        | OptionsSelectionBlock
         | OptionsTilesBlock
         | PersonalManagerBlock
         | PhotoDescriptorBlock
@@ -684,6 +685,36 @@ export interface KeyFeaturesBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'keyFeatures';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "OptionsSelectionBlock".
+ */
+export interface OptionsSelectionBlock {
+  title: string;
+  /**
+   * The legacy section drew two, side by side from the wide breakpoint.
+   */
+  cards?:
+    | {
+        title: string;
+        description: string;
+        image: number | Media;
+        /**
+         * One per box, under the paragraph.
+         */
+        items?:
+          | {
+              text: string;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'optionsSelection';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1812,6 +1843,7 @@ export interface PagesSelect<T extends boolean = true> {
         heroVideo?: T | HeroVideoBlockSelect<T>;
         heroYachts?: T | HeroYachtsBlockSelect<T>;
         keyFeatures?: T | KeyFeaturesBlockSelect<T>;
+        optionsSelection?: T | OptionsSelectionBlockSelect<T>;
         optionsTiles?: T | OptionsTilesBlockSelect<T>;
         personalManager?: T | PersonalManagerBlockSelect<T>;
         photoDescriptor?: T | PhotoDescriptorBlockSelect<T>;
@@ -2125,6 +2157,29 @@ export interface KeyFeaturesBlockSelect<T extends boolean = true> {
         title?: T;
         description?: T;
         image?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "OptionsSelectionBlock_select".
+ */
+export interface OptionsSelectionBlockSelect<T extends boolean = true> {
+  title?: T;
+  cards?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        image?: T;
+        items?:
+          | T
+          | {
+              text?: T;
+              id?: T;
+            };
         id?: T;
       };
   id?: T;

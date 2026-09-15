@@ -1,6 +1,12 @@
 import { describe, expect, it } from 'vitest'
 
-import { breadcrumbs, organisation, webSite, type SiteContact } from '@/lib/structured-data'
+import {
+  breadcrumbs,
+  faqPage,
+  organisation,
+  webSite,
+  type SiteContact,
+} from '@/lib/structured-data'
 
 /**
  * What the site tells a search engine about itself (issue #173). The legacy site emitted no
@@ -72,5 +78,37 @@ describe('breadcrumbs', () => {
   it('gives the home page no trail of its own', () => {
     // It is the first step of every other page's trail, not a trail with one step.
     expect(breadcrumbs(ORIGIN, 'en', 'Home', { slug: '', title: 'Home' })).toBeNull()
+  })
+})
+
+describe('faqPage', () => {
+  it('carries every question with the answer under it', () => {
+    const answered = faqPage([
+      { question: 'How far ahead do I book?', answer: 'Two hours is enough.' },
+      { question: 'What may I take?', answer: 'What fits the hold.' },
+    ])
+
+    expect(answered?.mainEntity).toEqual([
+      {
+        '@type': 'Question',
+        name: 'How far ahead do I book?',
+        acceptedAnswer: { '@type': 'Answer', text: 'Two hours is enough.' },
+      },
+      {
+        '@type': 'Question',
+        name: 'What may I take?',
+        acceptedAnswer: { '@type': 'Answer', text: 'What fits the hold.' },
+      },
+    ])
+  })
+
+  it('keeps the line breaks the answer was written with', () => {
+    const answered = faqPage([{ question: 'Where to?', answer: 'Anywhere.\nAlmost.' }])
+
+    expect(answered?.mainEntity).toMatchObject([{ acceptedAnswer: { text: 'Anywhere.\nAlmost.' } }])
+  })
+
+  it('says nothing at all on a page that asks nothing', () => {
+    expect(faqPage([])).toBeNull()
   })
 })

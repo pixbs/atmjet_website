@@ -24,6 +24,7 @@ import * as migration_20260915_033955_hero_video_block from './20260915_033955_h
 import * as migration_20260915_043206_telegram_lead_jobs from './20260915_043206_telegram_lead_jobs';
 import * as migration_20260915_044518_recent_yachts_block from './20260915_044518_recent_yachts_block';
 import * as migration_20260915_061538_footer_background from './20260915_061538_footer_background';
+import * as migration_20260915_074007_options_selection_block from './20260915_074007_options_selection_block';
 
 export const migrations = [
   {
@@ -154,6 +155,11 @@ export const migrations = [
   {
     up: migration_20260915_061538_footer_background.up,
     down: migration_20260915_061538_footer_background.down,
-    name: '20260915_061538_footer_background'
+    name: '20260915_061538_footer_background',
+  },
+  {
+    up: migration_20260915_074007_options_selection_block.up,
+    down: migration_20260915_074007_options_selection_block.down,
+    name: '20260915_074007_options_selection_block'
   },
 ];

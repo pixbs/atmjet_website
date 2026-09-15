@@ -20,6 +20,7 @@ import { heroSubpage } from '@/blocks/HeroSubpage/config'
 import { heroVideo } from '@/blocks/HeroVideo/config'
 import { heroYachts } from '@/blocks/HeroYachts/config'
 import { keyFeatures } from '@/blocks/KeyFeatures/config'
+import { optionsSelection } from '@/blocks/OptionsSelection/config'
 import { optionsTiles } from '@/blocks/OptionsTiles/config'
 import { personalManager } from '@/blocks/PersonalManager/config'
 import { photoDescriptor } from '@/blocks/PhotoDescriptor/config'
@@ -138,6 +139,7 @@ export const Pages: CollectionConfig = {
         heroVideo,
         heroYachts,
         keyFeatures,
+        optionsSelection,
         optionsTiles,
         personalManager,
         photoDescriptor,

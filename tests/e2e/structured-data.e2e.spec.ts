@@ -75,4 +75,27 @@ test.describe('structured data', () => {
     // It is the first step of every other page's trail, not a trail with one step.
     expect(await graphOf(request, pathFor('/', 'en'))).not.toHaveProperty('BreadcrumbList')
   })
+
+  test('carries the questions a page answers, with its answers', async ({ request }) => {
+    const graph = await graphOf(request, pathFor('/citizens', 'en'))
+    const questions = graph.FAQPage.mainEntity as Array<Record<string, unknown>>
+
+    expect(questions.length).toBeGreaterThan(0)
+    for (const question of questions) {
+      expect(question['@type']).toBe('Question')
+      expect(String(question.name).length).toBeGreaterThan(0)
+      expect(question.acceptedAnswer).toMatchObject({
+        '@type': 'Answer',
+        text: expect.stringMatching(/\S/),
+      })
+    }
+
+    // The same questions the section itself draws.
+    const html = await (await request.get(pathFor('/citizens', 'en'))).text()
+    expect(html).toContain(String(questions[0].name))
+  })
+
+  test('says nothing about questions on a page that asks none', async ({ request }) => {
+    expect(await graphOf(request, pathFor('/partners', 'en'))).not.toHaveProperty('FAQPage')
+  })
 })
