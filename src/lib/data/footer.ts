@@ -1,27 +1,11 @@
 import { cache } from 'react'
 
 import type { Locale } from '@/i18n/locales'
-import type { SocialNetwork } from '@/lib/links'
-import { mediaSource, type ImageSource } from '@/lib/media'
-import { navLinks, navPageIds, type NavLink } from '@/lib/nav'
+import { footerNavFrom, type FooterNav } from '@/lib/footer'
+import { navPageIds } from '@/lib/nav'
 
 import { slugsByPageId } from './pages'
 import { getPayloadClient } from './payload'
-
-export interface FooterNav {
-  /** The first row of page links. */
-  primary: NavLink[]
-  /** The second row. */
-  secondary: NavLink[]
-  /** Which accounts to link, in the order an editor put them; the handles live in SiteSettings. */
-  socials: SocialNetwork[]
-  /** The booking button, with the `?showBooking=` value the legacy link carried (section 3.9). */
-  cta: { label: string; source: string } | null
-  /** The two lines above the fold of the page, `{year}` still in them. */
-  legal: { location: string; copyright: string } | null
-  /** The photograph behind the footer. */
-  background: ImageSource | null
-}
 
 const EMPTY: FooterNav = {
   primary: [],
@@ -48,16 +32,7 @@ export const getFooterNav = cache(async (locale: Locale): Promise<FooterNav> => 
       ...navPageIds(footer.secondaryNav),
     ])
 
-    return {
-      primary: navLinks(footer.primaryNav, slugs),
-      secondary: navLinks(footer.secondaryNav, slugs),
-      socials: footer.socials ?? [],
-      cta: footer.cta ? { label: footer.cta.label, source: footer.cta.source } : null,
-      legal: footer.legal
-        ? { location: footer.legal.location, copyright: footer.legal.copyright }
-        : null,
-      background: mediaSource(typeof footer.background === 'object' ? footer.background : null),
-    }
+    return footerNavFrom(footer, slugs)
   } catch (error) {
     // The chrome is not worth taking the page down for: the page still ends, without its links.
     console.warn('[footer] the database was unreachable, so the footer has no links.', error)
