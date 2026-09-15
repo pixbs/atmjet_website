@@ -1,3 +1,5 @@
+import type { Page } from '@playwright/test'
+
 import { testUser } from '../helpers/seedUser'
 import { expect, test } from './fixtures'
 import { pathFor } from './routes'
@@ -12,6 +14,13 @@ const SECTION = '[data-section="contact-us"]'
 /** Unique, so a run can find its own lead in a list every run adds to. */
 const visitor = () => `A caller ${Date.now().toString(36)}`
 
+/**
+ * A browser fills three fields in faster than any person, and the action refuses a submission
+ * sent inside the first couple of seconds (issue #157). A test that means to be taken for a
+ * visitor spends a visitor's time over it.
+ */
+const asAVisitor = (page: Page) => page.waitForTimeout(2_500)
+
 test.describe('the contact section', () => {
   test('is in the HTML the server sends, with the form in it', async ({ request }) => {
     const html = await (await request.get(pathFor('/cargo_charter', 'en'))).text()
@@ -21,6 +30,8 @@ test.describe('the contact section', () => {
       'Manage your enquiries and bookings on go via private chat with our team',
     )
     expect(html).toContain('data-section="booking-form"')
+    // The heading the legacy drew above every booking form (issue #345).
+    expect(html).toContain('Leave your details')
   })
 
   test('reaches the accounts the settings name, not ones typed into the page', async ({ page }) => {
@@ -54,6 +65,7 @@ test.describe('the contact section', () => {
     const html = await (await request.get(pathFor('/cargo_charter', 'ru'))).text()
 
     expect(html).toContain('Телефонная линия открыта 24/7')
+    expect(html).toContain('Оставьте свои данные')
     expect(html).not.toContain('Telephone line is open 24/7')
   })
 })
@@ -71,9 +83,11 @@ test.describe('a lead left on a page', () => {
     await form.getByLabel('Name').fill(name)
     await form.getByLabel('Email').fill('caller@example.test')
     await form.getByLabel('Phone number').fill('+971504589926')
+    await asAVisitor(page)
     await form.getByRole('button', { name: 'Send' }).click()
 
-    await expect(form.getByRole('status')).toHaveText('Successfully sent')
+    // The confirmation stands beside the form rather than inside it (issue #345).
+    await expect(page.locator(SECTION).getByRole('status')).toHaveText('Successfully sent')
   })
 
   test('is traced back to the section rather than to nothing', async ({ admin, page }) => {

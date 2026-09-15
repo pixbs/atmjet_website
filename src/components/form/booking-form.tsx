@@ -2,7 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useTranslations } from 'next-intl'
-import { useId, useState } from 'react'
+import { useId, useState, type BaseSyntheticEvent } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 
 import { Checkmark } from '@/components/icons'
@@ -12,6 +12,7 @@ import { bookingSchema, parseDirections, type Booking } from '@/lib/booking'
 import { cn } from '@/lib/cn'
 import { submitLead } from '@/lib/data/leads'
 import type { LEAD_FORM_TYPES } from '@/lib/leads'
+import { HONEYPOT_FIELD } from '@/lib/spam'
 
 /**
  * The form that turns a visitor into a lead (issue #152, `docs/legacy-inventory.md` section
@@ -36,6 +37,29 @@ const FIELD =
 const CHIP =
   'cursor-pointer rounded-full border border-graphite-700 px-5 py-2 font-semibold uppercase transition-colors hover:border-graphite-100 peer-checked:border-transparent peer-checked:bg-gold peer-checked:text-graphite-900'
 
+/**
+ * How long the form was on screen before it was sent, measured between the moment it appeared
+ * and the event that sent it — both from the same clock, and neither a reading taken during
+ * render (issue #157).
+ *
+ * From when it appeared rather than from when it was first touched: a browser that fills every
+ * field from a saved address does it in the instant after the first one is focused, so a
+ * visitor whose browser knows them would otherwise be the one refused. Nothing to measure
+ * against is no reading at all, which the action reads as no evidence rather than as haste.
+ */
+const SHOWN_AT = new WeakMap<HTMLFormElement, number>()
+
+/** The moment a form reached the document, taken there rather than during a render. */
+function noteShown(form: HTMLFormElement | null) {
+  if (form !== null && !SHOWN_AT.has(form)) SHOWN_AT.set(form, performance.now())
+}
+
+function elapsedSince(shownAt: number | null, sentAt: number | undefined): number | undefined {
+  if (shownAt === null || sentAt === undefined) return undefined
+
+  return Math.max(0, Math.round(sentAt - shownAt))
+}
+
 export function BookingForm({
   locale,
   defaultCountry,
@@ -59,7 +83,6 @@ export function BookingForm({
   const chipId = useId()
   const [isSent, setIsSent] = useState(false)
   const [hasFailed, setHasFailed] = useState(false)
-
   const {
     control,
     formState: { errors, isSubmitting, touchedFields },
@@ -73,13 +96,20 @@ export function BookingForm({
     defaultValues: { name: '', email: '', phone: '', tags: [] },
   })
 
-  const submit = async (values: Booking) => {
+  const submit = async (values: Booking, event?: BaseSyntheticEvent) => {
     // The query is read here rather than through `useSearchParams`, which would make the whole
     // page render on the client unless every caller wrapped this in a Suspense boundary.
     const query = new URLSearchParams(window.location.search)
+    const form = event?.target as HTMLFormElement | undefined
+    const honeypot = form?.elements.namedItem(HONEYPOT_FIELD)
     const { ok } = await submitLead({
       values,
       formType,
+      elapsedMs: elapsedSince(
+        form === undefined ? null : (SHOWN_AT.get(form) ?? null),
+        event?.timeStamp,
+      ),
+      trap: honeypot instanceof HTMLInputElement ? honeypot.value : '',
       // The legacy carried the name of the button that opened the form (section 3.9); a form
       // nothing opened sent an empty string, so this one says where it stands instead.
       source: query.get('showBooking') ?? source,
@@ -108,105 +138,122 @@ export function BookingForm({
   // these two elements instead of the form, and nothing ever reached the branch that did.
   if (isSent)
     return (
-      <div
-        className={cn('flex w-full flex-col gap-6', className)}
-        data-section="booking-form"
-        data-state="sent"
-      >
-        <h2 className="text-center text-white" role="status">
+      <>
+        <h2
+          className="text-center text-white"
+          data-section="booking-form"
+          data-state="sent"
+          role="status"
+        >
           {t('sent')}
         </h2>
         <Checkmark className="mx-auto my-10 h-20 text-orange-200" />
-      </div>
+      </>
     )
 
   return (
-    <form
-      className={cn('flex w-full flex-col gap-6', className)}
-      data-section="booking-form"
-      // The legacy form asked the browser not to validate it: the rules are zod's.
-      noValidate
-      onSubmit={handleSubmit(submit)}
-    >
-      <div className="gap-1">
-        <label className="text-sm text-white" htmlFor={`${chipId}-name`}>
-          {t('name')}
-        </label>
+    // The heading stands beside the form rather than inside it, as the legacy returned the two:
+    // the room under it belongs to whatever holds them — a wide gap in the dialog and none in
+    // the contact card — and the form's own gap is the one between its fields (issue #345).
+    <>
+      <h2 className="text-center text-white">{t('title')}</h2>
+      <form
+        className={cn('flex w-full flex-col gap-6', className)}
+        data-section="booking-form"
+        // The legacy form asked the browser not to validate it: the rules are zod's.
+        noValidate
+        onSubmit={handleSubmit(submit)}
+        ref={noteShown}
+      >
+        {/* The honeypot (issue #157): out of the page for a person and out of the tab order, so
+          the only thing that fills it in is something reading the markup. */}
         <input
-          className={cn(FIELD, shows('name') ? 'border-red-500' : 'border-graphite-400')}
-          id={`${chipId}-name`}
-          placeholder={t('namePlaceholder')}
-          type="text"
-          {...register('name')}
+          aria-hidden
+          autoComplete="off"
+          className="sr-only"
+          name={HONEYPOT_FIELD}
+          tabIndex={-1}
         />
-        {shows('name') && <p className="mt-1 text-xs text-red-500">{t('nameRequired')}</p>}
-      </div>
-      <div className="gap-1">
-        <Controller
-          control={control}
-          name="phone"
-          render={({ field }) => (
-            <PhoneInput
-              defaultCountry={defaultCountry}
-              id={`${chipId}-phone`}
-              invalid={shows('phone')}
-              label={t('phone')}
-              labels={{
-                countries: t('countries'),
-                noResults: t('noResults'),
-                search: t('search'),
-              }}
-              locale={locale}
-              onBlur={field.onBlur}
-              onChange={field.onChange}
-              value={field.value}
-            />
-          )}
-        />
-        {shows('phone') && <p className="mt-1 text-xs text-red-500">{t('phoneInvalid')}</p>}
-      </div>
-      <div className="gap-1">
-        <label className="text-sm text-white" htmlFor={`${chipId}-email`}>
-          {t('email')}
-        </label>
-        <input
-          className={cn(FIELD, shows('email') ? 'border-red-500' : 'border-graphite-400')}
-          id={`${chipId}-email`}
-          placeholder={t('emailPlaceholder')}
-          type="email"
-          {...register('email')}
-        />
-        {shows('email') && <p className="mt-1 text-xs text-red-500">{t('emailInvalid')}</p>}
-      </div>
-      {tags.length > 0 && (
-        <div className="flex-row flex-wrap gap-2">
-          {tags.map((tag) => (
-            <div key={tag}>
-              <input
-                className="peer sr-only"
-                id={`${chipId}-${tag}`}
-                type="checkbox"
-                value={tag}
-                {...register('tags')}
-              />
-              <label className={CHIP} htmlFor={`${chipId}-${tag}`}>
-                {tag}
-              </label>
-            </div>
-          ))}
+        <div className="gap-1">
+          <label className="text-sm text-white" htmlFor={`${chipId}-name`}>
+            {t('name')}
+          </label>
+          <input
+            className={cn(FIELD, shows('name') ? 'border-red-500' : 'border-graphite-400')}
+            id={`${chipId}-name`}
+            placeholder={t('namePlaceholder')}
+            type="text"
+            {...register('name')}
+          />
+          {shows('name') && <p className="mt-1 text-xs text-red-500">{t('nameRequired')}</p>}
         </div>
-      )}
-      {/* The legacy said nothing when a send failed and closed the dialog anyway, so a lead
+        <div className="gap-1">
+          <Controller
+            control={control}
+            name="phone"
+            render={({ field }) => (
+              <PhoneInput
+                defaultCountry={defaultCountry}
+                id={`${chipId}-phone`}
+                invalid={shows('phone')}
+                label={t('phone')}
+                labels={{
+                  countries: t('countries'),
+                  noResults: t('noResults'),
+                  search: t('search'),
+                }}
+                locale={locale}
+                onBlur={field.onBlur}
+                onChange={field.onChange}
+                value={field.value}
+              />
+            )}
+          />
+          {shows('phone') && <p className="mt-1 text-xs text-red-500">{t('phoneInvalid')}</p>}
+        </div>
+        <div className="gap-1">
+          <label className="text-sm text-white" htmlFor={`${chipId}-email`}>
+            {t('email')}
+          </label>
+          <input
+            className={cn(FIELD, shows('email') ? 'border-red-500' : 'border-graphite-400')}
+            id={`${chipId}-email`}
+            placeholder={t('emailPlaceholder')}
+            type="email"
+            {...register('email')}
+          />
+          {shows('email') && <p className="mt-1 text-xs text-red-500">{t('emailInvalid')}</p>}
+        </div>
+        {tags.length > 0 && (
+          <div className="flex-row flex-wrap gap-2">
+            {tags.map((tag) => (
+              <div key={tag}>
+                <input
+                  className="peer sr-only"
+                  id={`${chipId}-${tag}`}
+                  type="checkbox"
+                  value={tag}
+                  {...register('tags')}
+                />
+                <label className={CHIP} htmlFor={`${chipId}-${tag}`}>
+                  {tag}
+                </label>
+              </div>
+            ))}
+          </div>
+        )}
+        {/* The legacy said nothing when a send failed and closed the dialog anyway, so a lead
           that never arrived looked exactly like one that did (section 13, entry 59). The form
           keeps what was typed, so sending again is pressing the button again. */}
-      {hasFailed && (
-        <p className="text-center text-sm text-red-500" role="alert">
-          {t('failed')}
-        </p>
-      )}
-      <button className="big self-center px-24!" disabled={isSubmitting} type="submit">
-        {hasFailed ? t('tryAgain') : t('send')}
-      </button>
-    </form>
+        {hasFailed && (
+          <p className="text-center text-sm text-red-500" role="alert">
+            {t('failed')}
+          </p>
+        )}
+        <button className="big self-center px-24!" disabled={isSubmitting} type="submit">
+          {hasFailed ? t('tryAgain') : t('send')}
+        </button>
+      </form>
+    </>
   )
 }

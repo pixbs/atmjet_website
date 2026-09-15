@@ -3,6 +3,7 @@
 import { headers } from 'next/headers'
 
 import { campaignOf, submissionSchema, type LeadSubmission } from '@/lib/booking'
+import { addressOf, createSubmissionLimiter, looksAutomated } from '@/lib/spam'
 
 import { getPayloadClient } from './payload'
 
@@ -16,18 +17,39 @@ import { getPayloadClient } from './payload'
  *
  * Written through the Local API, which does not go through access control: the collection is
  * closed to the REST and GraphQL APIs precisely so that nothing but this can create one.
+ *
+ * It is also the one place the invisible spam measures of issue #157 are applied, because it is
+ * the one door every form goes through.
  */
 
 /** As much of a browser's own description of itself as is worth keeping for spam triage. */
 const USER_AGENT_MAX = 512
+
+/** One window per server instance, as long-lived as the module (`src/lib/spam.ts`). */
+const limiter = createSubmissionLimiter()
 
 export async function submitLead(submission: LeadSubmission): Promise<{ ok: boolean }> {
   // A server action is a public endpoint whatever calls it, so nothing here is taken on trust.
   const parsed = submissionSchema.safeParse(submission)
   if (!parsed.success) return { ok: false }
 
-  const { values, formType, source, locale, url, directions } = parsed.data
+  const { values, formType, source, locale, url, directions, elapsedMs, trap } = parsed.data
   const request = await headers()
+
+  // Neither the reason nor the address is written down: a refusal is a log line and nothing
+  // more, which is what issue #157 asks for.
+  const automated = looksAutomated({ trap, elapsedMs })
+  if (automated !== null) {
+    console.warn(`[leads] a submission was refused as automated (${automated}).`)
+    return { ok: false }
+  }
+
+  const address = addressOf(request)
+  if (address !== '' && !limiter.allows(address)) {
+    console.warn('[leads] a submission was refused: too many from one address this hour.')
+    return { ok: false }
+  }
+
   const page = URL.canParse(url) ? new URL(url) : undefined
 
   try {
