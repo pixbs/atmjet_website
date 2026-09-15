@@ -1,3 +1,4 @@
+import { telegramHref } from '@/lib/links'
 import { mediaSource } from '@/lib/media'
 import { hrefForSlug } from '@/lib/nav'
 import type { Page } from '@/payload-types'
@@ -7,6 +8,7 @@ import { BestPrice } from './BestPrice/Component'
 import { ContactCard } from './ContactCard/Component'
 import { Descriptor } from './Descriptor/Component'
 import { Documents } from './Documents/Component'
+import { EmptyLegs } from './EmptyLegs/Component'
 import { Faq } from './Faq/Component'
 import { FramedDescriptor } from './FramedDescriptor/Component'
 import { GroupCards } from './GroupCards/Component'
@@ -97,6 +99,24 @@ function blockFor(block: LayoutBlock, key: string) {
 
       return offered.length === 0 ? null : <Documents key={key} documents={offered} />
     }
+    case 'emptyLegs':
+      return (
+        <EmptyLegs
+          key={key}
+          booking={{ href: `?showBooking=${block.cta.source}`, label: block.cta.label }}
+          channel={{
+            description: block.channel.description,
+            // Built from the bare handle an editor keeps, which is how the legacy link came to
+            // be unopenable: it was typed by hand (`docs/legacy-inventory.md` section 13.54).
+            href: telegramHref(block.channel.account),
+            label: block.channel.label,
+            title: block.channel.title,
+          }}
+          description={block.description}
+          limit={block.limit}
+          title={block.title}
+        />
+      )
     case 'faq':
       return (
         <Faq
