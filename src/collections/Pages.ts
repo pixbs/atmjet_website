@@ -20,6 +20,7 @@ import { heroSubpage } from '@/blocks/HeroSubpage/config'
 import { heroVideo } from '@/blocks/HeroVideo/config'
 import { heroYachts } from '@/blocks/HeroYachts/config'
 import { keyFeatures } from '@/blocks/KeyFeatures/config'
+import { makeBooking } from '@/blocks/MakeBooking/config'
 import { optionsSelection } from '@/blocks/OptionsSelection/config'
 import { optionsTiles } from '@/blocks/OptionsTiles/config'
 import { personalManager } from '@/blocks/PersonalManager/config'
@@ -28,6 +29,7 @@ import { privilege } from '@/blocks/Privilege/config'
 import { quote } from '@/blocks/Quote/config'
 import { recentYachts } from '@/blocks/RecentYachts/config'
 import { tiles } from '@/blocks/Tiles/config'
+import { transfer } from '@/blocks/Transfer/config'
 import { weInspect } from '@/blocks/WeInspect/config'
 import { whyUs } from '@/blocks/WhyUs/config'
 import { yachtsPromo } from '@/blocks/YachtsPromo/config'
@@ -139,6 +141,7 @@ export const Pages: CollectionConfig = {
         heroVideo,
         heroYachts,
         keyFeatures,
+        makeBooking,
         optionsSelection,
         optionsTiles,
         personalManager,
@@ -147,6 +150,7 @@ export const Pages: CollectionConfig = {
         quote,
         recentYachts,
         tiles,
+        transfer,
         weInspect,
         whyUs,
         yachtsPromo,
