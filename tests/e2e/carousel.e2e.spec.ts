@@ -97,8 +97,10 @@ test.describe('the carousel', () => {
     await last.click()
     await expect(last).toHaveAttribute('aria-selected', 'true')
 
-    // The end of the track is the end of the bar: the legacy one could be dragged past it.
-    expect(await width()).toBeGreaterThan(0)
+    // The end of the track is the end of the bar: the legacy one could be dragged past it. The
+    // bar is read until it has caught up, because the slides glide to the snap they were sent to
+    // and the selection is reported when that starts rather than when it lands.
+    await expect.poll(width).toBeGreaterThan(0)
     expect(await width()).toBeLessThanOrEqual(100)
   })
 })
