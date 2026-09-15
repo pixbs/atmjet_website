@@ -13,7 +13,7 @@ const SECTION = '[data-section="options-tiles"]'
 
 test.describe('the options tiles', () => {
   test('are in the HTML the server sends', async ({ request }) => {
-    const html = await (await request.get(pathFor('/partners', 'en'))).text()
+    const html = await (await request.get(pathFor('/', 'en'))).text()
 
     expect(html).toContain('data-section="options-tiles"')
     expect(html).toContain('For personal assistants')
@@ -21,7 +21,7 @@ test.describe('the options tiles', () => {
   })
 
   test('open the pages the block points at', async ({ page }) => {
-    await page.goto(pathFor('/partners', 'en'))
+    await page.goto(pathFor('/', 'en'))
     const section = page.locator(SECTION)
 
     await expect(section.getByRole('link', { name: /For personal assistants/ })).toHaveAttribute(
@@ -35,7 +35,7 @@ test.describe('the options tiles', () => {
   })
 
   test('offer one way through per tile, not two', async ({ page }) => {
-    await page.goto(pathFor('/partners', 'en'))
+    await page.goto(pathFor('/', 'en'))
 
     // The label looks like a button; the tile around it is what a visitor clicks or tabs to.
     await expect(page.locator(SECTION).getByRole('link')).toHaveCount(2)
@@ -43,7 +43,7 @@ test.describe('the options tiles', () => {
   })
 
   test('speak the language of the page they are on', async ({ request }) => {
-    const html = await (await request.get(pathFor('/partners', 'ru'))).text()
+    const html = await (await request.get(pathFor('/', 'ru'))).text()
 
     expect(html).toContain('Персональным ассистентам')
     expect(html).not.toContain('For personal assistants')

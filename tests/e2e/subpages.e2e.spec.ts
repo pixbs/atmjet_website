@@ -3,7 +3,8 @@ import { expect, test, type APIRequestContext } from '@playwright/test'
 import { ENABLED_LOCALES, pathFor, type Locale } from './routes'
 
 /**
- * The subpages that are their sections and nothing else (issues #144, #146, #143, #150 and #147,
+ * The subpages that are their sections and nothing else (issues #144, #146, #143, #150,
+ * #147 and #148,
  * `docs/legacy-inventory.md` section 4): what they are made of, in the order the legacy page
  * had them, and what they tell a crawler.
  *
@@ -42,6 +43,13 @@ const PAGES = [
     titles: { en: 'Business agents', ru: 'Бизнес-агентам' },
     words: { en: 'Why select us?', ru: 'Почему выбирают нас?' },
   },
+  {
+    slug: 'partners',
+    // Two stacks of reasons, which is what the legacy page drew: the clients' and the offer.
+    sections: ['hero-partners', 'why-us', 'why-us', 'personal-manager', 'contact-us'],
+    titles: { en: 'Partners', ru: 'Партнёры' },
+    words: { en: 'Clients benefit', ru: 'Клиенты выбирают нас' },
+  },
 ] as const
 
 async function documentOf(request: APIRequestContext, path: string): Promise<string> {
@@ -52,33 +60,26 @@ async function documentOf(request: APIRequestContext, path: string): Promise<str
   return response.text()
 }
 
-/** Where each section starts in the document, so their order can be compared with the legacy. */
-const orderOf = (html: string, sections: readonly string[]): string[] =>
-  sections
-    .map((name) => ({ name, at: html.indexOf(`data-section="${name}"`) }))
-    .filter((section) => section.at >= 0)
-    .sort((one, other) => one.at - other.at)
-    .map((section) => section.name)
+/**
+ * The chrome every page inherits, and the two forms a section may carry inside it. Everything
+ * else a document marks as a section is one of the page's own.
+ */
+const CHROME = ['header', 'footer', 'cookie-banner', 'booking-form', 'request-form']
+
+/** The page's own sections, in the order the document has them — twice, where it has one twice. */
+const sectionsOf = (html: string): string[] =>
+  [...html.matchAll(/data-section="([a-z-]+)"/g)]
+    .map((match) => match[1] ?? '')
+    .filter((name) => !CHROME.includes(name))
 
 for (const page of PAGES) {
   test.describe(`/${page.slug}`, () => {
     test('is rendered on the server, in the order the legacy page had', async ({ request }) => {
       const html = await documentOf(request, pathFor(`/${page.slug}`, 'en'))
 
-      expect(orderOf(html, page.sections)).toEqual([...page.sections])
+      // In order, and nothing else: a section on the wrong page shows up here as an extra.
+      expect(sectionsOf(html)).toEqual([...page.sections])
       expect(html).toContain(page.words.en)
-    })
-
-    test('draws nothing the legacy page did not', async ({ request }) => {
-      const html = await documentOf(request, pathFor(`/${page.slug}`, 'en'))
-      const drawn = [...html.matchAll(/data-section="([a-z-]+)"/g)].map((match) => match[1])
-
-      // The chrome every page inherits, and the sections this one is made of. Anything else is
-      // a section on the wrong page.
-      const chrome = ['header', 'footer', 'cookie-banner', 'booking-form', 'request-form']
-      expect(drawn.filter((name) => !chrome.includes(name!)).sort()).toEqual(
-        [...page.sections].sort(),
-      )
     })
 
     for (const locale of ENABLED_LOCALES) {
