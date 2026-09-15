@@ -4,7 +4,7 @@ import { ENABLED_LOCALES, pathFor, type Locale } from './routes'
 
 /**
  * The subpages that are their sections and nothing else (issues #144, #146, #143, #150,
- * #147, #145 and #148,
+ * #147, #145, #148 and #141,
  * `docs/legacy-inventory.md` section 4): what they are made of, in the order the legacy page
  * had them, and what they tell a crawler.
  *
@@ -55,6 +55,25 @@ const PAGES = [
     sections: ['hero-partners', 'why-us', 'why-us', 'personal-manager', 'contact-us'],
     titles: { en: 'Partners', ru: 'Партнёры' },
     words: { en: 'Clients benefit', ru: 'Клиенты выбирают нас' },
+  },
+  {
+    slug: 'sales_yachts',
+    sections: [
+      'hero-yachts',
+      'key-features',
+      'framed-descriptor',
+      'recent-yachts',
+      'we-inspect',
+      'options-selection',
+      'photo-descriptor',
+      'why-us',
+      'contact-us',
+    ],
+    titles: { en: 'Yachts for sale', ru: 'Яхты на продажу' },
+    words: {
+      en: 'Every yacht we list, we have stood on',
+      ru: 'На каждой яхте из списка мы стояли сами',
+    },
   },
 ] as const
 
