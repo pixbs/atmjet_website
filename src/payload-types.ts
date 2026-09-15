@@ -260,6 +260,7 @@ export interface Page {
     | (
         | AdvantagesBlock
         | BestPriceBlock
+        | CatalogueAircraftBlock
         | ContactCardBlock
         | ContactUsBlock
         | DescriptorBlock
@@ -341,6 +342,20 @@ export interface BestPriceBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'bestPrice';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CatalogueAircraftBlock".
+ */
+export interface CatalogueAircraftBlock {
+  title: string;
+  /**
+   * How many aircraft the carousel holds, newest first.
+   */
+  limit: number;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'catalogueAircraft';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1886,6 +1901,7 @@ export interface PagesSelect<T extends boolean = true> {
     | {
         advantages?: T | AdvantagesBlockSelect<T>;
         bestPrice?: T | BestPriceBlockSelect<T>;
+        catalogueAircraft?: T | CatalogueAircraftBlockSelect<T>;
         contactCard?: T | ContactCardBlockSelect<T>;
         contactUs?: T | ContactUsBlockSelect<T>;
         descriptor?: T | DescriptorBlockSelect<T>;
@@ -1960,6 +1976,16 @@ export interface BestPriceBlockSelect<T extends boolean = true> {
         label?: T;
         source?: T;
       };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CatalogueAircraftBlock_select".
+ */
+export interface CatalogueAircraftBlockSelect<T extends boolean = true> {
+  title?: T;
+  limit?: T;
   id?: T;
   blockName?: T;
 }

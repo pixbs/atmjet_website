@@ -87,6 +87,12 @@
     "bathrooms": "{count, plural, one {# bathroom} other {# bathrooms}}",
     "passengers": "{count, plural, one {# passenger} other {# passengers}}"
   },
+  "aircraft": {
+    "year": "Year:",
+    "passengers": "Pax:",
+    "previous": "Previous aircraft",
+    "next": "Next aircraft"
+  },
   "yacht": {
     "guests": "Guests:",
     "cabins": "Cabins:",
