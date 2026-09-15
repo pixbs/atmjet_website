@@ -3,7 +3,7 @@ import { Fragment } from 'react'
 
 import { Counter } from '@/components/motion/counter'
 import { Reveal } from '@/components/motion/reveal'
-import { HeroFrame } from '@/components/sections/hero-frame'
+import { HeroFrame, HeroPhoto } from '@/components/sections/hero-frame'
 import { buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/cn'
 import type { ImageSource } from '@/lib/media'
@@ -28,9 +28,8 @@ export interface HeroSalesProps {
 export function HeroSales({ overline, lines, description, image, action }: HeroSalesProps) {
   return (
     <HeroFrame
-      alt={image.alt === '' ? overline : image.alt}
-      contentClassName="justify-center"
-      image={image}
+      backdrop={<HeroPhoto alt={image.alt === '' ? overline : image.alt} image={image} />}
+      contentClassName="items-start justify-center"
       section="hero-sales"
     >
       <p className="text-sm uppercase">{overline}</p>
