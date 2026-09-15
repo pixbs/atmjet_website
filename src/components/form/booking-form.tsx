@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl'
 import { useId, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 
+import { Checkmark } from '@/components/icons'
 import { PhoneInput, type PhoneInputProps } from '@/components/ui/phone-input'
 import type { Locale } from '@/i18n/locales'
 import { bookingSchema, parseDirections, type Booking } from '@/lib/booking'
@@ -22,6 +23,12 @@ import type { LEAD_FORM_TYPES } from '@/lib/leads'
  *
  * The validation is the legacy's, down to when it speaks: `onBlur`, and a field says what is
  * wrong with it only once it has been left (`touchedFields && errors`).
+ *
+ * What it says when it is done is issue #158. The legacy confirm view existed and nothing ever
+ * set the query that showed it, so no visitor ever saw one (section 13, entry 59); it is what
+ * a sent form becomes here. A failed send said nothing at all — the dialog closed either way
+ * and the error went out as an unhandled rejection — so the visitor was told their enquiry had
+ * arrived when it had not. That one has no legacy markup to copy, because there was none.
  */
 const FIELD =
   'w-full border-b bg-transparent px-4 py-2 text-sm text-white placeholder-graphite-400 focus:outline-hidden'
@@ -51,6 +58,7 @@ export function BookingForm({
   const t = useTranslations('booking')
   const chipId = useId()
   const [isSent, setIsSent] = useState(false)
+  const [hasFailed, setHasFailed] = useState(false)
 
   const {
     control,
@@ -78,8 +86,11 @@ export function BookingForm({
       locale,
       url: window.location.href,
       directions: parseDirections(query.get('direction')),
-    })
+      // A refusal and a connection that never arrived are the same thing to the visitor: the
+      // enquiry is not away yet, and the button says so.
+    }).catch(() => ({ ok: false }))
 
+    setHasFailed(!ok)
     if (!ok) return
 
     reset()
@@ -92,6 +103,22 @@ export function BookingForm({
    * in three languages (section 10.4); here they are in the language being read.
    */
   const shows = (field: keyof Booking) => touchedFields[field] === true && Boolean(errors[field])
+
+  // The legacy confirm view, in place of the form rather than under it: the legacy returned
+  // these two elements instead of the form, and nothing ever reached the branch that did.
+  if (isSent)
+    return (
+      <div
+        className={cn('flex w-full flex-col gap-6', className)}
+        data-section="booking-form"
+        data-state="sent"
+      >
+        <h2 className="text-center text-white" role="status">
+          {t('sent')}
+        </h2>
+        <Checkmark className="mx-auto my-10 h-20 text-orange-200" />
+      </div>
+    )
 
   return (
     <form
@@ -169,16 +196,17 @@ export function BookingForm({
           ))}
         </div>
       )}
-      <button className="big self-center px-24!" disabled={isSubmitting} type="submit">
-        {t('send')}
-      </button>
-      {/* The legacy confirm view existed and nothing ever set the query that showed it
-          (section 13, entry 59); saying so here is what E9.8 builds on. */}
-      {isSent && (
-        <p className="text-center text-white" role="status">
-          {t('sent')}
+      {/* The legacy said nothing when a send failed and closed the dialog anyway, so a lead
+          that never arrived looked exactly like one that did (section 13, entry 59). The form
+          keeps what was typed, so sending again is pressing the button again. */}
+      {hasFailed && (
+        <p className="text-center text-sm text-red-500" role="alert">
+          {t('failed')}
         </p>
       )}
+      <button className="big self-center px-24!" disabled={isSubmitting} type="submit">
+        {hasFailed ? t('tryAgain') : t('send')}
+      </button>
     </form>
   )
 }
