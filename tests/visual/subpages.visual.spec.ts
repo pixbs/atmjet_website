@@ -4,12 +4,13 @@ import { ENABLED_LOCALES, pathFor } from '../e2e/routes'
 import { hideDevOverlay, hideFloatingHeader, settlePage } from './chrome'
 
 /**
- * The subpages that are their sections and nothing else, whole (issues #144, #146 and #143).
+ * The subpages that are their sections and nothing else, whole (issues #144, #146, #143 and
+ * #150).
  * Their sections have baselines of their own; this is the page around them — the order,
  * the spacing between sections and the gutter — in both languages, because the words are what
  * decides how tall each section grows.
  */
-const SLUGS = ['cargo_charter', 'medical_aviation', 'empty_legs'] as const
+const SLUGS = ['cargo_charter', 'medical_aviation', 'empty_legs', 'atm_jet_group'] as const
 
 const VIEWPORTS = {
   mobile: { width: 390, height: 844 },
@@ -22,7 +23,8 @@ for (const slug of SLUGS) {
       test(`/${slug} matches its baseline in ${locale} at ${name} width`, async ({ page }) => {
         await page.setViewportSize(size)
         await page.goto(pathFor(`/${slug}`, locale))
-        await page.locator('[data-section="contact-us"]').waitFor()
+        // The footer, because it is under every section whatever the page is made of.
+        await page.locator('[data-section="footer"]').waitFor()
         await page.evaluate(() => document.fonts.ready)
         await hideFloatingHeader(page)
         await hideDevOverlay(page)

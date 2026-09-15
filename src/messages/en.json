@@ -55,6 +55,8 @@
     "emailPlaceholder": "example@example.com",
     "send": "Send",
     "sent": "Successfully sent",
+    "failed": "Something went wrong. Please try again.",
+    "tryAgain": "Try again",
     "search": "Search",
     "noResults": "No results",
     "countries": "Countries",

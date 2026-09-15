@@ -55,6 +55,8 @@
     "emailPlaceholder": "example@example.com",
     "send": "Отправить",
     "sent": "Успешно отправлено",
+    "failed": "Что-то пошло не так. Попробуйте ещё раз.",
+    "tryAgain": "Попробовать ещё раз",
     "search": "Поиск",
     "noResults": "Нет результатов",
     "countries": "Страны",
