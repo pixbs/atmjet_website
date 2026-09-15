@@ -62,3 +62,32 @@ test.describe('the why us section', () => {
     expect(html).not.toContain('Years in the air')
   })
 })
+
+/**
+ * The same cards with nothing around them (issue #145, `docs/legacy-inventory.md` section 4):
+ * the group charters page laid them straight into the container, with no heading beside them
+ * and no box clipping them, so they stick to the page rather than to a box.
+ */
+test.describe('the bare stack', () => {
+  test('draws the cards with no heading beside them', async ({ page }) => {
+    await page.goto(pathFor('/group_charters', 'en'))
+    const section = page.locator(`${SECTION}[data-variant="bare"]`)
+
+    await expect(section).toHaveCount(1)
+    await expect(section.getByRole('heading', { level: 2 })).toHaveCount(0)
+    await expect(section.getByRole('heading', { level: 3 })).toHaveCount(3)
+  })
+
+  test('is not clipped by a box, as the stack beside a heading is', async ({ page }) => {
+    await page.goto(pathFor('/group_charters', 'en'))
+
+    await expect(page.locator(`${SECTION}[data-variant="bare"] [data-cards="why-us"]`)).toHaveCount(
+      0,
+    )
+
+    await page.goto(pathFor('/cargo_charter', 'en'))
+    await expect(
+      page.locator(`${SECTION}[data-variant="stacked"] [data-cards="why-us"]`),
+    ).toHaveCount(1)
+  })
+})
