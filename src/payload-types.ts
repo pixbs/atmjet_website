@@ -122,6 +122,7 @@ export interface Config {
   user: User;
   jobs: {
     tasks: {
+      sendTelegramLead: TaskSendTelegramLead;
       schedulePublish: TaskSchedulePublish;
       inline: {
         input: unknown;
@@ -1552,7 +1553,7 @@ export interface PayloadJob {
     | {
         executedAt: string;
         completedAt: string;
-        taskSlug: 'inline' | 'schedulePublish';
+        taskSlug: 'inline' | 'sendTelegramLead' | 'schedulePublish';
         taskID: string;
         input?:
           | {
@@ -1585,7 +1586,7 @@ export interface PayloadJob {
         id?: string | null;
       }[]
     | null;
-  taskSlug?: ('inline' | 'schedulePublish') | null;
+  taskSlug?: ('inline' | 'sendTelegramLead' | 'schedulePublish') | null;
   queue?: string | null;
   waitUntil?: string | null;
   processing?: boolean | null;
@@ -2919,6 +2920,18 @@ export interface CollectionsWidget {
     [k: string]: unknown;
   };
   width: 'full';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TaskSendTelegramLead".
+ */
+export interface TaskSendTelegramLead {
+  input: {
+    leadId: number;
+  };
+  output: {
+    delivered?: number | null;
+  };
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

@@ -24034,6 +24034,7 @@
       "schema": "public",
       "values": [
         "inline",
+        "sendTelegramLead",
         "schedulePublish"
       ]
     },
@@ -24050,6 +24051,7 @@
       "schema": "public",
       "values": [
         "inline",
+        "sendTelegramLead",
         "schedulePublish"
       ]
     },
@@ -24082,6 +24084,6 @@
     "tables": {},
     "columns": {}
   },
-  "id": "bfc8534c-ae37-4efa-933f-a5d01eb05167",
+  "id": "b0f43683-7d8f-4cd3-ae42-379a410779ad",
   "prevId": "00000000-0000-0000-0000-000000000000"
 }
