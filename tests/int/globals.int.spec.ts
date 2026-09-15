@@ -2,7 +2,7 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vites
 
 import type { TypedUser } from 'payload'
 
-import { DEFAULT_LOCALES } from '@/i18n/locales'
+import { DEFAULT_LOCALES, type Locale } from '@/i18n/locales'
 import { getEnabledLocales } from '@/lib/data/site-settings'
 import { createAdmin, createMedia, createUser } from '../factories'
 import { createRegistry, uniqueSuffix, type TestRegistry } from '../helpers/payload'
@@ -18,14 +18,60 @@ vi.mock('next/cache', () => ({ revalidateTag }))
  * What matters here is that a global is one document an editor owns rather than a constant in
  * six components (`docs/legacy-inventory.md` section 9.5), that its labels are per locale, and
  * that only the right people can change it.
+ *
+ * A global being one document is also why this suite has to put it back (issue #306). There is
+ * no scratch copy to write to, so the tests write the site's own menu and then delete the pages
+ * they pointed it at; what was left behind was a chrome pointing at nothing, which the next
+ * reader of the database — the build in `ci`, a browser tier run locally — renders as an empty
+ * menu.
  */
+const CHROME = ['header', 'footer'] as const
+
+interface ChromeSnapshot {
+  slug: (typeof CHROME)[number]
+  locale: Locale
+  data: Record<string, unknown>
+}
+
 let registry: TestRegistry
+let chrome: ChromeSnapshot[]
 
 beforeAll(async () => {
   registry = await createRegistry()
+
+  // Exactly what is stored, locale by locale: `fallbackLocale: false` so a label this language
+  // does not have is not written back as the English one.
+  chrome = []
+  for (const slug of CHROME)
+    for (const locale of DEFAULT_LOCALES)
+      chrome.push({
+        slug,
+        locale,
+        data: (await registry.payload.findGlobal({
+          slug,
+          locale,
+          fallbackLocale: false,
+          depth: 0,
+          overrideAccess: true,
+        })) as unknown as Record<string, unknown>,
+      })
 })
 
-afterAll(() => registry.cleanup())
+afterAll(async () => {
+  // The pages first: a menu restored before them would lose its links again as they go.
+  await registry.cleanup()
+
+  for (const { slug, locale, data } of chrome)
+    await registry.payload.updateGlobal({
+      slug,
+      locale,
+      data,
+      depth: 0,
+      overrideAccess: true,
+      // A repair has nothing to invalidate: no page has been rendered from it yet.
+      context: { skipRevalidation: true },
+    })
+})
 
 beforeEach(() => revalidateTag.mockClear())
 
