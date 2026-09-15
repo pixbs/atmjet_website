@@ -1,4 +1,7 @@
 {
+  "angleBar": {
+    "citizens": ""
+  },
   "common": {
     "skipToContent": "Skip to content",
     "loading": "Loading",
@@ -47,6 +50,25 @@
     "cabins": "{count, plural, one {# cabin} other {# cabins}}",
     "bathrooms": "{count, plural, one {# bathroom} other {# bathrooms}}",
     "passengers": "{count, plural, one {# passenger} other {# passengers}}"
+  },
+  "yacht": {
+    "guests": "Guests:",
+    "cabins": "Cabins:",
+    "crew": "Crew:",
+    "shipyard": "Shipyard:",
+    "year": "Year built:",
+    "length": "Length:",
+    "beam": "Beam:",
+    "draft": "Draft:",
+    "cruisingSpeed": "Cruising speed:",
+    "maxSpeed": "Max speed:",
+    "location": "Location:",
+    "feet": "feet",
+    "photographs": "Photographs",
+    "previousPhoto": "Previous photograph",
+    "nextPhoto": "Next photograph",
+    "previousYacht": "Previous yacht",
+    "nextYacht": "Next yacht"
   },
   "seo": {
     "siteName": "ATM JET",
