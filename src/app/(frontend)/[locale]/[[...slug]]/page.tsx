@@ -13,6 +13,7 @@ import { getPayloadClient } from '@/lib/data/payload'
 import { findRedirect } from '@/lib/data/redirects'
 import { getEnabledLocales } from '@/lib/data/site-settings'
 import { pageMetadata } from '@/lib/metadata'
+import { servedLocales } from '@/lib/pages'
 import { breadcrumbs, faqPage } from '@/lib/structured-data'
 import { siteOrigin } from '@/lib/urls'
 
@@ -94,7 +95,9 @@ export async function generateMetadata({
 
   return pageMetadata({
     locale: locale as Locale,
-    locales,
+    // Only the languages this page answers in, so a crawler is not offered a URL that
+    // redirects (issue #149).
+    locales: servedLocales(page.availableLocales, locales),
     slug: slugFrom(slug),
     title: meta?.title || page.title,
     description: meta?.description || t('siteDescription'),
@@ -138,6 +141,11 @@ export default async function CatchAllPage({ params }: { params: Promise<PagePar
   // old URL keeps resolving without every other page reading the table. Returned rather than
   // awaited: the helper is typed `Promise<never>`, which narrows `page` only through a `return`.
   if (!page) return redirectOrNotFound(locale as Locale, slug)
+
+  // A page an editor serves in fewer languages sends the rest to the home page, which is what
+  // the legacy citizens page did from inside its own component (section 13, entry 78, `keep`).
+  if (!servedLocales(page.availableLocales, locales).includes(locale as Locale))
+    redirect(`/${locale}`)
 
   const t = await getTranslations({ locale, namespace: 'common' })
   // The trail a search result shows instead of a bare URL; the home page is not its own trail.

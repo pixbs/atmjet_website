@@ -2,6 +2,7 @@ import type { MetadataRoute } from 'next'
 
 import type { Locale } from '@/i18n/locales'
 
+import { servedLocales } from './pages'
 import { localeUrl, localeUrls } from './urls'
 
 /**
@@ -17,6 +18,8 @@ import { localeUrl, localeUrls } from './urls'
 export interface Listable {
   slug?: string | null
   updatedAt?: string | null
+  /** The languages it answers in; none named means every one the site serves (issue #149). */
+  availableLocales?: string[] | null
 }
 
 /**
@@ -37,14 +40,23 @@ export function pageEntries(
     pages
       // A page an editor has not given a slug to has no URL yet, exactly as in `listPageParams`.
       .filter((page): page is Listable & { slug: string } => typeof page.slug === 'string')
-      .map((page) => ({
-        url: localeUrl(origin, canonical, page.slug),
-        // When an editor last changed it, rather than the legacy's build time.
-        lastModified: page.updatedAt ?? undefined,
-        changeFrequency: 'daily' as const,
-        // The home page is the one a crawler should come back to first.
-        priority: page.slug === '' ? 1 : 0.8,
-        alternates: { languages: localeUrls(origin, locales, page.slug) },
-      }))
+      .flatMap((page) => {
+        // A page served in fewer languages is listed in fewer, and canonical in the first of
+        // them: the Russian-only citizens page is a Russian URL, not an English one (#149).
+        const served = servedLocales(page.availableLocales, locales)
+        const [primary = canonical] = served
+
+        return [
+          {
+            url: localeUrl(origin, primary, page.slug),
+            // When an editor last changed it, rather than the legacy's build time.
+            lastModified: page.updatedAt ?? undefined,
+            changeFrequency: 'daily' as const,
+            // The home page is the one a crawler should come back to first.
+            priority: page.slug === '' ? 1 : 0.8,
+            alternates: { languages: localeUrls(origin, served, page.slug) },
+          },
+        ]
+      })
   )
 }

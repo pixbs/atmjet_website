@@ -70,3 +70,28 @@ describe('pageEntries', () => {
     expect(pageEntries(ORIGIN, [], PAGES)).toEqual([])
   })
 })
+
+/**
+ * A page served in fewer languages than the site (issue #149). The legacy sitemap had no idea
+ * the citizens page was Russian only, so it advertised an English URL that redirects.
+ */
+describe('a page that answers in one language', () => {
+  const RUSSIAN_ONLY: Listable[] = [
+    { slug: 'citizens', updatedAt: '2026-09-02T10:00:00.000Z', availableLocales: ['ru'] },
+  ]
+
+  it('is listed at the URL it actually answers on', () => {
+    expect(urls(pageEntries(ORIGIN, ['en', 'ru'], RUSSIAN_ONLY))).toEqual([
+      'https://atmjet.com/ru/citizens',
+    ])
+  })
+
+  it('offers no alternate a crawler would be redirected from', () => {
+    const [entry] = pageEntries(ORIGIN, ['en', 'ru'], RUSSIAN_ONLY)
+
+    expect(entry?.alternates?.languages).toEqual({
+      ru: 'https://atmjet.com/ru/citizens',
+      'x-default': 'https://atmjet.com/ru/citizens',
+    })
+  })
+})
