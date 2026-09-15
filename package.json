@@ -38,6 +38,7 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^5.9.1",
+    "@next/third-parties": "^16.3.5",
     "@payloadcms/db-postgres": "3.89.0",
     "@payloadcms/next": "3.89.0",
     "@payloadcms/plugin-redirects": "3.89.0",
