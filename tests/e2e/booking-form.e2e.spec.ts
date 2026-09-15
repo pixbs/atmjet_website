@@ -13,7 +13,8 @@ import { pathFor } from './routes'
  * The styleguide's own copy, not the one the booking dialog carries: a page opened with
  * `?showBooking=` now has both (issue #93).
  */
-const FORM = '[data-section="booking-form-example"] [data-section="booking-form"]'
+const EXAMPLE = '[data-section="booking-form-example"]'
+const FORM = `${EXAMPLE} [data-section="booking-form"]`
 
 /** Unique, so a run can find its own lead in a list every run adds to. */
 const visitor = () => `A visitor ${Date.now().toString(36)}`
@@ -74,10 +75,12 @@ test.describe('a lead', () => {
     await form.getByRole('button', { name: 'Send' }).click()
 
     // The confirm view the legacy wrote and nobody could reach (section 13, entry 59): it is
-    // what the form becomes, so there is nothing left to type into.
-    await expect(form.getByRole('status')).toHaveText('Successfully sent')
+    // what the form becomes, so there is nothing left to type into. The heading stands beside
+    // the form rather than inside it, so what is read is the section around both (issue #345).
+    const example = page.locator(EXAMPLE)
+    await expect(example.getByRole('status')).toHaveText('Successfully sent')
     await expect(form).toHaveAttribute('data-state', 'sent')
-    await expect(form.getByLabel('Name')).toHaveCount(0)
+    await expect(example.getByLabel('Name')).toHaveCount(0)
   })
 
   test('appears in the admin, with how it was delivered', async ({ admin, page }) => {
@@ -117,8 +120,9 @@ test.describe('a submission that does not get through', () => {
     await form.getByRole('button', { name: 'Send' }).click()
 
     await expect(form.getByRole('alert')).toHaveText('Something went wrong. Please try again.')
-    // Not the confirm view: the enquiry is not away, and the form does not pretend it is.
-    await expect(form.getByRole('status')).toHaveCount(0)
+    // Not the confirm view: the enquiry is not away, and the form does not pretend it is. The
+    // confirmation stands beside the form rather than inside it, so the section is what is read.
+    await expect(page.locator(EXAMPLE).getByRole('status')).toHaveCount(0)
     await expect(form.getByLabel('Name')).toHaveValue(name)
     await expect(form.getByRole('button', { name: 'Try again' })).toBeVisible()
   })
@@ -139,7 +143,7 @@ test.describe('a submission that does not get through', () => {
     await asAVisitor(page)
     await form.getByRole('button', { name: 'Try again' }).click()
 
-    await expect(form.getByRole('status')).toHaveText('Successfully sent')
+    await expect(page.locator(EXAMPLE).getByRole('status')).toHaveText('Successfully sent')
   })
 })
 

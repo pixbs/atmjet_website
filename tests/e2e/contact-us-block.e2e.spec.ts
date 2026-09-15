@@ -30,6 +30,8 @@ test.describe('the contact section', () => {
       'Manage your enquiries and bookings on go via private chat with our team',
     )
     expect(html).toContain('data-section="booking-form"')
+    // The heading the legacy drew above every booking form (issue #345).
+    expect(html).toContain('Leave your details')
   })
 
   test('reaches the accounts the settings name, not ones typed into the page', async ({ page }) => {
@@ -63,6 +65,7 @@ test.describe('the contact section', () => {
     const html = await (await request.get(pathFor('/cargo_charter', 'ru'))).text()
 
     expect(html).toContain('Телефонная линия открыта 24/7')
+    expect(html).toContain('Оставьте свои данные')
     expect(html).not.toContain('Telephone line is open 24/7')
   })
 })
@@ -83,7 +86,8 @@ test.describe('a lead left on a page', () => {
     await asAVisitor(page)
     await form.getByRole('button', { name: 'Send' }).click()
 
-    await expect(form.getByRole('status')).toHaveText('Successfully sent')
+    // The confirmation stands beside the form rather than inside it (issue #345).
+    await expect(page.locator(SECTION).getByRole('status')).toHaveText('Successfully sent')
   })
 
   test('is traced back to the section rather than to nothing', async ({ admin, page }) => {
