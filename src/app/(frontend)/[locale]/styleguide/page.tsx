@@ -2,13 +2,12 @@ import { getTranslations, setRequestLocale } from 'next-intl/server'
 import type { Metadata } from 'next'
 import React from 'react'
 
-import { AirportSearch } from './airport-search'
-
 import * as icons from '@/components/icons'
 import { Counter } from '@/components/motion/counter'
 import { Line } from '@/components/motion/line'
 import { Reveal } from '@/components/motion/reveal'
 import { Accordion, AccordionItem } from '@/components/ui/accordion'
+import { AirportSearch } from '@/components/ui/airport-search'
 import { EmptyLegCard } from '@/components/cards/empty-leg-card'
 import { FileCard } from '@/components/cards/file-card'
 import { GroupCard } from '@/components/cards/group-card'
@@ -712,11 +711,11 @@ export default async function StyleguidePage({ params }: { params: Promise<{ loc
       >
         <h3>Autocomplete</h3>
         <p>
-          Offers what it finds from two characters on. The airports behind it are a handful in{' '}
-          <code>airport-search.tsx</code> until the search endpoint arrives (E9.9).
+          Offers what it finds from two characters on, from the airports the search endpoint ranks:
+          the busiest first, matched in either language and named in this one.
         </p>
         <div className="w-full max-w-screen-sm gap-4">
-          <AirportSearch id="airport-from" label="From" />
+          <AirportSearch id="airport-from" label="From" locale={locale as Locale} />
         </div>
       </section>
     </div>

@@ -3,8 +3,12 @@ import { expect, test, type Page } from '@playwright/test'
 import { pathFor } from './routes'
 
 /**
- * The airport field (issue #107, `docs/legacy-inventory.md` section 6): what it offers, when it
- * offers it, and that it can be operated without a mouse — which the legacy one could not.
+ * The airport field (issues #107 and #159, `docs/legacy-inventory.md` sections 6 and 8.5): what
+ * it offers, when it offers it, and that it can be operated without a mouse — which the legacy
+ * one could not.
+ *
+ * What it offers is the seeded airports as the search endpoint ranks them, busiest first, so the
+ * two airports of a city come back in that order.
  */
 const SECTION = '[data-section="autocomplete"]'
 
@@ -53,7 +57,8 @@ test.describe('the airport autocomplete', () => {
     await expect(field).toHaveAttribute('aria-activedescendant', /.+/)
     await field.press('Enter')
 
-    await expect(field).toHaveValue('Paris (LFPG) France, Charles de Gaulle')
+    // The second of the two: the search ranks the busiest airport of a city first (issue #159).
+    await expect(field).toHaveValue('Paris (LFPB) France, Le Bourget')
     await expect(listOf(page)).toHaveCount(0)
   })
 
