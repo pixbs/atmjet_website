@@ -467,6 +467,48 @@ const INSPECTIONS: { en: [string, string]; ru: [string, string] }[] = [
 ]
 
 /**
+ * What managing an aircraft bought through the company comes with (issue #142, section 4,
+ * item 6). The legacy stack was headed by the company's own name with the sentence under it,
+ * and only its first card counted a figure up.
+ */
+const SALES_WHY_US: {
+  description: Record<'en' | 'ru', string>
+  cards: { figure?: string; en: [string, string]; ru: [string, string] }[]
+} = {
+  description: {
+    en: 'An aircraft bought through us is managed on terms written for the aircraft.',
+    ru: 'Самолёт, купленный через нас, управляется на условиях, написанных под него.',
+  },
+  cards: [
+    {
+      figure: '5',
+      en: ['Flights a month', 'More than ten a month pass through us as a broker.'],
+      ru: ['Рейсов в месяц', 'Как брокер мы обслуживаем больше десяти рейсов в месяц.'],
+    },
+    {
+      en: [
+        'Fleet management with experience',
+        'The terms for managing what you bought, agreed with you rather than handed to you.',
+      ],
+      ru: [
+        'Опытное управление авиапарком',
+        'Условия управления купленным самолётом согласуются с вами, а не выдаются вам.',
+      ],
+    },
+    {
+      en: [
+        'Yields that lead the market',
+        'The best return the market offers, and the model behind it.',
+      ],
+      ru: [
+        'Лучшая на рынке доходность',
+        'Лучшая доходность на рынке и модель, которая её показывает.',
+      ],
+    },
+  ],
+}
+
+/**
  * The two quotations the legacy citizens page carried (issue #132, section 4): the press one
  * under the Forbes wordmark and the founder's under the company's own. His words were written
  * into the page in Russian only; here both languages have them.
@@ -797,8 +839,11 @@ function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout 
           : 'Чартер, продажи, управление и яхты — теми, кто отвечает на ваш звонок.',
     })
 
+  // The sales department page down to the services it offers, in the legacy order (issue #142,
+  // section 4): the hero, the manager who answers, and the aircraft themselves.
   if (slug === 'sales_dept') {
     const hero = HERO_SALES[locale]
+    const manager = PERSONAL_MANAGER[locale]
     sections.push({
       blockType: 'heroSales',
       overline: hero.overline,
@@ -806,6 +851,19 @@ function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout 
       description: hero.description,
       image: fixture.photo,
       cta: { label: hero.button, source: 'Hero_sales' },
+    })
+    sections.push({
+      blockType: 'personalManager',
+      title: manager.title,
+      description: manager.description,
+      image: fixture.photo,
+      chips: manager.chips.map((label) => ({ label })),
+    })
+    sections.push({
+      blockType: 'catalogueAircraft',
+      title:
+        locale === 'en' ? 'Most-flown business aircraft:' : 'Самые популярные самолёты сейчас:',
+      limit: 15,
     })
   }
 
@@ -885,14 +943,6 @@ function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout 
         description: card[locale][1],
         image: card.withImage ? fixture.photo : undefined,
       })),
-    })
-
-  if (slug === 'sales_dept')
-    sections.push({
-      blockType: 'advantages',
-      title: locale === 'en' ? 'Selling through us' : 'Продажа через нас',
-      image: fixture.photo,
-      cards: ADVANTAGES.map((card) => ({ title: card[locale][0], description: card[locale][1] })),
     })
 
   if (slug === 'partners')
@@ -1076,7 +1126,7 @@ function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout 
       },
     })
 
-  if (slug === 'partners' || slug === 'sales_dept') {
+  if (slug === 'partners') {
     const manager = PERSONAL_MANAGER[locale]
     sections.push({
       blockType: 'personalManager',
@@ -1097,6 +1147,29 @@ function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout 
         description: card.description,
         image: fixture.photo,
         items: card.items.map((text) => ({ text })),
+      })),
+    })
+  }
+
+  // What selling through the company is worth, and the management that follows the sale. The
+  // legacy headed the stack with the company's own name (section 4, item 6).
+  if (slug === 'sales_dept') {
+    sections.push({
+      blockType: 'advantages',
+      title: locale === 'en' ? 'Selling through us' : 'Продажа через нас',
+      image: fixture.photo,
+      cards: ADVANTAGES.map((card) => ({ title: card[locale][0], description: card[locale][1] })),
+    })
+    sections.push({
+      blockType: 'whyUs',
+      variant: 'stacked',
+      title: 'ATM JET',
+      description: SALES_WHY_US.description[locale],
+      cards: SALES_WHY_US.cards.map((card) => ({
+        figure: card.figure,
+        title: card[locale][0],
+        description: card[locale][1],
+        image: fixture.photo,
       })),
     })
   }
@@ -1166,6 +1239,8 @@ function translated(layout: Layout | null | undefined, slug: string, fixture: Fi
           ),
         }
       case 'bestPrice':
+        return { ...block, id }
+      case 'catalogueAircraft':
         return { ...block, id }
       case 'contactCard':
         return { ...block, id }
