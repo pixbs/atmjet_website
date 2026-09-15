@@ -54,6 +54,13 @@ const chromium = {
 
 export default defineConfig({
   testDir: './tests',
+  /**
+   * The administrator the browser tiers sign in as, created once for the run (issue #343). It
+   * used to be created and deleted by every spec file that needed it, and with more than one
+   * worker one file's teardown deleted the user another was signing in as.
+   */
+  globalSetup: './tests/helpers/admin-user-setup.ts',
+  globalTeardown: './tests/helpers/admin-user-teardown.ts',
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,

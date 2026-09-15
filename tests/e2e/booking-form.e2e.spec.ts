@@ -1,4 +1,4 @@
-import { cleanupTestUser, seedTestUser, testUser } from '../helpers/seedUser'
+import { testUser } from '../helpers/seedUser'
 import { expect, test } from './fixtures'
 import { pathFor } from './routes'
 
@@ -50,14 +50,6 @@ test.describe('a lead', () => {
   test.describe.configure({ mode: 'serial' })
 
   const name = visitor()
-
-  test.beforeAll(() => {
-    seedTestUser()
-  })
-
-  test.afterAll(() => {
-    cleanupTestUser()
-  })
 
   test('is written down when the form is sent', async ({ page }) => {
     // Without `?showBooking=`, which now opens the dialog over the page (issue #93); the query
