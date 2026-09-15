@@ -17,18 +17,26 @@ test('the open airport list matches its baseline', async ({ page }) => {
   await page.evaluate(() => document.fonts.ready)
   await hideFloatingHeader(page)
 
-  // The section is the last on the page, so the end of the page is as high as it comes; the
-  // scroll is `instant` because the stylesheet scrolls smoothly (the legacy `scroll-smooth`)
-  // and a capture would otherwise catch the page still moving.
-  await page.evaluate(() =>
-    window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'instant' }),
-  )
+  // The section goes to the top of the screen, so the list has the room below it that it hangs
+  // into; the scroll is `instant` because the stylesheet scrolls smoothly (the legacy
+  // `scroll-smooth`) and a capture would otherwise catch the page still moving.
+  await section.evaluate((node) => node.scrollIntoView({ block: 'start', behavior: 'instant' }))
   await section.getByRole('combobox', { name: 'From' }).fill('dub')
-  await expect(section.getByRole('listbox')).toBeVisible()
-  // The open list hangs below the end of the page, so the page is asked for its end again.
-  await page.evaluate(() =>
-    window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'instant' }),
-  )
+  const list = section.getByRole('listbox')
+  await expect(list).toBeVisible()
 
-  await expect(page).toHaveScreenshot('autocomplete-open.png')
+  // Clipped to the field and what hangs under it, rather than the whole screen: what follows
+  // the section on the page is another section's baseline, not this one's.
+  const field = (await section.boundingBox())!
+  const open = (await list.boundingBox())!
+  const width = page.viewportSize()?.width ?? field.width
+
+  await expect(page).toHaveScreenshot('autocomplete-open.png', {
+    clip: {
+      x: 0,
+      y: field.y,
+      width,
+      height: Math.max(field.y + field.height, open.y + open.height) - field.y,
+    },
+  })
 })

@@ -12,6 +12,36 @@ export interface PageRouteParams {
 }
 
 /**
+ * The slugs of the pages a menu points at, keyed by id (issues #88 and #89).
+ *
+ * Two queries rather than one `depth: 1` read of the global: the relationship resolves to whole
+ * Page documents, and the chrome renders on every page of the site, so it asks for the dozen
+ * slugs it needs instead of for a dozen pages with everything on them.
+ */
+export async function slugsByPageId(
+  ids: readonly number[],
+  // Injected so a caller can share one client, as the chrome readers do.
+  client: () => Promise<Payload> = getPayloadClient,
+): Promise<Map<number, string>> {
+  if (ids.length === 0) return new Map()
+
+  const payload = await client()
+  const { docs } = await payload.find({
+    collection: 'pages',
+    where: { id: { in: [...ids] } },
+    limit: 0,
+    depth: 0,
+    select: { slug: true },
+    // Only what a visitor can read: a link to a draft page is a link to a 404.
+    overrideAccess: false,
+  })
+
+  return new Map(
+    docs.flatMap((page) => (typeof page.slug === 'string' ? [[page.id, page.slug] as const] : [])),
+  )
+}
+
+/**
  * Every published page, as route params for `generateStaticParams`.
  *
  * Prerendering is an optimisation, not a correctness requirement, so a build that cannot reach

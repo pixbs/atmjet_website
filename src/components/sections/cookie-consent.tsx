@@ -5,7 +5,6 @@ import { AnimatePresence, m } from 'motion/react'
 import { useTranslations } from 'next-intl'
 import { useState, useSyncExternalStore } from 'react'
 
-import { Link } from '@/i18n/navigation'
 import { ACCEPT_ALL, consentCookies, readConsent, REJECT_ALL, type Consent } from '@/lib/consent'
 import { banner } from '@/lib/motion'
 
@@ -84,14 +83,10 @@ export function CookieConsent({ gtmId }: { gtmId?: string }) {
             variants={banner}
           >
             <div className="container flex-row! flex-wrap gap-6 rounded-2xl bg-graphite-950 p-6">
-              <p>
-                {t('message')}{' '}
-                {/* The legacy banner linked to a page that answered 404 (section 13, entry 71);
-                    the page itself is E3.11. */}
-                <Link className="text-white" href="/privacy">
-                  {t('privacyPolicy')}
-                </Link>
-              </p>
+              {/* The legacy sentence ended in a link to `/privacy`, which answered 404 there
+                  (section 13, entry 71); issue #57 decided that nothing points at it until the
+                  policy text exists, so the clause that introduced it goes with the link. */}
+              <p>{t('message')}</p>
               <div className="flex-row flex-wrap items-center gap-2">
                 <button
                   className="middle dark w-full md:w-auto"
