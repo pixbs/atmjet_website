@@ -80,6 +80,21 @@ const MESSENGERS: Record<'telegram' | 'whatsapp', Record<'en' | 'ru', string>> =
 }
 
 /**
+ * What the two sections that carry the flight request are headed (issue #115, section 5). The
+ * legacy read both from its catalogues, `form.title` and `transfer.title`; here they are an
+ * editor's, so the seed writes what the legacy said.
+ */
+const MAKE_BOOKING: Record<'en' | 'ru', string> = {
+  en: 'Book a flight',
+  ru: 'Забронировать перелет',
+}
+
+const TRANSFER: Record<'en' | 'ru', string> = {
+  en: 'Get VIP airport transfer as a gift from us',
+  ru: 'Получите VIP-трансфер из аэропорта в подарок',
+}
+
+/**
  * The four pages the subpage hero opens (issue #112, `docs/legacy-inventory.md` section 5).
  * The citizens page passed no sentence at all, which is the shape the block has to keep.
  */
@@ -895,6 +910,11 @@ function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout 
       })),
     })
     sections.push({
+      blockType: 'transfer',
+      title: TRANSFER[locale],
+      image: fixture.photo,
+    })
+    sections.push({
       blockType: 'bestPrice',
       title: BEST_PRICE[locale][0],
       description: BEST_PRICE[locale][1],
@@ -902,6 +922,14 @@ function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout 
       cta: { label: BEST_PRICE[locale][2], source: 'Best_price' },
     })
   }
+
+  // The two pages that invited a booking under their hero, plain on one and in a card on the
+  // other, which is the whole of the legacy `isCard` (section 5).
+  if (slug === 'group_charters')
+    sections.push({ blockType: 'makeBooking', title: MAKE_BOOKING[locale], variant: 'plain' })
+
+  if (slug === 'citizens')
+    sections.push({ blockType: 'makeBooking', title: MAKE_BOOKING[locale], variant: 'card' })
 
   if (slug === 'sales_yachts')
     sections.push({
@@ -1123,6 +1151,8 @@ function translated(layout: Layout | null | undefined, slug: string, fixture: Fi
         return { ...block, id }
       case 'keyFeatures':
         return { ...block, id, cards: withRowIds(block.cards ?? [], rows) }
+      case 'makeBooking':
+        return { ...block, id }
       case 'optionsSelection': {
         const cards = written?.blockType === 'optionsSelection' ? written.cards : undefined
 
@@ -1173,6 +1203,8 @@ function translated(layout: Layout | null | undefined, slug: string, fixture: Fi
             written?.blockType === 'tiles' ? written.tiles : undefined,
           ),
         }
+      case 'transfer':
+        return { ...block, id }
       case 'weInspect':
         return {
           ...block,

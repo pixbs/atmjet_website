@@ -278,6 +278,7 @@ export interface Page {
         | HeroVideoBlock
         | HeroYachtsBlock
         | KeyFeaturesBlock
+        | MakeBookingBlock
         | OptionsSelectionBlock
         | OptionsTilesBlock
         | PersonalManagerBlock
@@ -286,6 +287,7 @@ export interface Page {
         | QuoteBlock
         | RecentYachtsBlock
         | TilesBlock
+        | TransferBlock
         | WeInspectBlock
         | WhyUsBlock
         | YachtsPromoBlock
@@ -714,6 +716,20 @@ export interface KeyFeaturesBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "MakeBookingBlock".
+ */
+export interface MakeBookingBlock {
+  title: string;
+  /**
+   * The card is what the legacy `isCard` drew: a panel around it.
+   */
+  variant: 'plain' | 'card';
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'makeBooking';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "OptionsSelectionBlock".
  */
 export interface OptionsSelectionBlock {
@@ -884,6 +900,17 @@ export interface TilesBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'tiles';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TransferBlock".
+ */
+export interface TransferBlock {
+  title: string;
+  image: number | Media;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'transfer';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1870,6 +1897,7 @@ export interface PagesSelect<T extends boolean = true> {
         heroVideo?: T | HeroVideoBlockSelect<T>;
         heroYachts?: T | HeroYachtsBlockSelect<T>;
         keyFeatures?: T | KeyFeaturesBlockSelect<T>;
+        makeBooking?: T | MakeBookingBlockSelect<T>;
         optionsSelection?: T | OptionsSelectionBlockSelect<T>;
         optionsTiles?: T | OptionsTilesBlockSelect<T>;
         personalManager?: T | PersonalManagerBlockSelect<T>;
@@ -1878,6 +1906,7 @@ export interface PagesSelect<T extends boolean = true> {
         quote?: T | QuoteBlockSelect<T>;
         recentYachts?: T | RecentYachtsBlockSelect<T>;
         tiles?: T | TilesBlockSelect<T>;
+        transfer?: T | TransferBlockSelect<T>;
         weInspect?: T | WeInspectBlockSelect<T>;
         whyUs?: T | WhyUsBlockSelect<T>;
         yachtsPromo?: T | YachtsPromoBlockSelect<T>;
@@ -2213,6 +2242,16 @@ export interface KeyFeaturesBlockSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "MakeBookingBlock_select".
+ */
+export interface MakeBookingBlockSelect<T extends boolean = true> {
+  title?: T;
+  variant?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "OptionsSelectionBlock_select".
  */
 export interface OptionsSelectionBlockSelect<T extends boolean = true> {
@@ -2339,6 +2378,16 @@ export interface TilesBlockSelect<T extends boolean = true> {
         image?: T;
         id?: T;
       };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TransferBlock_select".
+ */
+export interface TransferBlockSelect<T extends boolean = true> {
+  title?: T;
+  image?: T;
   id?: T;
   blockName?: T;
 }
