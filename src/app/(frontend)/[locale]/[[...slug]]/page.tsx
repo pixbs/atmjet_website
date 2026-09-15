@@ -88,6 +88,9 @@ export async function generateMetadata({
   if (!page) return {}
 
   const meta = (page as { meta?: PageSeo }).meta
+  // The film the page opens on, which is what the legacy home page named to a scraper
+  // (`docs/legacy-inventory.md` section 2.4). A page without a hero video names none.
+  const hero = (page.layout ?? []).find((block) => block.blockType === 'heroVideo')
 
   return pageMetadata({
     locale: locale as Locale,
@@ -96,6 +99,7 @@ export async function generateMetadata({
     title: meta?.title || page.title,
     description: meta?.description || t('siteDescription'),
     image: typeof meta?.image === 'object' ? meta.image?.url : undefined,
+    video: hero ? new URL(hero.video, siteOrigin()).href : undefined,
     siteName: t('siteName'),
     origin: siteOrigin(),
   })

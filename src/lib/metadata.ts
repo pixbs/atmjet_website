@@ -23,12 +23,29 @@ export interface PageMetadata {
   description?: string | null
   /** An absolute URL; a share image the page owns, otherwise the site's. */
   image?: string | null
+  /** An absolute URL of the video the page opens on, where it opens on one. */
+  video?: string | null
   siteName: string
   origin: string
 }
 
 const openGraphLocale = (locale: Locale): string =>
   LOCALE_DEFINITIONS.find((definition) => definition.code === locale)?.openGraph ?? locale
+
+/** What a scraper is told a video is, from the only two containers a browser plays inline. */
+const VIDEO_TYPES: Record<string, string> = { mp4: 'video/mp4', webm: 'video/webm' }
+
+/**
+ * The legacy home page named its own file as `video/mp4`, 1920 by 1080
+ * (`docs/legacy-inventory.md` section 2.4). The container is read off the path here rather than
+ * assumed, and the size is left unsaid: the file is an editor's, and a size this cannot know is
+ * worse than none.
+ */
+function openGraphVideo(url: string): { url: string; type?: string } {
+  const type = VIDEO_TYPES[url.split('.').pop()?.toLowerCase() ?? '']
+
+  return type === undefined ? { url } : { url, type }
+}
 
 export function pageMetadata({
   locale,
@@ -37,12 +54,14 @@ export function pageMetadata({
   title,
   description,
   image,
+  video,
   siteName,
   origin,
 }: PageMetadata): Metadata {
   const canonical = localeUrl(origin, locale, slug)
   const shared = { title, description: description ?? undefined }
   const images = image ? [image] : undefined
+  const videos = video ? [openGraphVideo(video)] : undefined
 
   return {
     ...shared,
@@ -61,6 +80,7 @@ export function pageMetadata({
         .filter((alternate) => alternate !== locale)
         .map((alternate) => openGraphLocale(alternate)),
       images,
+      videos,
     },
     twitter: { ...shared, card: image ? 'summary_large_image' : 'summary', images },
   }
