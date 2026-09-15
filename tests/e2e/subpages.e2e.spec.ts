@@ -3,7 +3,7 @@ import { expect, test, type APIRequestContext } from '@playwright/test'
 import { ENABLED_LOCALES, pathFor, type Locale } from './routes'
 
 /**
- * The subpages that are their sections and nothing else (issues #144, #146, #143 and #150,
+ * The subpages that are their sections and nothing else (issues #144, #146, #143, #150 and #147,
  * `docs/legacy-inventory.md` section 4): what they are made of, in the order the legacy page
  * had them, and what they tell a crawler.
  *
@@ -35,6 +35,12 @@ const PAGES = [
     sections: ['hero-group', 'group-cards', 'yachts-promo', 'privilege'],
     titles: { en: 'ATM JET Group', ru: 'Группа ATM JET' },
     words: { en: 'The group behind the flight', ru: 'Группа, которая стоит за рейсом' },
+  },
+  {
+    slug: 'business_agents',
+    sections: ['guide', 'why-us', 'documents', 'transfer', 'best-price'],
+    titles: { en: 'Business agents', ru: 'Бизнес-агентам' },
+    words: { en: 'Why select us?', ru: 'Почему выбирают нас?' },
   },
 ] as const
 
