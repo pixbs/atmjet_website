@@ -3,7 +3,8 @@ import { pathFor } from '../e2e/routes'
 import { expectNoA11yViolations } from './axe'
 
 /**
- * The subpages that are their sections and nothing else (issues #144, #146, #143, #150, #147 and #145).
+ * The subpages that are their sections and nothing else (issues #144, #146, #143, #150, #147,
+ * #145 and #148).
  * A whole page rather than a component: what a section passes on its own it can still fail
  * beside another, and these are the pages ported end to end.
  */
@@ -14,6 +15,8 @@ const SLUGS = [
   'atm_jet_group',
   'business_agents',
   'group_charters',
+  'partners',
+  'sales_dept',
   'sales_yachts',
 ] as const
 

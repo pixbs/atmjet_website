@@ -4,6 +4,7 @@ import { editorOrAdmin, publishedOnly } from '@/access'
 import { ALL_LOCALES } from '@/i18n/locales'
 import { advantages } from '@/blocks/Advantages/config'
 import { bestPrice } from '@/blocks/BestPrice/config'
+import { catalogueAircraft } from '@/blocks/CatalogueAircraft/config'
 import { contactCard } from '@/blocks/ContactCard/config'
 import { contactUs } from '@/blocks/ContactUs/config'
 import { descriptor } from '@/blocks/Descriptor/config'
@@ -138,6 +139,7 @@ export const Pages: CollectionConfig = {
       blocks: [
         advantages,
         bestPrice,
+        catalogueAircraft,
         contactCard,
         contactUs,
         descriptor,

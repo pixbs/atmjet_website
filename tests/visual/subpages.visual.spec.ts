@@ -5,7 +5,7 @@ import { hideDevOverlay, hideFloatingHeader, settlePage } from './chrome'
 
 /**
  * The subpages that are their sections and nothing else, whole (issues #144, #146, #143,
- * #150, #147 and #145).
+ * #150, #147, #145 and #148).
  * Their sections have baselines of their own; this is the page around them — the order,
  * the spacing between sections and the gutter — in both languages, because the words are what
  * decides how tall each section grows.
@@ -17,6 +17,8 @@ const PAGES: { slug: string; locales: readonly Locale[] }[] = [
   { slug: 'atm_jet_group', locales: ENABLED_LOCALES },
   { slug: 'business_agents', locales: ENABLED_LOCALES },
   { slug: 'group_charters', locales: ENABLED_LOCALES },
+  { slug: 'partners', locales: ENABLED_LOCALES },
+  { slug: 'sales_dept', locales: ENABLED_LOCALES },
   { slug: 'sales_yachts', locales: ENABLED_LOCALES },
   // The citizens page answers in Russian alone (issue #149), so there is one capture of it.
   { slug: 'citizens', locales: ['ru'] },

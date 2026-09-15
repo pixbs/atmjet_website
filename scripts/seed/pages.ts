@@ -165,6 +165,32 @@ const HOME_WHY_US: {
 ]
 
 /**
+ * What the partners page offers, under a heading of its own (issue #148, section 4). Four of
+ * them, none with a figure, which is the shape the legacy cards had there.
+ */
+const WE_OFFER: { en: [string, string]; ru: [string, string] }[] = [
+  {
+    en: ['White label partnership', 'Fly under your own name, on our aircraft and our permits.'],
+    ru: ['White Label партнёрство', 'Летайте под своим именем, на наших бортах и разрешениях.'],
+  },
+  {
+    en: ['Pricing confidentiality', 'What you charge is yours; what we charge stays between us.'],
+    ru: ['Конфиденциальность цен', 'Ваша цена — ваша; наша остаётся между нами.'],
+  },
+  {
+    en: ['Affiliate programme', 'A commission agreed once and paid on the day the flight closes.'],
+    ru: [
+      'Партнёрская программа',
+      'Комиссия согласована один раз и выплачена в день закрытия рейса.',
+    ],
+  },
+  {
+    en: ['Payment flexibility', 'By transfer, by card, or by whatever the charter needs.'],
+    ru: ['Гибкость оплаты', 'Переводом, картой или так, как требует чартер.'],
+  },
+]
+
+/**
  * What the group charters page stacked, straight into the container (issue #145, section 4).
  * Three of them, none with a figure, which is the shape the legacy cards had there.
  */
@@ -472,6 +498,48 @@ const INSPECTIONS: { en: [string, string]; ru: [string, string] }[] = [
     ru: ['Ходовые испытания', 'День в море с нагрузкой на системы, а не у причала.'],
   },
 ]
+
+/**
+ * What managing an aircraft bought through the company comes with (issue #142, section 4,
+ * item 6). The legacy stack was headed by the company's own name with the sentence under it,
+ * and only its first card counted a figure up.
+ */
+const SALES_WHY_US: {
+  description: Record<'en' | 'ru', string>
+  cards: { figure?: string; en: [string, string]; ru: [string, string] }[]
+} = {
+  description: {
+    en: 'An aircraft bought through us is managed on terms written for the aircraft.',
+    ru: 'Самолёт, купленный через нас, управляется на условиях, написанных под него.',
+  },
+  cards: [
+    {
+      figure: '5',
+      en: ['Flights a month', 'More than ten a month pass through us as a broker.'],
+      ru: ['Рейсов в месяц', 'Как брокер мы обслуживаем больше десяти рейсов в месяц.'],
+    },
+    {
+      en: [
+        'Fleet management with experience',
+        'The terms for managing what you bought, agreed with you rather than handed to you.',
+      ],
+      ru: [
+        'Опытное управление авиапарком',
+        'Условия управления купленным самолётом согласуются с вами, а не выдаются вам.',
+      ],
+    },
+    {
+      en: [
+        'Yields that lead the market',
+        'The best return the market offers, and the model behind it.',
+      ],
+      ru: [
+        'Лучшая на рынке доходность',
+        'Лучшая доходность на рынке и модель, которая её показывает.',
+      ],
+    },
+  ],
+}
 
 /**
  * What the citizens page says for itself beside the wordmark (issue #149, section 4). The legacy
@@ -940,8 +1008,11 @@ function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout 
           : 'Чартер, продажи, управление и яхты — теми, кто отвечает на ваш звонок.',
     })
 
+  // The sales department page down to the services it offers, in the legacy order (issue #142,
+  // section 4): the hero, the manager who answers, and the aircraft themselves.
   if (slug === 'sales_dept') {
     const hero = HERO_SALES[locale]
+    const manager = PERSONAL_MANAGER[locale]
     sections.push({
       blockType: 'heroSales',
       overline: hero.overline,
@@ -949,6 +1020,19 @@ function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout 
       description: hero.description,
       image: fixture.photo,
       cta: { label: hero.button, source: 'Hero_sales' },
+    })
+    sections.push({
+      blockType: 'personalManager',
+      title: manager.title,
+      description: manager.description,
+      image: fixture.photo,
+      chips: manager.chips.map((label) => ({ label })),
+    })
+    sections.push({
+      blockType: 'catalogueAircraft',
+      title:
+        locale === 'en' ? 'Most-flown business aircraft:' : 'Самые популярные самолёты сейчас:',
+      limit: 15,
     })
   }
 
@@ -1028,34 +1112,6 @@ function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout 
         description: card[locale][1],
         image: card.withImage ? fixture.photo : undefined,
       })),
-    })
-
-  if (slug === 'sales_dept')
-    sections.push({
-      blockType: 'advantages',
-      title: locale === 'en' ? 'Selling through us' : 'Продажа через нас',
-      image: fixture.photo,
-      cards: ADVANTAGES.map((card) => ({ title: card[locale][0], description: card[locale][1] })),
-    })
-
-  if (slug === 'partners')
-    sections.push({
-      blockType: 'optionsTiles',
-      tiles: OPTIONS_TILES.flatMap((tile) => {
-        const page = fixture.pages.get(tile.slug)
-
-        return page === undefined
-          ? []
-          : [
-              {
-                image: fixture.photo,
-                title: tile[locale][0],
-                label: tile[locale][1],
-                page,
-                dim: tile.dim,
-              },
-            ]
-      }),
     })
 
   if (slug === 'atm_jet_group')
@@ -1200,6 +1256,27 @@ function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout 
     })
   }
 
+  // The one page the legacy drew it on was the home page (section 4).
+  if (slug === '')
+    sections.push({
+      blockType: 'optionsTiles',
+      tiles: OPTIONS_TILES.flatMap((tile) => {
+        const page = fixture.pages.get(tile.slug)
+
+        return page === undefined
+          ? []
+          : [
+              {
+                image: fixture.photo,
+                title: tile[locale][0],
+                label: tile[locale][1],
+                page,
+                dim: tile.dim,
+              },
+            ]
+      }),
+    })
+
   // Eight, as the legacy grid sliced one picture into eight, on the one page that had it. Far
   // down it, as the legacy grid was: it is scrolled to, not landed on.
   if (slug === '')
@@ -1242,7 +1319,32 @@ function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout 
       },
     })
 
-  if (slug === 'partners' || slug === 'sales_dept') {
+  if (slug === 'partners') {
+    sections.push({
+      blockType: 'whyUs',
+      variant: 'stacked',
+      title: locale === 'en' ? 'Clients benefit' : 'Клиенты выбирают нас',
+      cards: HOME_WHY_US.map((card) => ({
+        figure: card.figure,
+        title: card[locale][0],
+        description: card[locale][1],
+        image: fixture.photo,
+      })),
+    })
+    sections.push({
+      blockType: 'whyUs',
+      variant: 'stacked',
+      title: locale === 'en' ? 'We offer:' : 'Мы предлагаем:',
+      description:
+        locale === 'en'
+          ? 'Partnerships built to last, with concierges, agencies and travel companies.'
+          : 'Партнёрство надолго — с консьерж-сервисами, агентствами и туристическими компаниями.',
+      cards: WE_OFFER.map((card) => ({
+        title: card[locale][0],
+        description: card[locale][1],
+        image: fixture.photo,
+      })),
+    })
     const manager = PERSONAL_MANAGER[locale]
     sections.push({
       blockType: 'personalManager',
@@ -1263,6 +1365,29 @@ function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout 
         description: card.description,
         image: fixture.photo,
         items: card.items.map((text) => ({ text })),
+      })),
+    })
+  }
+
+  // What selling through the company is worth, and the management that follows the sale. The
+  // legacy headed the stack with the company's own name (section 4, item 6).
+  if (slug === 'sales_dept') {
+    sections.push({
+      blockType: 'advantages',
+      title: locale === 'en' ? 'Selling through us' : 'Продажа через нас',
+      image: fixture.photo,
+      cards: ADVANTAGES.map((card) => ({ title: card[locale][0], description: card[locale][1] })),
+    })
+    sections.push({
+      blockType: 'whyUs',
+      variant: 'stacked',
+      title: 'ATM JET',
+      description: SALES_WHY_US.description[locale],
+      cards: SALES_WHY_US.cards.map((card) => ({
+        figure: card.figure,
+        title: card[locale][0],
+        description: card[locale][1],
+        image: fixture.photo,
       })),
     })
   }
@@ -1350,6 +1475,8 @@ function translated(layout: Layout | null | undefined, slug: string, fixture: Fi
           ),
         }
       case 'bestPrice':
+        return { ...block, id }
+      case 'catalogueAircraft':
         return { ...block, id }
       case 'contactCard':
         return { ...block, id }

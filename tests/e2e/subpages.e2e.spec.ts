@@ -3,7 +3,8 @@ import { expect, test, type APIRequestContext } from '@playwright/test'
 import { ENABLED_LOCALES, pathFor, type Locale } from './routes'
 
 /**
- * The subpages that are their sections and nothing else (issues #144, #146, #143, #150, #147, #145 and #141,
+ * The subpages that are their sections and nothing else (issues #144, #146, #143, #150,
+ * #147, #145, #148 and #141,
  * `docs/legacy-inventory.md` section 4): what they are made of, in the order the legacy page
  * had them, and what they tell a crawler.
  *
@@ -52,10 +53,31 @@ const PAGES: readonly Subpage[] = [
     words: { en: 'Why select us?', ru: 'Почему выбирают нас?' },
   },
   {
+    slug: 'sales_dept',
+    sections: [
+      'hero-sales',
+      'personal-manager',
+      'catalogue-aircraft',
+      'options-selection',
+      'advantages',
+      'why-us',
+      'contact-us',
+    ],
+    titles: { en: 'Sales department', ru: 'Отдел продаж' },
+    words: { en: 'Most-flown business aircraft:', ru: 'Самые популярные самолёты сейчас:' },
+  },
+  {
     slug: 'group_charters',
     sections: ['hero-subpage', 'make-booking', 'why-us', 'contact-us'],
     titles: { en: 'Group charters', ru: 'Групповые перевозки' },
     words: { en: 'One aircraft, one price', ru: 'Один борт, одна цена' },
+  },
+  {
+    slug: 'partners',
+    // Two stacks of reasons, which is what the legacy page drew: the clients' and the offer.
+    sections: ['hero-partners', 'why-us', 'why-us', 'personal-manager', 'contact-us'],
+    titles: { en: 'Partners', ru: 'Партнёры' },
+    words: { en: 'Clients benefit', ru: 'Клиенты выбирают нас' },
   },
   {
     slug: 'sales_yachts',
