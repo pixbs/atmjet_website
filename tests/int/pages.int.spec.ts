@@ -31,6 +31,10 @@ const heroOf = (page: { layout?: Page['layout'] }) =>
 const reasonsOf = (page: { layout?: Page['layout'] }) =>
   page.layout?.find((block) => block.blockType === 'whyUs')?.cards
 
+/** The contact section, likewise. */
+const contactOf = (page: { layout?: Page['layout'] }) =>
+  page.layout?.find((block) => block.blockType === 'contactUs')
+
 const pageData = (overrides: Record<string, unknown> = {}) => ({
   title: `Page ${uniqueSuffix()}`,
   slug: `page-${uniqueSuffix()}`,
@@ -377,5 +381,63 @@ describe('the why us block', () => {
     expect(reasonsOf(english)?.[0]?.title).toBe('Years in the air')
     expect(reasonsOf(russian)?.[0]?.title).toBe('Лет в воздухе')
     expect(reasonsOf(russian)).toHaveLength(1)
+  })
+})
+
+/**
+ * The contact section (issue #129). What a lead from it is traced back to is the section's, not
+ * a language's: the legacy inline form sent an empty string, so a lead named no page at all
+ * (`docs/legacy-inventory.md` section 13, entry 60), and a source that changed with the locale
+ * would put the Russian leads and the English ones under two different names.
+ */
+describe('the contact section block', () => {
+  it('keeps one source across the languages while the wording is translated', async () => {
+    const page = await registry.create(
+      'pages',
+      pageData({
+        layout: [
+          {
+            blockType: 'contactUs',
+            telegram: { title: 'Telegram', description: 'Chat with our team' },
+            whatsapp: { title: 'Whatsapp', description: 'Answers, straight away' },
+            hours: 'Telephone line is open 24/7',
+            source: 'Contact_us',
+          },
+        ],
+      }),
+    )
+
+    await registry.payload.update({
+      collection: 'pages',
+      id: page.id,
+      data: {
+        title: 'Грузовые перевозки',
+        layout: [
+          {
+            blockType: 'contactUs',
+            id: contactOf(page)?.id,
+            telegram: { title: 'Telegram', description: 'Пишите нашей команде' },
+            whatsapp: { title: 'Whatsapp', description: 'Ответы сразу' },
+            hours: 'Телефонная линия открыта 24/7',
+            source: 'Contact_us',
+          },
+        ],
+      },
+      locale: 'ru',
+      overrideAccess: true,
+    })
+
+    const english = await registry.payload.findByID({ collection: 'pages', id: page.id })
+    const russian = await registry.payload.findByID({
+      collection: 'pages',
+      id: page.id,
+      locale: 'ru',
+    })
+
+    expect(contactOf(english)?.hours).toBe('Telephone line is open 24/7')
+    expect(contactOf(russian)?.hours).toBe('Телефонная линия открыта 24/7')
+    expect(contactOf(russian)?.telegram.description).toBe('Пишите нашей команде')
+    // Not localized, so both languages name the same origin whatever either one was written as.
+    expect(contactOf(russian)?.source).toBe(contactOf(english)?.source)
   })
 })
