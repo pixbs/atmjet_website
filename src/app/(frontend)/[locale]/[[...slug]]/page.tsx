@@ -161,7 +161,7 @@ export default async function CatchAllPage({ params }: { params: Promise<PagePar
           <h1>{page.title}</h1>
         </article>
       ) : (
-        <RenderBlocks layout={page.layout} />
+        <RenderBlocks layout={page.layout} locale={locale as Locale} />
       )}
       {/* The floating button the legacy site drew on the home page and nowhere else
           (`docs/legacy-inventory.md` section 3.5, issue #94). */}

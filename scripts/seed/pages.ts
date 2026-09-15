@@ -50,6 +50,36 @@ const META: Record<string, Record<string, { title: string; description: string }
 }
 
 /**
+ * The pages the legacy ended with its contact section (issue #129, section 5). Ten of the
+ * thirteen static routes: the home page, the group page and the business agents page closed
+ * with something else.
+ */
+const CONTACT_US_PAGES = new Set([
+  'aircraft',
+  'cargo_charter',
+  'citizens',
+  'empty_legs',
+  'group_charters',
+  'medical_aviation',
+  'partners',
+  'sales_dept',
+  'sales_yachts',
+  'yachts',
+])
+
+/** What the two messenger cards said, hard-coded in the legacy section as a locale ternary. */
+const MESSENGERS: Record<'telegram' | 'whatsapp', Record<'en' | 'ru', string>> = {
+  telegram: {
+    en: 'Manage your enquiries and bookings on go via private chat with our team',
+    ru: 'Управляйте своими запросами и бронированиями на ходу через приватный чат с нашей командой',
+  },
+  whatsapp: {
+    en: 'Get instant support and answers to your questions directly from our team',
+    ru: 'Получайте мгновенную поддержку и ответы на ваши вопросы непосредственно от нашей команды',
+  },
+}
+
+/**
  * The four pages the subpage hero opens (issue #112, `docs/legacy-inventory.md` section 5).
  * The citizens page passed no sentence at all, which is the shape the block has to keep.
  */
@@ -985,6 +1015,16 @@ function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout 
       limit: 8,
     })
 
+  // Last on every page that carried it, which is where the legacy put it (section 5).
+  if (CONTACT_US_PAGES.has(slug))
+    sections.push({
+      blockType: 'contactUs',
+      telegram: { title: 'Telegram', description: MESSENGERS.telegram[locale] },
+      whatsapp: { title: 'Whatsapp', description: MESSENGERS.whatsapp[locale] },
+      hours: locale === 'en' ? 'Telephone line is open 24/7' : 'Телефонная линия открыта 24/7',
+      source: 'Contact_us',
+    })
+
   return sections
 }
 
@@ -1013,6 +1053,8 @@ function translated(layout: Layout | null | undefined, slug: string, fixture: Fi
       case 'bestPrice':
         return { ...block, id }
       case 'contactCard':
+        return { ...block, id }
+      case 'contactUs':
         return { ...block, id }
       case 'descriptor':
         return { ...block, id }
