@@ -23,12 +23,10 @@ import { Direction } from './direction'
  * The flight request (issue #151, `docs/legacy-inventory.md` section 7.1): up to four legs, or
  * one leg there and back, handed to the booking dialog with the legs in the query.
  *
- * A request that does not validate is refused in silence, as the legacy form refused it: it
- * rendered no errors at all, and giving it any is a decision of its own (section 13, entry 64).
- *
- * What does change is that switching from a multi-leg request to a round trip no longer throws
- * the other legs away: the legacy `remove` deleted them and the way back was never written
- * (section 7.1), so a visitor who looked at the return flight lost the itinerary they had typed.
+ * Two of its habits are reproduced rather than fixed, both recorded in section 13 as decisions
+ * of their own: a request that does not validate is refused in silence, the legacy form having
+ * rendered no errors at all (entry 64), and switching to a round trip throws away every leg but
+ * the first, with nothing to bring them back (entry 65).
  *
  * The buttons carry only the colours the legacy gave them; the shape is the parity layer's
  * `button` rule, as it was on the legacy site.
@@ -49,15 +47,13 @@ export function RequestForm({
   const t = useTranslations('form')
   const router = useRouter()
   const [isRoundTrip, setIsRoundTrip] = useState(false)
-  // What a multi-leg request had before the round trip put it aside, so it can be handed back.
-  const [setAside, setSetAside] = useState<FlightRequest['legs']>([])
 
   const methods = useForm<FlightRequest>({
     resolver: zodResolver(flightRequestSchema),
     defaultValues: { legs: [emptyLeg()] },
   })
   const { control, handleSubmit } = methods
-  const { append, fields, remove, replace } = useFieldArray({ control, name: 'legs' })
+  const { append, fields, remove } = useFieldArray({ control, name: 'legs' })
 
   const submit = (request: FlightRequest) => {
     methods.reset()
@@ -65,16 +61,10 @@ export function RequestForm({
   }
 
   const roundTrip = (round: boolean) => {
-    const legs = methods.getValues('legs')
-
-    if (round && legs.length > 1) {
-      setSetAside(legs.slice(1))
-      replace([legs[0]])
-    }
-
-    if (!round && setAside.length > 0) {
-      replace([...legs, ...setAside].slice(0, MAX_LEGS))
-      setSetAside([])
+    // Every leg after the first goes, and switching back does not bring it back: the legacy
+    // `remove([1..n])` with no counterpart, which section 13 entry 65 marks `keep`.
+    if (round && fields.length > 1) {
+      remove(Array.from({ length: fields.length - 1 }, (_, index) => index + 1))
     }
 
     setIsRoundTrip(round)
