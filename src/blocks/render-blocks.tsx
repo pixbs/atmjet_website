@@ -5,6 +5,7 @@ import type { Page } from '@/payload-types'
 
 import { Advantages } from './Advantages/Component'
 import { BestPrice } from './BestPrice/Component'
+import { CatalogueAircraft } from './CatalogueAircraft/Component'
 import { ContactCard } from './ContactCard/Component'
 import { ContactUs } from './ContactUs/Component'
 import { Descriptor } from './Descriptor/Component'
@@ -398,6 +399,8 @@ function blockFor(block: LayoutBlock, key: string, locale: Locale) {
           variant={block.variant}
         />
       )
+    case 'catalogueAircraft':
+      return <CatalogueAircraft key={key} limit={block.limit} title={block.title} />
     case 'recentYachts':
       return <RecentYachts key={key} limit={block.limit} title={block.title} />
     case 'yachtsPromo': {
@@ -469,7 +472,8 @@ function blockFor(block: LayoutBlock, key: string, locale: Locale) {
             title: card.title,
           }))}
           description={block.description ?? undefined}
-          title={block.title}
+          title={block.title ?? undefined}
+          variant={block.variant}
         />
       )
   }

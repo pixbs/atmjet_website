@@ -68,6 +68,13 @@ export async function settlePage(page: Page) {
     window.scrollTo({ top: 0, behavior: 'instant' })
   })
 
+  // A slide parked outside a carousel's window is never near the screen, however far the page
+  // is scrolled, so its picture is never fetched and the wait below would never end.
+  await page.evaluate(() => {
+    for (const photo of document.querySelectorAll<HTMLImageElement>('main img[loading="lazy"]'))
+      photo.loading = 'eager'
+  })
+
   await waitForPhotos(page.locator('main'))
   await page.addStyleTag({
     content: 'main [style*="opacity"] { opacity: 1 !important; transform: none !important }',

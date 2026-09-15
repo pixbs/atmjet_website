@@ -88,6 +88,12 @@
     "bathrooms": "{count, plural, one {# ванная} few {# ванные} many {# ванных} other {# ванные}}",
     "passengers": "{count, plural, one {# пассажир} few {# пассажира} many {# пассажиров} other {# пассажира}}"
   },
+  "aircraft": {
+    "year": "Год:",
+    "passengers": "Пассажиров:",
+    "previous": "Предыдущий самолёт",
+    "next": "Следующий самолёт"
+  },
   "yacht": {
     "guests": "Гостей:",
     "cabins": "Кают:",
