@@ -17,6 +17,32 @@ const baseURL = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3000'
 const isRemoteTarget = Boolean(process.env.PLAYWRIGHT_BASE_URL)
 const vercelBypassSecret = process.env.VERCEL_AUTOMATION_BYPASS_SECRET
 
+/**
+ * Every tier but the cookie specs runs as a visitor who has already answered the cookie question
+ * (issue #91): the banner is fixed to the foot of every page, so a run without an answer is a run
+ * with a banner over whatever is being tested. The host comes from `baseURL`, so this works
+ * against a preview as well as against a local build.
+ */
+const answered = {
+  cookies: ['cookie-consent=true', 'marketing-consent=false', 'personal-consent=false'].map(
+    (cookie) => {
+      const [name, value] = cookie.split('=')
+
+      return {
+        name,
+        value,
+        domain: new URL(baseURL).hostname,
+        path: '/',
+        expires: -1,
+        httpOnly: false,
+        secure: false,
+        sameSite: 'Lax' as const,
+      }
+    },
+  ),
+  origins: [],
+}
+
 const chromium = {
   ...devices['Desktop Chrome'],
   channel: 'chromium',
@@ -40,6 +66,7 @@ export default defineConfig({
   },
   use: {
     baseURL,
+    storageState: answered,
     trace: 'on-first-retry',
     extraHTTPHeaders: vercelBypassSecret
       ? { 'x-vercel-protection-bypass': vercelBypassSecret }
