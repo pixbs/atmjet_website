@@ -1,4 +1,7 @@
 {
+  "angleBar": {
+    "citizens": "Для граждан РФ"
+  },
   "common": {
     "skipToContent": "Перейти к содержимому",
     "loading": "Загрузка",
@@ -34,6 +37,25 @@
     "cabins": "{count, plural, one {# каюта} few {# каюты} many {# кают} other {# каюты}}",
     "bathrooms": "{count, plural, one {# ванная} few {# ванные} many {# ванных} other {# ванные}}",
     "passengers": "{count, plural, one {# пассажир} few {# пассажира} many {# пассажиров} other {# пассажира}}"
+  },
+  "yacht": {
+    "guests": "Гостей:",
+    "cabins": "Кают:",
+    "crew": "Экипаж:",
+    "shipyard": "Верфь:",
+    "year": "Год постройки:",
+    "length": "Длина:",
+    "beam": "Ширина:",
+    "draft": "Осадка:",
+    "cruisingSpeed": "Крейсерская скорость:",
+    "maxSpeed": "Максимальная скорость:",
+    "location": "Расположение:",
+    "feet": "футов",
+    "photographs": "Фотографии",
+    "previousPhoto": "Предыдущая фотография",
+    "nextPhoto": "Следующая фотография",
+    "previousYacht": "Предыдущая яхта",
+    "nextYacht": "Следующая яхта"
   },
   "seo": {
     "siteName": "ATM JET",

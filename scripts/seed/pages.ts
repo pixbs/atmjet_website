@@ -839,6 +839,13 @@ function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout 
     })
   }
 
+  if (slug === 'sales_yachts')
+    sections.push({
+      blockType: 'recentYachts',
+      title: locale === 'en' ? 'Recently listed' : 'Недавно выставленные',
+      limit: 8,
+    })
+
   return sections
 }
 
@@ -958,6 +965,8 @@ function translated(layout: Layout | null | undefined, slug: string, fixture: Fi
       case 'privilege':
         return { ...block, id, cards: withRowIds(block.cards ?? [], rows) }
       case 'quote':
+        return { ...block, id }
+      case 'recentYachts':
         return { ...block, id }
       case 'tiles':
         return {

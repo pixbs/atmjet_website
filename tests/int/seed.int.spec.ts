@@ -8,6 +8,7 @@ import { SEEDED_GLOBALS } from '../../scripts/seed/globals'
 import { SEED_IMAGES } from '../../scripts/seed/media'
 import { LEGACY_REDIRECTS, seedRedirects } from '../../scripts/seed/redirects'
 import { SEED_ADMIN } from '../../scripts/seed/users'
+import { SEED_YACHTS } from '../../scripts/seed/yachts'
 import { PAGE_SLUGS } from '../../src/collections/Pages'
 import { createRegistry, uniqueSuffix, type TestRegistry } from '../helpers/payload'
 
@@ -21,7 +22,8 @@ vi.mock('next/cache', () => ({ revalidateTag }))
  * #69, #117 and #306).
  *
  * What the seed writes is keyed by natural keys rather than by `uniqueSuffix`: thirteen pages by
- * slug, two uploads by filename, the airports and the flights between them by code, five
+ * slug, two uploads by filename, the airports and the flights between them by code, two yachts by
+ * name, five
  * redirects by path and two globals. Vitest gives every file its own worker against one
  * database, so a second suite that seeds — or that deletes what the seed wrote — races this one:
  * a cleanup landing between two runs makes the second report `created` where idempotency says
@@ -37,6 +39,7 @@ const EXPECTED_DOCUMENTS =
   SEED_IMAGES.length +
   SEED_AIRPORTS.length +
   SEED_EMPTY_LEGS.length +
+  SEED_YACHTS.length +
   PAGE_SLUGS.length +
   SEEDED_GLOBALS.length +
   LEGACY_REDIRECTS.length

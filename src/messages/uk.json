@@ -1,4 +1,7 @@
 {
+  "angleBar": {
+    "citizens": ""
+  },
   "common": {
     "skipToContent": "Перейти до вмісту",
     "loading": "Завантаження",
@@ -34,6 +37,25 @@
     "cabins": "{count, plural, one {# каюта} few {# каюти} many {# кают} other {# каюти}}",
     "bathrooms": "{count, plural, one {# ванна} few {# ванни} many {# ванн} other {# ванни}}",
     "passengers": "{count, plural, one {# пасажир} few {# пасажири} many {# пасажирів} other {# пасажири}}"
+  },
+  "yacht": {
+    "guests": "Гостей:",
+    "cabins": "Кают:",
+    "crew": "Екіпаж:",
+    "shipyard": "Верф:",
+    "year": "Рік побудови:",
+    "length": "Довжина:",
+    "beam": "Ширина:",
+    "draft": "Осадка:",
+    "cruisingSpeed": "Крейсерська швидкість:",
+    "maxSpeed": "Максимальна швидкість:",
+    "location": "Розташування:",
+    "feet": "футів",
+    "photographs": "Фотографії",
+    "previousPhoto": "Попередня фотографія",
+    "nextPhoto": "Наступна фотографія",
+    "previousYacht": "Попередня яхта",
+    "nextYacht": "Наступна яхта"
   },
   "seo": {
     "siteName": "ATM JET",
