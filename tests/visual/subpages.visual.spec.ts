@@ -17,6 +17,7 @@ const SLUGS = [
   'atm_jet_group',
   'business_agents',
   'group_charters',
+  'sales_yachts',
 ] as const
 
 const VIEWPORTS = {

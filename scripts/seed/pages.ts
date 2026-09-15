@@ -467,6 +467,100 @@ const INSPECTIONS: { en: [string, string]; ru: [string, string] }[] = [
 ]
 
 /**
+ * What the yachts for sale page settles before it shows a yacht (issue #141, section 4, item 2):
+ * the four parameters the legacy `carousel` namespace named, in the block that carries them.
+ */
+const YACHT_PARAMETERS: {
+  title: Record<'en' | 'ru', string>
+  description: Record<'en' | 'ru', string>
+  cards: { en: [string, string]; ru: [string, string] }[]
+} = {
+  title: {
+    en: 'We will find you the right one',
+    ru: 'Подберём для вас идеальный вариант',
+  },
+  description: {
+    en: 'An introductory meeting first, to settle which parameters actually matter.',
+    ru: 'Сначала встреча, чтобы понять, какие параметры действительно важны.',
+  },
+  cards: [
+    {
+      en: [
+        'The architecture bureaux',
+        'The designers whose drawings become the yacht you asked for.',
+      ],
+      ru: [
+        'Работаем с лучшими бюро',
+        'Дизайнеры, чьи чертежи становятся именно той яхтой, о которой вы просили.',
+      ],
+    },
+    {
+      en: [
+        'The length it takes',
+        'How many guests, how much crew, and how much comfort each of them needs.',
+      ],
+      ru: [
+        'Подбираем длину под задачу',
+        'Сколько гостей, сколько экипажа и сколько комфорта нужно каждому из них.',
+      ],
+    },
+    {
+      en: [
+        'The price of the whole thing',
+        'The transaction, the years of ownership, and what it is worth at the end of them.',
+      ],
+      ru: [
+        'Считаем цену целиком',
+        'Сделка, годы владения и то, сколько яхта будет стоить в конце.',
+      ],
+    },
+    {
+      en: ['What it earns back', 'A financial model, and the charter weeks that pay for a season.'],
+      ru: [
+        'Обеспечиваем доходность',
+        'Финансовая модель и чартерные недели, которые окупают сезон.',
+      ],
+    },
+  ],
+}
+
+/**
+ * What the company does for a yacht it manages (issue #141, section 4, item 8): four reasons
+ * under the heading the "twenty years" section above them already carries — the legacy passed
+ * the same translation key to both, and the page reads with it twice.
+ */
+const YACHT_MANAGEMENT: { en: [string, string]; ru: [string, string] }[] = [
+  {
+    en: ['A management calendar', 'A year of it, with the financial planning inside it.'],
+    ru: ['Календарь управления', 'На год вперёд, вместе с финансовым планированием.'],
+  },
+  {
+    en: ['A marketing plan for the year', 'Online and off, written before the season starts.'],
+    ru: ['Годовой маркетинговый план', 'Онлайн и офлайн, составленный до начала сезона.'],
+  },
+  {
+    en: [
+      'The databases that matter',
+      'Every yacht we manage, listed where the brokerages actually look.',
+    ],
+    ru: [
+      'Лучшие места в базах',
+      'Каждая яхта под управлением — там, где её действительно ищут брокеры.',
+    ],
+  },
+  {
+    en: [
+      'The events, as partners',
+      'The weeks our yachts are chartered are the weeks the events are running.',
+    ],
+    ru: [
+      'Партнёрство с организаторами',
+      'Недели, когда наши яхты в чартере, — это недели, когда идут мероприятия.',
+    ],
+  },
+]
+
+/**
  * The two quotations the legacy citizens page carried (issue #132, section 4): the press one
  * under the Forbes wordmark and the founder's under the company's own. His words were written
  * into the page in Russian only; here both languages have them.
@@ -996,7 +1090,20 @@ function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout 
   if (slug === 'citizens')
     sections.push({ blockType: 'makeBooking', title: MAKE_BOOKING[locale], variant: 'card' })
 
-  if (slug === 'sales_yachts')
+  // The yachts for sale page down to the services it offers, in the legacy order (issue #141,
+  // section 4): the parameters, the line between them and the listings, the listings, and what
+  // is looked at before one is listed.
+  if (slug === 'sales_yachts') {
+    sections.push({
+      blockType: 'keyFeatures',
+      title: YACHT_PARAMETERS.title[locale],
+      description: YACHT_PARAMETERS.description[locale],
+      cards: YACHT_PARAMETERS.cards.map((card) => ({
+        title: card[locale][0],
+        description: card[locale][1],
+        image: fixture.photo,
+      })),
+    })
     sections.push({
       blockType: 'framedDescriptor',
       title:
@@ -1004,8 +1111,11 @@ function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout 
           ? 'Every yacht we list, we have stood on'
           : 'На каждой яхте из списка мы стояли сами',
     })
-
-  if (slug === 'sales_yachts')
+    sections.push({
+      blockType: 'recentYachts',
+      title: locale === 'en' ? 'Recently listed' : 'Недавно выставленные',
+      limit: 8,
+    })
     sections.push({
       blockType: 'weInspect',
       title: locale === 'en' ? 'What we inspect' : 'Что мы проверяем',
@@ -1015,17 +1125,7 @@ function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout 
         image: fixture.photo,
       })),
     })
-
-  if (slug === 'sales_yachts')
-    sections.push({
-      blockType: 'photoDescriptor',
-      title: locale === 'en' ? 'Twenty years on the water' : 'Двадцать лет на воде',
-      description:
-        locale === 'en'
-          ? 'The same brokers, the same yards, and a list of buyers who answer the telephone.'
-          : 'Те же брокеры, те же верфи и список покупателей, которые берут трубку.',
-      image: fixture.photo,
-    })
+  }
 
   if (slug === 'citizens') {
     for (const entry of QUOTES)
@@ -1101,12 +1201,30 @@ function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout 
     })
   }
 
-  if (slug === 'sales_yachts')
+  // The twenty years, and what they buy a yacht under management. The legacy gave both the same
+  // heading, so the page says it twice (section 4, items 7 and 8).
+  if (slug === 'sales_yachts') {
+    const years = locale === 'en' ? 'Twenty years on the water' : 'Двадцать лет на воде'
     sections.push({
-      blockType: 'recentYachts',
-      title: locale === 'en' ? 'Recently listed' : 'Недавно выставленные',
-      limit: 8,
+      blockType: 'photoDescriptor',
+      title: years,
+      description:
+        locale === 'en'
+          ? 'The same brokers, the same yards, and a list of buyers who answer the telephone.'
+          : 'Те же брокеры, те же верфи и список покупателей, которые берут трубку.',
+      image: fixture.photo,
     })
+    sections.push({
+      blockType: 'whyUs',
+      variant: 'stacked',
+      title: years,
+      cards: YACHT_MANAGEMENT.map((card) => ({
+        title: card[locale][0],
+        description: card[locale][1],
+        image: fixture.photo,
+      })),
+    })
+  }
 
   if (slug === 'atm_jet_group')
     sections.push({
