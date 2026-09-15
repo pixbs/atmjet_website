@@ -76,7 +76,8 @@ test.describe('a lead left on a page', () => {
     await form.getByLabel('Phone number').fill('+971504589926')
     await form.getByRole('button', { name: 'Send' }).click()
 
-    await expect(form.getByRole('status')).toHaveText('Successfully sent')
+    // The confirmation stands beside the form rather than inside it (issue #345).
+    await expect(page.locator(SECTION).getByRole('status')).toHaveText('Successfully sent')
   })
 
   test('is traced back to the section rather than to nothing', async ({ admin, page }) => {
