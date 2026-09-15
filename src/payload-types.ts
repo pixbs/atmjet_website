@@ -2715,6 +2715,10 @@ export interface Footer {
    * Which accounts to link, in the order they are shown.
    */
   socials?: ('telegram' | 'whatsapp' | 'instagram')[] | null;
+  /**
+   * The photograph behind the footer. The legacy site served a 1.5 MB JPEG where a 92 KB WebP of the same picture sat beside it (section 13, entry 83).
+   */
+  background?: (number | null) | Media;
   cta: {
     label: string;
     /**
@@ -2828,6 +2832,7 @@ export interface FooterSelect<T extends boolean = true> {
         id?: T;
       };
   socials?: T;
+  background?: T;
   cta?:
     | T
     | {

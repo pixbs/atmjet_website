@@ -20,6 +20,7 @@ import * as migration_20260914_193505_small_hero_blocks from './20260914_193505_
 import * as migration_20260914_194732_contact_card_block from './20260914_194732_contact_card_block';
 import * as migration_20260915_022850_empty_legs_block from './20260915_022850_empty_legs_block';
 import * as migration_20260915_024225_personal_manager_block from './20260915_024225_personal_manager_block';
+import * as migration_20260915_041822_footer_background from './20260915_041822_footer_background';
 
 export const migrations = [
   {
@@ -130,6 +131,11 @@ export const migrations = [
   {
     up: migration_20260915_024225_personal_manager_block.up,
     down: migration_20260915_024225_personal_manager_block.down,
-    name: '20260915_024225_personal_manager_block'
+    name: '20260915_024225_personal_manager_block',
+  },
+  {
+    up: migration_20260915_041822_footer_background.up,
+    down: migration_20260915_041822_footer_background.down,
+    name: '20260915_041822_footer_background'
   },
 ];
