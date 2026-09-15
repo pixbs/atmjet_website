@@ -4,13 +4,19 @@ import { ENABLED_LOCALES, pathFor } from '../e2e/routes'
 import { hideDevOverlay, hideFloatingHeader, settlePage } from './chrome'
 
 /**
- * The subpages that are their sections and nothing else, whole (issues #144, #146, #143 and
- * #150).
+ * The subpages that are their sections and nothing else, whole (issues #144, #146, #143,
+ * #150 and #147).
  * Their sections have baselines of their own; this is the page around them — the order,
  * the spacing between sections and the gutter — in both languages, because the words are what
  * decides how tall each section grows.
  */
-const SLUGS = ['cargo_charter', 'medical_aviation', 'empty_legs', 'atm_jet_group'] as const
+const SLUGS = [
+  'cargo_charter',
+  'medical_aviation',
+  'empty_legs',
+  'atm_jet_group',
+  'business_agents',
+] as const
 
 const VIEWPORTS = {
   mobile: { width: 390, height: 844 },
