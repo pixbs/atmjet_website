@@ -16,6 +16,7 @@ const SLUGS = [
   'business_agents',
   'group_charters',
   'partners',
+  'sales_dept',
   'sales_yachts',
 ] as const
 

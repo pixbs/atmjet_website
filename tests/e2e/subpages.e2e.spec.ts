@@ -44,6 +44,20 @@ const PAGES = [
     words: { en: 'Why select us?', ru: 'Почему выбирают нас?' },
   },
   {
+    slug: 'sales_dept',
+    sections: [
+      'hero-sales',
+      'personal-manager',
+      'catalogue-aircraft',
+      'options-selection',
+      'advantages',
+      'why-us',
+      'contact-us',
+    ],
+    titles: { en: 'Sales department', ru: 'Отдел продаж' },
+    words: { en: 'Most-flown business aircraft:', ru: 'Самые популярные самолёты сейчас:' },
+  },
+  {
     slug: 'group_charters',
     sections: ['hero-subpage', 'make-booking', 'why-us', 'contact-us'],
     titles: { en: 'Group charters', ru: 'Групповые перевозки' },

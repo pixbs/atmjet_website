@@ -1,6 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
 
-import { createUser } from '../factories'
+import { listCatalogueAircraft } from '@/lib/data/aircraft'
+import { createMedia, createUser } from '../factories'
 import { createRegistry, uniqueSuffix, type TestRegistry } from '../helpers/payload'
 
 const revalidateTag = vi.hoisted(() => vi.fn())
@@ -222,5 +223,67 @@ describe('revalidation', () => {
     const tags = revalidateTag.mock.calls.map(([tag]) => tag as string)
 
     expect(tags).toContain('aircraft')
+  })
+})
+
+/**
+ * The listing the aircraft carousel reads (issue #142). The legacy page read the `vehicles`
+ * table ordered by the year painted on the aircraft, newest first, and took fifteen
+ * (`docs/legacy-inventory.md` section 4).
+ */
+describe('the listing the aircraft carousel reads', () => {
+  const client = () => Promise.resolve(registry.payload)
+
+  it('lists the newest aircraft first, and one with no year last', async () => {
+    const undated = await registry.create('aircraft', aircraft())
+    const older = await registry.create(
+      'aircraft',
+      aircraft({ specification: { yearOfProduction: 2011 } }),
+    )
+    const newer = await registry.create(
+      'aircraft',
+      aircraft({ specification: { yearOfProduction: 2021 } }),
+    )
+
+    const listed = await listCatalogueAircraft('en', 500, client)
+    const mine = listed
+      .map((one) => one.id)
+      .filter((id) => [undated.id, older.id, newer.id].includes(id as number))
+
+    expect(mine).toEqual([newer.id, older.id, undated.id])
+  })
+
+  it('leaves out an aircraft an editor has taken off the market', async () => {
+    const grounded = await registry.create('aircraft', aircraft({ availability: 'unavailable' }))
+
+    const listed = await listCatalogueAircraft('en', 500, client)
+
+    expect(listed.map((one) => one.id)).not.toContain(grounded.id)
+  })
+
+  it('asks for no more aircraft than the section is set to show', async () => {
+    await registry.create('aircraft', aircraft())
+
+    await expect(listCatalogueAircraft('en', 1, client)).resolves.toHaveLength(1)
+  })
+
+  it('reads the model and the first photograph, and leaves an empty figure empty', async () => {
+    const upload = await createMedia(registry)
+    const created = await registry.create(
+      'aircraft',
+      aircraft({
+        type: { model: 'Gulfstream G650ER' },
+        specification: { passengers: 14 },
+        images: [{ type: 'exterior', media: upload.id }],
+      }),
+    )
+
+    const listed = await listCatalogueAircraft('en', 500, client)
+    const mine = listed.find((one) => one.id === created.id)
+
+    expect(mine?.model).toBe('Gulfstream G650ER')
+    expect(mine?.passengers).toBe(14)
+    expect(mine?.year ?? null).toBeNull()
+    expect(mine?.image?.src).toContain(upload.filename)
   })
 })

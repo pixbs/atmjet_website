@@ -7,6 +7,7 @@ import { SEED_AIRPORTS, SEED_EMPTY_LEGS } from '../../scripts/seed/empty-legs'
 import { SEEDED_GLOBALS } from '../../scripts/seed/globals'
 import { SEED_IMAGES } from '../../scripts/seed/media'
 import { LEGACY_REDIRECTS, seedRedirects } from '../../scripts/seed/redirects'
+import { SEED_AIRCRAFT } from '../../scripts/seed/aircraft'
 import { SEED_ADMIN } from '../../scripts/seed/users'
 import { SEED_YACHTS } from '../../scripts/seed/yachts'
 import { PAGE_SLUGS } from '../../src/collections/Pages'
@@ -22,9 +23,8 @@ vi.mock('next/cache', () => ({ revalidateTag }))
  * #69, #117 and #306).
  *
  * What the seed writes is keyed by natural keys rather than by `uniqueSuffix`: thirteen pages by
- * slug, two uploads by filename, the airports and the flights between them by code, two yachts by
- * name, five
- * redirects by path and two globals. Vitest gives every file its own worker against one
+ * slug, two uploads by filename, the airports and the flights between them by code, two yachts
+ * by name, four aircraft by registration, five redirects by path and two globals. Vitest gives every file its own worker against one
  * database, so a second suite that seeds — or that deletes what the seed wrote — races this one:
  * a cleanup landing between two runs makes the second report `created` where idempotency says
  * `unchanged`, which is how the tier came to fail about one run in three.
@@ -40,6 +40,7 @@ const EXPECTED_DOCUMENTS =
   SEED_AIRPORTS.length +
   SEED_EMPTY_LEGS.length +
   SEED_YACHTS.length +
+  SEED_AIRCRAFT.length +
   PAGE_SLUGS.length +
   SEEDED_GLOBALS.length +
   LEGACY_REDIRECTS.length
