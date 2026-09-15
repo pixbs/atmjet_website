@@ -9,7 +9,6 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"id" varchar PRIMARY KEY NOT NULL,
   	"limit" numeric DEFAULT 12,
   	"cta_source" varchar DEFAULT 'Empty-legs',
-  	"channel_account" varchar DEFAULT 'atmjet1',
   	"block_name" varchar
   );
   
@@ -32,7 +31,6 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"id" serial PRIMARY KEY NOT NULL,
   	"limit" numeric DEFAULT 12,
   	"cta_source" varchar DEFAULT 'Empty-legs',
-  	"channel_account" varchar DEFAULT 'atmjet1',
   	"_uuid" varchar,
   	"block_name" varchar
   );

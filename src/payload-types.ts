@@ -403,14 +403,13 @@ export interface EmptyLegsBlock {
      */
     source: string;
   };
+  /**
+   * Where the button leads is the channel handle in the site settings, not a URL typed here: the legacy link was written by hand and no browser could open it (section 13, entry 54).
+   */
   channel: {
     title: string;
     description: string;
     label: string;
-    /**
-     * The channel the new flights are posted to, as a bare handle. The legacy link was typed as a scheme no browser follows (section 13, entry 54).
-     */
-    account: string;
   };
   id?: string | null;
   blockName?: string | null;
@@ -1868,7 +1867,6 @@ export interface EmptyLegsBlockSelect<T extends boolean = true> {
         title?: T;
         description?: T;
         label?: T;
-        account?: T;
       };
   id?: T;
   blockName?: T;

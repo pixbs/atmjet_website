@@ -571,7 +571,6 @@ function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout 
             ? 'Every empty leg is posted to the Telegram channel the hour it is confirmed.'
             : 'Каждый пустой перелёт публикуется в Telegram-канале в час подтверждения.',
         label: locale === 'en' ? 'Open the channel' : 'Открыть канал',
-        account: 'atmjet1',
       },
     })
 

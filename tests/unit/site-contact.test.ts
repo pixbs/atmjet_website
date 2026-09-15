@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
 
-import { getSiteContact } from '@/lib/data/site-settings'
+import { getSiteContact, getTelegramChannel } from '@/lib/data/site-settings'
 
 /**
  * The contact details the structured data names (issue #173). They are an editor's, and what
@@ -35,6 +35,34 @@ describe('getSiteContact', () => {
       await expect(
         getSiteContact(() => Promise.reject(new Error('no database'))),
       ).resolves.toBeNull()
+      expect(warn).toHaveBeenCalled()
+    } finally {
+      warn.mockRestore()
+    }
+  })
+})
+
+/**
+ * The channel the empty legs section links to (issue #117). It is a different account from the
+ * one the chrome messages, and the legacy site wrote both by hand: `tg:\\nesolve?domain=@atmjet1`
+ * was the result (`docs/legacy-inventory.md` section 13, entry 54).
+ */
+describe('getTelegramChannel', () => {
+  it('builds the link from the handle an editor keeps, not from a scheme they typed', async () => {
+    await expect(getTelegramChannel(async () => STORED)).resolves.toBe('https://t.me/atmjet1')
+  })
+
+  it('has no link to give when the channel has not been named', async () => {
+    await expect(getTelegramChannel(async () => ({ telegramChannel: '  ' }))).resolves.toBe('')
+  })
+
+  it('leaves the button out rather than the page down when the database cannot be reached', async () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined)
+
+    try {
+      await expect(
+        getTelegramChannel(() => Promise.reject(new Error('no database'))),
+      ).resolves.toBe('')
       expect(warn).toHaveBeenCalled()
     } finally {
       warn.mockRestore()

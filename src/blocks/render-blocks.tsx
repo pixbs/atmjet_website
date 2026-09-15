@@ -1,4 +1,3 @@
-import { telegramHref } from '@/lib/links'
 import { mediaSource } from '@/lib/media'
 import { hrefForSlug } from '@/lib/nav'
 import type { Page } from '@/payload-types'
@@ -106,9 +105,6 @@ function blockFor(block: LayoutBlock, key: string) {
           booking={{ href: `?showBooking=${block.cta.source}`, label: block.cta.label }}
           channel={{
             description: block.channel.description,
-            // Built from the bare handle an editor keeps, which is how the legacy link came to
-            // be unopenable: it was typed by hand (`docs/legacy-inventory.md` section 13.54).
-            href: telegramHref(block.channel.account),
             label: block.channel.label,
             title: block.channel.title,
           }}

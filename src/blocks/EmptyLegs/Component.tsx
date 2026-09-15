@@ -6,6 +6,7 @@ import { buttonVariants } from '@/components/ui/button'
 import type { Locale } from '@/i18n/locales'
 import { cn } from '@/lib/cn'
 import { listEmptyLegs } from '@/lib/data/empty-legs'
+import { getTelegramChannel } from '@/lib/data/site-settings'
 
 /**
  * The empty legs section (issue #117, `docs/legacy-inventory.md` section 5): the heading that
@@ -23,15 +24,16 @@ export interface EmptyLegsProps {
   limit: number
   /** The wording of the button on every card, and the query that opens the booking dialog. */
   booking: { label: string; href: string }
-  /** The card under the flights. An account that builds no link leaves the button out. */
-  channel: { title: string; description: string; label: string; href: string }
+  /** The card under the flights. Where its button leads is the site settings' channel. */
+  channel: { title: string; description: string; label: string }
 }
 
 export async function EmptyLegs({ title, description, limit, booking, channel }: EmptyLegsProps) {
   // The page has already refused a locale the site does not serve.
   const locale = (await getLocale()) as Locale
-  const [legs, t] = await Promise.all([
+  const [legs, channelHref, t] = await Promise.all([
     listEmptyLegs(locale, limit),
+    getTelegramChannel(),
     getTranslations({ locale, namespace: 'common' }),
   ])
 
@@ -65,13 +67,13 @@ export async function EmptyLegs({ title, description, limit, booking, channel }:
           <div className="card mt-4 items-start gap-4 bg-linear-to-b from-graphite-850 from-15% to-teal-950 p-6 md:bg-fixed">
             <h3>{channel.title}</h3>
             <p className="text-white">{channel.description}</p>
-            {channel.href !== '' && (
+            {channelHref !== '' && (
               <Link
                 className={cn(
                   buttonVariants({ as: 'link', size: 'big' }),
                   'mt-2 bg-blue-600 text-white',
                 )}
-                href={channel.href}
+                href={channelHref}
               >
                 {channel.label}
               </Link>

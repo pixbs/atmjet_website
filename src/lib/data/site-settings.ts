@@ -74,6 +74,29 @@ export async function getSiteContact(
 }
 
 /**
+ * The Telegram channel the empty legs are posted to (issue #117), built from the handle an
+ * editor keeps in the site settings (issue #61).
+ *
+ * It is not the account the chrome links to: the legacy site posted its flights to `@atmjet1`
+ * and answered messages on another, and wrote both by hand in six components at once
+ * (`docs/legacy-inventory.md` section 9.5). An empty string leaves the button out, as it does
+ * for the chrome's own links below.
+ */
+export async function getTelegramChannel(
+  // Injected so the unreachable-database path can be tested without breaking the database.
+  read: () => Promise<Pick<SiteSetting, 'telegramChannel'>> = getSiteSettings,
+): Promise<string> {
+  try {
+    const { telegramChannel } = await read()
+
+    return telegramHref(telegramChannel)
+  } catch (error) {
+    console.warn('[site-settings] the database was unreachable, so the channel has no link.', error)
+    return ''
+  }
+}
+
+/**
  * Where the chrome links when a visitor wants to talk to someone (issue #88), built from the
  * handles an editor keeps rather than from a scheme they typed (src/lib/links.ts).
  *

@@ -35,20 +35,14 @@ export const emptyLegs: Block = {
       name: 'channel',
       type: 'group',
       label: 'Telegram channel card',
+      admin: {
+        description:
+          'Where the button leads is the channel handle in the site settings, not a URL typed here: the legacy link was written by hand and no browser could open it (section 13, entry 54).',
+      },
       fields: [
         { name: 'title', type: 'text', required: true, localized: true },
         { name: 'description', type: 'textarea', required: true, localized: true },
         { name: 'label', type: 'text', required: true, localized: true },
-        {
-          name: 'account',
-          type: 'text',
-          required: true,
-          defaultValue: 'atmjet1',
-          admin: {
-            description:
-              'The channel the new flights are posted to, as a bare handle. The legacy link was typed as a scheme no browser follows (section 13, entry 54).',
-          },
-        },
       ],
     },
   ],

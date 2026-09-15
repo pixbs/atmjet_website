@@ -2097,13 +2097,6 @@
           "notNull": false,
           "default": "'Empty-legs'"
         },
-        "channel_account": {
-          "name": "channel_account",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "'atmjet1'"
-        },
         "block_name": {
           "name": "block_name",
           "type": "varchar",
@@ -9771,13 +9764,6 @@
           "primaryKey": false,
           "notNull": false,
           "default": "'Empty-legs'"
-        },
-        "channel_account": {
-          "name": "channel_account",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "'atmjet1'"
         },
         "_uuid": {
           "name": "_uuid",
@@ -22850,6 +22836,6 @@
     "tables": {},
     "columns": {}
   },
-  "id": "92b954e0-8140-4383-be95-76393c4de0ee",
+  "id": "5f8670c3-b6ee-4982-9aa8-04efa237601a",
   "prevId": "00000000-0000-0000-0000-000000000000"
 }
