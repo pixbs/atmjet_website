@@ -470,7 +470,8 @@ function blockFor(block: LayoutBlock, key: string, locale: Locale) {
             title: card.title ?? undefined,
           }))}
           description={block.description ?? undefined}
-          title={block.title}
+          title={block.title ?? undefined}
+          variant={block.variant}
         />
       )
     case 'wordmarkNote':

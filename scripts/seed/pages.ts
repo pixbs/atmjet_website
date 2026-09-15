@@ -165,6 +165,28 @@ const HOME_WHY_US: {
 ]
 
 /**
+ * What the group charters page stacked, straight into the container (issue #145, section 4).
+ * Three of them, none with a figure, which is the shape the legacy cards had there.
+ */
+const GROUP_CHARTERS: { en: [string, string]; ru: [string, string] }[] = [
+  {
+    en: ['One aircraft, one price', 'Agreed once for the whole party, however the seats fill.'],
+    ru: [
+      'Один борт, одна цена',
+      'Согласована один раз на всю группу, как бы ни распределились места.',
+    ],
+  },
+  {
+    en: ['The schedule is yours', 'You say when it leaves; nothing else is being boarded.'],
+    ru: ['Расписание — ваше', 'Вы называете время вылета; больше никого не сажают.'],
+  },
+  {
+    en: ['Handled at both ends', 'Permits, catering and the cars, arranged before you arrive.'],
+    ru: ['Оба конца на нас', 'Разрешения, кейтеринг и машины — до вашего приезда.'],
+  },
+]
+
+/**
  * The reasons the cargo charter page stacks (issue #116, section 5). Three of them, because the
  * three shapes the card comes in are what a fixture is for: with a figure and a photograph, and
  * with neither.
@@ -900,6 +922,7 @@ function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout 
   if (slug === 'cargo_charter')
     sections.push({
       blockType: 'whyUs',
+      variant: 'stacked',
       title: locale === 'en' ? 'Why us' : 'Почему мы',
       description:
         locale === 'en'
@@ -971,6 +994,7 @@ function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout 
     })
     sections.push({
       blockType: 'whyUs',
+      variant: 'stacked',
       title: locale === 'en' ? 'Why select us?' : 'Почему выбирают нас?',
       cards: HOME_WHY_US.map((card) => ({
         figure: card.figure,
@@ -1005,8 +1029,18 @@ function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout 
 
   // Plain here and in a card on the citizens page below, which is the whole of the legacy
   // `isCard` (section 5).
-  if (slug === 'group_charters')
+  if (slug === 'group_charters') {
     sections.push({ blockType: 'makeBooking', title: MAKE_BOOKING[locale], variant: 'plain' })
+    sections.push({
+      blockType: 'whyUs',
+      variant: 'bare',
+      cards: GROUP_CHARTERS.map((card) => ({
+        title: card[locale][0],
+        description: card[locale][1],
+        image: fixture.photo,
+      })),
+    })
+  }
 
   if (slug === 'sales_yachts')
     sections.push({
@@ -1055,6 +1089,7 @@ function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout 
     sections.push({ blockType: 'makeBooking', title: MAKE_BOOKING[locale], variant: 'card' })
     sections.push({
       blockType: 'whyUs',
+      variant: 'stacked',
       title: CITIZENS_WHY_US.title[locale],
       cards: CITIZENS_WHY_US.cards.map((card, index) => ({
         description: card[locale],
