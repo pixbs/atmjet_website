@@ -26,6 +26,7 @@ import * as migration_20260915_044518_recent_yachts_block from './20260915_04451
 import * as migration_20260915_061538_footer_background from './20260915_061538_footer_background';
 import * as migration_20260915_074007_options_selection_block from './20260915_074007_options_selection_block';
 import * as migration_20260915_152842_make_booking_transfer_blocks from './20260915_152842_make_booking_transfer_blocks';
+import * as migration_20260915_161327_contact_us_block from './20260915_161327_contact_us_block';
 
 export const migrations = [
   {
@@ -166,6 +167,11 @@ export const migrations = [
   {
     up: migration_20260915_152842_make_booking_transfer_blocks.up,
     down: migration_20260915_152842_make_booking_transfer_blocks.down,
-    name: '20260915_152842_make_booking_transfer_blocks'
+    name: '20260915_152842_make_booking_transfer_blocks',
+  },
+  {
+    up: migration_20260915_161327_contact_us_block.up,
+    down: migration_20260915_161327_contact_us_block.down,
+    name: '20260915_161327_contact_us_block'
   },
 ];
