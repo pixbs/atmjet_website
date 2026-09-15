@@ -3,11 +3,11 @@ import { pathFor } from '../e2e/routes'
 import { expectNoA11yViolations } from './axe'
 
 /**
- * The two subpages that are a hero, one section and the contact card (issues #144 and #146).
+ * The subpages that are their sections and nothing else (issues #144, #146 and #143).
  * A whole page rather than a component: what a section passes on its own it can still fail
  * beside another, and these are the first two pages ported end to end.
  */
-const SLUGS = ['cargo_charter', 'medical_aviation'] as const
+const SLUGS = ['cargo_charter', 'medical_aviation', 'empty_legs'] as const
 
 forEachLocale((locale) => {
   for (const slug of SLUGS) {
