@@ -158,6 +158,35 @@ const HOME_WHY_US: {
 ]
 
 /**
+<<<<<<< HEAD
+ * What the partners page offers, under a heading of its own (issue #148, section 4). Four of
+ * them, none with a figure, which is the shape the legacy cards had there.
+ */
+const WE_OFFER: { en: [string, string]; ru: [string, string] }[] = [
+  {
+    en: ['White label partnership', 'Fly under your own name, on our aircraft and our permits.'],
+    ru: ['White Label партнёрство', 'Летайте под своим именем, на наших бортах и разрешениях.'],
+  },
+  {
+    en: ['Pricing confidentiality', 'What you charge is yours; what we charge stays between us.'],
+    ru: ['Конфиденциальность цен', 'Ваша цена — ваша; наша остаётся между нами.'],
+  },
+  {
+    en: ['Affiliate programme', 'A commission agreed once and paid on the day the flight closes.'],
+    ru: [
+      'Партнёрская программа',
+      'Комиссия согласована один раз и выплачена в день закрытия рейса.',
+    ],
+  },
+  {
+    en: ['Payment flexibility', 'By transfer, by card, or by whatever the charter needs.'],
+    ru: ['Гибкость оплаты', 'Переводом, картой или так, как требует чартер.'],
+  },
+]
+
+/**
+=======
+>>>>>>> origin/master
  * The reasons the cargo charter page stacks (issue #116, section 5). Three of them, because the
  * three shapes the card comes in are what a fixture is for: with a figure and a photograph, and
  * with neither.
@@ -872,26 +901,6 @@ function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout 
       cards: ADVANTAGES.map((card) => ({ title: card[locale][0], description: card[locale][1] })),
     })
 
-  if (slug === 'partners')
-    sections.push({
-      blockType: 'optionsTiles',
-      tiles: OPTIONS_TILES.flatMap((tile) => {
-        const page = fixture.pages.get(tile.slug)
-
-        return page === undefined
-          ? []
-          : [
-              {
-                image: fixture.photo,
-                title: tile[locale][0],
-                label: tile[locale][1],
-                page,
-                dim: tile.dim,
-              },
-            ]
-      }),
-    })
-
   if (slug === 'atm_jet_group')
     sections.push({
       blockType: 'groupCards',
@@ -1008,6 +1017,27 @@ function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout 
     })
   }
 
+  // The one page the legacy drew it on was the home page (section 4).
+  if (slug === '')
+    sections.push({
+      blockType: 'optionsTiles',
+      tiles: OPTIONS_TILES.flatMap((tile) => {
+        const page = fixture.pages.get(tile.slug)
+
+        return page === undefined
+          ? []
+          : [
+              {
+                image: fixture.photo,
+                title: tile[locale][0],
+                label: tile[locale][1],
+                page,
+                dim: tile.dim,
+              },
+            ]
+      }),
+    })
+
   // Eight, as the legacy grid sliced one picture into eight, on the one page that had it. Far
   // down it, as the legacy grid was: it is scrolled to, not landed on.
   if (slug === '')
@@ -1041,6 +1071,32 @@ function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout 
         page: yachts,
       },
     })
+
+  if (slug === 'partners') {
+    sections.push({
+      blockType: 'whyUs',
+      title: locale === 'en' ? 'Clients benefit' : 'Клиенты выбирают нас',
+      cards: HOME_WHY_US.map((card) => ({
+        figure: card.figure,
+        title: card[locale][0],
+        description: card[locale][1],
+        image: fixture.photo,
+      })),
+    })
+    sections.push({
+      blockType: 'whyUs',
+      title: locale === 'en' ? 'We offer:' : 'Мы предлагаем:',
+      description:
+        locale === 'en'
+          ? 'Partnerships built to last, with concierges, agencies and travel companies.'
+          : 'Партнёрство надолго — с консьерж-сервисами, агентствами и туристическими компаниями.',
+      cards: WE_OFFER.map((card) => ({
+        title: card[locale][0],
+        description: card[locale][1],
+        image: fixture.photo,
+      })),
+    })
+  }
 
   if (slug === 'partners' || slug === 'sales_dept') {
     const manager = PERSONAL_MANAGER[locale]

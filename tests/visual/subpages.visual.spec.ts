@@ -5,7 +5,7 @@ import { hideDevOverlay, hideFloatingHeader, settlePage } from './chrome'
 
 /**
  * The subpages that are their sections and nothing else, whole (issues #144, #146, #143,
- * #150 and #147).
+ * #150, #147 and #148).
  * Their sections have baselines of their own; this is the page around them — the order,
  * the spacing between sections and the gutter — in both languages, because the words are what
  * decides how tall each section grows.
@@ -16,6 +16,7 @@ const SLUGS = [
   'empty_legs',
   'atm_jet_group',
   'business_agents',
+  'partners',
 ] as const
 
 const VIEWPORTS = {
