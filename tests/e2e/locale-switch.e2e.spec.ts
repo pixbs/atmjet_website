@@ -54,11 +54,21 @@ test.describe('the language links', () => {
 
   test('carry the query across the switch', async ({ page }) => {
     // The legacy site opened its booking dialog from the query, so losing it closed the dialog.
+    // Read rather than clicked: that query now draws the dialog over the switcher (issue #93).
     await page.goto(`${pathFor('/styleguide', 'en')}?showBooking=1`)
+    await expect(page.locator(`${SWITCH} a`, { hasText: 'Рус' })).toHaveAttribute(
+      'href',
+      `${pathFor('/styleguide', 'ru')}?showBooking=1`,
+    )
+
+    // And the switch itself keeps it, on a query that leaves the switcher in the open.
+    await page.goto(`${pathFor('/styleguide', 'en')}?utm_source=telegram`)
     await page.locator(`${SWITCH} a`, { hasText: 'Рус' }).click()
 
     // `toHaveURL` retries, which `page.url()` does not: the click starts the navigation.
-    await expect(page).toHaveURL(new RegExp(`${pathFor('/styleguide', 'ru')}\\?showBooking=1$`))
+    await expect(page).toHaveURL(
+      new RegExp(`${pathFor('/styleguide', 'ru')}\\?utm_source=telegram$`),
+    )
   })
 
   test('offer a plain URL when there is no query to carry', async ({ page }) => {
