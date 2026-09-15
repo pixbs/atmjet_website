@@ -279,6 +279,7 @@ export interface Page {
         | PhotoDescriptorBlock
         | PrivilegeBlock
         | QuoteBlock
+        | RecentYachtsBlock
         | TilesBlock
         | WeInspectBlock
         | WhyUsBlock
@@ -747,6 +748,20 @@ export interface QuoteBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'quote';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "RecentYachtsBlock".
+ */
+export interface RecentYachtsBlock {
+  title: string;
+  /**
+   * How many listings the carousel holds, newest first.
+   */
+  limit: number;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'recentYachts';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1753,6 +1768,7 @@ export interface PagesSelect<T extends boolean = true> {
         photoDescriptor?: T | PhotoDescriptorBlockSelect<T>;
         privilege?: T | PrivilegeBlockSelect<T>;
         quote?: T | QuoteBlockSelect<T>;
+        recentYachts?: T | RecentYachtsBlockSelect<T>;
         tiles?: T | TilesBlockSelect<T>;
         weInspect?: T | WeInspectBlockSelect<T>;
         whyUs?: T | WhyUsBlockSelect<T>;
@@ -2116,6 +2132,16 @@ export interface QuoteBlockSelect<T extends boolean = true> {
   variant?: T;
   quote?: T;
   attribution?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "RecentYachtsBlock_select".
+ */
+export interface RecentYachtsBlockSelect<T extends boolean = true> {
+  title?: T;
+  limit?: T;
   id?: T;
   blockName?: T;
 }

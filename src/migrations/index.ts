@@ -19,6 +19,7 @@ import * as migration_20260914_192256_descriptor_blocks from './20260914_192256_
 import * as migration_20260914_193505_small_hero_blocks from './20260914_193505_small_hero_blocks';
 import * as migration_20260914_194732_contact_card_block from './20260914_194732_contact_card_block';
 import * as migration_20260915_022850_empty_legs_block from './20260915_022850_empty_legs_block';
+import * as migration_20260915_025618_recent_yachts_block from './20260915_025618_recent_yachts_block';
 
 export const migrations = [
   {
@@ -124,6 +125,11 @@ export const migrations = [
   {
     up: migration_20260915_022850_empty_legs_block.up,
     down: migration_20260915_022850_empty_legs_block.down,
-    name: '20260915_022850_empty_legs_block'
+    name: '20260915_022850_empty_legs_block',
+  },
+  {
+    up: migration_20260915_025618_recent_yachts_block.up,
+    down: migration_20260915_025618_recent_yachts_block.down,
+    name: '20260915_025618_recent_yachts_block'
   },
 ];

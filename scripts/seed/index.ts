@@ -14,12 +14,14 @@ import { seedPages } from './pages'
 import { seedRedirects } from './redirects'
 import { summarise, type SeedReport } from './report'
 import { seedUsers } from './users'
+import { seedYachts } from './yachts'
 
 export async function runSeed(payload: Payload): Promise<SeedReport> {
   const outcomes = [
     ...(await seedUsers(payload)),
     ...(await seedMedia(payload)),
     ...(await seedEmptyLegs(payload)),
+    ...(await seedYachts(payload)),
     ...(await seedPages(payload)),
     ...(await seedGlobals(payload)),
     ...(await seedRedirects(payload)),
