@@ -13,7 +13,7 @@ import { getPayloadClient } from '@/lib/data/payload'
 import { findRedirect } from '@/lib/data/redirects'
 import { getEnabledLocales } from '@/lib/data/site-settings'
 import { pageMetadata } from '@/lib/metadata'
-import { breadcrumbs } from '@/lib/structured-data'
+import { breadcrumbs, faqPage } from '@/lib/structured-data'
 import { siteOrigin } from '@/lib/urls'
 
 /**
@@ -142,6 +142,12 @@ export default async function CatchAllPage({ params }: { params: Promise<PagePar
     title: page.title,
   })
 
+  // Every question the page asks, wherever in the layout it asks it (issue #173).
+  const questions = (page.layout ?? []).flatMap((block) =>
+    block.blockType === 'faq' ? (block.questions ?? []) : [],
+  )
+  const answered = faqPage(questions)
+
   return (
     <>
       {(page.layout ?? []).length === 0 ? (
@@ -157,6 +163,7 @@ export default async function CatchAllPage({ params }: { params: Promise<PagePar
           (`docs/legacy-inventory.md` section 3.5, issue #94). */}
       {slugFrom(slug) === '' && <AngleBar locale={locale as Locale} locales={locales} />}
       {trail && <JsonLd data={trail} />}
+      {answered && <JsonLd data={answered} />}
     </>
   )
 }
