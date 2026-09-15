@@ -829,28 +829,6 @@ function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout 
       cards: ADVANTAGES.map((card) => ({ title: card[locale][0], description: card[locale][1] })),
     })
 
-  if (slug === 'atm_jet_group')
-    sections.push({
-      blockType: 'privilege',
-      title: locale === 'en' ? 'What flying with us' : 'Что даёт полёт',
-      goldTitle: locale === 'en' ? 'comes with' : 'с нами',
-      cards: PRIVILEGES.map((card) => ({
-        icon: card.icon,
-        title: card[locale][0],
-        description: card[locale][1],
-      })),
-      contact: {
-        title: locale === 'en' ? 'Tell us where you are going' : 'Расскажите, куда летите',
-        description:
-          locale === 'en'
-            ? 'A manager answers within minutes, at any hour, in either language.'
-            : 'Менеджер отвечает в течение нескольких минут, в любой час, на любом языке.',
-        telegram: 'Telegram',
-        whatsapp: 'WhatsApp',
-        background: fixture.surface,
-      },
-    })
-
   if (slug === 'partners')
     sections.push({
       blockType: 'optionsTiles',
@@ -1041,6 +1019,28 @@ function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout 
       blockType: 'recentYachts',
       title: locale === 'en' ? 'Recently listed' : 'Недавно выставленные',
       limit: 8,
+    })
+
+  if (slug === 'atm_jet_group')
+    sections.push({
+      blockType: 'privilege',
+      title: locale === 'en' ? 'What flying with us' : 'Что даёт полёт',
+      goldTitle: locale === 'en' ? 'comes with' : 'с нами',
+      cards: PRIVILEGES.map((card) => ({
+        icon: card.icon,
+        title: card[locale][0],
+        description: card[locale][1],
+      })),
+      contact: {
+        title: locale === 'en' ? 'Tell us where you are going' : 'Расскажите, куда летите',
+        description:
+          locale === 'en'
+            ? 'A manager answers within minutes, at any hour, in either language.'
+            : 'Менеджер отвечает в течение нескольких минут, в любой час, на любом языке.',
+        telegram: 'Telegram',
+        whatsapp: 'WhatsApp',
+        background: fixture.surface,
+      },
     })
 
   // Last on every page that carried it, which is where the legacy put it (section 5).
