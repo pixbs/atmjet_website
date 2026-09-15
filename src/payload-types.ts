@@ -260,6 +260,7 @@ export interface Page {
     | (
         | AdvantagesBlock
         | BestPriceBlock
+        | CatalogueAircraftBlock
         | ContactCardBlock
         | ContactUsBlock
         | DescriptorBlock
@@ -341,6 +342,20 @@ export interface BestPriceBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'bestPrice';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CatalogueAircraftBlock".
+ */
+export interface CatalogueAircraftBlock {
+  title: string;
+  /**
+   * How many aircraft the carousel holds, newest first.
+   */
+  limit: number;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'catalogueAircraft';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -938,7 +953,14 @@ export interface WeInspectBlock {
  * via the `definition` "WhyUsBlock".
  */
 export interface WhyUsBlock {
-  title: string;
+  /**
+   * The group charters page laid the same cards straight into the container, with no heading and nothing clipping them (section 4).
+   */
+  variant: 'stacked' | 'bare';
+  /**
+   * The heading beside the cards. The cards alone have none.
+   */
+  title?: string | null;
   description?: string | null;
   /**
    * Each one comes to rest a little lower than the one above it.
@@ -1879,6 +1901,7 @@ export interface PagesSelect<T extends boolean = true> {
     | {
         advantages?: T | AdvantagesBlockSelect<T>;
         bestPrice?: T | BestPriceBlockSelect<T>;
+        catalogueAircraft?: T | CatalogueAircraftBlockSelect<T>;
         contactCard?: T | ContactCardBlockSelect<T>;
         contactUs?: T | ContactUsBlockSelect<T>;
         descriptor?: T | DescriptorBlockSelect<T>;
@@ -1953,6 +1976,16 @@ export interface BestPriceBlockSelect<T extends boolean = true> {
         label?: T;
         source?: T;
       };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CatalogueAircraftBlock_select".
+ */
+export interface CatalogueAircraftBlockSelect<T extends boolean = true> {
+  title?: T;
+  limit?: T;
   id?: T;
   blockName?: T;
 }
@@ -2413,6 +2446,7 @@ export interface WeInspectBlockSelect<T extends boolean = true> {
  * via the `definition` "WhyUsBlock_select".
  */
 export interface WhyUsBlockSelect<T extends boolean = true> {
+  variant?: T;
   title?: T;
   description?: T;
   cards?:

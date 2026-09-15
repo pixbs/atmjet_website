@@ -27,6 +27,8 @@ import * as migration_20260915_061538_footer_background from './20260915_061538_
 import * as migration_20260915_074007_options_selection_block from './20260915_074007_options_selection_block';
 import * as migration_20260915_152842_make_booking_transfer_blocks from './20260915_152842_make_booking_transfer_blocks';
 import * as migration_20260915_161327_contact_us_block from './20260915_161327_contact_us_block';
+import * as migration_20260915_201753_why_us_bare_variant from './20260915_201753_why_us_bare_variant';
+import * as migration_20260915_214710_catalogue_aircraft_block from './20260915_214710_catalogue_aircraft_block';
 
 export const migrations = [
   {
@@ -172,6 +174,16 @@ export const migrations = [
   {
     up: migration_20260915_161327_contact_us_block.up,
     down: migration_20260915_161327_contact_us_block.down,
-    name: '20260915_161327_contact_us_block'
+    name: '20260915_161327_contact_us_block',
+  },
+  {
+    up: migration_20260915_201753_why_us_bare_variant.up,
+    down: migration_20260915_201753_why_us_bare_variant.down,
+    name: '20260915_201753_why_us_bare_variant',
+  },
+  {
+    up: migration_20260915_214710_catalogue_aircraft_block.up,
+    down: migration_20260915_214710_catalogue_aircraft_block.down,
+    name: '20260915_214710_catalogue_aircraft_block'
   },
 ];
