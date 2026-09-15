@@ -70,6 +70,7 @@ test.describe('a lead', () => {
     await form.getByLabel('Phone number').fill('+971504589926')
     // The chip is a checkbox with its box taken away, so it is the label that is clicked.
     await form.getByText('Partnership request').click()
+    await asAVisitor(page)
     await form.getByRole('button', { name: 'Send' }).click()
 
     // The confirm view the legacy wrote and nobody could reach (section 13, entry 59): it is
