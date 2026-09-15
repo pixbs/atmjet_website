@@ -37,6 +37,14 @@ export type Booking = z.infer<typeof bookingSchema>
 const URL_MAX = 2048
 
 /**
+ * A day, as the longest elapsed time worth believing: a tab left open overnight sends a number
+ * nothing can be concluded from. A number outside the range is dropped rather than floored to
+ * nought, which the floor under it would have read as the fastest submission there is and
+ * refused — turning a stale tab into a lost lead.
+ */
+const MAX_ELAPSED_MS = 24 * 60 * 60 * 1000
+
+/**
  * A whole submission, as it arrives at the server action. Every field is checked there rather
  * than trusted: a server action is a public endpoint, whatever calls it in the browser.
  */
@@ -50,6 +58,9 @@ export const submissionSchema = z.object({
   url: z.string().trim().max(URL_MAX),
   /** The legs of a flight request, where one was handed over (section 7.6). */
   directions: z.array(legSchema).max(4).optional(),
+  /** How long the form was on screen before it was sent, and the honeypot (issue #157). */
+  elapsedMs: z.number().int().nonnegative().max(MAX_ELAPSED_MS).optional().catch(undefined),
+  trap: z.string().max(LEAD_NAME_MAX_LENGTH).optional(),
 })
 
 export type LeadSubmission = z.infer<typeof submissionSchema>

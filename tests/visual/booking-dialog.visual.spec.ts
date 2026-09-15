@@ -48,6 +48,9 @@ test('the confirm view matches its baseline', async ({ page }) => {
   await dialog.getByLabel('Name').fill('A visitor')
   await dialog.getByLabel('Email').fill('visitor@example.test')
   await dialog.getByLabel('Phone number').fill('+971504589926')
+  // A browser fills three fields in faster than any person, and the action refuses a submission
+  // sent inside the first couple of seconds (issue #157).
+  await page.waitForTimeout(2_500)
   await dialog.getByRole('button', { name: 'Send' }).click()
   await expect(dialog.getByRole('status')).toHaveText('Successfully sent')
 
