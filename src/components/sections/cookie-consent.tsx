@@ -3,9 +3,16 @@
 import { GoogleTagManager } from '@next/third-parties/google'
 import { AnimatePresence, m } from 'motion/react'
 import { useTranslations } from 'next-intl'
-import { useState, useSyncExternalStore } from 'react'
+import { useEffect, useState, useSyncExternalStore } from 'react'
 
-import { ACCEPT_ALL, consentCookies, readConsent, REJECT_ALL, type Consent } from '@/lib/consent'
+import {
+  ACCEPT_ALL,
+  consentCookies,
+  consentSignals,
+  readConsent,
+  REJECT_ALL,
+  type Consent,
+} from '@/lib/consent'
 import { banner } from '@/lib/motion'
 
 import { CookieModal } from './cookie-modal'
@@ -39,6 +46,22 @@ function currentConsent(): Consent | null {
 /** Nothing is known on the server, and nothing is drawn there either. */
 const noConsent = () => null
 
+/**
+ * What every visit starts from, written into the markup rather than pushed after it (issue
+ * #174). Google reads a consent state only from the `arguments` of a `gtag()` call, and only the
+ * ones already in the queue when the container loads count as the defaults — so the queue and
+ * that function are opened here, in a script the browser runs as it parses the page, and the
+ * visitor's own answer is applied over them afterwards.
+ */
+const DEFAULTS = [
+  'window.dataLayer=window.dataLayer||[];',
+  'window.gtag=window.gtag||function(){window.dataLayer.push(arguments)};',
+  `window.gtag("consent","default",${JSON.stringify(consentSignals(REJECT_ALL))});`,
+].join('')
+
+/** The window once the script above has run. */
+type Tagged = Window & { gtag?: (...command: unknown[]) => void }
+
 /** False while the server's HTML is being matched, true from the first client render after it. */
 const hydrated = () => true
 const notHydrated = () => false
@@ -70,8 +93,18 @@ export function CookieConsent({ gtmId }: { gtmId?: string }) {
     for (const listener of listeners) listener()
   }
 
+  // The answer over the denied defaults, on every visit rather than only on the one it was given
+  // in: the cookie outlives the session, and Consent Mode is told again each time the page loads.
+  useEffect(() => {
+    if (consent === null) return
+
+    ;(window as Tagged).gtag?.('consent', 'update', consentSignals(consent))
+  }, [consent])
+
   return (
     <>
+      {/* Before anything Google loads, and before the answer is known (issue #174). */}
+      <script dangerouslySetInnerHTML={{ __html: DEFAULTS }} />
       <AnimatePresence>
         {isHydrated && consent === null && (
           <m.section

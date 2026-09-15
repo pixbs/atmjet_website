@@ -1,4 +1,4 @@
-import type { BreadcrumbList, Organization, Thing, WebSite, WithContext } from 'schema-dts'
+import type { BreadcrumbList, FAQPage, Organization, Thing, WebSite, WithContext } from 'schema-dts'
 
 import type { Locale } from '@/i18n/locales'
 
@@ -98,5 +98,27 @@ export function breadcrumbs(
         item: localeUrl(origin, locale, page.slug),
       },
     ],
+  }
+}
+
+/**
+ * The questions a page answers, so a search result can carry them (issue #173). One node per
+ * page rather than one per section: a page that asks twice still answers one set of questions.
+ *
+ * The answers keep the line breaks an editor typed, which is how the section itself draws them.
+ */
+export function faqPage(
+  questions: readonly { question: string; answer: string }[],
+): Node<FAQPage> | null {
+  if (questions.length === 0) return null
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: questions.map(({ question, answer }) => ({
+      '@type': 'Question',
+      name: question,
+      acceptedAnswer: { '@type': 'Answer', text: answer },
+    })),
   }
 }
