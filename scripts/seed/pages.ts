@@ -487,6 +487,17 @@ function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout 
       image: fixture.photo,
     })
 
+  if (slug === '')
+    sections.push({
+      blockType: 'heroVideo',
+      // The legacy overline, and the legacy headline, which its Russian and Ukrainian
+      // catalogues left in English; the fixture carries the translation the site wanted.
+      overline: 'ATM JET',
+      title: locale === 'en' ? 'Flying private made simple' : 'Частные перелёты — это просто',
+      // The path the legacy markup named; the file arrives with the assets of E5.12.
+      video: '/video/background_full.mp4',
+    })
+
   if (slug === 'aircraft')
     sections.push({
       blockType: 'heroAircraft',
@@ -917,6 +928,8 @@ function translated(layout: Layout | null | undefined, slug: string, fixture: Fi
           ),
         }
       case 'heroSubpage':
+        return { ...block, id }
+      case 'heroVideo':
         return { ...block, id }
       case 'heroYachts':
         return { ...block, id }
