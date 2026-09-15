@@ -1,7 +1,7 @@
 import type { Payload } from 'payload'
 
 import { PAGE_SLUGS } from '../../src/collections/Pages'
-import { DEFAULT_LOCALES } from '../../src/i18n/locales'
+import { DEFAULT_LOCALES, type Locale } from '../../src/i18n/locales'
 import type { Page } from '../../src/payload-types'
 import type { SeedOutcome } from './report'
 
@@ -28,6 +28,13 @@ const TITLES: Record<string, { en: string; ru: string }> = {
   sales_yachts: { en: 'Yachts for sale', ru: 'Яхты на продажу' },
   yachts: { en: 'Yacht charter', ru: 'Аренда яхт' },
 }
+
+/**
+ * The languages a page answers in, where it is not every one (issue #149, section 4). The
+ * legacy citizens page was Russian only and sent everybody else to the home page; nothing else
+ * named a language at all.
+ */
+const AVAILABLE_LOCALES: Record<string, Locale[]> = { citizens: ['ru'] }
 
 /**
  * The metadata the legacy site intended (issue #170). Only its home page ever exported any
@@ -443,6 +450,48 @@ const INSPECTIONS: { en: [string, string]; ru: [string, string] }[] = [
     ru: ['Ходовые испытания', 'День в море с нагрузкой на системы, а не у причала.'],
   },
 ]
+
+/**
+ * What the citizens page says for itself beside the wordmark (issue #149, section 4). The legacy
+ * read it from the hero's own translation key and drew it a section lower.
+ */
+const WORDMARK_NOTE: Record<'en' | 'ru', string> = {
+  en: 'We are aware of the restrictions our clients from Russia face, and we can help you avoid any of them.',
+  ru: 'Мы осведомлены о глобальных вызовах, включая санкции, и гарантируем, что они не станут преградой для ваших путешествий. Наша команда экспертов обеспечивает беспрепятственные чартерные перелеты из Москвы в любую точку мира.',
+}
+
+/**
+ * How the company works with Russian citizens (issue #149, section 4): five reasons the legacy
+ * passed with an empty figure and an empty heading, so that each card is its sentence alone.
+ */
+const CITIZENS_WHY_US: {
+  title: Record<'en' | 'ru', string>
+  cards: Record<'en' | 'ru', string>[]
+} = {
+  title: { en: 'How we work with citizens of Russia', ru: 'Как мы работаем с гражданами РФ?' },
+  cards: [
+    {
+      en: 'We take charge of the correspondence around the sanctions lists and follow every change to the international rules.',
+      ru: 'Мы прекрасно понимаем все тонкости взаимодействия с санкционными списками и тщательно следим за всеми изменениями в международных правилах.',
+    },
+    {
+      en: 'We prepare every document a Russian passenger needs, and support you at each stage of the paperwork.',
+      ru: 'Мы обеспечиваем оформление всех необходимых документов для русских пассажиров и предоставляем полную поддержку на каждом этапе.',
+    },
+    {
+      en: 'We arrange the technical stops a route needs, planned around your preferences and the rules of each country.',
+      ru: 'Мы организуем оптимальные технические остановки для ваших рейсов, планируя каждую с учётом ваших предпочтений и международных требований.',
+    },
+    {
+      en: 'We find the lead passenger whose citizenship the flight calls for, so that every border is crossed in order.',
+      ru: 'Мы подберём «основного» пассажира с необходимым гражданством, обеспечивая полное соответствие международным требованиям.',
+    },
+    {
+      en: 'We accept payment in any form: bank transfer, a company account, or cryptocurrency.',
+      ru: 'Мы принимаем любой вид оплаты, включая банковские переводы, корпоративные счета и криптовалюты.',
+    },
+  ],
+}
 
 /**
  * The two quotations the legacy citizens page carried (issue #132, section 4): the press one
@@ -954,13 +1003,10 @@ function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout 
     })
   }
 
-  // The two pages that invited a booking under their hero, plain on one and in a card on the
-  // other, which is the whole of the legacy `isCard` (section 5).
+  // Plain here and in a card on the citizens page below, which is the whole of the legacy
+  // `isCard` (section 5).
   if (slug === 'group_charters')
     sections.push({ blockType: 'makeBooking', title: MAKE_BOOKING[locale], variant: 'plain' })
-
-  if (slug === 'citizens')
-    sections.push({ blockType: 'makeBooking', title: MAKE_BOOKING[locale], variant: 'card' })
 
   if (slug === 'sales_yachts')
     sections.push({
@@ -993,7 +1039,11 @@ function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout 
       image: fixture.photo,
     })
 
+  // The citizens page in the order the legacy file had it (issue #149, section 4): what the
+  // company says for itself, the two quotations, the invitation in its card, and the reasons.
   if (slug === 'citizens') {
+    sections.push({ blockType: 'wordmarkNote', note: WORDMARK_NOTE[locale] })
+
     for (const entry of QUOTES)
       sections.push({
         blockType: 'quote',
@@ -1001,10 +1051,17 @@ function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout 
         quote: entry[locale][0],
         attribution: entry[locale][1],
       })
+
+    sections.push({ blockType: 'makeBooking', title: MAKE_BOOKING[locale], variant: 'card' })
     sections.push({
-      blockType: 'faq',
-      title: locale === 'en' ? 'Questions we are asked' : 'Что нас спрашивают',
-      questions: FAQ.map((entry) => ({ question: entry[locale][0], answer: entry[locale][1] })),
+      blockType: 'whyUs',
+      title: CITIZENS_WHY_US.title[locale],
+      cards: CITIZENS_WHY_US.cards.map((card, index) => ({
+        description: card[locale],
+        // The third card asked for a file that was never there; the decision of issue #149 is
+        // that nothing replaces it (section 13, entry 76).
+        image: index === 2 ? undefined : fixture.photo,
+      })),
     })
   }
 
@@ -1018,6 +1075,14 @@ function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout 
       tiles: Array.from({ length: 8 }, (_, index) => ({
         image: index % 2 === 0 ? fixture.photo : fixture.surface,
       })),
+    })
+
+  // Last on the home page, the one page the legacy drew it on (issue #123, section 5).
+  if (slug === '')
+    sections.push({
+      blockType: 'faq',
+      title: locale === 'en' ? 'Questions we are asked' : 'Что нас спрашивают',
+      questions: FAQ.map((entry) => ({ question: entry[locale][0], answer: entry[locale][1] })),
     })
 
   const yachts = fixture.pages.get('yachts')
@@ -1269,6 +1334,8 @@ function translated(layout: Layout | null | undefined, slug: string, fixture: Fi
         }
       case 'whyUs':
         return { ...block, id, cards: withRowIds(block.cards ?? [], rows) }
+      case 'wordmarkNote':
+        return { ...block, id }
       case 'yachtsPromo':
         return {
           ...block,
@@ -1390,6 +1457,7 @@ async function createPages(payload: Payload): Promise<Set<string>> {
         slug,
         layout: [],
         _status: 'published',
+        availableLocales: AVAILABLE_LOCALES[slug],
         meta: META[slug]?.en,
       },
       locale: 'en',
