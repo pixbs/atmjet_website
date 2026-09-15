@@ -187,19 +187,19 @@ Engineering rules that apply to every issue: visual parity, SSR-first (ADR-0007)
 
 ## E9 Forms and integrations
 
-| #     | Issue                                                   | Labels                                   | Legacy source                                                                 |
-| ----- | ------------------------------------------------------- | ---------------------------------------- | ----------------------------------------------------------------------------- |
-| E9.1  | RequestForm (multi-leg and round trip)                  | type:feature, area:forms, priority:p1    | `form/request_flight.tsx`, `form/direction.tsx`                               |
-| E9.2  | BookingForm                                             | type:feature, area:forms, priority:p1    | `form/booking.tsx`                                                            |
-| E9.3  | Detail-page inline forms with correct dialog sources    | type:feature, area:forms                 | `aircraft/[id]/page.tsx`, `yachts/[id]/page.tsx` server actions               |
-| E9.4  | Persist leads and show them in the admin                | type:feature, area:payload               |                                                                               |
-| E9.5  | Telegram dispatch through Payload jobs                  | type:feature, area:forms                 | `src/app/telegramBot.ts`, message format in `form/booking.tsx`                |
-| E9.6  | Kommo CRM: decided, not ported                          | type:chore, area:forms                   | Dead route on the legacy site; leads go to Telegram and the Leads collection. |
-| E9.7  | Spam protection                                         | type:feature, area:forms, needs-decision |                                                                               |
-| E9.8  | Success and error feedback (legacy confirm view)        | type:feature, area:forms                 | `contact-form.confirm`, `checkmark.svg`                                       |
-| E9.9  | Airport search endpoint                                 | type:feature, area:forms                 | `src/utils/getAiport.ts`                                                      |
-| E9.10 | Country list generator and default country              | type:chore, area:forms, needs-decision   | `scripts/number-iso.js`, `src/countries.ts`                                   |
-| E9.11 | Fail-safe integrations on missing environment variables | type:bug, area:forms                     | `telegramBot.ts` module-level throw                                           |
+| #     | Issue                                                   | Labels                                 | Legacy source                                                                                                |
+| ----- | ------------------------------------------------------- | -------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| E9.1  | RequestForm (multi-leg and round trip)                  | type:feature, area:forms, priority:p1  | `form/request_flight.tsx`, `form/direction.tsx`                                                              |
+| E9.2  | BookingForm                                             | type:feature, area:forms, priority:p1  | `form/booking.tsx`                                                                                           |
+| E9.3  | Detail-page inline forms with correct dialog sources    | type:feature, area:forms               | `aircraft/[id]/page.tsx`, `yachts/[id]/page.tsx` server actions                                              |
+| E9.4  | Persist leads and show them in the admin                | type:feature, area:payload             |                                                                                                              |
+| E9.5  | Telegram dispatch through Payload jobs                  | type:feature, area:forms               | `src/app/telegramBot.ts`, message format in `form/booking.tsx`                                               |
+| E9.6  | Kommo CRM: decided, not ported                          | type:chore, area:forms                 | Dead route on the legacy site; leads go to Telegram and the Leads collection.                                |
+| E9.7  | Spam protection                                         | type:feature, area:forms               | Decided 2026-09-13: invisible only — honeypot, a floor under the fill time, a limit per address. No captcha. |
+| E9.8  | Success and error feedback (legacy confirm view)        | type:feature, area:forms               | `contact-form.confirm`, `checkmark.svg`                                                                      |
+| E9.9  | Airport search endpoint                                 | type:feature, area:forms               | `src/utils/getAiport.ts`                                                                                     |
+| E9.10 | Country list generator and default country              | type:chore, area:forms, needs-decision | `scripts/number-iso.js`, `src/countries.ts`                                                                  |
+| E9.11 | Fail-safe integrations on missing environment variables | type:bug, area:forms                   | `telegramBot.ts` module-level throw                                                                          |
 
 ## E10 i18n content
 
