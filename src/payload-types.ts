@@ -261,6 +261,7 @@ export interface Page {
         | AdvantagesBlock
         | BestPriceBlock
         | ContactCardBlock
+        | ContactUsBlock
         | DescriptorBlock
         | DocumentsBlock
         | EmptyLegsBlock
@@ -357,6 +358,31 @@ export interface ContactCardBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'contactCard';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ContactUsBlock".
+ */
+export interface ContactUsBlock {
+  telegram: {
+    title: string;
+    description: string;
+  };
+  whatsapp: {
+    title: string;
+    description: string;
+  };
+  /**
+   * The line under the telephone number. The legacy said it was open 24/7.
+   */
+  hours: string;
+  /**
+   * What a lead from this form is traced back to. The legacy inline form sent an empty string, so nothing said which page it came from (section 13, entry 60).
+   */
+  source: string;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'contactUs';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1827,6 +1853,7 @@ export interface PagesSelect<T extends boolean = true> {
         advantages?: T | AdvantagesBlockSelect<T>;
         bestPrice?: T | BestPriceBlockSelect<T>;
         contactCard?: T | ContactCardBlockSelect<T>;
+        contactUs?: T | ContactUsBlockSelect<T>;
         descriptor?: T | DescriptorBlockSelect<T>;
         documents?: T | DocumentsBlockSelect<T>;
         emptyLegs?: T | EmptyLegsBlockSelect<T>;
@@ -1914,6 +1941,28 @@ export interface ContactCardBlockSelect<T extends boolean = true> {
         label?: T;
         source?: T;
       };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ContactUsBlock_select".
+ */
+export interface ContactUsBlockSelect<T extends boolean = true> {
+  telegram?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+      };
+  whatsapp?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+      };
+  hours?: T;
+  source?: T;
   id?: T;
   blockName?: T;
 }
