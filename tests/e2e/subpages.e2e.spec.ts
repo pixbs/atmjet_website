@@ -11,7 +11,16 @@ import { ENABLED_LOCALES, pathFor, type Locale } from './routes'
  * metadata at all (section 2.4). They are documents now, so what is asserted is the order the
  * seed lands and the head the server sends for it.
  */
-const PAGES = [
+interface Subpage {
+  slug: string
+  sections: readonly string[]
+  /** The languages the page answers in, where that is not every one it is written in (#149). */
+  locales?: readonly Locale[]
+  titles: Partial<Record<Locale, string>>
+  words: Partial<Record<Locale, string>>
+}
+
+const PAGES: readonly Subpage[] = [
   {
     slug: 'cargo_charter',
     sections: ['hero-subpage', 'why-us', 'contact-us'],
@@ -42,7 +51,23 @@ const PAGES = [
     titles: { en: 'Business agents', ru: 'Бизнес-агентам' },
     words: { en: 'Why select us?', ru: 'Почему выбирают нас?' },
   },
-] as const
+  {
+    slug: 'citizens',
+    sections: [
+      'hero-subpage',
+      'wordmark-note',
+      'quote',
+      'quote',
+      'make-booking',
+      'why-us',
+      'contact-us',
+    ],
+    // The one page that answers in a single language, as the legacy page did (issue #149).
+    locales: ['ru'],
+    titles: { ru: 'Гражданам' },
+    words: { ru: 'Как мы работаем с гражданами РФ?' },
+  },
+]
 
 async function documentOf(request: APIRequestContext, path: string): Promise<string> {
   const response = await request.get(path)
@@ -52,36 +77,31 @@ async function documentOf(request: APIRequestContext, path: string): Promise<str
   return response.text()
 }
 
-/** Where each section starts in the document, so their order can be compared with the legacy. */
-const orderOf = (html: string, sections: readonly string[]): string[] =>
-  sections
-    .map((name) => ({ name, at: html.indexOf(`data-section="${name}"`) }))
-    .filter((section) => section.at >= 0)
-    .sort((one, other) => one.at - other.at)
-    .map((section) => section.name)
+/**
+ * The chrome every page inherits, and the two forms a section may carry inside it. Everything
+ * else a document marks as a section is one of the page's own.
+ */
+const CHROME = ['header', 'footer', 'cookie-banner', 'booking-form', 'request-form']
+
+/** The page's own sections, in the order the document has them — twice, where it has one twice. */
+const sectionsOf = (html: string): string[] =>
+  [...html.matchAll(/data-section="([a-z-]+)"/g)]
+    .map((match) => match[1] ?? '')
+    .filter((name) => !CHROME.includes(name))
 
 for (const page of PAGES) {
   test.describe(`/${page.slug}`, () => {
+    const [first = 'en'] = page.locales ?? ENABLED_LOCALES
+
     test('is rendered on the server, in the order the legacy page had', async ({ request }) => {
-      const html = await documentOf(request, pathFor(`/${page.slug}`, 'en'))
+      const html = await documentOf(request, pathFor(`/${page.slug}`, first))
 
-      expect(orderOf(html, page.sections)).toEqual([...page.sections])
-      expect(html).toContain(page.words.en)
+      // In order, and nothing else: a section on the wrong page shows up here as an extra.
+      expect(sectionsOf(html)).toEqual([...page.sections])
+      expect(html).toContain(page.words[first])
     })
 
-    test('draws nothing the legacy page did not', async ({ request }) => {
-      const html = await documentOf(request, pathFor(`/${page.slug}`, 'en'))
-      const drawn = [...html.matchAll(/data-section="([a-z-]+)"/g)].map((match) => match[1])
-
-      // The chrome every page inherits, and the sections this one is made of. Anything else is
-      // a section on the wrong page.
-      const chrome = ['header', 'footer', 'cookie-banner', 'booking-form', 'request-form']
-      expect(drawn.filter((name) => !chrome.includes(name!)).sort()).toEqual(
-        [...page.sections].sort(),
-      )
-    })
-
-    for (const locale of ENABLED_LOCALES) {
+    for (const locale of page.locales ?? ENABLED_LOCALES) {
       test(`[${locale}] says it in the language of the page, and titles itself`, async ({
         request,
       }) => {
@@ -89,8 +109,8 @@ for (const page of PAGES) {
         const title = html.match(/<title>([^<]*)<\/title>/)?.[1]
 
         // The legacy layout computed a title and never returned it, so every page had none.
-        expect(title).toBe(page.titles[locale as Locale as 'en'])
-        expect(html).toContain(page.words[locale as Locale as 'en'])
+        expect(title).toBe(page.titles[locale])
+        expect(html).toContain(page.words[locale])
       })
     }
   })

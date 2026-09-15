@@ -10,16 +10,32 @@ import { hideDevOverlay, hideFloatingHeader, waitForPhotos } from './chrome'
  * a narrow screen and beside it on a wide one.
  */
 const CASES = [
-  { name: 'make-booking-plain', path: '/group_charters', section: '[data-section="make-booking"]' },
-  { name: 'make-booking-card', path: '/citizens', section: '[data-section="make-booking"]' },
-  { name: 'transfer', path: '/business_agents', section: '[data-section="transfer"]' },
+  {
+    name: 'make-booking-plain',
+    path: '/group_charters',
+    locale: 'en',
+    section: '[data-section="make-booking"]',
+  },
+  // The card variant is on the citizens page, which answers in Russian alone (issue #149).
+  {
+    name: 'make-booking-card',
+    path: '/citizens',
+    locale: 'ru',
+    section: '[data-section="make-booking"]',
+  },
+  {
+    name: 'transfer',
+    path: '/business_agents',
+    locale: 'en',
+    section: '[data-section="transfer"]',
+  },
 ] as const
 
-for (const { name, path, section: selector } of CASES) {
+for (const { name, path, locale, section: selector } of CASES) {
   for (const width of [390, 1280]) {
     test(`the ${name} section matches its baseline at ${width}px`, async ({ page }) => {
       await page.setViewportSize({ width, height: 900 })
-      await page.goto(pathFor(path, 'en'))
+      await page.goto(pathFor(path, locale))
       const section = page.locator(selector)
       await expect(section).toBeVisible()
       await page.evaluate(() => document.fonts.ready)

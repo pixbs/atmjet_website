@@ -23,7 +23,7 @@ test.describe('the booking invitation', () => {
   test('draws the card the legacy `isCard` drew, and leaves the plain one plain', async ({
     page,
   }) => {
-    await page.goto(pathFor('/citizens', 'en'))
+    await page.goto(pathFor('/citizens', 'ru'))
     const card = page.locator(BOOKING)
     await expect(card).toHaveAttribute('data-variant', 'card')
     await expect(card.locator('[class*="bg-graphite-850"]')).toHaveCount(1)
