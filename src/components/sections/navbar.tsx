@@ -8,7 +8,7 @@ import { LocaleSwitch } from '@/components/ui/locale-switch'
 import type { Locale } from '@/i18n/locales'
 import { Link, usePathname } from '@/i18n/navigation'
 import { cn } from '@/lib/cn'
-import type { HeaderNav } from '@/lib/data/header'
+import type { HeaderNav } from '@/lib/header'
 import { fade, overlay } from '@/lib/motion'
 import type { NavLink } from '@/lib/nav'
 
