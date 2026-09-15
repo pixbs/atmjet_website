@@ -2,6 +2,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server'
 import type { Metadata } from 'next'
 import React from 'react'
 
+import { RequestForm } from '@/components/form/request-form'
 import * as icons from '@/components/icons'
 import { Counter } from '@/components/motion/counter'
 import { Line } from '@/components/motion/line'
@@ -717,6 +718,20 @@ export default async function StyleguidePage({ params }: { params: Promise<{ loc
         <div className="w-full max-w-screen-sm gap-4">
           <AirportSearch id="airport-from" label="From" locale={locale as Locale} />
         </div>
+      </section>
+
+      <section
+        id="request-form"
+        data-section="request-form-example"
+        className="container items-start gap-4"
+      >
+        <h3>Flight request</h3>
+        <p>
+          Up to four legs, or one leg there and back. A request that does not validate is refused in
+          silence, as the legacy form refused it; filling it in hands the legs to the booking dialog
+          in the query.
+        </p>
+        <RequestForm locale={locale as Locale} />
       </section>
     </div>
   )
