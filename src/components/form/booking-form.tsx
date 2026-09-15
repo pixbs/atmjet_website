@@ -2,7 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useTranslations } from 'next-intl'
-import { useId, useState } from 'react'
+import { useId, useState, type BaseSyntheticEvent } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 
 import { Checkmark } from '@/components/icons'
@@ -12,6 +12,7 @@ import { bookingSchema, parseDirections, type Booking } from '@/lib/booking'
 import { cn } from '@/lib/cn'
 import { submitLead } from '@/lib/data/leads'
 import type { LEAD_FORM_TYPES } from '@/lib/leads'
+import { HONEYPOT_FIELD } from '@/lib/spam'
 
 /**
  * The form that turns a visitor into a lead (issue #152, `docs/legacy-inventory.md` section
@@ -36,6 +37,29 @@ const FIELD =
 const CHIP =
   'cursor-pointer rounded-full border border-graphite-700 px-5 py-2 font-semibold uppercase transition-colors hover:border-graphite-100 peer-checked:border-transparent peer-checked:bg-gold peer-checked:text-graphite-900'
 
+/**
+ * How long the form was on screen before it was sent, measured between the moment it appeared
+ * and the event that sent it — both from the same clock, and neither a reading taken during
+ * render (issue #157).
+ *
+ * From when it appeared rather than from when it was first touched: a browser that fills every
+ * field from a saved address does it in the instant after the first one is focused, so a
+ * visitor whose browser knows them would otherwise be the one refused. Nothing to measure
+ * against is no reading at all, which the action reads as no evidence rather than as haste.
+ */
+const SHOWN_AT = new WeakMap<HTMLFormElement, number>()
+
+/** The moment a form reached the document, taken there rather than during a render. */
+function noteShown(form: HTMLFormElement | null) {
+  if (form !== null && !SHOWN_AT.has(form)) SHOWN_AT.set(form, performance.now())
+}
+
+function elapsedSince(shownAt: number | null, sentAt: number | undefined): number | undefined {
+  if (shownAt === null || sentAt === undefined) return undefined
+
+  return Math.max(0, Math.round(sentAt - shownAt))
+}
+
 export function BookingForm({
   locale,
   defaultCountry,
@@ -59,7 +83,6 @@ export function BookingForm({
   const chipId = useId()
   const [isSent, setIsSent] = useState(false)
   const [hasFailed, setHasFailed] = useState(false)
-
   const {
     control,
     formState: { errors, isSubmitting, touchedFields },
@@ -73,13 +96,20 @@ export function BookingForm({
     defaultValues: { name: '', email: '', phone: '', tags: [] },
   })
 
-  const submit = async (values: Booking) => {
+  const submit = async (values: Booking, event?: BaseSyntheticEvent) => {
     // The query is read here rather than through `useSearchParams`, which would make the whole
     // page render on the client unless every caller wrapped this in a Suspense boundary.
     const query = new URLSearchParams(window.location.search)
+    const form = event?.target as HTMLFormElement | undefined
+    const honeypot = form?.elements.namedItem(HONEYPOT_FIELD)
     const { ok } = await submitLead({
       values,
       formType,
+      elapsedMs: elapsedSince(
+        form === undefined ? null : (SHOWN_AT.get(form) ?? null),
+        event?.timeStamp,
+      ),
+      trap: honeypot instanceof HTMLInputElement ? honeypot.value : '',
       // The legacy carried the name of the button that opened the form (section 3.9); a form
       // nothing opened sent an empty string, so this one says where it stands instead.
       source: query.get('showBooking') ?? source,
@@ -127,7 +157,17 @@ export function BookingForm({
       // The legacy form asked the browser not to validate it: the rules are zod's.
       noValidate
       onSubmit={handleSubmit(submit)}
+      ref={noteShown}
     >
+      {/* The honeypot (issue #157): out of the page for a person and out of the tab order, so
+          the only thing that fills it in is something reading the markup. */}
+      <input
+        aria-hidden
+        autoComplete="off"
+        className="sr-only"
+        name={HONEYPOT_FIELD}
+        tabIndex={-1}
+      />
       <div className="gap-1">
         <label className="text-sm text-white" htmlFor={`${chipId}-name`}>
           {t('name')}

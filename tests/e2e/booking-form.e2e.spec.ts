@@ -70,6 +70,7 @@ test.describe('a lead', () => {
     await form.getByLabel('Phone number').fill('+971504589926')
     // The chip is a checkbox with its box taken away, so it is the label that is clicked.
     await form.getByText('Partnership request').click()
+    await asAVisitor(page)
     await form.getByRole('button', { name: 'Send' }).click()
 
     // The confirm view the legacy wrote and nobody could reach (section 13, entry 59): it is
@@ -139,5 +140,57 @@ test.describe('a submission that does not get through', () => {
     await form.getByRole('button', { name: 'Try again' }).click()
 
     await expect(form.getByRole('status')).toHaveText('Successfully sent')
+  })
+})
+
+/**
+ * The invisible measures of issue #157, from the browser's side: the honeypot is out of the way
+ * of anybody filling the form in, and a submission that fills it in never becomes a lead.
+ */
+test.describe('a submission that looks automated', () => {
+  test('leaves the honeypot out of the way of anyone filling the form in', async ({ page }) => {
+    await page.goto(pathFor('/styleguide', 'en'))
+    const form = page.locator(FORM)
+    // By what it is rather than by what it is called: the name is chosen so that no browser
+    // recognises it, and naming it here would pin the one thing that has to stay free to change.
+    const trap = form.locator('input[aria-hidden="true"]')
+
+    await expect(trap).toHaveCount(1)
+    // Out of the page for a person: no box, and nothing a tab can land on.
+    await expect(trap).not.toBeInViewport()
+    await expect(trap).toHaveAttribute('tabindex', '-1')
+  })
+
+  test('is refused when the honeypot has been filled in', async ({ page }) => {
+    await page.goto(pathFor('/styleguide', 'en'))
+    const form = page.locator(FORM)
+
+    await form.getByLabel('Name').fill(visitor())
+    await form.getByLabel('Email').fill('script@example.test')
+    await form.getByLabel('Phone number').fill('+971504589926')
+    await form
+      .locator('input[aria-hidden="true"]')
+      .evaluate((field: HTMLInputElement) => (field.value = 'ATM JET'))
+    await asAVisitor(page)
+
+    await form.getByRole('button', { name: 'Send' }).click()
+
+    // No confirm view: nothing was written down. What it does say is what a failed send says
+    // (issue #158), which tells a script nothing it did not already know.
+    await expect(form.getByRole('status')).toHaveCount(0)
+    await expect(form.getByRole('alert')).toBeVisible()
+    await expect(form.getByLabel('Email')).toHaveValue('script@example.test')
+  })
+
+  test('is refused when the form is sent the instant it is reached', async ({ page }) => {
+    await page.goto(pathFor('/styleguide', 'en'))
+    const form = page.locator(FORM)
+
+    await form.getByLabel('Name').fill(visitor())
+    await form.getByLabel('Email').fill('hurried@example.test')
+    await form.getByLabel('Phone number').fill('+971504589926')
+    await form.getByRole('button', { name: 'Send' }).click()
+
+    await expect(form.getByRole('status')).toHaveCount(0)
   })
 })

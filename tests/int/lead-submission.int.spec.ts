@@ -40,6 +40,8 @@ const submission = (overrides: Record<string, unknown> = {}) => ({
   source: 'Header',
   locale: 'en' as const,
   url: 'https://atmjet.com/en/empty_legs?utm_source=telegram&utm_campaign=empty-legs',
+  // As long as a visitor who is not hurrying takes over the three fields (issue #157).
+  elapsedMs: 30_000,
   ...overrides,
 })
 
@@ -130,5 +132,70 @@ describe('a submission', () => {
       submitLead({ ...sent, values: { ...sent.values, phone: '+971 50' } }),
     ).resolves.toEqual({ ok: false })
     expect(await leadFor(sent.values.email)).toBeUndefined()
+  })
+})
+
+/**
+ * The invisible measures of issue #157, where they are actually applied: the one server action
+ * every form goes through. A refusal writes nothing at all — not the lead, and not the address
+ * it came from.
+ */
+describe('a submission that looks automated', () => {
+  it('is refused when it filled in the field nothing shows', async () => {
+    const sent = submission({ trap: 'ATM JET' })
+
+    await expect(submitLead(sent)).resolves.toEqual({ ok: false })
+    expect(await leadFor(sent.values.email)).toBeUndefined()
+  })
+
+  it('is refused when the form was sent the instant it was reached', async () => {
+    const sent = submission({ elapsedMs: 0 })
+
+    await expect(submitLead(sent)).resolves.toEqual({ ok: false })
+    expect(await leadFor(sent.values.email)).toBeUndefined()
+  })
+
+  it('is written down when the browser said nothing believable about the time', async () => {
+    // A tab open since yesterday, or one whose clock says something impossible: the reading is
+    // dropped rather than read as the fastest submission there is, which would lose the lead.
+    const stale = submission({ elapsedMs: 3 * 24 * 60 * 60 * 1_000 })
+    const impossible = submission({ elapsedMs: -5 })
+
+    await expect(submitLead(stale as never)).resolves.toEqual({ ok: true })
+    await expect(submitLead(impossible as never)).resolves.toEqual({ ok: true })
+    expect(await leadFor(stale.values.email)).toBeDefined()
+    expect(await leadFor(impossible.values.email)).toBeDefined()
+  })
+})
+
+/**
+ * The limit per address (issue #157). The other suites here submit with no address at all, so
+ * the window is untouched until this one writes one on the request.
+ */
+describe('a flood from one address', () => {
+  const address = '203.0.113.42'
+
+  beforeAll(() => {
+    requestHeaders.set('x-forwarded-for', address)
+  })
+
+  afterAll(() => {
+    requestHeaders.delete('x-forwarded-for')
+  })
+
+  it('lets an ordinary run of enquiries through and then stops', async () => {
+    const accepted: boolean[] = []
+
+    // Until it says no, from a run far longer than one visitor makes in an hour. The number is
+    // not asserted: what matters is that a run gets through and a flood does not.
+    for (let attempt = 0; attempt < 30 && (accepted.at(-1) ?? true); attempt += 1) {
+      accepted.push((await submitLead(submission())).ok)
+    }
+
+    expect(accepted[0]).toBe(true)
+    expect(accepted.at(-1)).toBe(false)
+    // An address is shared by everyone behind one company network, so the door stays open for
+    // longer than one enquiry.
+    expect(accepted.filter(Boolean).length).toBeGreaterThanOrEqual(5)
   })
 })
