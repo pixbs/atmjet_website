@@ -115,6 +115,49 @@ const HERO_PAGES: Record<string, Record<'en' | 'ru', string>> = {
 }
 
 /**
+ * The five reasons the home page stacked, which the business agents page stacked as well
+ * (issue #147, section 4). The first two carry a figure and the other three do not, which is
+ * the shape the legacy cards had; the words are placeholders until the content migration.
+ */
+const HOME_WHY_US: {
+  figure?: string
+  en: [string, string]
+  ru: [string, string]
+}[] = [
+  {
+    figure: '20',
+    en: ['Years of experience', 'Charters out of the Gulf, Europe and the CIS since 2004.'],
+    ru: ['Лет опыта', 'Чартеры из Залива, Европы и СНГ с 2004 года.'],
+  },
+  {
+    figure: '16,000',
+    en: ['Satisfied clients', 'Who came back, and sent the people they fly with.'],
+    ru: ['Довольных клиентов', 'Которые вернулись и привели тех, с кем летают.'],
+  },
+  {
+    en: ['Trusted by celebrities', 'Names that do not appear on a passenger list, and never have.'],
+    ru: ['Нам доверяют знаменитости', 'Имена, которых нет в списке пассажиров и не было.'],
+  },
+  {
+    en: [
+      'Same-day departures',
+      'Permits, slots and a crew, arranged between the call and the gate.',
+    ],
+    ru: [
+      'Вылеты в тот же день',
+      'Разрешения, слоты и экипаж — между звонком и выходом на посадку.',
+    ],
+  },
+  {
+    en: [
+      'Commitment to excellence',
+      'The cabin, the catering and the car, to the standard you set.',
+    ],
+    ru: ['Стремление к совершенству', 'Салон, кейтеринг и машина — по вашему стандарту.'],
+  },
+]
+
+/**
  * The reasons the cargo charter page stacks (issue #116, section 5). Three of them, because the
  * three shapes the card comes in are what a fixture is for: with a figure and a photograph, and
  * with neither.
@@ -876,6 +919,16 @@ function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout 
       heading: locale === 'en' ? 'What working with us gives you' : 'Что даёт работа с нами',
       points: GUIDE_POINTS.map((point) => ({ text: point[locale] })),
       image: fixture.photo,
+    })
+    sections.push({
+      blockType: 'whyUs',
+      title: locale === 'en' ? 'Why select us?' : 'Почему выбирают нас?',
+      cards: HOME_WHY_US.map((card) => ({
+        figure: card.figure,
+        title: card[locale][0],
+        description: card[locale][1],
+        image: fixture.photo,
+      })),
     })
     sections.push({
       blockType: 'documents',

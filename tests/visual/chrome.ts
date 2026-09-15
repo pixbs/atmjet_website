@@ -50,8 +50,14 @@ export async function hideHeroVideo(page: Page) {
  * shutter opened. What each reveal does has its own end-to-end test; a baseline is of where
  * they come to rest.
  *
- * The resting state is forced only inside `main`: the chrome above and below it animates on
- * its own terms, and the preloader's resting state is the one where it has gone.
+ * Forced only inside `main`: the chrome above and below it animates on its own terms, and the
+ * preloader's resting state is the one where it has gone.
+ *
+ * One thing a flattened capture cannot hold, whatever is forced: a gradient clipped to the
+ * letters of a counter draws nothing past the first screen, because Chromium paints the region
+ * below it without the background the viewport was carrying. The figures have baselines of
+ * their own where the shot is of the screen rather than the page (`why-us-block`,
+ * `why-us-card`); what this one is for is the order and the spacing of the sections.
  */
 export async function settlePage(page: Page) {
   await page.evaluate(async () => {
