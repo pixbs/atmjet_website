@@ -36,7 +36,7 @@ bun run dev                 # http://localhost:3000, admin at /admin
 | `bun run migrate` / `migrate:create <name>` / `migrate:status`        | Payload migrations (Drizzle push only under `bun run dev`) |
 | `bun run generate:types` / `generate:importmap`                       | regenerate Payload artefacts after config changes          |
 | `bun run test:int`                                                    | unit and integration tests with coverage thresholds        |
-| `bun run test:e2e` / `test:visual` / `test:a11y` / `test:lighthouse`  | browser tiers (dev server or `PLAYWRIGHT_BASE_URL`)        |
+| `bun run test:e2e` / `test:visual` / `test:a11y` / `test:lighthouse`  | browser tiers (a local build or `PLAYWRIGHT_BASE_URL`)     |
 | `bun run test:visual:update`                                          | regenerate visual baselines (Linux only)                   |
 
 ## Repository layout

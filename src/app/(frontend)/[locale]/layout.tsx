@@ -78,8 +78,13 @@ export default async function LocaleLayout({
       {/* The page colour is the parity layer's, on `:root` as the legacy stylesheet had it.
           Painting it here as well would put the body's background over anything a section
           sends behind itself with a negative z-index, which is how the legacy drew the
-          photograph under the options tiles (issue #119). */}
-      <body className="min-h-dvh font-sans text-white antialiased">
+          photograph under the options tiles (issue #119).
+
+          The text colour is `:root`'s for the same reason: it is what the legacy left every
+          element that carried no colour of its own to inherit, and a colour here would beat it
+          for the whole page (issue #300). What the legacy drew white says so where it is
+          drawn. */}
+      <body className="min-h-dvh font-sans antialiased">
         <NextIntlClientProvider>
           <MotionProvider>
             <Header locale={locale as Locale} locales={locales} />
