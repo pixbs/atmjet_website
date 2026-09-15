@@ -1,7 +1,15 @@
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
 
+import { listSaleYachts } from '@/lib/data/yachts'
 import { slugify } from '@/lib/slug'
-import { createAdmin, createContact, createUser, createYacht, yachtData } from '../factories'
+import {
+  createAdmin,
+  createContact,
+  createMedia,
+  createUser,
+  createYacht,
+  yachtData,
+} from '../factories'
 import { createRegistry, uniqueSuffix, type TestRegistry } from '../helpers/payload'
 
 const revalidateTag = vi.hoisted(() => vi.fn())
@@ -352,5 +360,84 @@ describe('revalidation', () => {
     const tags = revalidateTag.mock.calls.map(([tag]) => tag as string)
 
     expect(tags).toContain('yachts')
+  })
+})
+
+/**
+ * The listing the recent yachts section reads (issue #133). The legacy page read the whole sale
+ * table with no order and no limit (`docs/legacy-inventory.md` section 13, entry 52).
+ */
+describe('the listing the recent yachts section reads', () => {
+  const client = () => Promise.resolve(registry.payload)
+
+  it('lists the newest sale listings first, and only sale listings', async () => {
+    const charter = await createYacht(registry, { name: `Charter ${uniqueSuffix()}` })
+    const older = await createYacht(registry, {
+      name: `Older ${uniqueSuffix()}`,
+      listingType: 'sale',
+    })
+    const newer = await createYacht(registry, {
+      name: `Newer ${uniqueSuffix()}`,
+      listingType: 'sale',
+    })
+
+    const listed = await listSaleYachts('en', 500, client)
+    const mine = listed.filter((yacht) =>
+      [older.id, newer.id, charter.id].includes(yacht.id as number),
+    )
+
+    expect(mine.map((yacht) => yacht.id)).toEqual([newer.id, older.id])
+  })
+
+  it('asks for no more listings than the section is set to show', async () => {
+    await createYacht(registry, { name: `Limit ${uniqueSuffix()}`, listingType: 'sale' })
+
+    await expect(listSaleYachts('en', 1, client)).resolves.toHaveLength(1)
+  })
+
+  it('draws a photograph from the row that carries it, in the language being read', async () => {
+    const upload = await createMedia(registry)
+    const yacht = await createYacht(registry, {
+      name: `Photographed ${uniqueSuffix()}`,
+      listingType: 'sale',
+      location: 'Monaco',
+      photos: [{ media: upload.id, alt: 'Her bow' }],
+    })
+    await registry.payload.update({
+      collection: 'yachts',
+      id: yacht.id,
+      locale: 'ru',
+      data: { location: 'Монако' },
+      overrideAccess: true,
+    })
+
+    const english = (await listSaleYachts('en', 500, client)).find((one) => one.id === yacht.id)
+    const russian = (await listSaleYachts('ru', 500, client)).find((one) => one.id === yacht.id)
+
+    expect(english?.photos[0]?.alt).toBe('Her bow')
+    expect(english?.location).toBe('Monaco')
+    expect(russian?.location).toBe('Монако')
+  })
+
+  it('leaves out a photograph that points at nothing rather than drawing a hole', async () => {
+    const yacht = await createYacht(registry, {
+      name: `Unphotographed ${uniqueSuffix()}`,
+      listingType: 'sale',
+      photos: [{ alt: 'Nothing to see' }],
+    })
+
+    const listed = (await listSaleYachts('en', 500, client)).find((one) => one.id === yacht.id)
+
+    expect(listed?.photos).toEqual([])
+  })
+
+  it('lists none rather than taking the page down when the database cannot be reached', async () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined)
+
+    await expect(
+      listSaleYachts('en', 5, () => Promise.reject(new Error('connection refused'))),
+    ).resolves.toEqual([])
+    expect(warn).toHaveBeenCalled()
+    warn.mockRestore()
   })
 })

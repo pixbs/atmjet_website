@@ -25,6 +25,7 @@ import { personalManager } from '@/blocks/PersonalManager/config'
 import { photoDescriptor } from '@/blocks/PhotoDescriptor/config'
 import { privilege } from '@/blocks/Privilege/config'
 import { quote } from '@/blocks/Quote/config'
+import { recentYachts } from '@/blocks/RecentYachts/config'
 import { tiles } from '@/blocks/Tiles/config'
 import { weInspect } from '@/blocks/WeInspect/config'
 import { whyUs } from '@/blocks/WhyUs/config'
@@ -142,6 +143,7 @@ export const Pages: CollectionConfig = {
         photoDescriptor,
         privilege,
         quote,
+        recentYachts,
         tiles,
         weInspect,
         whyUs,
