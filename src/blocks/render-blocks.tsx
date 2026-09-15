@@ -24,6 +24,7 @@ import { OptionsTiles } from './OptionsTiles/Component'
 import { PhotoDescriptor } from './PhotoDescriptor/Component'
 import { Privilege } from './Privilege/Component'
 import { Quote } from './Quote/Component'
+import { RecentYachts } from './RecentYachts/Component'
 import { Tiles } from './Tiles/Component'
 import { WeInspect } from './WeInspect/Component'
 import { YachtsPromo } from './YachtsPromo/Component'
@@ -328,6 +329,8 @@ function blockFor(block: LayoutBlock, key: string) {
           variant={block.variant}
         />
       )
+    case 'recentYachts':
+      return <RecentYachts key={key} limit={block.limit} title={block.title} />
     case 'yachtsPromo': {
       const image = mediaSource(typeof block.image === 'object' ? block.image : null)
       const picture = mediaSource(
