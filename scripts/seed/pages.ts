@@ -551,6 +551,29 @@ function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout 
           : 'Рейс, который всё равно состоится, и салон летит в ту же сторону, что и вы.',
     })
 
+  if (slug === 'empty_legs')
+    sections.push({
+      blockType: 'emptyLegs',
+      title: locale === 'en' ? 'Flights leaving soon' : 'Ближайшие перелёты',
+      description:
+        locale === 'en'
+          ? 'The cabin is going anyway, and the price says so. New ones appear as the schedule changes.'
+          : 'Салон всё равно летит, и цена это отражает. Новые появляются по мере изменения расписания.',
+      limit: 12,
+      cta: {
+        label: locale === 'en' ? 'Make a booking' : 'Забронировать',
+        source: 'Empty-legs',
+      },
+      channel: {
+        title: locale === 'en' ? 'Be the first to know' : 'Узнавайте первыми',
+        description:
+          locale === 'en'
+            ? 'Every empty leg is posted to the Telegram channel the hour it is confirmed.'
+            : 'Каждый пустой перелёт публикуется в Telegram-канале в час подтверждения.',
+        label: locale === 'en' ? 'Open the channel' : 'Открыть канал',
+      },
+    })
+
   if (slug === 'sales_yachts' || slug === 'yachts') {
     const hero = HERO_YACHTS[slug][locale]
     sections.push({
@@ -812,6 +835,8 @@ function translated(layout: Layout | null | undefined, slug: string, fixture: Fi
             written?.blockType === 'documents' ? written.documents : undefined,
           ),
         }
+      case 'emptyLegs':
+        return { ...block, id }
       case 'faq':
         return {
           ...block,

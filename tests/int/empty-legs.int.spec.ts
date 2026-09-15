@@ -1,5 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
 
+import { listEmptyLegs } from '@/lib/data/empty-legs'
+
 import { createEmptyLeg, createUser, emptyLegData } from '../factories'
 import { createRegistry, uniqueSuffix, type TestRegistry } from '../helpers/payload'
 
@@ -237,5 +239,105 @@ describe('revalidation', () => {
     const tags = revalidateTag.mock.calls.map(([tag]) => tag as string)
 
     expect(tags).toContain('empty-legs')
+  })
+})
+
+/**
+ * The list the section on a page reads (issue #117). The legacy section read the whole table in
+ * whatever order the database felt like, looked each code up with a wildcard `ILIKE`, and dropped
+ * a leg it could not resolve (`docs/legacy-inventory.md` section 6).
+ */
+describe('the listing the section reads', () => {
+  /** The suite's own Payload, as the section's data helper would be given one on the server. */
+  const client = () => Promise.resolve(registry.payload)
+
+  /** An airport in both languages, as the import of E5.5 leaves them. */
+  async function airportIn(icao: string, en: [string, string], ru: [string, string]) {
+    const created = await registry.create('airports', {
+      icao,
+      city: en[0],
+      country: en[1],
+    })
+
+    await registry.payload.update({
+      collection: 'airports',
+      id: created.id,
+      locale: 'ru',
+      data: { city: ru[0], country: ru[1] },
+      overrideAccess: true,
+    })
+
+    return created
+  }
+
+  it('lists the flights in the order an editor put them, whatever their dates', async () => {
+    const [second, last, first] = await Promise.all([
+      createEmptyLeg(registry, { order: 92, departureAt: '2026-01-01T00:00:00.000Z' }),
+      createEmptyLeg(registry, { order: null, departureAt: '2020-01-01T00:00:00.000Z' }),
+      createEmptyLeg(registry, { order: 91, departureAt: '2026-06-01T00:00:00.000Z' }),
+    ])
+    const ids = [first.id, second.id, last.id]
+
+    const listed = await listEmptyLegs('en', 500, client)
+
+    expect(listed.filter((leg) => ids.includes(leg.id as number)).map((leg) => leg.id)).toEqual(ids)
+  })
+
+  it('lists a flight that has already left, as the legacy page did', async () => {
+    // The decision on issue #117: no expiry rule, because the legacy site had none.
+    const flown = await createEmptyLeg(registry, { departureAt: '2020-03-05T09:30:00.000Z' })
+
+    const listed = await listEmptyLegs('en', 500, client)
+
+    expect(listed.some((leg) => leg.id === flown.id)).toBe(true)
+  })
+
+  it('asks for no more flights than the section is set to show', async () => {
+    await createEmptyLeg(registry)
+
+    await expect(listEmptyLegs('en', 2, client)).resolves.toHaveLength(2)
+  })
+
+  it('names the airports in the language of the page', async () => {
+    const from = await airportIn('UUEE', ['Moscow', 'Russia'], ['Москва', 'Россия'])
+    const to = await airportIn('LFMD', ['Cannes', 'France'], ['Канны', 'Франция'])
+    const leg = await createEmptyLeg(registry, {
+      departureAirport: from.id,
+      departureIcao: from.icao,
+      arrivalAirport: to.id,
+      arrivalIcao: to.icao,
+    })
+
+    const english = (await listEmptyLegs('en', 500, client)).find((one) => one.id === leg.id)
+    const russian = (await listEmptyLegs('ru', 500, client)).find((one) => one.id === leg.id)
+
+    expect(english?.from).toEqual({ icao: 'UUEE', airport: 'Moscow, Russia' })
+    expect(russian?.from).toEqual({ icao: 'UUEE', airport: 'Москва, Россия' })
+    expect(russian?.to.airport).toBe('Канны, Франция')
+  })
+
+  it('keeps a flight whose code matches no airport, where the legacy dropped it', async () => {
+    const leg = await createEmptyLeg(registry, {
+      departureIcao: 'ZZZZ',
+      arrivalIcao: 'YYYY',
+      departureAirport: null,
+      arrivalAirport: null,
+    })
+
+    const listed = (await listEmptyLegs('en', 500, client)).find((one) => one.id === leg.id)
+
+    expect(listed?.from).toEqual({ icao: 'ZZZZ', airport: undefined })
+    expect(listed?.to).toEqual({ icao: 'YYYY', airport: undefined })
+  })
+
+  it('lists none rather than taking the page down when the database cannot be reached', async () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined)
+
+    // Every legacy query was wrapped in `.catch(() => [])`, so an outage drew an empty section.
+    await expect(
+      listEmptyLegs('en', 5, () => Promise.reject(new Error('connection refused'))),
+    ).resolves.toEqual([])
+    expect(warn).toHaveBeenCalled()
+    warn.mockRestore()
   })
 })

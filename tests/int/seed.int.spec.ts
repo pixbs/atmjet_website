@@ -3,6 +3,7 @@ import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
 import { findRedirect } from '@/lib/data/redirects'
 
 import { runSeed } from '../../scripts/seed'
+import { SEED_AIRPORTS, SEED_EMPTY_LEGS } from '../../scripts/seed/empty-legs'
 import { SEEDED_GLOBALS } from '../../scripts/seed/globals'
 import { SEED_IMAGES } from '../../scripts/seed/media'
 import { LEGACY_REDIRECTS, seedRedirects } from '../../scripts/seed/redirects'
@@ -16,15 +17,15 @@ const revalidateTag = vi.hoisted(() => vi.fn())
 vi.mock('next/cache', () => ({ revalidateTag }))
 
 /**
- * The seed, and the only suite in this tier that runs any part of it (issues #41, #60, #61, #69
- * and #306).
+ * The seed, and the only suite in this tier that runs any part of it (issues #41, #60, #61,
+ * #69, #117 and #306).
  *
  * What the seed writes is keyed by natural keys rather than by `uniqueSuffix`: thirteen pages by
- * slug, two uploads by filename, five redirects by path and two globals. Vitest gives every file
- * its own worker against one database, so a second suite that seeds — or that deletes what the
- * seed wrote — races this one: a cleanup landing between two runs makes the second report
- * `created` where idempotency says `unchanged`, which is how the tier came to fail about one run
- * in three.
+ * slug, two uploads by filename, the airports and the flights between them by code, five
+ * redirects by path and two globals. Vitest gives every file its own worker against one
+ * database, so a second suite that seeds — or that deletes what the seed wrote — races this one:
+ * a cleanup landing between two runs makes the second report `created` where idempotency says
+ * `unchanged`, which is how the tier came to fail about one run in three.
  *
  * The fixture therefore has exactly one owner. This file runs the seed and leaves what it wrote
  * in place: nothing of it is registered for cleanup, which is also what lets the build that
@@ -32,7 +33,13 @@ vi.mock('next/cache', () => ({ revalidateTag }))
  * keeps the next suite that wants a seeded document from taking the shortcut again.
  */
 const EXPECTED_DOCUMENTS =
-  1 + SEED_IMAGES.length + PAGE_SLUGS.length + SEEDED_GLOBALS.length + LEGACY_REDIRECTS.length
+  1 +
+  SEED_IMAGES.length +
+  SEED_AIRPORTS.length +
+  SEED_EMPTY_LEGS.length +
+  PAGE_SLUGS.length +
+  SEEDED_GLOBALS.length +
+  LEGACY_REDIRECTS.length
 
 let registry: TestRegistry
 

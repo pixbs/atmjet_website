@@ -70,3 +70,20 @@ export function routeEndLabel(icao: string, airport?: string | null): string {
   if (code === '') return name
   return name === '' ? code : `${name}(${code})`
 }
+
+/**
+ * `Dubai, United Arab Emirates`: the airport a route end relates to, named as the legacy section
+ * named it from the two columns it read (`docs/legacy-inventory.md` section 6). What is missing
+ * is left out rather than printed, where the legacy template returned a stray comma for an
+ * airport it knew only the country of.
+ */
+export function airportName(airport: {
+  city?: string | null
+  country?: string | null
+}): string | undefined {
+  const parts = [airport.city, airport.country]
+    .map((part) => (part ?? '').trim())
+    .filter((part) => part !== '')
+
+  return parts.length === 0 ? undefined : parts.join(', ')
+}

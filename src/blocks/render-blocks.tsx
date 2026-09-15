@@ -7,6 +7,7 @@ import { BestPrice } from './BestPrice/Component'
 import { ContactCard } from './ContactCard/Component'
 import { Descriptor } from './Descriptor/Component'
 import { Documents } from './Documents/Component'
+import { EmptyLegs } from './EmptyLegs/Component'
 import { Faq } from './Faq/Component'
 import { FramedDescriptor } from './FramedDescriptor/Component'
 import { GroupCards } from './GroupCards/Component'
@@ -97,6 +98,21 @@ function blockFor(block: LayoutBlock, key: string) {
 
       return offered.length === 0 ? null : <Documents key={key} documents={offered} />
     }
+    case 'emptyLegs':
+      return (
+        <EmptyLegs
+          key={key}
+          booking={{ href: `?showBooking=${block.cta.source}`, label: block.cta.label }}
+          channel={{
+            description: block.channel.description,
+            label: block.channel.label,
+            title: block.channel.title,
+          }}
+          description={block.description}
+          limit={block.limit}
+          title={block.title}
+        />
+      )
     case 'faq':
       return (
         <Faq
