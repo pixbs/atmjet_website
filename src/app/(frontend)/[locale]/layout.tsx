@@ -5,6 +5,7 @@ import { notFound } from 'next/navigation'
 import React from 'react'
 
 import { MotionProvider } from '@/components/providers/motion-provider'
+import { CookieConsent } from '@/components/sections/cookie-consent'
 import { Footer } from '@/components/sections/footer'
 import { Header } from '@/components/sections/header'
 import { JsonLd } from '@/components/ui/json-ld'
@@ -91,6 +92,8 @@ export default async function LocaleLayout({
             <Header locale={locale as Locale} locales={locales} />
             <main>{children}</main>
             <Footer locale={locale as Locale} locales={locales} />
+            {/* The question, and the tag its answer decides (issue #91). */}
+            <CookieConsent gtmId={process.env.NEXT_PUBLIC_GTM_ID} />
           </MotionProvider>
         </NextIntlClientProvider>
         {contact && <JsonLd data={organisation(origin, t('siteName'), contact)} />}
