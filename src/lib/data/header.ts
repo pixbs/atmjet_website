@@ -3,6 +3,7 @@ import { cache } from 'react'
 import type { Locale } from '@/i18n/locales'
 import { navLinks, navPageIds, type NavLink } from '@/lib/nav'
 
+import { slugsByPageId } from './pages'
 import { getPayloadClient } from './payload'
 
 export interface HeaderNav {
@@ -20,11 +21,8 @@ export interface HeaderNav {
 const EMPTY: HeaderNav = { primary: [], secondary: [], cta: null }
 
 /**
- * The navigation the header overlay opens, in one locale (issue #88).
- *
- * Two queries rather than one `depth: 1` read: the relationship resolves to whole Page
- * documents, and the chrome renders on every page of the site, so it asks for the twelve slugs
- * it needs instead of for twelve pages with everything on them.
+ * The navigation the header overlay opens, in one locale (issue #88). The pages it points at are
+ * read by `slugsByPageId`, which the footer uses as well.
  *
  * Read through `cache()`, so the header and anything else on the page share one pair of queries
  * per render pass, as the site settings do.
@@ -33,28 +31,10 @@ export const getHeaderNav = cache(async (locale: Locale): Promise<HeaderNav> => 
   try {
     const payload = await getPayloadClient()
     const header = await payload.findGlobal({ slug: 'header', locale, depth: 0 })
-    const ids = [...navPageIds(header.primaryNav), ...navPageIds(header.secondaryNav)]
-
-    const docs =
-      ids.length === 0
-        ? []
-        : (
-            await payload.find({
-              collection: 'pages',
-              where: { id: { in: ids } },
-              limit: 0,
-              depth: 0,
-              select: { slug: true },
-              // Only what a visitor can read: a link to a draft page is a link to a 404.
-              overrideAccess: false,
-            })
-          ).docs
-
-    const slugs = new Map(
-      docs.flatMap((page) =>
-        typeof page.slug === 'string' ? [[page.id, page.slug] as const] : [],
-      ),
-    )
+    const slugs = await slugsByPageId([
+      ...navPageIds(header.primaryNav),
+      ...navPageIds(header.secondaryNav),
+    ])
 
     return {
       primary: navLinks(header.primaryNav, slugs),
