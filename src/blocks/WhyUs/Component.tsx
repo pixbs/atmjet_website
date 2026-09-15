@@ -12,7 +12,7 @@ import type { ImageSource } from '@/lib/media'
 export interface WhyUsProps {
   title: string
   description?: string
-  cards: { figure?: string; title: string; description: string; image?: ImageSource }[]
+  cards: { figure?: string; title?: string; description: string; image?: ImageSource }[]
 }
 
 export function WhyUs({ title, description, cards }: WhyUsProps) {
@@ -29,7 +29,7 @@ export function WhyUs({ title, description, cards }: WhyUsProps) {
         <div className="relative w-full self-stretch overflow-clip rounded-2xl" data-cards="why-us">
           {cards.map((card, index) => (
             <WhyUsCard
-              key={card.title}
+              key={card.title ?? card.description}
               description={card.description}
               image={card.image}
               num={card.figure}

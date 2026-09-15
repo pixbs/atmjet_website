@@ -36,6 +36,7 @@ import { Transfer } from './Transfer/Component'
 import { WeInspect } from './WeInspect/Component'
 import { YachtsPromo } from './YachtsPromo/Component'
 import { WhyUs } from './WhyUs/Component'
+import { WordmarkNote } from './WordmarkNote/Component'
 
 /**
  * The sections of a page, in the order an editor put them (issue #112, E7). One case per block
@@ -466,12 +467,14 @@ function blockFor(block: LayoutBlock, key: string, locale: Locale) {
             description: card.description,
             figure: card.figure ?? undefined,
             image: mediaSource(typeof card.image === 'object' ? card.image : null) ?? undefined,
-            title: card.title,
+            title: card.title ?? undefined,
           }))}
           description={block.description ?? undefined}
           title={block.title}
         />
       )
+    case 'wordmarkNote':
+      return <WordmarkNote key={key} note={block.note} />
   }
 }
 
