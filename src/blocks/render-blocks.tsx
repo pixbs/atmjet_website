@@ -6,6 +6,7 @@ import type { Page } from '@/payload-types'
 import { Advantages } from './Advantages/Component'
 import { BestPrice } from './BestPrice/Component'
 import { ContactCard } from './ContactCard/Component'
+import { ContactUs } from './ContactUs/Component'
 import { Descriptor } from './Descriptor/Component'
 import { Documents } from './Documents/Component'
 import { EmptyLegs } from './EmptyLegs/Component'
@@ -91,6 +92,17 @@ function blockFor(block: LayoutBlock, key: string, locale: Locale) {
         />
       )
     }
+    case 'contactUs':
+      return (
+        <ContactUs
+          key={key}
+          hours={block.hours}
+          locale={locale}
+          source={block.source}
+          telegram={block.telegram}
+          whatsapp={block.whatsapp}
+        />
+      )
     case 'descriptor':
       return <Descriptor key={key} description={block.description} title={block.title} />
     case 'documents': {

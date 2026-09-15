@@ -45,6 +45,7 @@ export function BookingForm({
   locale,
   defaultCountry,
   formType,
+  source,
   tags = [],
   className,
 }: {
@@ -53,6 +54,8 @@ export function BookingForm({
   defaultCountry: PhoneInputProps['defaultCountry']
   /** Which form this is, for the record the lead keeps (issue #68). */
   formType: (typeof LEAD_FORM_TYPES)[number]
+  /** What the lead is traced back to where no button opened the form, as the inline one is. */
+  source?: string
   /** The chips a visitor may tick. The legacy list was hard-coded per language (section 7.2). */
   tags?: readonly string[]
   className?: string
@@ -88,8 +91,9 @@ export function BookingForm({
       formType,
       elapsedMs: elapsedSince(touchedAt, event?.timeStamp),
       trap: honeypot instanceof HTMLInputElement ? honeypot.value : '',
-      // The legacy carried the name of the button that opened the form (section 3.9).
-      source: query.get('showBooking') ?? undefined,
+      // The legacy carried the name of the button that opened the form (section 3.9); a form
+      // nothing opened sent an empty string, so this one says where it stands instead.
+      source: query.get('showBooking') ?? source,
       locale,
       url: window.location.href,
       directions: parseDirections(query.get('direction')),
