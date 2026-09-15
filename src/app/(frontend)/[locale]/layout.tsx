@@ -2,15 +2,18 @@ import { NextIntlClientProvider } from 'next-intl'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import React from 'react'
+import React, { Suspense } from 'react'
 
 import { MotionProvider } from '@/components/providers/motion-provider'
+import { BookingDialog } from '@/components/sections/booking-dialog'
 import { CookieConsent } from '@/components/sections/cookie-consent'
 import { Footer } from '@/components/sections/footer'
 import { Header } from '@/components/sections/header'
 import { JsonLd } from '@/components/ui/json-ld'
 import type { Locale } from '@/i18n/locales'
-import { getEnabledLocales, getSiteContact } from '@/lib/data/site-settings'
+import { defaultCountry } from '@/lib/countries'
+import { getEnabledLocales, getSiteContact, getSocialLinks } from '@/lib/data/site-settings'
+import { SOCIAL_NETWORKS, telHref } from '@/lib/links'
 import { organisation, webSite } from '@/lib/structured-data'
 import { siteOrigin } from '@/lib/urls'
 
@@ -70,10 +73,20 @@ export default async function LocaleLayout({
 
   // Who the site belongs to and how to reach them, on every page (issue #173).
   const origin = siteOrigin()
-  const [contact, t] = await Promise.all([
+  const [contact, social, t, tBooking, tSocial] = await Promise.all([
     getSiteContact(),
+    getSocialLinks(),
     getTranslations({ locale, namespace: 'seo' }),
+    getTranslations({ locale, namespace: 'booking' }),
+    getTranslations({ locale, namespace: 'social' }),
   ])
+
+  // The dialog every booking button opens (issue #93). Mounted here, as the legacy mounted it,
+  // because the query that opens it is on whatever page the visitor is reading; a link that
+  // goes nowhere is what one on a page without it would be.
+  const accounts = SOCIAL_NETWORKS.flatMap((network) =>
+    social[network] === '' ? [] : [{ label: tSocial(network), href: social[network] }],
+  )
 
   return (
     <html lang={locale}>
@@ -92,6 +105,19 @@ export default async function LocaleLayout({
             <Header locale={locale as Locale} locales={locales} />
             <main>{children}</main>
             <Footer locale={locale as Locale} locales={locales} />
+            {/* Around the dialog alone, never around the page: it reads the query, and a
+                boundary over `[[...slug]]` would turn its redirects and its 404s into a 200
+                shell (`docs/legacy-inventory.md` section 13, entry 98). */}
+            <Suspense>
+              <BookingDialog
+                defaultCountry={defaultCountry(null, locale as Locale)}
+                labels={{ title: tBooking('title'), close: tBooking('close') }}
+                locale={locale as Locale}
+                phone={contact && { label: contact.phone, href: telHref(contact.phone) }}
+                social={accounts}
+                tags={[tBooking('tagPartnership'), tBooking('tagPress'), tBooking('tagOther')]}
+              />
+            </Suspense>
             {/* The question, and the tag its answer decides (issue #91). */}
             <CookieConsent gtmId={process.env.NEXT_PUBLIC_GTM_ID} />
           </MotionProvider>
