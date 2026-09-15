@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test'
 
 import { pathFor } from '../e2e/routes'
-import { hideHeroVideo } from './chrome'
+import { hideHeroVideo, settlePage } from './chrome'
 
 /**
  * Visual parity example. Every ported section and page adds a screenshot test
@@ -12,6 +12,7 @@ test('home page matches its baseline', async ({ page }) => {
   await page.goto(pathFor('/', 'en'))
   await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
   await hideHeroVideo(page)
+  await settlePage(page)
 
   await expect(page).toHaveScreenshot('home.png', { fullPage: true })
 })
