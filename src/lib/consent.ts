@@ -59,3 +59,30 @@ export function consentCookies(consent: Consent): string[] {
     [CONSENT_COOKIE, true],
   ].map(([name, allowed]) => `${name}=${allowed}; Max-Age=${CONSENT_MAX_AGE}; Path=/; SameSite=Lax`)
 }
+
+/** What Google calls each thing a tag may do, and which of the two answers decides it. */
+const SIGNALS = {
+  ad_storage: 'marketing',
+  ad_user_data: 'marketing',
+  ad_personalization: 'marketing',
+  analytics_storage: 'marketing',
+  personalization_storage: 'personal',
+} as const
+
+/**
+ * The answer in the words Google Consent Mode reads (issue #174). The two the modal calls
+ * necessary are granted throughout: they are what carries the answer itself and the session, and
+ * the legacy modal listed them as required rather than as a choice
+ * (`docs/legacy-inventory.md` section 3.7).
+ */
+export function consentSignals(consent: Consent): Record<string, 'granted' | 'denied'> {
+  const state = (allowed: boolean) => (allowed ? 'granted' : 'denied')
+
+  return {
+    ...Object.fromEntries(
+      Object.entries(SIGNALS).map(([signal, answer]) => [signal, state(consent[answer])]),
+    ),
+    functionality_storage: 'granted',
+    security_storage: 'granted',
+  }
+}
