@@ -39,7 +39,9 @@ The design tokens are unit tested too: `tests/helpers/tailwind.ts` compiles `src
 
 ## Browser tiers
 
-`playwright.config.ts` defines the `e2e`, `visual` and `a11y` projects. They start `bun run dev` themselves, or target a deployment when `PLAYWRIGHT_BASE_URL` is set (with the Vercel bypass header from `VERCEL_AUTOMATION_BYPASS_SECRET`). Chromium comes from `bunx playwright install chromium` or `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH`.
+`playwright.config.ts` defines the `e2e`, `visual` and `a11y` projects. They build the site and serve it themselves (`bun run build && bun run start`), or target a deployment when `PLAYWRIGHT_BASE_URL` is set (with the Vercel bypass header from `VERCEL_AUTOMATION_BYPASS_SECRET`). Chromium comes from `bunx playwright install chromium` or `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH`.
+
+A tier run against `next dev` loses specs to the server rather than to the site: `next dev` re-evaluates its modules as it serves, which loses the memoised Payload instance, and every rebuild of it runs a drizzle push whose window answers requests with the error page (issue #292). A server that is already listening is used as it is, so `bun run dev` in another terminal is still how a tier is pointed at the dev server on purpose.
 
 Run `bun run migrate && bun run seed` before them on a fresh database, as the `ci` workflow does. Readiness is checked against `/en/styleguide` rather than `/`: the styleguide is a static route, so an unseeded database fails a test that names the missing content instead of timing out after two minutes on a webServer check with nothing to say.
 
