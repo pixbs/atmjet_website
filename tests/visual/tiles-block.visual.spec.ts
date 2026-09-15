@@ -20,7 +20,7 @@ const VIEWPORTS = {
 for (const [name, size] of Object.entries(VIEWPORTS)) {
   test(`the tiles grid matches its baseline at ${name} width`, async ({ page }) => {
     await page.setViewportSize(size)
-    await page.goto(pathFor('/cargo_charter', 'en'))
+    await page.goto(pathFor('/', 'en'))
     const section = page.locator(SECTION)
     await expect(section).toBeVisible()
     await page.evaluate(() => document.fonts.ready)

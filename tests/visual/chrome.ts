@@ -39,3 +39,31 @@ export async function hideDevOverlay(page: Page) {
 export async function hideHeroVideo(page: Page) {
   await page.addStyleTag({ content: '[data-section="hero-video"] video { visibility: hidden }' })
 }
+
+/**
+ * A whole page, ready to be captured: everything below the fold has been asked for, every
+ * photograph has arrived, and every reveal is where it comes to rest.
+ *
+ * A reveal that re-runs (`whileInView` without `once`) puts its section back to `opacity: 0`
+ * the moment it leaves the screen, and one that has never been reached has not started, so a
+ * full-page capture would otherwise hold whichever sections happened to be on screen when the
+ * shutter opened. What each reveal does has its own end-to-end test; a baseline is of where
+ * they come to rest.
+ *
+ * The resting state is forced only inside `main`: the chrome above and below it animates on
+ * its own terms, and the preloader's resting state is the one where it has gone.
+ */
+export async function settlePage(page: Page) {
+  await page.evaluate(async () => {
+    for (let top = 0; top <= document.body.scrollHeight; top += window.innerHeight / 2) {
+      window.scrollTo({ top, behavior: 'instant' })
+      await new Promise((resolve) => requestAnimationFrame(resolve))
+    }
+    window.scrollTo({ top: 0, behavior: 'instant' })
+  })
+
+  await waitForPhotos(page.locator('main'))
+  await page.addStyleTag({
+    content: 'main [style*="opacity"] { opacity: 1 !important; transform: none !important }',
+  })
+}
