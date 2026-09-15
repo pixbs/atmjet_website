@@ -57,8 +57,11 @@ test.describe('the flight request', () => {
     await expect(form.getByRole('button', { name: 'Add leg' })).toHaveCount(0)
   })
 
-  test('keeps the legs a round trip puts aside, which the legacy threw away', async ({ page }) => {
-    // Switching to a round trip removed legs 1..n and nothing ever put them back (section 7.1).
+  test('throws away the legs a round trip replaces, and does not hand them back', async ({
+    page,
+  }) => {
+    // `remove([1..n])` with no counterpart, which section 13 entry 65 marks `keep` rather than a
+    // bug to fix: a visitor who looks at the return flight loses the itinerary they had typed.
     const form = formOf(page)
     await form.getByRole('button', { name: 'Add leg' }).click()
     await form.getByRole('combobox', { name: 'From' }).nth(1).fill('London')
@@ -67,8 +70,7 @@ test.describe('the flight request', () => {
     await expect(legsOf(page)).toHaveCount(1)
 
     await form.getByRole('button', { name: 'Multi-leg' }).click()
-    await expect(legsOf(page)).toHaveCount(2)
-    await expect(form.getByRole('combobox', { name: 'From' }).nth(1)).toHaveValue('London')
+    await expect(legsOf(page)).toHaveCount(1)
   })
 
   test('offers the airports the search ranks, and puts the one chosen into the leg', async ({
