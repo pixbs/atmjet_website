@@ -469,7 +469,8 @@ function blockFor(block: LayoutBlock, key: string, locale: Locale) {
             title: card.title,
           }))}
           description={block.description ?? undefined}
-          title={block.title}
+          title={block.title ?? undefined}
+          variant={block.variant}
         />
       )
   }

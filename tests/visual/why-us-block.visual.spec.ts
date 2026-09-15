@@ -40,3 +40,22 @@ test('the why us section matches its baseline', async ({ page }) => {
 
   await expect(page).toHaveScreenshot('why-us-section.png')
 })
+
+/**
+ * The same cards with nothing around them (issue #145): the group charters page laid them
+ * straight into the container, with no heading beside them and no box clipping them.
+ */
+test('the bare stack matches its baseline', async ({ page }) => {
+  await page.goto(pathFor('/group_charters', 'en'))
+  const section = page.locator('[data-section="why-us"][data-variant="bare"]')
+  await expect(section).toBeVisible()
+  await page.evaluate(() => document.fonts.ready)
+  await hideFloatingHeader(page)
+
+  await scrollTo(section, 100)
+  await waitForPhotos(section)
+  await scrollTo(section, 100)
+  await expect.poll(async () => Math.round((await section.boundingBox())?.y ?? -1)).toBe(100)
+
+  await expect(page).toHaveScreenshot('why-us-bare.png')
+})
