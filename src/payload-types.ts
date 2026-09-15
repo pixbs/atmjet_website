@@ -276,6 +276,7 @@ export interface Page {
         | HeroYachtsBlock
         | KeyFeaturesBlock
         | OptionsTilesBlock
+        | PersonalManagerBlock
         | PhotoDescriptorBlock
         | PrivilegeBlock
         | QuoteBlock
@@ -682,6 +683,27 @@ export interface OptionsTilesBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'optionsTiles';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PersonalManagerBlock".
+ */
+export interface PersonalManagerBlock {
+  title: string;
+  description: string;
+  image: number | Media;
+  /**
+   * One per box. The legacy section split a single string on `;`.
+   */
+  chips?:
+    | {
+        label: string;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'personalManager';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1750,6 +1772,7 @@ export interface PagesSelect<T extends boolean = true> {
         heroYachts?: T | HeroYachtsBlockSelect<T>;
         keyFeatures?: T | KeyFeaturesBlockSelect<T>;
         optionsTiles?: T | OptionsTilesBlockSelect<T>;
+        personalManager?: T | PersonalManagerBlockSelect<T>;
         photoDescriptor?: T | PhotoDescriptorBlockSelect<T>;
         privilege?: T | PrivilegeBlockSelect<T>;
         quote?: T | QuoteBlockSelect<T>;
@@ -2065,6 +2088,23 @@ export interface OptionsTilesBlockSelect<T extends boolean = true> {
         label?: T;
         page?: T;
         dim?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PersonalManagerBlock_select".
+ */
+export interface PersonalManagerBlockSelect<T extends boolean = true> {
+  title?: T;
+  description?: T;
+  image?: T;
+  chips?:
+    | T
+    | {
+        label?: T;
         id?: T;
       };
   id?: T;
