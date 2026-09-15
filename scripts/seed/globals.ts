@@ -123,6 +123,18 @@ function isTheSeedsOwnWreck(global: SavedMenus, slug: (typeof SEEDED_GLOBALS)[nu
   )
 }
 
+/** The placeholder the footer's photograph is until the real assets arrive (issue #84). */
+async function backgroundId(payload: Payload): Promise<number | undefined> {
+  const media = await payload.find({
+    collection: 'media',
+    where: { filename: { equals: 'seed-surface.png' } },
+    limit: 1,
+    overrideAccess: true,
+  })
+
+  return media.docs[0]?.id
+}
+
 async function pageIdsBySlug(payload: Payload): Promise<Map<string, number>> {
   const pages = await payload.find({
     collection: 'pages',
@@ -161,6 +173,7 @@ function navRows(
 
 export async function seedGlobals(payload: Payload): Promise<SeedOutcome[]> {
   const ids = await pageIdsBySlug(payload)
+  const background = await backgroundId(payload)
   const outcomes: SeedOutcome[] = []
 
   for (const slug of SEEDED_GLOBALS) {
@@ -200,6 +213,7 @@ export async function seedGlobals(payload: Payload): Promise<SeedOutcome[]> {
           },
           ...(slug === 'footer'
             ? {
+                background,
                 legal: {
                   location: translate(LEGAL.location, locale),
                   copyright: translate(LEGAL.copyright, locale),

@@ -35,6 +35,15 @@ export const Footer: GlobalConfig = {
       })),
       admin: { description: 'Which accounts to link, in the order they are shown.' },
     },
+    {
+      name: 'background',
+      type: 'upload',
+      relationTo: 'media',
+      admin: {
+        description:
+          'The photograph behind the footer. The legacy site served a 1.5 MB JPEG where a 92 KB WebP of the same picture sat beside it (section 13, entry 83).',
+      },
+    },
     bookingCta('Footer'),
     {
       name: 'legal',
