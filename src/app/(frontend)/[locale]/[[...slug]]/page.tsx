@@ -5,6 +5,7 @@ import React from 'react'
 
 import { RenderBlocks } from '@/blocks/render-blocks'
 import { servedStatusFor } from '@/collections/Redirects'
+import { AngleBar } from '@/components/sections/angle-bar'
 import { JsonLd } from '@/components/ui/json-ld'
 import type { Locale } from '@/i18n/locales'
 import { listPageParams } from '@/lib/data/pages'
@@ -120,7 +121,11 @@ async function redirectOrNotFound(locale: Locale, slug: string[] | undefined): P
 export default async function CatchAllPage({ params }: { params: Promise<PageParams> }) {
   const { locale, slug } = await params
 
-  if (!(await getEnabledLocales()).includes(locale as Locale)) notFound()
+  // A prefix that is not an enabled locale never reaches a page: the proxy stops routing it and
+  // this is the second door, for a request that arrives at the route directly (issue #53).
+  const locales = await getEnabledLocales()
+  if (!locales.includes(locale as Locale)) notFound()
+
   setRequestLocale(locale)
 
   const page = await findPage(locale, slugFrom(slug))
@@ -148,6 +153,9 @@ export default async function CatchAllPage({ params }: { params: Promise<PagePar
       ) : (
         <RenderBlocks layout={page.layout} />
       )}
+      {/* The floating button the legacy site drew on the home page and nowhere else
+          (`docs/legacy-inventory.md` section 3.5, issue #94). */}
+      {slugFrom(slug) === '' && <AngleBar locale={locale as Locale} locales={locales} />}
       {trail && <JsonLd data={trail} />}
     </>
   )

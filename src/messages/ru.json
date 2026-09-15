@@ -1,4 +1,7 @@
 {
+  "angleBar": {
+    "citizens": "Для граждан РФ"
+  },
   "common": {
     "skipToContent": "Перейти к содержимому",
     "loading": "Загрузка",
