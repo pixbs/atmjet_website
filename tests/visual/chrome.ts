@@ -30,3 +30,12 @@ export async function waitForPhotos(cards: Locator) {
 export async function hideDevOverlay(page: Page) {
   await page.addStyleTag({ content: 'nextjs-portal { display: none }' })
 }
+
+/**
+ * A frame of the hero video is never the same twice, and the file it plays arrives with the
+ * assets of E5.12 (issue #111). It is hidden rather than masked because it fills its section:
+ * a mask over it would paint over the words drawn on top of it as well.
+ */
+export async function hideHeroVideo(page: Page) {
+  await page.addStyleTag({ content: '[data-section="hero-video"] video { visibility: hidden }' })
+}

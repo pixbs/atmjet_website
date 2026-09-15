@@ -1,7 +1,7 @@
 import Link from 'next/link'
 
 import { Reveal } from '@/components/motion/reveal'
-import { HeroFrame } from '@/components/sections/hero-frame'
+import { HeroFrame, HeroPhoto } from '@/components/sections/hero-frame'
 import { buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/cn'
 import type { ImageSource } from '@/lib/media'
@@ -34,9 +34,8 @@ export function HeroYachts({
 }: HeroYachtsProps) {
   return (
     <HeroFrame
-      alt={image.alt === '' ? title : image.alt}
-      contentClassName="justify-end pb-14 md:justify-center"
-      image={image}
+      backdrop={<HeroPhoto alt={image.alt === '' ? title : image.alt} image={image} />}
+      contentClassName="items-start justify-end pb-14 md:justify-center"
       section="hero-yachts"
     >
       <p className="text-sm uppercase">{overline}</p>

@@ -5,27 +5,42 @@ import { cn } from '@/lib/cn'
 import type { ImageSource } from '@/lib/media'
 
 /**
- * The shell both full-screen heroes are drawn in (issues #113 and #114,
- * `docs/legacy-inventory.md` section 5): a photograph filling the screen, the darkening
- * gradient over it, and the words over that.
+ * The shell every full-screen hero is drawn in (issues #111, #113 and #114,
+ * `docs/legacy-inventory.md` section 5): something filling the screen, the darkening gradient
+ * over it, and the words over that.
  *
- * The legacy wrote it out twice, once per section, down to the z-indexes; what differs between
- * them is where the words sit in the screen, which is what `contentClassName` says.
+ * The legacy wrote it out once per section, down to the z-indexes; what differs between them is
+ * where the words sit in the screen and whether the screen holds a photograph or a video.
  */
 
 /** What the legacy asked the optimiser for; the photograph covers the screen whatever it is. */
 const PHOTO = { width: 1920, height: 1080 }
 
+/** The screen-filling photograph, for the two heroes drawn on one rather than on a video. */
+export function HeroPhoto({ image, alt }: { image: ImageSource; alt: string }) {
+  // The first screen of the page, so it is fetched with the markup rather than lazily: the
+  // legacy marked every hero `loading='lazy'` (section 13, entry 15).
+  return (
+    <Image
+      alt={alt}
+      className="absolute inset-0 z-0 size-full object-cover"
+      height={PHOTO.height}
+      priority
+      sizes="100vw"
+      src={image.src}
+      width={PHOTO.width}
+    />
+  )
+}
+
 export function HeroFrame({
-  image,
-  alt,
+  backdrop,
   section,
   contentClassName,
   children,
 }: {
-  image: ImageSource
-  /** What the photograph shows, for a reader who cannot see it. */
-  alt: string
+  /** What fills the screen behind the words: a photograph, or the video of the home page. */
+  backdrop: ReactNode
   /** The `data-section` this hero answers to. */
   section: string
   contentClassName?: string
@@ -35,21 +50,9 @@ export function HeroFrame({
     <section data-section={section}>
       {/* `.container` is an unlayered parity rule, so cancelling its margin needs the important
           marker, exactly as the legacy `!my-0` did (docs/adr/0006-styling-and-motion.md). */}
-      <div className={cn('z-20 container my-0! h-svh items-start gap-2', contentClassName)}>
-        {children}
-      </div>
+      <div className={cn('z-20 container my-0! h-svh gap-2', contentClassName)}>{children}</div>
       <div className="hero-darkening absolute inset-0 z-10" />
-      {/* The first screen of the page, so it is fetched with the markup rather than lazily:
-          the legacy marked every hero `loading='lazy'` (section 13, entry 15). */}
-      <Image
-        alt={alt}
-        className="absolute inset-0 z-0 size-full object-cover"
-        height={PHOTO.height}
-        priority
-        sizes="100vw"
-        src={image.src}
-        width={PHOTO.width}
-      />
+      {backdrop}
     </section>
   )
 }

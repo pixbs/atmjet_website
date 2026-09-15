@@ -273,6 +273,7 @@ export interface Page {
         | HeroPartnersBlock
         | HeroSalesBlock
         | HeroSubpageBlock
+        | HeroVideoBlock
         | HeroYachtsBlock
         | KeyFeaturesBlock
         | OptionsTilesBlock
@@ -615,6 +616,29 @@ export interface HeroSubpageBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'heroSubpage';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "HeroVideoBlock".
+ */
+export interface HeroVideoBlock {
+  overline: string;
+  title: string;
+  /**
+   * Path under `public`, as the legacy markup wrote it — `/video/background_full.mp4`. The legacy path had no leading slash, so it resolved against the page and needed a second copy of the file (section 13, entry 13).
+   */
+  video: string;
+  /**
+   * Shown instead on a narrow screen. The legacy site named one and never used it, so leaving this empty is what it drew.
+   */
+  videoMobile?: string | null;
+  /**
+   * The still shown until the video plays. The legacy hero had none, so leaving this empty is what it drew.
+   */
+  poster?: (number | null) | Media;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'heroVideo';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1769,6 +1793,7 @@ export interface PagesSelect<T extends boolean = true> {
         heroPartners?: T | HeroPartnersBlockSelect<T>;
         heroSales?: T | HeroSalesBlockSelect<T>;
         heroSubpage?: T | HeroSubpageBlockSelect<T>;
+        heroVideo?: T | HeroVideoBlockSelect<T>;
         heroYachts?: T | HeroYachtsBlockSelect<T>;
         keyFeatures?: T | KeyFeaturesBlockSelect<T>;
         optionsTiles?: T | OptionsTilesBlockSelect<T>;
@@ -2035,6 +2060,19 @@ export interface HeroSubpageBlockSelect<T extends boolean = true> {
   title?: T;
   description?: T;
   image?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "HeroVideoBlock_select".
+ */
+export interface HeroVideoBlockSelect<T extends boolean = true> {
+  overline?: T;
+  title?: T;
+  video?: T;
+  videoMobile?: T;
+  poster?: T;
   id?: T;
   blockName?: T;
 }
