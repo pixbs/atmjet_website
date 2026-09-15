@@ -2,13 +2,15 @@ import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
 
 /**
- * The order the `tests and build` job runs its steps in (issue #252).
+ * The order the `tests and build` job runs its steps in (issues #252 and #306).
  *
- * `tests/int/seed.int.spec.ts` runs the seed and registers what it creates with the test
- * registry, so it deletes the fixture content on its way out. A build that follows it reads an
- * empty database and prerenders nothing — quietly, because an empty database is also the
- * legitimate answer for a preview with no content yet (`listPageParams`). The build then proves
- * nothing about the pages, which is the one thing it is there for, so the order is pinned here.
+ * One seed, before both readers of the fixture: the integration tier and the build that
+ * prerenders the pages. It ran a second time between them until `tests/int/seed.int.spec.ts`
+ * stopped registering what the seed creates with the test registry — until then the tier deleted
+ * the fixture on its way out, and a build that followed read an empty database and prerendered
+ * nothing, quietly, because an empty database is also the legitimate answer for a preview with
+ * no content yet (`listPageParams`). The build proves something about the pages only in this
+ * order, so it is pinned here.
  */
 const workflow = readFileSync(new URL('../../.github/workflows/ci.yml', import.meta.url), 'utf8')
 
@@ -20,12 +22,16 @@ const commandAt = (command: string, from = 0): number => {
 }
 
 describe('the tests and build job', () => {
-  it('seeds the fixture content again before it builds against it', () => {
+  it('seeds the fixture once, before the tier and the build that read it', () => {
+    const seed = commandAt('seed')
     const tests = commandAt('test:int')
-    const build = commandAt('build', tests)
-    const seed = commandAt('seed', tests)
 
-    expect(seed, 'the seed must run after the tests that delete what it wrote').toBeLessThan(build)
+    expect(seed, 'the fixture must exist before the suites that read it').toBeLessThan(tests)
+    expect(seed).toBeLessThan(commandAt('build', tests))
+    expect(
+      workflow.indexOf('run: bun run seed', seed + 1),
+      'one seed is enough: the tier leaves the fixture where it found it (issue #306)',
+    ).toBe(-1)
   })
 
   it('builds after the tests, so a broken page fails the same job', () => {

@@ -28,6 +28,7 @@ The design tokens are unit tested too: `tests/helpers/tailwind.ts` compiles `src
 - **Unique data, no truncation.** Every document a test creates carries a `uniqueSuffix()` in its natural key, so files running in parallel do not collide. Never delete whole collections: another worker may be using them.
 - **A registry per suite.** `const registry = await createRegistry()` in `beforeAll`, `registry.create(collection, data)` (or the factories) for every document, `afterAll(() => registry.cleanup())`. The registry deletes what the suite created, newest first, and tolerates documents already removed by the test.
 - **Seed** (`bun run seed`, `scripts/seed`): the fixture content every environment needs to render, idempotent by natural key; the `ci` workflow seeds before the suites run. The Vitest tiers never depend on seeded data except `tests/int/seed.int.spec.ts`; use the factories instead. The browser tiers do depend on it, because the site is content-driven: since issue #60 the home page is the `pages` document with the empty slug, so `/en` is a 404 until the seed has run.
+- **One owner for the fixture.** `tests/int/seed.int.spec.ts` is the only suite that runs the seed or any part of it, and it leaves what the seed wrote in place rather than registering it for cleanup. The fixture is keyed by slug, filename and path instead of by `uniqueSuffix`, so a second suite that seeds it, or that deletes it, races the first: that was a failure about one run in three, in a different spec each time (issue #306). `tests/unit/seed-ownership.test.ts` enforces it.
 - **Factories** under `tests/factories` (`createUser`, `createMedia`, ...) produce valid documents with unique keys; every new collection adds one and reuses it in `tests/int/access.int.spec.ts`.
 - **Access checks** pass `overrideAccess: false` and, when needed, `user`; the harness creates documents with `overrideAccess: true`.
 
@@ -39,7 +40,9 @@ The design tokens are unit tested too: `tests/helpers/tailwind.ts` compiles `src
 
 ## Browser tiers
 
-`playwright.config.ts` defines the `e2e`, `visual` and `a11y` projects. They start `bun run dev` themselves, or target a deployment when `PLAYWRIGHT_BASE_URL` is set (with the Vercel bypass header from `VERCEL_AUTOMATION_BYPASS_SECRET`). Chromium comes from `bunx playwright install chromium` or `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH`.
+`playwright.config.ts` defines the `e2e`, `visual` and `a11y` projects. They build the site and serve it themselves (`bun run build && bun run start`), or target a deployment when `PLAYWRIGHT_BASE_URL` is set (with the Vercel bypass header from `VERCEL_AUTOMATION_BYPASS_SECRET`). Chromium comes from `bunx playwright install chromium` or `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH`.
+
+A tier run against `next dev` loses specs to the server rather than to the site: `next dev` re-evaluates its modules as it serves, which loses the memoised Payload instance, and every rebuild of it runs a drizzle push whose window answers requests with the error page (issue #292). A server that is already listening is used as it is, so `bun run dev` in another terminal is still how a tier is pointed at the dev server on purpose.
 
 Run `bun run migrate && bun run seed` before them on a fresh database, as the `ci` workflow does. Readiness is checked against `/en/styleguide` rather than `/`: the styleguide is a static route, so an unseeded database fails a test that names the missing content instead of timing out after two minutes on a webServer check with nothing to say.
 
