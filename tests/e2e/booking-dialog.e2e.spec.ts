@@ -51,6 +51,9 @@ test.describe('the booking dialog', () => {
     await page.goto(`${pathFor('/empty_legs', 'en')}?showBooking=Header`)
     const dialog = dialogOf(page)
 
+    // The heading the legacy drew above every booking form (issue #345).
+    await expect(dialog.getByRole('heading', { name: 'Leave your details' })).toBeVisible()
+
     await expect(dialog.getByRole('link', { name: 'Telegram' })).toHaveAttribute(
       'href',
       'https://t.me/melentev1',
@@ -102,6 +105,9 @@ test.describe('the booking dialog', () => {
     await page.goto(`${pathFor('/empty_legs', 'ru')}?showBooking=Header`)
 
     await expect(dialogOf(page)).toHaveAttribute('aria-label', 'Забронировать')
+    await expect(
+      dialogOf(page).getByRole('heading', { name: 'Оставьте свои данные' }),
+    ).toBeVisible()
     await expect(dialogOf(page).getByRole('button', { name: 'Отправить' })).toBeVisible()
   })
 })

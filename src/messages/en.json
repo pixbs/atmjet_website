@@ -46,7 +46,8 @@
     }
   },
   "booking": {
-    "title": "Make a booking",
+    "title": "Leave your details",
+    "dialog": "Make a booking",
     "close": "Close",
     "name": "Name",
     "namePlaceholder": "John Snow",

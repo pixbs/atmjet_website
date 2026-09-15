@@ -128,6 +128,9 @@ export function BookingForm({
       noValidate
       onSubmit={handleSubmit(submit)}
     >
+      {/* The legacy drew this above every booking form, in the dialog and inline alike; the
+          inventory's field list starts at the name input and never mentioned it (issue #345). */}
+      <h2 className="text-center text-white">{t('title')}</h2>
       <div className="gap-1">
         <label className="text-sm text-white" htmlFor={`${chipId}-name`}>
           {t('name')}
