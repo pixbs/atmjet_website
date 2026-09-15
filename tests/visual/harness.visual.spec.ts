@@ -18,7 +18,11 @@ test.describe('visual parity harness', () => {
     const same = compareImages(second, first)
     expect(same.pass, same.reason).toBe(true)
 
-    const painted = compareImages(paintPixels(first, 20_000, [255, 0, 255, 255]), first)
+    // A share of the page rather than a count of pixels: the home page grows as its sections
+    // are ported, and a fixed count fell under the harness's own one-per-cent tolerance the
+    // moment the footer landed (issue #89).
+    const magenta = Math.ceil(same.width * same.height * 0.02)
+    const painted = compareImages(paintPixels(first, magenta, [255, 0, 255, 255]), first)
     expect(painted.pass).toBe(false)
     expect(painted.reason).toContain('pixels differ')
     expect(painted.diff).toBeDefined()
