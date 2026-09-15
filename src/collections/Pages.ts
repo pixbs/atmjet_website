@@ -1,7 +1,7 @@
 import type { CollectionConfig } from 'payload'
 
 import { editorOrAdmin, publishedOnly } from '@/access'
-import { ALL_LOCALES } from '@/i18n/locales'
+import { ALL_LOCALES, type Locale } from '@/i18n/locales'
 import { advantages } from '@/blocks/Advantages/config'
 import { bestPrice } from '@/blocks/BestPrice/config'
 import { catalogueAircraft } from '@/blocks/CatalogueAircraft/config'
@@ -63,6 +63,18 @@ export const PAGE_SLUGS = [
   'sales_yachts',
   'yachts',
 ] as const
+
+export type PageSlug = (typeof PAGE_SLUGS)[number]
+
+/**
+ * The languages a route answers in, where the legacy site answered in fewer than all of them
+ * (issue #149, `docs/legacy-inventory.md` section 4). It is what the seed writes into
+ * `availableLocales` and what a finished build is expected to have prerendered; an editor moves
+ * a page off it afterwards by changing the field.
+ */
+export const PAGE_LOCALES: Partial<Record<PageSlug, readonly Locale[]>> = {
+  citizens: ['ru'],
+}
 
 /** The path a page is served at. The home page is the locale root, not `/en/home`. */
 export function pathForPage(locale: string, slug: string): string {

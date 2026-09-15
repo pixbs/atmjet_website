@@ -1,7 +1,7 @@
 import type { Payload } from 'payload'
 
-import { PAGE_SLUGS } from '../../src/collections/Pages'
-import { DEFAULT_LOCALES, type Locale } from '../../src/i18n/locales'
+import { PAGE_LOCALES, PAGE_SLUGS } from '../../src/collections/Pages'
+import { DEFAULT_LOCALES } from '../../src/i18n/locales'
 import type { Page } from '../../src/payload-types'
 import type { SeedOutcome } from './report'
 
@@ -28,13 +28,6 @@ const TITLES: Record<string, { en: string; ru: string }> = {
   sales_yachts: { en: 'Yachts for sale', ru: 'Яхты на продажу' },
   yachts: { en: 'Yacht charter', ru: 'Аренда яхт' },
 }
-
-/**
- * The languages a page answers in, where it is not every one (issue #149, section 4). The
- * legacy citizens page was Russian only and sent everybody else to the home page; nothing else
- * named a language at all.
- */
-const AVAILABLE_LOCALES: Record<string, Locale[]> = { citizens: ['ru'] }
 
 /**
  * The metadata the legacy site intended (issue #170). Only its home page ever exported any
@@ -1730,6 +1723,7 @@ async function createPages(payload: Payload): Promise<Set<string>> {
   for (const slug of PAGE_SLUGS) {
     if (await find(payload, slug)) continue
 
+    const answersIn = PAGE_LOCALES[slug]
     const page = await payload.create({
       collection: 'pages',
       data: {
@@ -1737,7 +1731,7 @@ async function createPages(payload: Payload): Promise<Set<string>> {
         slug,
         layout: [],
         _status: 'published',
-        availableLocales: AVAILABLE_LOCALES[slug],
+        availableLocales: answersIn ? [...answersIn] : undefined,
         meta: META[slug]?.en,
       },
       locale: 'en',
