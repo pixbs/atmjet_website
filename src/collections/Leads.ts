@@ -50,7 +50,10 @@ export const Leads: CollectionConfig = {
   slug: 'leads',
   admin: {
     useAsTitle: 'name',
-    defaultColumns: ['name', 'email', 'formType', 'source', 'createdAt'],
+    // What the desk looks at first (issue #154): when it came in, which button it came from,
+    // who it is, how to reach them, and whether it arrived. Every one of these is indexed, so
+    // the list can be filtered by any of them.
+    defaultColumns: ['createdAt', 'source', 'name', 'phone', 'deliveryStatus'],
     group: 'People',
     description:
       'Form submissions and how they were delivered. Personal data: administrators only, and never rendered on the public site.',
@@ -195,8 +198,11 @@ export const Leads: CollectionConfig = {
       type: 'array',
       label: 'Delivery',
       admin: {
+        // Written by the job that sends the lead (issue #155), not by hand: a row an editor
+        // could edit would say a lead had arrived when it had not.
+        readOnly: true,
         description:
-          'One row per channel. The legacy site had none of this: a failed send was an unhandled rejection and the lead was gone.',
+          'One row per channel, written by the queue. The legacy site had none of this: a failed send was an unhandled rejection and the lead was gone.',
       },
       fields: [
         {
