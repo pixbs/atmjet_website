@@ -5,8 +5,20 @@ This repository is rebuilt from scratch on Payload 3 + Next.js 16 + Bun. The rul
 ## Setup
 
 1. Install [Bun](https://bun.sh) (`.bun-version`) and Node 24 (`.node-version`).
-2. `cp .env.example .env` and set `DATABASE_URL` and `PAYLOAD_SECRET`. A local database: `docker compose up -d` (Postgres 17).
+2. `cp .env.example .env`, then set `DATABASE_URL` and generate a `PAYLOAD_SECRET` (`openssl rand -hex 32`) — the placeholder the example ships is published in this repository, so it is refused. A local database: `docker compose up -d` (Postgres 17). What every other variable does, and which environments hold it: `docs/environment.md`.
 3. `bun install` (installs the git hooks), `bun run dev` (Drizzle push creates the schema in the local database), then `bun run seed` (local admin `dev@atmjet.local` / `dev-password-change-me` and placeholder media). Do not run `bun run migrate` against a database that push created: Payload's docs say the two are not meant to be mixed.
+
+## Admin accounts
+
+Two roles, written out cell by cell in `docs/access-matrix.md`: an **editor** runs the content, an **admin** also runs the people and the settings. `editor` is what a new account gets, and only an admin may write the field — otherwise an editor could add `admin` to their own roles.
+
+- **The first account on a new environment** is created through Payload's own first-user flow: open `/admin` on the fresh deployment and fill the form. Payload allows it while the collection is empty, which is why `create` can be admin-only from the very first minute. Do it once, immediately, before the URL is shared: the second person to find an empty `/admin` becomes the administrator.
+- **Everyone after that** is created by an admin in the admin panel, under Users, with the role they need and no more.
+- **Nobody is imported.** The legacy `atmjet_admin__users` table stores its passwords in plain text (`docs/legacy-inventory.md` section 14), so it is a list of people to invite, never a list of accounts to migrate. No import or migration writes a user, and no deployment runs the seed: the build command (`bun run ci`) applies the migrations and builds, and the seed refuses to run with `NODE_ENV=production` unless somebody sets `SEED_ALLOW_PRODUCTION=1`.
+- **When someone leaves**, an admin deletes their user. There are no shared accounts and no API keys; a signed-in session is one person.
+- Five wrong passwords lock an account for ten minutes, so a stolen address is not worth guessing at.
+
+Locally, `bun run seed` creates `dev@atmjet.local` / `dev-password-change-me` in the disposable development database. It is a development account with a published password: it belongs in no database anyone else can reach.
 
 ## Branches, commits and pull requests
 

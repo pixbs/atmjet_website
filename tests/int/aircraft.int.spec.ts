@@ -1,7 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
 
 import type { AircraftQuery } from '@/lib/aircraft'
-import { listCatalogueAircraft, searchAircraft } from '@/lib/data/aircraft'
+import { listCatalogueAircraft, resolveAircraft, searchAircraft } from '@/lib/data/aircraft'
 import { createMedia, createUser } from '../factories'
 import { createRegistry, uniqueSuffix, type TestRegistry } from '../helpers/payload'
 
@@ -304,6 +304,8 @@ describe('the listing the aircraft page reads', () => {
     perPage: 500,
     sort: 'size',
     direction: 'asc',
+    // This listing offers none; the yachts page is the one with filters (issue #139).
+    filters: {},
     ...overrides,
   })
 
@@ -413,5 +415,74 @@ describe('the listing the aircraft page reads', () => {
     expect(mine?.registration).toBe(created.registrationDisplay)
     expect(mine?.slug).toBe(created.slug)
     expect(mine?.image?.src).toContain(upload.filename)
+  })
+})
+
+/**
+ * The aircraft a detail page is asked for (issue #138, `docs/legacy-inventory.md` section 4).
+ * The legacy page read the first two dash-separated parts of the slug as a registration and
+ * looked that up case-insensitively, so a catalogue slug and a bare tail number both answered;
+ * both still do, and neither needs a redirect entry to.
+ */
+describe('the aircraft a detail page is asked for', () => {
+  const client = () => Promise.resolve(registry.payload)
+
+  it('answers to the slug the listing card writes', async () => {
+    const created = await registry.create(
+      'aircraft',
+      aircraft({ slug: `gulfstream-${uniqueSuffix()}` }),
+    )
+
+    const found = await resolveAircraft(created.slug ?? '', 'en', client)
+
+    expect(found?.id).toBe(created.id)
+  })
+
+  /** Dash-free: a registration is `RA-73025`, one dash, which is the shape the rule reads. */
+  const tail = () => uniqueSuffix().replace(/-/g, '').slice(-6).toUpperCase()
+
+  it('answers to the registration, however it is written', async () => {
+    const suffix = tail()
+    const created = await registry.create(
+      'aircraft',
+      aircraft({ registrationDisplay: `T7-${suffix}` }),
+    )
+
+    // What the listing card writes for an aircraft the import has not given a slug yet, and
+    // what the legacy sitemap advertised: the tail number on its own.
+    await expect(resolveAircraft(`T7${suffix}`, 'en', client)).resolves.toMatchObject({
+      id: created.id,
+    })
+    await expect(resolveAircraft(`T7-${suffix}`, 'en', client)).resolves.toMatchObject({
+      id: created.id,
+    })
+  })
+
+  it('reads the registration out of a slug that carries a model after it', async () => {
+    const suffix = tail()
+    const created = await registry.create(
+      'aircraft',
+      aircraft({ registrationDisplay: `RA-${suffix}`, slug: undefined }),
+    )
+
+    const found = await resolveAircraft(`RA-${suffix}-gulfstream-g650`, 'en', client)
+
+    expect(found?.id).toBe(created.id)
+  })
+
+  it('answers with nothing for a slug no aircraft has, so the page can send them to the list', async () => {
+    await expect(
+      resolveAircraft(`nothing-${uniqueSuffix()}`, 'en', client),
+    ).resolves.toBeUndefined()
+  })
+
+  it('answers with nothing rather than throwing when the database cannot be reached', async () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined)
+
+    await expect(
+      resolveAircraft('anything', 'en', () => Promise.reject(new Error('connection refused'))),
+    ).resolves.toBeUndefined()
+    expect(warn).toHaveBeenCalled()
+    warn.mockRestore()
   })
 })

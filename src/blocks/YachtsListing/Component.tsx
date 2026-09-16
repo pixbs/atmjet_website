@@ -10,7 +10,7 @@ import { buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/cn'
 import { searchCharterYachts, type CharterYachtListing } from '@/lib/data/yachts'
 import { parseListing, type SearchParams } from '@/lib/listing'
-import { CHARTER_LISTING, CHARTER_SORTS } from '@/lib/yachts'
+import { CHARTER_FILTERS, CHARTER_LISTING, CHARTER_SORTS } from '@/lib/yachts'
 
 /**
  * The charter listing (issue #139, `docs/legacy-inventory.md` section 4): the card the fleet is
@@ -91,6 +91,24 @@ export async function YachtsListing({ title, heading, search }: YachtsListingPro
   return (
     <>
       <ListingFilters apply={t('apply')} contract={CHARTER_LISTING} title={title}>
+        {/* The three bands first, then the order, as the legacy card laid them out. Each opens
+            on what the URL was served with: the legacy trio reset to `All` the moment the page
+            they had asked for arrived (section 13, entry 42). */}
+        {(Object.keys(CHARTER_FILTERS) as (keyof typeof CHARTER_FILTERS)[]).map((name) => (
+          <Select
+            key={name}
+            defaultValue={query.filters[name]}
+            id={name}
+            label={t(`filters.${name}.label` as 'filters.guests.label')}
+            name={name}
+          >
+            {CHARTER_FILTERS[name].choices.map((choice) => (
+              <option key={choice} value={choice}>
+                {t(`filters.${name}.${choice}` as 'filters.guests.All')}
+              </option>
+            ))}
+          </Select>
+        ))}
         <Select
           defaultValue={query.sort}
           id="sort"
