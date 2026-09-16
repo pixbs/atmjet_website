@@ -9,7 +9,7 @@ import { SEED_IMAGES } from '../../scripts/seed/media'
 import { LEGACY_REDIRECTS, seedRedirects } from '../../scripts/seed/redirects'
 import { SEED_AIRCRAFT } from '../../scripts/seed/aircraft'
 import { SEED_ADMIN } from '../../scripts/seed/users'
-import { SEED_YACHTS } from '../../scripts/seed/yachts'
+import { SEED_CHARTER_YACHTS, SEED_YACHTS } from '../../scripts/seed/yachts'
 import { PAGE_SLUGS } from '../../src/collections/Pages'
 import { createRegistry, uniqueSuffix, type TestRegistry } from '../helpers/payload'
 
@@ -40,6 +40,7 @@ const EXPECTED_DOCUMENTS =
   SEED_AIRPORTS.length +
   SEED_EMPTY_LEGS.length +
   SEED_YACHTS.length +
+  SEED_CHARTER_YACHTS.length +
   SEED_AIRCRAFT.length +
   PAGE_SLUGS.length +
   SEEDED_GLOBALS.length +

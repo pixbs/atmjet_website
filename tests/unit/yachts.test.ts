@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest'
 import {
   listingProblems,
   saleYachtSpecs,
+  sortedCharter,
   type SaleYachtLabels,
   type YachtListing,
 } from '@/lib/yachts'
@@ -190,5 +191,64 @@ describe('saleYachtSpecs', () => {
 
     expect(specs).toContainEqual({ label: 'Length:', value: '0 feet' })
     expect(specs).toContainEqual({ label: 'Draft:', value: '0' })
+  })
+})
+
+/**
+ * The order the charter listing is read in (issue #139, `docs/legacy-inventory.md` section 4).
+ * The legacy page sorted in the browser and read a missing figure as zero, so the yachts nobody
+ * had measured opened the list under "the largest first".
+ */
+describe('sortedCharter', () => {
+  const fleet = [
+    { name: 'unmeasured' },
+    { name: 'small', price: 1_000, length: 40, guests: 8 },
+    { name: 'large', price: 9_000, length: 110, guests: 45 },
+    { name: 'middling', price: 4_500, length: 78, guests: 20 },
+  ]
+  const names = (yachts: { name: string }[]) => yachts.map((yacht) => yacht.name)
+
+  it('orders by the figure the URL names', () => {
+    expect(names(sortedCharter(fleet, { sort: 'price', direction: 'asc' }))).toEqual([
+      'small',
+      'middling',
+      'large',
+      'unmeasured',
+    ])
+    expect(names(sortedCharter(fleet, { sort: 'guests', direction: 'asc' }))).toEqual([
+      'small',
+      'middling',
+      'large',
+      'unmeasured',
+    ])
+  })
+
+  it('turns the order round without moving what has no figure', () => {
+    const up = sortedCharter(fleet, { sort: 'length', direction: 'asc' })
+    const down = sortedCharter(fleet, { sort: 'length', direction: 'desc' })
+
+    expect(names(down).slice(0, -1)).toEqual(names(up).slice(0, -1).reverse())
+    expect(names(down).at(-1)).toBe('unmeasured')
+  })
+
+  it('leaves the fleet it was given alone', () => {
+    const order = names(fleet)
+    sortedCharter(fleet, { sort: 'price', direction: 'desc' })
+
+    expect(names(fleet)).toEqual(order)
+  })
+
+  it('reads a figure that is not a number as one nobody has filled in', () => {
+    // The legacy comparison ran every value through `Number(...) || 0`, so a blank column sorted
+    // as the cheapest, the shortest and the emptiest yacht in the fleet.
+    const odd = [
+      { name: 'blank', price: Number.NaN },
+      { name: 'priced', price: 500 },
+    ]
+
+    expect(names(sortedCharter(odd, { sort: 'price', direction: 'asc' }))).toEqual([
+      'priced',
+      'blank',
+    ])
   })
 })

@@ -3,7 +3,12 @@ import { cache } from 'react'
 
 import type { Locale } from '@/i18n/locales'
 import { mediaSource, type ImageSource, type MediaLike } from '@/lib/media'
-import type { SaleYachtFacts } from '@/lib/yachts'
+import {
+  sortedCharter,
+  type CharterOrderable,
+  type CharterQuery,
+  type SaleYachtFacts,
+} from '@/lib/yachts'
 
 import { getPayloadClient } from './payload'
 
@@ -96,6 +101,81 @@ export const listSaleYachts = cache(
       }))
     } catch (error) {
       console.warn('[yachts] the database was unreachable, so the section lists none.', error)
+      return []
+    }
+  },
+)
+
+/**
+ * One yacht as the charter listing draws it (issue #139, `docs/legacy-inventory.md` section 4):
+ * the photograph, the maker and the name over it, the hourly price in a badge, and the six
+ * figures under the rule.
+ */
+export interface CharterYachtListing extends CharterOrderable {
+  id: number | string
+  slug?: string | null
+  name: string
+  manufacturer?: string | null
+  currency?: string | null
+  minHours?: number | null
+  cabins?: string | null
+  bathrooms?: string | null
+  refit?: number | null
+  photo: ImageSource | null
+}
+
+/**
+ * The charter fleet, in the order the URL asks for (issue #139).
+ *
+ * One query and no paging, as the legacy page had: it read the whole `new_yachts` table and drew
+ * every row. What it did not do is survive an empty one — the ranges it derived for a slider
+ * nobody could see indexed the first element of an empty array and threw (section 13, entry 51)
+ * — so an unreachable database renders an empty listing here rather than taking the page down.
+ */
+export const searchCharterYachts = cache(
+  async (
+    locale: Locale,
+    query: Pick<CharterQuery, 'sort' | 'direction'>,
+    // Injected so the integration tier can read through its own Payload instance.
+    client: () => Promise<Payload> = getPayloadClient,
+  ): Promise<CharterYachtListing[]> => {
+    try {
+      const payload = await client()
+      const { docs } = await payload.find({
+        collection: 'yachts',
+        locale,
+        where: { listingType: { equals: 'charter' } },
+        // One level, for the uploads the photographs point at.
+        depth: 1,
+        select: { name: true, slug: true, length: true, photos: true, charter: true },
+        // The whole fleet, as the legacy page read it.
+        limit: 0,
+        pagination: false,
+        sort: 'name',
+        // Only what a visitor can read.
+        overrideAccess: false,
+      })
+
+      return sortedCharter(
+        docs.map((yacht) => ({
+          id: yacht.id,
+          slug: yacht.slug,
+          name: yacht.name,
+          manufacturer: yacht.charter?.manufacturer,
+          price: yacht.charter?.customerPrice,
+          currency: yacht.charter?.currency,
+          length: yacht.length,
+          guests: yacht.charter?.guestsDay,
+          minHours: yacht.charter?.minHours,
+          cabins: yacht.charter?.cabins,
+          bathrooms: yacht.charter?.bathrooms,
+          refit: yacht.charter?.refit,
+          photo: photoSource(yacht.photos?.[0] ?? {}),
+        })),
+        query,
+      )
+    } catch (error) {
+      console.warn('[yachts] the database was unreachable, so the listing is empty.', error)
       return []
     }
   },

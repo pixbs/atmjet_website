@@ -5,10 +5,10 @@ import { AircraftCard } from '@/components/cards/aircraft-card'
 import { AircraftSort } from '@/components/form/aircraft-sort'
 import { buttonVariants } from '@/components/ui/button'
 import type { Locale } from '@/i18n/locales'
-import { AIRCRAFT_LISTING, type AircraftQuery } from '@/lib/aircraft'
+import { AIRCRAFT_LISTING } from '@/lib/aircraft'
 import { cn } from '@/lib/cn'
 import { searchAircraft } from '@/lib/data/aircraft'
-import { listingSearch } from '@/lib/listing'
+import { listingSearch, parseListing, type SearchParams } from '@/lib/listing'
 
 /**
  * The aircraft listing (issue #135, `docs/legacy-inventory.md` section 4): the filter card, and
@@ -21,13 +21,14 @@ import { listingSearch } from '@/lib/listing'
  */
 export interface AircraftListingProps {
   title: string
-  /** What the URL asked for, read by the page (`src/lib/listing.ts`). */
-  query: AircraftQuery
+  /** What the URL asked for, unread (`src/lib/listing.ts`). */
+  search: SearchParams
 }
 
-export async function AircraftListing({ title, query }: AircraftListingProps) {
+export async function AircraftListing({ title, search }: AircraftListingProps) {
   // The page has already refused a locale the site does not serve.
   const locale = (await getLocale()) as Locale
+  const query = parseListing(search, AIRCRAFT_LISTING)
   const [{ aircraft, total }, t] = await Promise.all([
     searchAircraft(locale, query),
     getTranslations({ locale, namespace: 'aircraft' }),

@@ -20,6 +20,7 @@ export interface ListingContract<Sort extends string> {
   /** The sorts on offer. The first is the one the listing opens on. */
   sorts: readonly [Sort, ...Sort[]]
   direction: ListingDirection
+  /** Zero means the whole result, as it does to Payload's own `limit`. */
   perPage: number
   /** So a request for ten thousand cards is not one the database is asked for. */
   maxPerPage: number
