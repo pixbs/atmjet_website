@@ -5,7 +5,7 @@ This repository is rebuilt from scratch on Payload 3 + Next.js 16 + Bun. The rul
 ## Setup
 
 1. Install [Bun](https://bun.sh) (`.bun-version`) and Node 24 (`.node-version`).
-2. `cp .env.example .env` and set `DATABASE_URL` and `PAYLOAD_SECRET`. A local database: `docker compose up -d` (Postgres 17).
+2. `cp .env.example .env`, then set `DATABASE_URL` and generate a `PAYLOAD_SECRET` (`openssl rand -hex 32`) — the placeholder the example ships is published in this repository, so it is refused. A local database: `docker compose up -d` (Postgres 17). What every other variable does, and which environments hold it: `docs/environment.md`.
 3. `bun install` (installs the git hooks), `bun run dev` (Drizzle push creates the schema in the local database), then `bun run seed` (local admin `dev@atmjet.local` / `dev-password-change-me` and placeholder media). Do not run `bun run migrate` against a database that push created: Payload's docs say the two are not meant to be mixed.
 
 ## Branches, commits and pull requests
