@@ -169,7 +169,18 @@
       }
     },
     "request": "Замовити {name}",
-    "hour": "Година"
+    "hour": "Година",
+    "keyStats": "Основні факти",
+    "included": "Включено у вартість:",
+    "about": "Про {name}",
+    "stats": {
+      "paxDayNight": "пасажирів день/ніч",
+      "lengthFtM": "довжина фт/м",
+      "cabins": "каюти",
+      "bathrooms": "санвузли",
+      "minHours": "мін. годин оренди",
+      "refit": "рефіт"
+    }
   },
   "seo": {
     "siteName": "ATM JET",

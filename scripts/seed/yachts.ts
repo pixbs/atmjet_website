@@ -74,10 +74,12 @@ interface SeedCharterYacht {
     customerPrice?: number
     currency?: 'AED'
     guestsDay?: number
+    guestsNight?: number
     minHours?: number
     cabins?: string
     bathrooms?: string
     refit?: number
+    included?: string
   }
 }
 
@@ -85,20 +87,24 @@ export const SEED_CHARTER_YACHTS: readonly SeedCharterYacht[] = [
   {
     name: 'Serenity',
     slug: 'azimut-serenity',
+    // Six photographs: the band takes the first, the gallery opens on the second, and the column
+    // under the description begins at the fifth, which is the slice the legacy page took (#140).
+    photos: 6,
     manufacturer: 'Azimut',
-    photos: 2,
     length: 78,
     location: 'Dubai Marina',
     description:
-      'A flybridge with room for twenty on deck and four cabins below. Refitted in 2021 and kept in Dubai Marina, she leaves from the pontoon she is moored at.',
+      'A flybridge with room for twenty on deck and four cabins below.\nRefitted in 2021 and kept in Dubai Marina, she leaves from the pontoon she is moored at.',
     charter: {
       customerPrice: 4500,
       currency: 'AED',
       guestsDay: 20,
+      guestsNight: 8,
       minHours: 4,
       cabins: '4',
       bathrooms: '4',
       refit: 2021,
+      included: 'Crew, fuel, soft drinks and a tender.',
     },
   },
   {
@@ -231,9 +237,12 @@ export async function seedYachts(payload: Payload): Promise<SeedOutcome[]> {
         length: yacht.length,
         location: yacht.location,
         description: yacht.description,
-        photos: media.docs
-          .slice(0, yacht.photos)
-          .map((doc) => ({ media: doc.id, alt: `${yacht.manufacturer} ${yacht.name}` })),
+        // The two placeholders in turn, so a fixture can carry more photographs than there
+        // are files to draw them with (issue #41).
+        photos: Array.from({ length: yacht.photos }, (_, index) => ({
+          media: media.docs[index % media.docs.length].id,
+          alt: `${yacht.manufacturer} ${yacht.name}`,
+        })),
         charter: { manufacturer: yacht.manufacturer, ...yacht.charter },
         provenance: { origin: 'manual' },
       },

@@ -169,7 +169,18 @@
       }
     },
     "request": "Request {name}",
-    "hour": "Hour"
+    "hour": "Hour",
+    "keyStats": "Key stats",
+    "included": "Included in the price:",
+    "about": "About {name}",
+    "stats": {
+      "paxDayNight": "pax day/night",
+      "lengthFtM": "length ft/m",
+      "cabins": "cabins",
+      "bathrooms": "bathrooms",
+      "minHours": "min rental hours",
+      "refit": "refit"
+    }
   },
   "seo": {
     "siteName": "ATM JET",
