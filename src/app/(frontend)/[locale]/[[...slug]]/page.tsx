@@ -7,6 +7,7 @@ import { RenderBlocks } from '@/blocks/render-blocks'
 import { servedStatusFor } from '@/collections/Redirects'
 import { AngleBar } from '@/components/sections/angle-bar'
 import { JsonLd } from '@/components/ui/json-ld'
+import { Preloader } from '@/components/ui/preloader'
 import type { Locale } from '@/i18n/locales'
 import { listPageParams } from '@/lib/data/pages'
 import { getPayloadClient } from '@/lib/data/payload'
@@ -172,8 +173,11 @@ export default async function CatchAllPage({ params }: { params: Promise<PagePar
         <RenderBlocks layout={page.layout} locale={locale as Locale} />
       )}
       {/* The floating button the legacy site drew on the home page and nowhere else
-          (`docs/legacy-inventory.md` section 3.5, issue #94). */}
+          (`docs/legacy-inventory.md` section 3.5, issue #94), and the curtain it drew over the
+          same page alone (section 3.8, issue #134). The curtain is last in the markup and first
+          on the screen, because it is positioned rather than laid out. */}
       {slugFrom(slug) === '' && <AngleBar locale={locale as Locale} locales={locales} />}
+      {slugFrom(slug) === '' && <Preloader />}
       {trail && <JsonLd data={trail} />}
       {answered && <JsonLd data={answered} />}
     </>
