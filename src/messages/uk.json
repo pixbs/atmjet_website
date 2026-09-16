@@ -121,7 +121,27 @@
     "previousPhoto": "Попередня фотографія",
     "nextPhoto": "Наступна фотографія",
     "previousYacht": "Попередня яхта",
-    "nextYacht": "Наступна яхта"
+    "nextYacht": "Наступна яхта",
+    "perHour": "за годину",
+    "feetShort": "фт",
+    "metresShort": "м",
+    "cabinsShort": "каюти",
+    "minimum": "мін",
+    "bathroomsShort": "ванні",
+    "refit": "ремонт",
+    "filter": "Фільтрувати яхти",
+    "apply": "Застосувати",
+    "sortBy": "Сортувати за",
+    "order": "Порядок",
+    "ascending": "За зростанням",
+    "descending": "За спаданням",
+    "sorts": {
+      "price": "Ціною",
+      "length": "Довжиною",
+      "guests": "Гостями"
+    },
+    "none": "Яхт не знайдено",
+    "reset": "Скинути фільтри"
   },
   "seo": {
     "siteName": "ATM JET",

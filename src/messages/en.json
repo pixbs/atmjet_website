@@ -121,7 +121,27 @@
     "previousPhoto": "Previous photograph",
     "nextPhoto": "Next photograph",
     "previousYacht": "Previous yacht",
-    "nextYacht": "Next yacht"
+    "nextYacht": "Next yacht",
+    "perHour": "per hour",
+    "feetShort": "ft",
+    "metresShort": "m",
+    "cabinsShort": "cabins",
+    "minimum": "min",
+    "bathroomsShort": "bathrooms",
+    "refit": "refit",
+    "filter": "Filter yachts",
+    "apply": "Apply",
+    "sortBy": "Sort by",
+    "order": "Order",
+    "ascending": "Ascending",
+    "descending": "Descending",
+    "sorts": {
+      "price": "Price",
+      "length": "Length",
+      "guests": "Guests"
+    },
+    "none": "No yachts found",
+    "reset": "Reset filters"
   },
   "seo": {
     "siteName": "ATM JET",

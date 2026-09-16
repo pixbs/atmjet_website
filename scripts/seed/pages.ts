@@ -1251,6 +1251,15 @@ function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout 
     })
   }
 
+  // Between the hero and the contact section, where the legacy page drew it (section 4).
+  if (slug === 'yachts')
+    sections.push({
+      blockType: 'yachtsListing',
+      title: locale === 'en' ? 'Filter yachts' : 'Фильтровать яхты',
+      heading:
+        locale === 'en' ? 'Yachts available for rent in Dubai' : 'Яхты доступные в аренду в Дубае',
+    })
+
   if (slug === 'medical_aviation')
     sections.push({
       blockType: 'keyFeatures',
@@ -1745,6 +1754,8 @@ function translated(layout: Layout | null | undefined, slug: string, fixture: Fi
       case 'whyUs':
         return { ...block, id, cards: withRowIds(block.cards ?? [], rows) }
       case 'wordmarkNote':
+        return { ...block, id }
+      case 'yachtsListing':
         return { ...block, id }
       case 'yachtsPromo':
         return {

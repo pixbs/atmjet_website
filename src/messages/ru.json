@@ -121,7 +121,27 @@
     "previousPhoto": "Предыдущая фотография",
     "nextPhoto": "Следующая фотография",
     "previousYacht": "Предыдущая яхта",
-    "nextYacht": "Следующая яхта"
+    "nextYacht": "Следующая яхта",
+    "perHour": "за час",
+    "feetShort": "фт",
+    "metresShort": "м",
+    "cabinsShort": "каюты",
+    "minimum": "мин",
+    "bathroomsShort": "ванные",
+    "refit": "ремонт",
+    "filter": "Фильтровать яхты",
+    "apply": "Применить",
+    "sortBy": "Сортировать по",
+    "order": "Порядок",
+    "ascending": "По возрастанию",
+    "descending": "По убыванию",
+    "sorts": {
+      "price": "Цене",
+      "length": "Длине",
+      "guests": "Гостям"
+    },
+    "none": "Яхты не найдены",
+    "reset": "Сбросить фильтры"
   },
   "seo": {
     "siteName": "ATM JET",

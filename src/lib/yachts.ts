@@ -1,3 +1,5 @@
+import type { ListingContract, ListingQuery } from './listing'
+
 /**
  * Yacht listings (issue #65).
  *
@@ -159,4 +161,64 @@ export function saleYachtSpecs(
     label: labels[name],
     value: values[name],
   }))
+}
+
+/**
+ * What the charter listing sorts by (issue #139, `docs/legacy-inventory.md` section 4). The
+ * legacy filter card offered these three and read them back out of the URL after a navigation,
+ * which is more than it did for its filters.
+ */
+export const CHARTER_SORTS = ['price', 'length', 'guests'] as const
+
+export type CharterSort = (typeof CHARTER_SORTS)[number]
+
+/**
+ * The listing opens on price ascending, as the legacy select did. The page size is zero, which
+ * means the whole result as it does to Payload's own `limit`: the legacy page read the entire
+ * table and drew every row (section 13, entry 52), and a charter fleet is dozens of yachts
+ * rather than thousands, so a listing that ends is what the page promises.
+ */
+export const CHARTER_LISTING: ListingContract<CharterSort> = {
+  sorts: CHARTER_SORTS,
+  direction: 'asc',
+  perPage: 0,
+  maxPerPage: 0,
+}
+
+export type CharterQuery = ListingQuery<CharterSort>
+
+/** The figures a charter listing is ordered by; any of them may be one nobody has filled in. */
+export interface CharterOrderable {
+  price?: number | null
+  length?: number | null
+  guests?: number | null
+}
+
+/**
+ * The listing in the order its URL asks for (issue #139).
+ *
+ * In memory rather than in the query, because the whole fleet is read at once; the yachts
+ * nobody has measured go last whichever way round the order is asked for, where a database would
+ * have put them first under a descending sort and the legacy comparison read them as zero and
+ * opened the list with them.
+ */
+export function sortedCharter<Yacht extends CharterOrderable>(
+  yachts: readonly Yacht[],
+  query: Pick<CharterQuery, 'sort' | 'direction'>,
+): Yacht[] {
+  const measure = (yacht: Yacht): number | null => {
+    const value =
+      query.sort === 'price' ? yacht.price : query.sort === 'length' ? yacht.length : yacht.guests
+
+    return typeof value === 'number' && Number.isFinite(value) ? value : null
+  }
+  const turn = query.direction === 'desc' ? -1 : 1
+
+  return [...yachts].sort((one, other) => {
+    const left = measure(one)
+    const right = measure(other)
+    if (left === null || right === null) return left === right ? 0 : left === null ? 1 : -1
+
+    return (left - right) * turn
+  })
 }
