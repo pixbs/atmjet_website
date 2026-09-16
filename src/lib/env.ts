@@ -35,16 +35,18 @@ const isPostgresUrl = (value: string): boolean => {
   }
 }
 
-export const environmentSchema = z.object({
+// A blank value is one problem, not two: zod runs every check unless one aborts, so the checks
+// meant for a value that is there are skipped once "is not set" has fired.
+const environmentSchema = z.object({
   DATABASE_URL: z
     .string({ error: 'is not set' })
     .trim()
-    .min(1, 'is not set')
+    .min(1, { error: 'is not set', abort: true })
     .refine(isPostgresUrl, 'is not a postgres:// or postgresql:// connection string'),
   PAYLOAD_SECRET: z
     .string({ error: 'is not set' })
     .trim()
-    .min(1, 'is not set')
+    .min(1, { error: 'is not set', abort: true })
     .refine((value) => value !== PLACEHOLDER_SECRET, 'is the placeholder from .env.example')
     .refine(
       (value) => value.length >= SECRET_MIN_LENGTH,
@@ -52,7 +54,7 @@ export const environmentSchema = z.object({
     ),
 })
 
-export type Environment = z.infer<typeof environmentSchema>
+type Environment = z.infer<typeof environmentSchema>
 
 /**
  * The environment, or one error naming every variable that is wrong.

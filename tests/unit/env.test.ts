@@ -38,6 +38,15 @@ describe('reading the environment', () => {
     expect(thrown).toThrow(/PAYLOAD_SECRET is not set/)
   })
 
+  it('says a blank value is not set, and nothing more about it', () => {
+    const thrown = (): void => void readEnvironment({ DATABASE_URL: '', PAYLOAD_SECRET: ' ' })
+
+    expect(thrown).toThrow(/DATABASE_URL is not set/)
+    expect(thrown).not.toThrow(/is not a postgres/)
+    expect(thrown).toThrow(/PAYLOAD_SECRET is not set/)
+    expect(thrown).not.toThrow(/shorter than/)
+  })
+
   it('says where to set them', () => {
     expect(() => readEnvironment({})).toThrow(/docs\/environment\.md/)
   })
