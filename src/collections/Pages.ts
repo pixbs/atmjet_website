@@ -37,6 +37,7 @@ import { transfer } from '@/blocks/Transfer/config'
 import { weInspect } from '@/blocks/WeInspect/config'
 import { whyUs } from '@/blocks/WhyUs/config'
 import { wordmarkNote } from '@/blocks/WordmarkNote/config'
+import { yachtsListing } from '@/blocks/YachtsListing/config'
 import { yachtsPromo } from '@/blocks/YachtsPromo/config'
 import { revalidateCollection } from '@/hooks/revalidate'
 
@@ -82,7 +83,7 @@ export const PAGE_LOCALES: Partial<Record<PageSlug, readonly Locale[]>> = {
  * how far it has been read from the query, which cannot be known before the request, so the
  * page is rendered on demand (`docs/conventions/rendering.md`).
  */
-export const DYNAMIC_PAGE_SLUGS: readonly PageSlug[] = ['aircraft']
+export const DYNAMIC_PAGE_SLUGS: readonly PageSlug[] = ['aircraft', 'yachts']
 
 /** The path a page is served at. The home page is the locale root, not `/en/home`. */
 export function pathForPage(locale: string, slug: string): string {
@@ -192,6 +193,7 @@ export const Pages: CollectionConfig = {
         weInspect,
         whyUs,
         wordmarkNote,
+        yachtsListing,
         yachtsPromo,
       ],
       admin: { description: 'The sections of this page, in the order they are rendered.' },

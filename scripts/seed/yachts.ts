@@ -4,10 +4,12 @@ import { DEFAULT_LOCALES } from '../../src/i18n/locales'
 import type { SeedOutcome } from './report'
 
 /**
- * Two yachts for sale (issues #133 and #65, E2.5), so the recent yachts section has something to
- * carry: one filled in as the legacy table filled a row, and one an editor has only started.
+ * Two yachts for sale and four for charter (issues #133, #139 and #65, E2.5), so the section
+ * that carries the recent ones and the page that lists the fleet both have something to draw:
+ * filled in as the legacy tables filled a row, and one of each an editor has only started.
  *
- * Sale listings only. The charter catalogue arrives with the pages that list it (E8.6).
+ * The charter catalogue proper arrives with the import of E5.9; this is the fixture that lets
+ * the listing be sorted and captured before it does.
  */
 interface SeedYacht {
   name: string
@@ -52,6 +54,80 @@ export const SEED_YACHTS: readonly SeedYacht[] = [
     location: { en: 'Dubai', ru: 'Дубай' },
     sale: { shipyard: 'Sunseeker', guests: 8, cabins: 4, crew: 5 },
   },
+]
+
+/**
+ * The charter fleet (issue #139). The lengths are feet, as both legacy cards read the column,
+ * and the last yacht is one an editor has only started: nothing about it has been measured, so
+ * it is the one the listing puts last whichever way round the order is asked for.
+ */
+interface SeedCharterYacht {
+  name: string
+  slug: string
+  manufacturer: string
+  photos: number
+  length?: number
+  charter: {
+    customerPrice?: number
+    currency?: 'AED'
+    guestsDay?: number
+    minHours?: number
+    cabins?: string
+    bathrooms?: string
+    refit?: number
+  }
+}
+
+export const SEED_CHARTER_YACHTS: readonly SeedCharterYacht[] = [
+  {
+    name: 'Serenity',
+    slug: 'azimut-serenity',
+    manufacturer: 'Azimut',
+    photos: 2,
+    length: 78,
+    charter: {
+      customerPrice: 4500,
+      currency: 'AED',
+      guestsDay: 20,
+      minHours: 4,
+      cabins: '4',
+      bathrooms: '4',
+      refit: 2021,
+    },
+  },
+  {
+    name: 'Bluewater',
+    slug: 'sunseeker-bluewater',
+    manufacturer: 'Sunseeker',
+    photos: 1,
+    length: 55,
+    charter: {
+      customerPrice: 2800,
+      currency: 'AED',
+      guestsDay: 12,
+      minHours: 3,
+      cabins: '3',
+      bathrooms: '3',
+      refit: 2019,
+    },
+  },
+  {
+    name: 'Al Noor',
+    slug: 'majesty-al-noor',
+    manufacturer: 'Majesty',
+    photos: 2,
+    length: 110,
+    charter: {
+      customerPrice: 9500,
+      currency: 'AED',
+      guestsDay: 45,
+      minHours: 5,
+      cabins: '6',
+      bathrooms: '6',
+      refit: 2022,
+    },
+  },
+  { name: 'Marina', slug: 'gulf-craft-marina', manufacturer: 'Gulf Craft', photos: 1, charter: {} },
 ]
 
 export async function seedYachts(payload: Payload): Promise<SeedOutcome[]> {
@@ -114,6 +190,46 @@ export async function seedYachts(payload: Payload): Promise<SeedOutcome[]> {
       })
 
     outcomes.push({ collection: 'yachts', key: yacht.name, action: 'created', id: created.id })
+  }
+
+  for (const yacht of SEED_CHARTER_YACHTS) {
+    const existing = await payload.find({
+      collection: 'yachts',
+      where: { slug: { equals: yacht.slug } },
+      limit: 1,
+      overrideAccess: true,
+    })
+
+    if (existing.totalDocs > 0) {
+      outcomes.push({
+        collection: 'yachts',
+        key: yacht.slug,
+        action: 'unchanged',
+        id: existing.docs[0].id,
+      })
+      continue
+    }
+
+    const created = await payload.create({
+      collection: 'yachts',
+      data: {
+        name: yacht.name,
+        slug: yacht.slug,
+        listingType: 'charter',
+        length: yacht.length,
+        photos: media.docs
+          .slice(0, yacht.photos)
+          .map((doc) => ({ media: doc.id, alt: `${yacht.manufacturer} ${yacht.name}` })),
+        charter: { manufacturer: yacht.manufacturer, ...yacht.charter },
+        provenance: { origin: 'manual' },
+      },
+      locale: 'en',
+      overrideAccess: true,
+      // A bulk write has nothing to invalidate (docs/conventions/rendering.md).
+      context: { skipRevalidation: true },
+    })
+
+    outcomes.push({ collection: 'yachts', key: yacht.slug, action: 'created', id: created.id })
   }
 
   return outcomes

@@ -31,6 +31,7 @@ import * as migration_20260915_201753_why_us_bare_variant from './20260915_20175
 import * as migration_20260915_214710_catalogue_aircraft_block from './20260915_214710_catalogue_aircraft_block';
 import * as migration_20260915_231750_citizens_page from './20260915_231750_citizens_page';
 import * as migration_20260916_010220_aircraft_listing_block from './20260916_010220_aircraft_listing_block';
+import * as migration_20260916_015448_yachts_listing_block from './20260916_015448_yachts_listing_block';
 
 export const migrations = [
   {
@@ -196,6 +197,11 @@ export const migrations = [
   {
     up: migration_20260916_010220_aircraft_listing_block.up,
     down: migration_20260916_010220_aircraft_listing_block.down,
-    name: '20260916_010220_aircraft_listing_block'
+    name: '20260916_010220_aircraft_listing_block',
+  },
+  {
+    up: migration_20260916_015448_yachts_listing_block.up,
+    down: migration_20260916_015448_yachts_listing_block.down,
+    name: '20260916_015448_yachts_listing_block'
   },
 ];

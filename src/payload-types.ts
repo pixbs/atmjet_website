@@ -297,6 +297,7 @@ export interface Page {
         | WeInspectBlock
         | WhyUsBlock
         | WordmarkNoteBlock
+        | YachtsListingBlock
         | YachtsPromoBlock
       )[]
     | null;
@@ -1012,6 +1013,23 @@ export interface WordmarkNoteBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'wordmarkNote';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "YachtsListingBlock".
+ */
+export interface YachtsListingBlock {
+  /**
+   * The heading over the selects.
+   */
+  title: string;
+  /**
+   * The heading over the grid of yachts.
+   */
+  heading: string;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'yachtsListing';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1967,6 +1985,7 @@ export interface PagesSelect<T extends boolean = true> {
         weInspect?: T | WeInspectBlockSelect<T>;
         whyUs?: T | WhyUsBlockSelect<T>;
         wordmarkNote?: T | WordmarkNoteBlockSelect<T>;
+        yachtsListing?: T | YachtsListingBlockSelect<T>;
         yachtsPromo?: T | YachtsPromoBlockSelect<T>;
       };
   meta?:
@@ -2511,6 +2530,16 @@ export interface WhyUsBlockSelect<T extends boolean = true> {
  */
 export interface WordmarkNoteBlockSelect<T extends boolean = true> {
   note?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "YachtsListingBlock_select".
+ */
+export interface YachtsListingBlockSelect<T extends boolean = true> {
+  title?: T;
+  heading?: T;
   id?: T;
   blockName?: T;
 }
