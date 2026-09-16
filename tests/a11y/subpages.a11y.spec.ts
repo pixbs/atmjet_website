@@ -9,6 +9,7 @@ import { expectNoA11yViolations } from './axe'
  * beside another, and these are the pages ported end to end.
  */
 const SLUGS = [
+  'aircraft',
   'cargo_charter',
   'medical_aviation',
   'empty_legs',

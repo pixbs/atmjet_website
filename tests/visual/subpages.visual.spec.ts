@@ -11,6 +11,7 @@ import { hideDevOverlay, hideFloatingHeader, settlePage } from './chrome'
  * decides how tall each section grows.
  */
 const SLUGS = [
+  'aircraft',
   'cargo_charter',
   'medical_aviation',
   'empty_legs',
