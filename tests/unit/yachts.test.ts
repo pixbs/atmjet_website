@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 
 import {
   listingProblems,
+  CHARTER_FILTERS,
   matchesCharter,
   saleYachtSpecs,
   sortedCharter,
@@ -258,6 +259,19 @@ describe('sortedCharter', () => {
  * The three bands the charter card narrows the fleet with (issue #139, section 4). The legacy
  * comparison ran in the browser on every navigation and got one of them wrong.
  */
+describe('the charter listing contract', () => {
+  it('opens each band on one of the choices it offers', () => {
+    // A default outside its own choices renders a select with nothing selected, so the browser
+    // shows the first choice while the server believes the listing opened on another: the page
+    // and its URL would disagree about what is on screen, silently.
+    for (const [name, filter] of Object.entries(CHARTER_FILTERS)) {
+      expect(filter.choices, `${name} opens on a choice it does not offer`).toContain(
+        filter.opensOn,
+      )
+    }
+  })
+})
+
 describe('matchesCharter', () => {
   const yacht = { price: 4_500, length: 78, guests: 20 }
   const all = { guests: 'All', price: 'All', length: 'All' }
