@@ -304,6 +304,8 @@ describe('the listing the aircraft page reads', () => {
     perPage: 500,
     sort: 'size',
     direction: 'asc',
+    // This listing offers none; the yachts page is the one with filters (issue #139).
+    filters: {},
     ...overrides,
   })
 

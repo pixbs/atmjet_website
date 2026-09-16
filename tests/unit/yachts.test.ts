@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 
 import {
   listingProblems,
+  matchesCharter,
   saleYachtSpecs,
   sortedCharter,
   type SaleYachtLabels,
@@ -250,5 +251,45 @@ describe('sortedCharter', () => {
       'priced',
       'blank',
     ])
+  })
+})
+
+/**
+ * The three bands the charter card narrows the fleet with (issue #139, section 4). The legacy
+ * comparison ran in the browser on every navigation and got one of them wrong.
+ */
+describe('matchesCharter', () => {
+  const yacht = { price: 4_500, length: 78, guests: 20 }
+  const all = { guests: 'All', price: 'All', length: 'All' }
+
+  it('lets the whole fleet through when nothing was narrowed', () => {
+    expect(matchesCharter(yacht, all)).toBe(true)
+    expect(matchesCharter({}, all)).toBe(true)
+  })
+
+  it('keeps a yacht only where every band asked for takes it', () => {
+    expect(matchesCharter(yacht, { ...all, guests: '30', price: 'Lux' })).toBe(true)
+    // In the guests band but out of the price one.
+    expect(matchesCharter(yacht, { ...all, guests: '30', price: '1200' })).toBe(false)
+  })
+
+  it('means what it says by more than sixty guests', () => {
+    // The legacy case had no `break` and fell through into `All`, so the band that promised the
+    // largest yachts showed every one of them (section 13, entry 39).
+    const large = { guests: 90 }
+
+    expect(matchesCharter(large, { ...all, guests: '60+' })).toBe(true)
+    expect(matchesCharter(yacht, { ...all, guests: '60+' })).toBe(false)
+  })
+
+  it('reads a figure nobody has filled in as zero, as the legacy comparison did', () => {
+    // `Number(x) || 0`, so an unpriced yacht still shows under the cheapest band. Not one of the
+    // defects section 13 lists, so it is reproduced rather than corrected.
+    expect(matchesCharter({}, { ...all, price: '1200' })).toBe(true)
+    expect(matchesCharter({}, { ...all, price: 'Lux' })).toBe(false)
+  })
+
+  it('takes a band it does not offer as no band at all', () => {
+    expect(matchesCharter(yacht, { ...all, price: 'nonsense' })).toBe(true)
   })
 })

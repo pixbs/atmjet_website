@@ -16,6 +16,9 @@ const CONTRACT: ListingContract<'newest' | 'price'> = {
   direction: 'asc',
   perPage: 10,
   maxPerPage: 30,
+  // `any` is offered last and is still what the listing opens on, as the legacy yachts
+  // selects were (`docs/legacy-inventory.md` section 4).
+  filters: { colour: { choices: ['red', 'blue', 'any'], opensOn: 'any' } },
 }
 
 describe('reading a listing URL', () => {
@@ -25,6 +28,7 @@ describe('reading a listing URL', () => {
       perPage: CONTRACT.perPage,
       sort: 'newest',
       direction: 'asc',
+      filters: { colour: 'any' },
     })
   })
 
@@ -55,6 +59,11 @@ describe('reading a listing URL', () => {
   it('reads a parameter written twice as the one a form would have submitted', () => {
     expect(parseListing({ sort: ['price', 'newest'] }, CONTRACT).sort).toBe('price')
   })
+
+  it('takes a filter the listing offers, and falls back where it does not', () => {
+    expect(parseListing({ colour: 'blue' }, CONTRACT).filters.colour).toBe('blue')
+    expect(parseListing({ colour: 'puce' }, CONTRACT).filters.colour).toBe('any')
+  })
 })
 
 describe('writing a listing URL', () => {
@@ -66,6 +75,11 @@ describe('writing a listing URL', () => {
     const query = parseListing({ sort: 'price', page: '3' }, CONTRACT)
 
     expect(listingSearch(query, CONTRACT)).toBe('sort=price&page=3')
+  })
+
+  it('leaves a filter out while it is the one the listing opens on', () => {
+    expect(listingSearch(parseListing({ colour: 'any' }, CONTRACT), CONTRACT)).toBe('')
+    expect(listingSearch(parseListing({ colour: 'red' }, CONTRACT), CONTRACT)).toBe('colour=red')
   })
 
   it('writes the same state the same way round, whatever order it was read in', () => {
