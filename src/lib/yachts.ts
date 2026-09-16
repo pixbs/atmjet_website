@@ -195,11 +195,10 @@ export const CHARTER_FILTERS = {
  * 39). Here it means what it says.
  */
 const BANDS: Record<keyof typeof CHARTER_FILTERS, Record<string, [number, number]>> = {
-  // Both ends of a band count, which is what the labels say: a yacht for thirty is both "from
-  // fifteen to thirty" and "from thirty to sixty". `60+` is the exception, because "more than
-  // 60" is not "60", and the band below it already claims that yacht; guests are whole people,
-  // so the band after sixty begins at sixty-one.
-  guests: { '15': [0, 15], '30': [15, 30], '60': [30, 60], '60+': [61, Number.POSITIVE_INFINITY] },
+  // Both ends of a band count, as the legacy comparison read them: a yacht for thirty is both
+  // "from fifteen to thirty" and "from thirty to sixty", and one for sixty is in "from thirty to
+  // sixty" and in "more than 60" alike.
+  guests: { '15': [0, 15], '30': [15, 30], '60': [30, 60], '60+': [60, Number.POSITIVE_INFINITY] },
   price: { '1200': [0, 1_200], '3500': [0, 3_500], Lux: [3_500, Number.POSITIVE_INFINITY] },
   length: { '20': [0, 20], '40': [20, 40], '60': [40, 60] },
 }

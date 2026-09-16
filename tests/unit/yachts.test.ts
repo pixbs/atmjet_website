@@ -282,14 +282,14 @@ describe('matchesCharter', () => {
   })
 
   it('puts a yacht on the boundary in the band whose label claims it', () => {
-    // Both ends of a band count, so a yacht for exactly thirty is in the band that ends at
-    // thirty and the one that begins there — both labels say so. `60+` reads "more than 60",
-    // and the band below it already claims a yacht for sixty, so that one is the exception.
+    // Both ends of a band count, as the legacy comparison read them: a yacht for exactly thirty
+    // is in the band that ends at thirty and the one that begins there, and one for sixty is in
+    // "from 30 to 60" and in "more than 60" alike.
     expect(matchesCharter({ guests: 30 }, { ...all, guests: '30' })).toBe(true)
     expect(matchesCharter({ guests: 30 }, { ...all, guests: '60' })).toBe(true)
     expect(matchesCharter({ guests: 60 }, { ...all, guests: '60' })).toBe(true)
-    expect(matchesCharter({ guests: 60 }, { ...all, guests: '60+' })).toBe(false)
-    expect(matchesCharter({ guests: 61 }, { ...all, guests: '60+' })).toBe(true)
+    expect(matchesCharter({ guests: 60 }, { ...all, guests: '60+' })).toBe(true)
+    expect(matchesCharter({ guests: 59 }, { ...all, guests: '60+' })).toBe(false)
   })
 
   it('keeps a yacht only where every band asked for takes it', () => {
