@@ -123,3 +123,87 @@ test.describe('the request a yacht page takes', () => {
     expect(url).toContain('"guests":6')
   })
 })
+
+/**
+ * What the page carries under the request card (issue #140, section 4, `/yachts/[id]` item 3):
+ * the six figures, what a charter includes, the description and the photographs the legacy
+ * stacked beside it.
+ */
+test.describe('what a yacht page says about herself', () => {
+  const SPECS = '[data-section="yacht-specs"]'
+
+  test('draws the six figures the legacy card drew, in its order', async ({ page }) => {
+    await page.goto(pathFor(SERENITY, 'en'))
+    const labels = await page.locator(`${SPECS} p`).allInnerTexts()
+
+    expect(labels.slice(0, 6)).toEqual([
+      'pax day/night',
+      'length ft/m',
+      'cabins',
+      'bathrooms',
+      'min rental hours',
+      'refit',
+    ])
+  })
+
+  test('prints the figures the legacy composed out of two columns', async ({ page }) => {
+    await page.goto(pathFor(SERENITY, 'en'))
+    const card = page.locator(SPECS).getByRole('heading', { level: 3 })
+
+    // `guestsDay / guestsNight`, and the feet with the metres worked out from them.
+    await expect(card.nth(0)).toHaveText('20 / 8')
+    await expect(card.nth(1)).toHaveText('78 / 24')
+  })
+
+  test('counts the hours in the language of the page', async ({ request }) => {
+    // The legacy wrote `${minHours} hours` on the Russian page too (section 13, entry 49).
+    const html = await (await request.get(pathFor(SERENITY, 'ru'))).text()
+
+    expect(html).toContain('4 часа')
+    expect(html).toContain('мин. часов аренды')
+  })
+
+  test('says what the price includes', async ({ page }) => {
+    await page.goto(pathFor(SERENITY, 'en'))
+
+    await expect(page.locator(SPECS)).toContainText('Included in the price:')
+    await expect(page.locator(SPECS)).toContainText('Crew, fuel, soft drinks and a tender.')
+  })
+
+  test('keeps the description in the paragraphs an editor typed', async ({ page }) => {
+    // The legacy split it on full stops and dropped whatever followed the last one (entry 50).
+    await page.goto(pathFor(SERENITY, 'en'))
+    const about = page.locator(SPECS).locator('p')
+
+    await expect(page.locator(SPECS)).toContainText('she leaves from the pontoon she is moored at.')
+    expect(await about.filter({ hasText: 'flybridge' }).count()).toBe(1)
+  })
+
+  test('stacks the photographs the gallery and the band did not take', async ({ page }) => {
+    // `photos.slice(2, -1).slice(2)`: the fifth to the second from last, which of six is one.
+    await page.goto(pathFor(SERENITY, 'en'))
+
+    await expect(page.locator(`${SPECS} img`)).toHaveCount(2)
+  })
+
+  test('draws the section for a yacht with a single photograph too', async ({ page }) => {
+    await page.goto(pathFor(BLUEWATER, 'en'))
+
+    await expect(page.locator(SPECS)).toBeVisible()
+    // The one photograph is both the last and the only: the stack beside the description is empty.
+    await expect(page.locator(`${SPECS} img`)).toHaveCount(1)
+  })
+})
+
+test.describe('what a search engine is told about a yacht', () => {
+  test('names her, points at her own URL and offers her photograph', async ({ page }) => {
+    await page.goto(pathFor(SERENITY, 'en'))
+
+    await expect(page).toHaveTitle(/Azimut "Serenity"/)
+    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
+      'href',
+      new RegExp(`${SERENITY}$`),
+    )
+    await expect(page.locator('meta[property="og:image"]')).toHaveCount(1)
+  })
+})
