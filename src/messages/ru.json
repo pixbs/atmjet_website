@@ -79,7 +79,8 @@
     "deleteLeg": "Удалить остановку",
     "addLeg": "Добавить остановку",
     "roundTrip": "Туда-обратно",
-    "multiLeg": "Сложный маршрут"
+    "multiLeg": "Сложный маршрут",
+    "hours": "Часы"
   },
   "units": {
     "hours": "{count, plural, one {# час} few {# часа} many {# часов} other {# часа}}",
@@ -141,7 +142,9 @@
       "guests": "Гостям"
     },
     "none": "Яхты не найдены",
-    "reset": "Сбросить фильтры"
+    "reset": "Сбросить фильтры",
+    "request": "Заказать {name}",
+    "hour": "Час"
   },
   "seo": {
     "siteName": "ATM JET",

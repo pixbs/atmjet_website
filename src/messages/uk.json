@@ -79,7 +79,8 @@
     "deleteLeg": "Видалити зупинку",
     "addLeg": "Додати зупинку",
     "roundTrip": "Туди-назад",
-    "multiLeg": "Багато зупинок"
+    "multiLeg": "Багато зупинок",
+    "hours": "Години"
   },
   "units": {
     "hours": "{count, plural, one {# година} few {# години} many {# годин} other {# години}}",
@@ -141,7 +142,9 @@
       "guests": "Гостями"
     },
     "none": "Яхт не знайдено",
-    "reset": "Скинути фільтри"
+    "reset": "Скинути фільтри",
+    "request": "Замовити {name}",
+    "hour": "Година"
   },
   "seo": {
     "siteName": "ATM JET",

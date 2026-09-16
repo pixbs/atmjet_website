@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
 
-import { listSaleYachts, searchCharterYachts } from '@/lib/data/yachts'
+import { listSaleYachts, resolveYacht, searchCharterYachts } from '@/lib/data/yachts'
 import { slugify } from '@/lib/slug'
 import {
   createAdmin,
@@ -529,6 +529,51 @@ describe('the listing the charter page reads', () => {
         Promise.reject(new Error('connection refused')),
       ),
     ).resolves.toEqual([])
+    expect(warn).toHaveBeenCalled()
+    warn.mockRestore()
+  })
+})
+
+/**
+ * The lookup the detail page does (issue #140, `docs/legacy-inventory.md` section 13, entry 44).
+ * The legacy page asked for `ILIKE '%id%'` with no order, so a fragment of a slug answered with
+ * whichever row the table handed over first — including, once two yachts shared a word, a
+ * different yacht after an unrelated edit.
+ */
+describe('the yacht the detail page resolves', () => {
+  const client = () => Promise.resolve(registry.payload)
+
+  it('answers to the whole slug', async () => {
+    const slug = `charter-${uniqueSuffix()}`
+    const yacht = await createYacht(registry, { listingType: 'charter', slug })
+
+    await expect(resolveYacht(slug, 'en', client)).resolves.toMatchObject({ id: yacht.id })
+  })
+
+  it('does not answer to a piece of one', async () => {
+    const slug = `charter-${uniqueSuffix()}`
+    await createYacht(registry, { listingType: 'charter', slug })
+
+    await expect(resolveYacht(slug.slice(4), 'en', client)).resolves.toBeUndefined()
+  })
+
+  it('leaves the yachts for sale to the section that lists them', async () => {
+    const slug = `sale-${uniqueSuffix()}`
+    await createYacht(registry, { listingType: 'sale', slug })
+
+    await expect(resolveYacht(slug, 'en', client)).resolves.toBeUndefined()
+  })
+
+  it('answers with nothing for a slug no yacht carries', async () => {
+    await expect(resolveYacht(`absent-${uniqueSuffix()}`, 'en', client)).resolves.toBeUndefined()
+  })
+
+  it('reports an unreachable database rather than taking the page down', async () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined)
+
+    await expect(
+      resolveYacht('anything', 'en', () => Promise.reject(new Error('connection refused'))),
+    ).resolves.toBeUndefined()
     expect(warn).toHaveBeenCalled()
     warn.mockRestore()
   })

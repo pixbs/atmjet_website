@@ -79,7 +79,8 @@
     "deleteLeg": "Delete leg",
     "addLeg": "Add leg",
     "roundTrip": "Round trip",
-    "multiLeg": "Multi-leg"
+    "multiLeg": "Multi-leg",
+    "hours": "Hours"
   },
   "units": {
     "hours": "{count, plural, one {# hour} other {# hours}}",
@@ -141,7 +142,9 @@
       "guests": "Guests"
     },
     "none": "No yachts found",
-    "reset": "Reset filters"
+    "reset": "Reset filters",
+    "request": "Request {name}",
+    "hour": "Hour"
   },
   "seo": {
     "siteName": "ATM JET",

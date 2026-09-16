@@ -180,3 +180,53 @@ export const searchCharterYachts = cache(
     }
   },
 )
+
+/**
+ * One charter yacht, by the slug in its address (issue #140, `docs/legacy-inventory.md` section
+ * 4, route `/[locale]/yachts/[id]`).
+ *
+ * An exact match on the slug, where the legacy page asked for `ILIKE '%id%'` with no order: a
+ * substring of one slug is a substring of others, and the row it answered with was whichever the
+ * table handed over first, so `/yachts/serenity` could open a different yacht after an unrelated
+ * edit (section 13, entry 44).
+ *
+ * The sale catalogue is not offered here. The legacy detail page read `new_yachts` alone, which
+ * is the charter half of the collection; a yacht for sale is a card in the section of E8.4.
+ */
+export const resolveYacht = cache(
+  async (
+    slug: string,
+    locale: Locale,
+    // Injected so the integration tier can read through its own Payload instance.
+    client: () => Promise<Payload> = getPayloadClient,
+  ) => {
+    try {
+      const payload = await client()
+      const { docs } = await payload.find({
+        collection: 'yachts',
+        locale,
+        where: { and: [{ slug: { equals: slug } }, { listingType: { equals: 'charter' } }] },
+        // One level, for the uploads the photographs point at.
+        depth: 1,
+        limit: 1,
+        // Only what a visitor can read.
+        overrideAccess: false,
+      })
+
+      return docs[0]
+    } catch (error) {
+      console.warn('[yachts] the database was unreachable, so the page cannot be resolved.', error)
+      return undefined
+    }
+  },
+)
+
+/** The photographs of a yacht, in the order an editor put them in, without the rows that carry
+ * nothing to draw. */
+export function yachtPhotographs(photos: YachtPhoto[] | null | undefined): ImageSource[] {
+  return (photos ?? []).flatMap((photo) => {
+    const source = photoSource(photo)
+
+    return source === null ? [] : [source]
+  })
+}
