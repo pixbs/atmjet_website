@@ -1,6 +1,7 @@
 import type { Payload } from 'payload'
 
 import type { Locale } from '@/i18n/locales'
+import { servedLocales } from '@/lib/pages'
 import type { Listable } from '@/lib/sitemap'
 
 import { getPayloadClient } from './payload'
@@ -67,7 +68,7 @@ export async function listPageParams(
         locale,
         limit: 0,
         depth: 0,
-        select: { slug: true },
+        select: { slug: true, availableLocales: true },
         overrideAccess: false,
       })
 
@@ -76,6 +77,9 @@ export async function listPageParams(
         // string is the home page, so skipping these keeps such a draft from claiming the
         // locale root: Postgres counts NULLs as distinct, so the unique index allows many.
         if (typeof page.slug !== 'string') continue
+
+        // A page this language is not served in has no URL here either: it redirects (#149).
+        if (!servedLocales(page.availableLocales, locales).includes(locale)) continue
 
         params.push({ locale, slug: page.slug === '' ? [] : page.slug.split('/') })
       }
@@ -113,7 +117,7 @@ export async function listPagesForSitemap(
       collection: 'pages',
       limit: 0,
       depth: 0,
-      select: { slug: true, updatedAt: true },
+      select: { slug: true, updatedAt: true, availableLocales: true },
       // Only what a visitor can read: a draft page has no URL to offer a crawler.
       overrideAccess: false,
     })

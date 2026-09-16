@@ -11,11 +11,12 @@ import { hideFloatingHeader } from './chrome'
 const SECTION = '[data-section="hero-subpage"]'
 
 for (const page of [
-  { slug: 'cargo_charter', name: 'hero-subpage.png' },
-  { slug: 'citizens', name: 'hero-subpage-no-subtitle.png' },
-]) {
+  { slug: 'cargo_charter', locale: 'en', name: 'hero-subpage.png' },
+  // The citizens page answers in Russian alone (issue #149).
+  { slug: 'citizens', locale: 'ru', name: 'hero-subpage-no-subtitle.png' },
+] as const) {
   test(`the ${page.slug} hero matches its baseline`, async ({ page: browserPage }) => {
-    await browserPage.goto(pathFor(`/${page.slug}`, 'en'))
+    await browserPage.goto(pathFor(`/${page.slug}`, page.locale))
     const hero = browserPage.locator(SECTION)
     await expect(hero).toBeVisible()
     await browserPage.evaluate(() => document.fonts.ready)

@@ -77,7 +77,7 @@ test.describe('structured data', () => {
   })
 
   test('carries the questions a page answers, with its answers', async ({ request }) => {
-    const graph = await graphOf(request, pathFor('/citizens', 'en'))
+    const graph = await graphOf(request, pathFor('/', 'en'))
     const questions = graph.FAQPage.mainEntity as Array<Record<string, unknown>>
 
     expect(questions.length).toBeGreaterThan(0)
@@ -91,7 +91,7 @@ test.describe('structured data', () => {
     }
 
     // The same questions the section itself draws.
-    const html = await (await request.get(pathFor('/citizens', 'en'))).text()
+    const html = await (await request.get(pathFor('/', 'en'))).text()
     expect(html).toContain(String(questions[0].name))
   })
 

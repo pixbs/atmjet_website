@@ -499,3 +499,39 @@ describe('the contact section block', () => {
     expect(contactOf(russian)?.source).toBe(contactOf(english)?.source)
   })
 })
+
+/**
+ * The languages a page answers in (issue #149). It belongs to the document, not to a language:
+ * a page that is Russian only has to say so from every language, or the English write would
+ * clear it and the page would start answering in English again.
+ */
+describe('the languages a page answers in', () => {
+  it('is one list for the document, whichever language it is written from', async () => {
+    const page = await registry.create('pages', pageData({ availableLocales: ['ru'] }))
+
+    await registry.payload.update({
+      collection: 'pages',
+      id: page.id,
+      data: { title: 'Гражданам' },
+      locale: 'ru',
+      overrideAccess: true,
+    })
+
+    const english = await registry.payload.findByID({ collection: 'pages', id: page.id, depth: 0 })
+    const russian = await registry.payload.findByID({
+      collection: 'pages',
+      id: page.id,
+      locale: 'ru',
+      depth: 0,
+    })
+
+    expect(english.availableLocales).toEqual(['ru'])
+    expect(russian.availableLocales).toEqual(['ru'])
+  })
+
+  it('is empty on a page nobody has restricted, which is every other page', async () => {
+    const page = await registry.create('pages', pageData())
+
+    expect(page.availableLocales ?? []).toEqual([])
+  })
+})

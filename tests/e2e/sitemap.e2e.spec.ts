@@ -86,8 +86,8 @@ test.describe('sitemap.xml', () => {
   test('lists the pages the legacy sitemap got wrong', async ({ request }) => {
     const paths = locationsIn(await sitemapXml(request)).map((url) => new URL(url).pathname)
 
-    expect(paths).toContain('/en/citizens')
-    expect(paths).not.toContain('/en/citezens')
+    expect(paths).toContain('/ru/citizens')
+    expect(paths).not.toContain('/ru/citezens')
     expect(paths).toContain('/en/sales_yachts')
   })
 

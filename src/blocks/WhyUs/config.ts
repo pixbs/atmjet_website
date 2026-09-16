@@ -50,7 +50,14 @@ export const whyUs: Block = {
             description: 'Counted up when the card arrives, as `20+`; some pages had none.',
           },
         },
-        { name: 'title', type: 'text', required: true, localized: true },
+        {
+          name: 'title',
+          type: 'text',
+          localized: true,
+          admin: {
+            description: 'The citizens cards carry their reason in the sentence alone (#149).',
+          },
+        },
         { name: 'description', type: 'text', required: true, localized: true },
         { name: 'image', type: 'upload', relationTo: 'media' },
       ],
