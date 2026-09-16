@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { canonicalRegistration } from '@/lib/aircraft'
+import { canonicalRegistration, registrationsInSlug } from '@/lib/aircraft'
 
 /**
  * Aircraft value handling (issue #63). The registration rule decides which legacy rows E5.7
@@ -34,5 +34,31 @@ describe('canonicalRegistration', () => {
     expect(canonicalRegistration('  -  ')).toBeUndefined()
     expect(canonicalRegistration(null)).toBeUndefined()
     expect(canonicalRegistration(7)).toBeUndefined()
+  })
+})
+
+/**
+ * The registration a detail-page slug names (issue #138, `docs/legacy-inventory.md` section 4).
+ * The legacy page split the slug on `-` and read the first two parts, so `RA-73025-gulfstream`
+ * asked for `RA-73025`; a bare registration and a slug written without the hyphen answer too.
+ */
+describe('registrationsInSlug', () => {
+  it('reads the registration out of the slug the listing card writes', () => {
+    expect(registrationsInSlug('RA-73025-gulfstream-g650')).toContain('RA73025')
+  })
+
+  it('takes a slug of one part as the registration itself', () => {
+    expect(registrationsInSlug('MOUSE')).toEqual(['MOUSE'])
+  })
+
+  it('offers the whole slug as well, for a registration written without its hyphen', () => {
+    // `T7-ATM` and `T7ATM` are one aircraft to the comparison the legacy merge used.
+    expect(registrationsInSlug('T7-ATM')).toEqual(['T7ATM'])
+    expect(registrationsInSlug('9H-ATM-legacy-650')).toEqual(['9HATM', '9HATMLEGACY650'])
+  })
+
+  it('offers nothing for a slug with nothing in it', () => {
+    expect(registrationsInSlug('')).toEqual([])
+    expect(registrationsInSlug('---')).toEqual([])
   })
 })
