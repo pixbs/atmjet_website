@@ -224,12 +224,12 @@ export default async function YachtDetailPage({ params }: { params: Promise<Deta
             {/* The rule after the last figure is the yacht card's own; the aircraft card stops
                 at the one before it (section 4). */}
             <KeyStatsCard ruleAfterLast stats={stats} title={t('keyStats')}>
-              {charter.included && (
-                <div className="col-span-full">
-                  <p>{t('included')}</p>
-                  <h3>{charter.included}</h3>
-                </div>
-              )}
+              {/* Drawn whatever the field holds, as the legacy card drew it and as the sale
+                  card's rows are (issue #100): the label is part of the card, not of the value. */}
+              <div className="col-span-full">
+                <p>{t('included')}</p>
+                <h3>{charter.included}</h3>
+              </div>
             </KeyStatsCard>
           </div>
           <div className="relative items-start gap-6 md:grid md:grid-cols-2 md:gap-10">
