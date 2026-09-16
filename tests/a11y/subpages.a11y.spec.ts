@@ -20,7 +20,9 @@ const SLUGS = [
   'sales_dept',
   'sales_yachts',
   'yachts',
-  // One yacht, reached the way the listing card reaches it (issue #140).
+  // One aircraft, reached the way the listing card reaches it (issue #138).
+  'aircraft/MOUSE',
+  // One yacht, reached the same way (issue #140).
   'yachts/azimut-serenity',
 ] as const
 
