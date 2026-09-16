@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-import { legSchema } from './flight-request'
+import { directionSchema } from './flight-request'
 import {
   isSubmittableEmail,
   isSubmittablePhone,
@@ -57,7 +57,7 @@ export const submissionSchema = z.object({
   /** The page it was submitted from, as the browser knows it. */
   url: z.string().trim().max(URL_MAX),
   /** The legs of a flight request, where one was handed over (section 7.6). */
-  directions: z.array(legSchema).max(4).optional(),
+  directions: z.array(directionSchema).max(4).optional(),
   /** How long the form was on screen before it was sent, and the honeypot (issue #157). */
   elapsedMs: z.number().int().nonnegative().max(MAX_ELAPSED_MS).optional().catch(undefined),
   trap: z.string().max(LEAD_NAME_MAX_LENGTH).optional(),
@@ -74,7 +74,7 @@ export function parseDirections(raw: string | null): LeadSubmission['directions'
   if (raw === null || raw === '') return undefined
 
   try {
-    const parsed = z.array(legSchema).max(4).safeParse(JSON.parse(raw))
+    const parsed = z.array(directionSchema).max(4).safeParse(JSON.parse(raw))
 
     return parsed.success ? parsed.data : undefined
   } catch {
