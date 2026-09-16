@@ -1,6 +1,5 @@
 import type { Locale } from '@/i18n/locales'
-import { AIRCRAFT_LISTING, type AircraftQuery } from '@/lib/aircraft'
-import { parseListing } from '@/lib/listing'
+import type { SearchParams } from '@/lib/listing'
 import { mediaSource } from '@/lib/media'
 import { hrefForSlug } from '@/lib/nav'
 import type { Page } from '@/payload-types'
@@ -38,6 +37,7 @@ import { RecentYachts } from './RecentYachts/Component'
 import { Tiles } from './Tiles/Component'
 import { Transfer } from './Transfer/Component'
 import { WeInspect } from './WeInspect/Component'
+import { YachtsListing } from './YachtsListing/Component'
 import { YachtsPromo } from './YachtsPromo/Component'
 import { WhyUs } from './WhyUs/Component'
 import { WordmarkNote } from './WordmarkNote/Component'
@@ -52,10 +52,10 @@ import { WordmarkNote } from './WordmarkNote/Component'
  */
 type LayoutBlock = NonNullable<Page['layout']>[number]
 
-function blockFor(block: LayoutBlock, key: string, locale: Locale, listing: AircraftQuery) {
+function blockFor(block: LayoutBlock, key: string, locale: Locale, search: SearchParams) {
   switch (block.blockType) {
     case 'aircraftListing':
-      return <AircraftListing key={key} query={listing} title={block.title} />
+      return <AircraftListing key={key} search={search} title={block.title} />
     case 'advantages': {
       const image = mediaSource(typeof block.image === 'object' ? block.image : null)
 
@@ -409,6 +409,8 @@ function blockFor(block: LayoutBlock, key: string, locale: Locale, listing: Airc
       return <CatalogueAircraft key={key} limit={block.limit} title={block.title} />
     case 'recentYachts':
       return <RecentYachts key={key} limit={block.limit} title={block.title} />
+    case 'yachtsListing':
+      return <YachtsListing key={key} heading={block.heading} search={search} title={block.title} />
     case 'yachtsPromo': {
       const image = mediaSource(typeof block.image === 'object' ? block.image : null)
       const picture = mediaSource(
@@ -490,20 +492,18 @@ function blockFor(block: LayoutBlock, key: string, locale: Locale, listing: Airc
 export function RenderBlocks({
   layout,
   locale,
-  listing,
+  search,
 }: {
   layout: Page['layout']
   locale: Locale
   /**
-   * What the URL asked a listing for. Only the route that serves a listing reads the query, so
-   * a listing block an editor puts on an ordinary page draws the first batch in the order the
-   * listing opens on, which is what that page can be prerendered with.
+   * What the URL asked for, unread. Each listing parses it against its own contract, and only
+   * the route that serves a listing has a query to pass: a listing block an editor puts on an
+   * ordinary page draws what it opens on, which is what that page can be prerendered with.
    */
-  listing?: AircraftQuery
+  search?: SearchParams
 }) {
-  const asked = listing ?? parseListing({}, AIRCRAFT_LISTING)
-
   return (layout ?? []).map((block, index) =>
-    blockFor(block, block.id ?? String(index), locale, asked),
+    blockFor(block, block.id ?? String(index), locale, search ?? {}),
   )
 }

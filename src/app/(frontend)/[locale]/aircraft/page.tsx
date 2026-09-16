@@ -5,10 +5,9 @@ import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { RenderBlocks } from '@/blocks/render-blocks'
 import { JsonLd } from '@/components/ui/json-ld'
 import type { Locale } from '@/i18n/locales'
-import { AIRCRAFT_LISTING } from '@/lib/aircraft'
 import { findPageBySlug, pageHead } from '@/lib/data/pages'
 import { getEnabledLocales } from '@/lib/data/site-settings'
-import { parseListing, type SearchParams } from '@/lib/listing'
+import type { SearchParams } from '@/lib/listing'
 import { servedLocales } from '@/lib/pages'
 import { breadcrumbs } from '@/lib/structured-data'
 import { siteOrigin } from '@/lib/urls'
@@ -68,11 +67,7 @@ export default async function AircraftPage({
 
   return (
     <>
-      <RenderBlocks
-        layout={page.layout}
-        listing={parseListing(await searchParams, AIRCRAFT_LISTING)}
-        locale={locale as Locale}
-      />
+      <RenderBlocks layout={page.layout} locale={locale as Locale} search={await searchParams} />
       {trail && <JsonLd data={trail} />}
     </>
   )
