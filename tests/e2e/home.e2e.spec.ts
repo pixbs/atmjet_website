@@ -1,4 +1,5 @@
 import { expect, forEachLocale, test } from './fixtures'
+import { pathFor, type Locale } from './routes'
 
 /**
  * The home page is the `pages` document whose slug is empty (issue #60). Its first section is
@@ -17,10 +18,55 @@ const DOCUMENT_TITLES = {
   ru: 'Аренда частного самолета, заказать самолет в Москве и любой точке мира',
 } as const
 
+/**
+ * The eleven sections the legacy home page drew, in its order (issue #134, section 4). The two
+ * forms a section carries inside it are chrome, as they are on every other page.
+ */
+const SECTIONS = [
+  'hero-video',
+  'make-booking',
+  'why-us',
+  'empty-legs',
+  'key-features',
+  'options-tiles',
+  'privilege',
+  'yachts-promo',
+  'tiles',
+  'transfer',
+  'faq',
+]
+
+const CHROME = ['header', 'footer', 'cookie-banner', 'booking-form', 'request-form', 'angle-bar']
+
+/** The page's own sections, in the order the document has them. */
+const sectionsOf = (html: string): string[] =>
+  [...html.matchAll(/data-section="([a-z-]+)"/g)]
+    .map((match) => match[1] ?? '')
+    .filter((name) => !CHROME.includes(name))
+
 forEachLocale((locale) => {
   test.describe('Home', () => {
     test('is rendered on the server', async ({ home, request }) => {
       await home.expectServerRendered(request, HEADINGS[locale as keyof typeof HEADINGS])
+    })
+
+    test('is its eleven sections, in the order the legacy page had them', async ({ request }) => {
+      const html = await (await request.get(pathFor('/', locale as Locale))).text()
+
+      // In order, and nothing else: a section on the wrong page shows up here as an extra.
+      expect(sectionsOf(html)).toEqual(SECTIONS)
+    })
+
+    test('draws the curtain the legacy drew over this page alone', async ({ request }) => {
+      // The preloader is a curtain, not a loading screen: the page is already behind it in the
+      // HTML the server sends (issue #92, section 3.8).
+      const html = await (await request.get(pathFor('/', locale as Locale))).text()
+
+      expect(html).toContain('preloader-backdrop')
+      expect(html).toContain(HEADINGS[locale as keyof typeof HEADINGS])
+      expect(await (await request.get(pathFor('/yachts', locale as Locale))).text()).not.toContain(
+        'preloader-backdrop',
+      )
     })
 
     test('shows the page a visitor asked for, in their locale', async ({ home, page }) => {
