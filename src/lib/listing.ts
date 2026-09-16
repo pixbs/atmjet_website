@@ -15,6 +15,17 @@ export type SearchParams = Record<string, string | string[] | undefined>
 
 export type ListingDirection = 'asc' | 'desc'
 
+/**
+ * One filter: the choices in the order the select offers them, and the one the listing opens
+ * on. The two are separate because the legacy yachts card offered `All` last on two of its three
+ * selects and first on the other (`docs/legacy-inventory.md` section 4).
+ */
+export interface ListingFilter {
+  choices: readonly [string, ...string[]]
+  /** Left out of the address, so a filter nobody touched does not appear in it. */
+  opensOn: string
+}
+
 /** What a listing offers and what it opens on: the shape a URL is read against. */
 export interface ListingContract<Sort extends string> {
   /** The sorts on offer. The first is the one the listing opens on. */
@@ -24,6 +35,8 @@ export interface ListingContract<Sort extends string> {
   perPage: number
   /** So a request for ten thousand cards is not one the database is asked for. */
   maxPerPage: number
+  /** What each filter offers, by the name it goes under in the URL. */
+  filters?: Readonly<Record<string, ListingFilter>>
 }
 
 export interface ListingQuery<Sort extends string> {
@@ -31,6 +44,8 @@ export interface ListingQuery<Sort extends string> {
   perPage: number
   sort: Sort
   direction: ListingDirection
+  /** What each filter was asked for; one it does not offer reads as the one it opens on. */
+  filters: Readonly<Record<string, string>>
 }
 
 /** A parameter written twice is read once; the first wins, as a form submits it. */
@@ -60,6 +75,13 @@ export function parseListing<Sort extends string>(
     perPage: Math.min(counted(first(params.perPage), contract.perPage), contract.maxPerPage),
     sort: contract.sorts.find((sort) => sort === named) ?? contract.sorts[0],
     direction: direction === 'asc' || direction === 'desc' ? direction : contract.direction,
+    filters: Object.fromEntries(
+      Object.entries(contract.filters ?? {}).map(([name, filter]) => {
+        const asked = first(params[name])
+
+        return [name, filter.choices.find((choice) => choice === asked) ?? filter.opensOn]
+      }),
+    ),
   }
 }
 
@@ -76,6 +98,11 @@ export function listingSearch<Sort extends string>(
 
   if (query.sort !== contract.sorts[0]) written.set('sort', query.sort)
   if (query.direction !== contract.direction) written.set('direction', query.direction)
+  // In the contract's own order, so one state is one address whichever way the form filled in.
+  for (const [name, filter] of Object.entries(contract.filters ?? {})) {
+    const chosen = query.filters[name]
+    if (chosen !== undefined && chosen !== filter.opensOn) written.set(name, chosen)
+  }
   if (query.perPage !== contract.perPage) written.set('perPage', String(query.perPage))
   if (query.page !== 1) written.set('page', String(query.page))
 

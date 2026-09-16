@@ -1,4 +1,4 @@
-import type { ListingContract, ListingQuery } from './listing'
+import type { ListingContract, ListingFilter, ListingQuery } from './listing'
 
 /**
  * Yacht listings (issue #65).
@@ -173,6 +173,60 @@ export const CHARTER_SORTS = ['price', 'length', 'guests'] as const
 export type CharterSort = (typeof CHARTER_SORTS)[number]
 
 /**
+ * The three bands the legacy filter card narrowed the fleet with, by the name each goes under in
+ * the URL and in the order its select offered them (issue #139, section 4): two of the three
+ * ended on `All` and the length one began with it. All three open on `All`, so a band nobody
+ * chose is left out of the address.
+ *
+ * The length select was named `lenght` on the form while the URL it wrote said `length`, and the
+ * comparison behind it looked for a lowercase `all` the form never sent (section 13, entry 40).
+ * The URL keeps the name it always had; the misspelling was the form field's own and nothing
+ * outside the form ever saw it.
+ */
+export const CHARTER_FILTERS = {
+  guests: { choices: ['15', '30', '60', '60+', 'All'], opensOn: 'All' },
+  price: { choices: ['1200', '3500', 'Lux', 'All'], opensOn: 'All' },
+  length: { choices: ['All', '20', '40', '60'], opensOn: 'All' },
+} as const satisfies Record<string, ListingFilter>
+
+/**
+ * What each band means. `60+` is the one the legacy got wrong: its case had no `break`, so it
+ * fell through into `All` and "more than 60 guests" showed the whole fleet (section 13, entry
+ * 39). Here it means what it says.
+ */
+const BANDS: Record<keyof typeof CHARTER_FILTERS, Record<string, [number, number]>> = {
+  // Both ends of a band count, as the legacy comparison read them: a yacht for thirty is both
+  // "from fifteen to thirty" and "from thirty to sixty", and one for sixty is in "from thirty to
+  // sixty" and in "more than 60" alike.
+  guests: { '15': [0, 15], '30': [15, 30], '60': [30, 60], '60+': [60, Number.POSITIVE_INFINITY] },
+  price: { '1200': [0, 1_200], '3500': [0, 3_500], Lux: [3_500, Number.POSITIVE_INFINITY] },
+  length: { '20': [0, 20], '40': [20, 40], '60': [40, 60] },
+}
+
+/**
+ * Whether a yacht is in every band that was asked for.
+ *
+ * A figure an editor has not filled in counts as zero, which is what the legacy comparison did
+ * with `Number(x) || 0` — so an unpriced yacht still shows under the cheapest band. That is not
+ * one of the defects section 13 lists, so it is reproduced rather than corrected.
+ */
+export function matchesCharter(
+  yacht: CharterOrderable,
+  filters: Readonly<Record<string, string>>,
+): boolean {
+  return (Object.keys(CHARTER_FILTERS) as (keyof typeof CHARTER_FILTERS)[]).every((name) => {
+    const band = BANDS[name][filters[name] ?? 'All']
+    if (!band) return true
+
+    const measured =
+      name === 'guests' ? yacht.guests : name === 'price' ? yacht.price : yacht.length
+    const figure = typeof measured === 'number' && Number.isFinite(measured) ? measured : 0
+
+    return figure >= band[0] && figure <= band[1]
+  })
+}
+
+/**
  * The listing opens on price ascending, as the legacy select did. The page size is zero, which
  * means the whole result as it does to Payload's own `limit`: the legacy page read the entire
  * table and drew every row (section 13, entry 52), and a charter fleet is dozens of yachts
@@ -183,6 +237,7 @@ export const CHARTER_LISTING: ListingContract<CharterSort> = {
   direction: 'asc',
   perPage: 0,
   maxPerPage: 0,
+  filters: CHARTER_FILTERS,
 }
 
 export type CharterQuery = ListingQuery<CharterSort>

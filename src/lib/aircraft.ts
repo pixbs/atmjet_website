@@ -39,3 +39,19 @@ export const AIRCRAFT_LISTING: ListingContract<AircraftSort> = {
 }
 
 export type AircraftQuery = ListingQuery<AircraftSort>
+
+/**
+ * The registration a detail-page slug names (issue #138, `docs/legacy-inventory.md` section 4).
+ *
+ * The legacy page split the slug on `-` and read the first two parts as the registration, so
+ * `RA-73025-gulfstream-g650` asked for `RA-73025`. A slug with one part is the registration
+ * itself, which is what the listing card writes for an aircraft the import has not given a slug
+ * yet; the whole slug is offered too, because a registration may be written without its hyphen.
+ */
+export function registrationsInSlug(slug: string): string[] {
+  const parts = slug.split('-').filter((part) => part !== '')
+  const named = parts.length > 1 ? canonicalRegistration(`${parts[0]}-${parts[1]}`) : undefined
+  const whole = canonicalRegistration(parts.join('-'))
+
+  return [...new Set([named, whole].filter((one): one is string => one !== undefined))]
+}
