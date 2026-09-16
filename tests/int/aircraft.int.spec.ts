@@ -1,6 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
 
-import { listCatalogueAircraft } from '@/lib/data/aircraft'
+import type { AircraftQuery } from '@/lib/aircraft'
+import { listCatalogueAircraft, searchAircraft } from '@/lib/data/aircraft'
 import { createMedia, createUser } from '../factories'
 import { createRegistry, uniqueSuffix, type TestRegistry } from '../helpers/payload'
 
@@ -284,6 +285,133 @@ describe('the listing the aircraft carousel reads', () => {
     expect(mine?.model).toBe('Gulfstream G650ER')
     expect(mine?.passengers).toBe(14)
     expect(mine?.year ?? null).toBeNull()
+    expect(mine?.image?.src).toContain(upload.filename)
+  })
+})
+
+/**
+ * The listing the aircraft page reads (issue #135, `docs/legacy-inventory.md` section 4). Three
+ * of the legacy list's defects are fixed rather than reproduced (section 13, entries 23, 24 and
+ * 26), and each of them is a thing a visitor could see: an order that did nothing, aircraft that
+ * were never listed, and batches shorter than the fifteen they promised.
+ */
+describe('the listing the aircraft page reads', () => {
+  const client = () => Promise.resolve(registry.payload)
+
+  /** Everything, so a run can pick its own aircraft out of a catalogue every run adds to. */
+  const asked = (overrides: Partial<AircraftQuery> = {}): AircraftQuery => ({
+    page: 1,
+    perPage: 500,
+    sort: 'size',
+    direction: 'asc',
+    ...overrides,
+  })
+
+  /** An aircraft with a photograph, which is what the listing draws a card from. */
+  async function listed(specification: Record<string, number>) {
+    const upload = await createMedia(registry)
+
+    return registry.create(
+      'aircraft',
+      aircraft({ specification, images: [{ type: 'exterior', media: upload.id }] }),
+    )
+  }
+
+  const order = (found: { id: number | string }[], mine: (number | string)[]) =>
+    found.map((one) => one.id).filter((id) => mine.includes(id))
+
+  it('sorts by the passengers a card shows, which the legacy option never did', async () => {
+    // The legacy select offered `passangers`, which matched nothing, so the list stayed in id
+    // order however a visitor asked for it (section 13, entry 23).
+    const few = await listed({ passengers: 4 })
+    const some = await listed({ passengers: 9 })
+    const many = await listed({ passengers: 20 })
+    const mine = [few.id, some.id, many.id]
+
+    const down = await searchAircraft(
+      'en',
+      asked({ sort: 'passengers', direction: 'desc' }),
+      client,
+    )
+    const up = await searchAircraft('en', asked({ sort: 'passengers' }), client)
+
+    expect(order(down.aircraft, mine)).toEqual([many.id, some.id, few.id])
+    expect(order(up.aircraft, mine)).toEqual([few.id, some.id, many.id])
+  })
+
+  it('lists an aircraft nobody has measured, and puts it last either way round', async () => {
+    // The legacy filter asked for between 0 and 400 passengers on every read, so an aircraft
+    // whose seats nobody had counted was never listed at all (section 13, entry 24).
+    const measured = await listed({ passengers: 12 })
+    const unmeasured = await listed({})
+    const mine = [measured.id, unmeasured.id]
+
+    const down = await searchAircraft(
+      'en',
+      asked({ sort: 'passengers', direction: 'desc' }),
+      client,
+    )
+    const up = await searchAircraft('en', asked({ sort: 'passengers' }), client)
+
+    expect(order(down.aircraft, mine)).toEqual([measured.id, unmeasured.id])
+    expect(order(up.aircraft, mine)).toEqual([measured.id, unmeasured.id])
+  })
+
+  it('leaves out an aircraft with no photograph before counting, not after', async () => {
+    // The legacy card returned nothing when it had no cover, after the batch of fifteen had
+    // been chosen, so the grid was short and the next batch skipped rows (section 13, entry 26).
+    const bare = await registry.create('aircraft', aircraft({ specification: { passengers: 8 } }))
+
+    const found = await searchAircraft('en', asked(), client)
+
+    expect(found.aircraft.map((one) => one.id)).not.toContain(bare.id)
+  })
+
+  it('leaves out an aircraft an editor has taken off the market', async () => {
+    const upload = await createMedia(registry)
+    const grounded = await registry.create(
+      'aircraft',
+      aircraft({ availability: 'unavailable', images: [{ type: 'exterior', media: upload.id }] }),
+    )
+
+    const found = await searchAircraft('en', asked(), client)
+
+    expect(found.aircraft.map((one) => one.id)).not.toContain(grounded.id)
+  })
+
+  it('hands back a batch and how many there are, so the page can offer more', async () => {
+    await listed({ passengers: 5 })
+    await listed({ passengers: 6 })
+
+    const first = await searchAircraft('en', asked({ perPage: 1 }), client)
+    const second = await searchAircraft('en', asked({ perPage: 1, page: 2 }), client)
+
+    // A page is how far the listing has been read, so the second holds the first as well.
+    expect(first.aircraft).toHaveLength(1)
+    expect(second.aircraft).toHaveLength(2)
+    expect(second.aircraft[0]?.id).toBe(first.aircraft[0]?.id)
+    expect(first.total).toBeGreaterThan(first.aircraft.length)
+  })
+
+  it('reads what a card prints, and leads to the aircraft by its slug', async () => {
+    const upload = await createMedia(registry)
+    const created = await registry.create(
+      'aircraft',
+      aircraft({
+        registrationDisplay: `T7-${uniqueSuffix().slice(-5)}`,
+        type: { name: 'Gulfstream G650ER', category: 'Ultra long range' },
+        specification: { cabinHeight: 1.95 },
+        images: [{ type: 'exterior', media: upload.id }],
+      }),
+    )
+
+    const found = await searchAircraft('en', asked(), client)
+    const mine = found.aircraft.find((one) => one.id === created.id)
+
+    expect(mine?.name).toBe('Gulfstream G650ER')
+    expect(mine?.category).toBe('Ultra long range')
+    expect(mine?.registration).toBe(created.registrationDisplay)
+    expect(mine?.slug).toBe(created.slug)
     expect(mine?.image?.src).toContain(upload.filename)
   })
 })

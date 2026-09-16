@@ -9,7 +9,7 @@ import { routing } from './routing'
  * (`docs/legacy-inventory.md` section 3.3).
  *
  * `usePathname` returns the path without the locale prefix, which is what a link that switches
- * language needs (issue #90). The remaining members (`redirect`, `useRouter`) are exported when
- * the first component needs one.
+ * language needs (issue #90), and what `useRouter` expects back when a control navigates to a
+ * listing's own URL (issue #135). `redirect` is exported when the first component needs it.
  */
-export const { Link, usePathname } = createNavigation(routing)
+export const { Link, usePathname, useRouter } = createNavigation(routing)

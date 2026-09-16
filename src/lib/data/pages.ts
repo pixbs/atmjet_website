@@ -1,10 +1,17 @@
+import type { Metadata } from 'next'
+import { getTranslations } from 'next-intl/server'
 import type { Payload } from 'payload'
+import { cache } from 'react'
 
+import { DYNAMIC_PAGE_SLUGS } from '@/collections/Pages'
 import type { Locale } from '@/i18n/locales'
+import { pageMetadata } from '@/lib/metadata'
 import { servedLocales } from '@/lib/pages'
 import type { Listable } from '@/lib/sitemap'
+import { siteOrigin } from '@/lib/urls'
 
 import { getPayloadClient } from './payload'
+import { getEnabledLocales } from './site-settings'
 
 export interface PageRouteParams {
   locale: string
@@ -78,6 +85,10 @@ export async function listPageParams(
         // locale root: Postgres counts NULLs as distinct, so the unique index allows many.
         if (typeof page.slug !== 'string') continue
 
+        // A listing is served by a route of its own and rendered on demand, so the catch-all
+        // has nothing to prerender for it (issue #135).
+        if (DYNAMIC_PAGE_SLUGS.some((dynamic) => dynamic === page.slug)) continue
+
         // A page this language is not served in has no URL here either: it redirects (#149).
         if (!servedLocales(page.availableLocales, locales).includes(locale)) continue
 
@@ -130,4 +141,74 @@ export async function listPagesForSitemap(
     )
     return []
   }
+}
+
+/**
+ * The page served at a path, or nothing (issue #60).
+ *
+ * Read through `cache()`, so the two readers of one request — the head and the body of the page
+ * — share a query rather than each making their own. `depth` is 1: the blocks of the layout draw
+ * their own uploads and the head reads the share image off the same document
+ * (`docs/conventions/rendering.md`).
+ */
+export const findPageBySlug = cache(async (locale: string, slug: string) => {
+  const payload = await getPayloadClient()
+
+  const result = await payload.find({
+    collection: 'pages',
+    where: { slug: { equals: slug } },
+    locale: locale as 'en',
+    limit: 1,
+    depth: 1,
+    // Drafts stay invisible here: this is a public read, so `publishedOnly` applies.
+    overrideAccess: false,
+  })
+
+  return result.docs[0]
+})
+
+/** The `plugin-seo` fields on a page; `image` is the document, not its id, at this depth. */
+interface PageSeo {
+  title?: string | null
+  description?: string | null
+  image?: string | number | { url?: string | null } | null
+}
+
+/**
+ * What a page tells a crawler and a link preview (issue #170). The legacy site gave twelve of
+ * its thirteen routes no metadata at all and none of them a canonical URL or an `hreflang` link
+ * (`docs/legacy-inventory.md` section 2.4), so `/en/yachts` and `/ru/yachts` read as two
+ * unrelated pages competing for the same content.
+ *
+ * The strings are the editor's, from the `plugin-seo` fields, falling back to the page title and
+ * the site description rather than to nothing. A path no page claims is a redirect or a 404, and
+ * inherits the layout's defaults.
+ */
+export async function pageHead(locale: string, slug: string): Promise<Metadata> {
+  const [page, locales, t] = await Promise.all([
+    findPageBySlug(locale, slug),
+    getEnabledLocales(),
+    getTranslations({ locale, namespace: 'seo' }),
+  ])
+
+  if (!page) return {}
+
+  const meta = (page as { meta?: PageSeo }).meta
+  // The film the page opens on, which is what the legacy home page named to a scraper
+  // (`docs/legacy-inventory.md` section 2.4). A page without a hero video names none.
+  const hero = (page.layout ?? []).find((block) => block.blockType === 'heroVideo')
+
+  return pageMetadata({
+    locale: locale as Locale,
+    // Only the languages this page answers in, so a crawler is not offered a URL that
+    // redirects (issue #149).
+    locales: servedLocales(page.availableLocales, locales),
+    slug,
+    title: meta?.title || page.title,
+    description: meta?.description || t('siteDescription'),
+    image: typeof meta?.image === 'object' ? meta.image?.url : undefined,
+    video: hero ? new URL(hero.video, siteOrigin()).href : undefined,
+    siteName: t('siteName'),
+    origin: siteOrigin(),
+  })
 }

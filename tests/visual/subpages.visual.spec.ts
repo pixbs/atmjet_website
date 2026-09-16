@@ -11,6 +11,7 @@ import { hideDevOverlay, hideFloatingHeader, settlePage } from './chrome'
  * decides how tall each section grows.
  */
 const PAGES: { slug: string; locales: readonly Locale[] }[] = [
+  { slug: 'aircraft', locales: ENABLED_LOCALES },
   { slug: 'cargo_charter', locales: ENABLED_LOCALES },
   { slug: 'medical_aviation', locales: ENABLED_LOCALES },
   { slug: 'empty_legs', locales: ENABLED_LOCALES },
