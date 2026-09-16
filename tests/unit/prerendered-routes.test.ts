@@ -6,7 +6,7 @@ import {
   missingRoutes,
   routesFromManifest,
 } from '../../scripts/ci/prerendered-routes'
-import { PAGE_SLUGS, pathForPage } from '@/collections/Pages'
+import { DYNAMIC_PAGE_SLUGS, PAGE_SLUGS, pathForPage } from '@/collections/Pages'
 import { DEFAULT_LOCALES } from '@/i18n/locales'
 
 /**
@@ -31,6 +31,9 @@ describe('expectedRoutes', () => {
     const routes = expectedRoutes()
 
     for (const slug of PAGE_SLUGS) {
+      // Bar the ones served on demand, which a build cannot prerender at all (issue #135).
+      if (DYNAMIC_PAGE_SLUGS.includes(slug)) continue
+
       const anywhere = DEFAULT_LOCALES.map((locale) => pathForPage(locale, slug))
 
       expect(routes.some((route) => anywhere.includes(route))).toBe(true)
@@ -44,6 +47,15 @@ describe('expectedRoutes', () => {
 
     expect(routes).toContain('/ru/citizens')
     expect(routes).not.toContain('/en/citizens')
+  })
+
+  it('leaves out a listing, which the build has nothing to prerender for', () => {
+    // The aircraft page is sorted and paged through its query, so it is rendered on demand
+    // (issue #135) and a build without it is not a build with a page missing.
+    const routes = expectedRoutes()
+
+    expect(routes).not.toContain('/en/aircraft')
+    expect(routes).toContain('/en/yachts')
   })
 
   it('expects robots and the sitemap, which live outside the locale segment', () => {

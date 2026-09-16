@@ -92,7 +92,17 @@
     "year": "Year:",
     "passengers": "Pax:",
     "previous": "Previous aircraft",
-    "next": "Next aircraft"
+    "next": "Next aircraft",
+    "listing": {
+      "sort": "Sort by",
+      "size": "Size",
+      "passengers": "Passengers",
+      "range": "Range",
+      "order": "Order",
+      "ascending": "Ascending",
+      "descending": "Descending",
+      "more": "Show more"
+    }
   },
   "yacht": {
     "guests": "Guests:",

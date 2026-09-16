@@ -263,6 +263,7 @@ export interface Page {
   layout?:
     | (
         | AdvantagesBlock
+        | AircraftListingBlock
         | BestPriceBlock
         | CatalogueAircraftBlock
         | ContactCardBlock
@@ -328,6 +329,16 @@ export interface AdvantagesBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'advantages';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "AircraftListingBlock".
+ */
+export interface AircraftListingBlock {
+  title: string;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'aircraftListing';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1922,6 +1933,7 @@ export interface PagesSelect<T extends boolean = true> {
     | T
     | {
         advantages?: T | AdvantagesBlockSelect<T>;
+        aircraftListing?: T | AircraftListingBlockSelect<T>;
         bestPrice?: T | BestPriceBlockSelect<T>;
         catalogueAircraft?: T | CatalogueAircraftBlockSelect<T>;
         contactCard?: T | ContactCardBlockSelect<T>;
@@ -1982,6 +1994,15 @@ export interface AdvantagesBlockSelect<T extends boolean = true> {
         description?: T;
         id?: T;
       };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "AircraftListingBlock_select".
+ */
+export interface AircraftListingBlockSelect<T extends boolean = true> {
+  title?: T;
   id?: T;
   blockName?: T;
 }

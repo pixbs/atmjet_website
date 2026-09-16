@@ -964,6 +964,14 @@ function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout 
       },
     })
 
+  // Between the card that invites a call and the contact section, where the legacy page drew
+  // the list (section 4).
+  if (slug === 'aircraft')
+    sections.push({
+      blockType: 'aircraftListing',
+      title: locale === 'en' ? 'Filter aircraft' : 'Фильтровать самолёты',
+    })
+
   if (slug === 'empty_legs')
     sections.push({
       blockType: 'heroEmptyLegs',
@@ -1467,6 +1475,8 @@ function translated(layout: Layout | null | undefined, slug: string, fixture: Fi
             written?.blockType === 'advantages' ? written.cards : undefined,
           ),
         }
+      case 'aircraftListing':
+        return { ...block, id }
       case 'bestPrice':
         return { ...block, id }
       case 'catalogueAircraft':

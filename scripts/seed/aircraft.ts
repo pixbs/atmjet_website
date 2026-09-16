@@ -16,6 +16,10 @@ interface SeedAircraft {
   category: string
   year?: number
   passengers?: number
+  /** Metres, as the legacy `aircraft_type_cabin_height` held them: what "size" sorts by. */
+  cabinHeight?: number
+  /** Kilometres, as the legacy `aircraft_type_range_maximum` held them. */
+  rangeMaximum?: number
 }
 
 // The registrations are ones no test writes by hand: the fixture and the integration tier share
@@ -27,6 +31,8 @@ export const SEED_AIRCRAFT: readonly SeedAircraft[] = [
     category: 'Ultra long range',
     year: 2021,
     passengers: 13,
+    cabinHeight: 1.88,
+    rangeMaximum: 11112,
   },
   {
     registration: 'T7-ATM',
@@ -34,6 +40,8 @@ export const SEED_AIRCRAFT: readonly SeedAircraft[] = [
     category: 'Ultra long range',
     year: 2019,
     passengers: 14,
+    cabinHeight: 1.95,
+    rangeMaximum: 13890,
   },
   {
     registration: '9H-ATM',
@@ -41,7 +49,11 @@ export const SEED_AIRCRAFT: readonly SeedAircraft[] = [
     category: 'Heavy jet',
     year: 2016,
     passengers: 13,
+    cabinHeight: 1.82,
+    rangeMaximum: 7223,
   },
+  // The one an editor has only started: the listing sorts it last whichever way round it is
+  // asked for, because nothing about it has been measured yet (issue #135).
   { registration: 'VP-CAT', model: 'Cessna Citation XLS+', category: 'Midsize jet' },
 ]
 
@@ -85,6 +97,8 @@ export async function seedAircraft(payload: Payload): Promise<SeedOutcome[]> {
         specification: {
           passengers: aircraft.passengers,
           yearOfProduction: aircraft.year,
+          cabinHeight: aircraft.cabinHeight,
+          rangeMaximum: aircraft.rangeMaximum,
         },
         images: photo === undefined ? [] : [{ type: 'exterior', media: photo }],
         provenance: { origin: 'manual' },

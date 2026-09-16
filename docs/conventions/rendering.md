@@ -65,7 +65,9 @@ Adding a collection without these hooks is the usual cause of "the editor saved 
 
 Filters, sorting and pagination live in the URL, never in client state. The legacy listing kept them in React state, so "load more" dropped the filters and no listing URL could be shared or crawled (`docs/legacy-inventory.md` section 4).
 
-The first listing page (E8) brings the `searchParams` parser with it, and it keeps this contract: the parameters are `page`, `perPage`, `sort`, `direction` and one per filter; a filter accepts repetition and commas alike; anything unparseable falls back to the default rather than throwing; `perPage` is capped; the canonical URL omits defaults and sorts filters, so crawlers see one URL per listing and the cache holds one entry.
+The parser is `src/lib/listing.ts`, brought by the aircraft page (#135). The parameters are `page`, `perPage`, `sort` and `direction`, plus one per filter on a listing that has filters; anything unparseable falls back to the default rather than throwing, `perPage` is capped, and the canonical URL omits defaults, so crawlers see one URL per listing and the cache holds one entry. `page` is how far the listing has been read rather than which slice is on screen: page two shows the first two pages' worth, because "show more" adds a batch under the cards already read rather than replacing them.
+
+A listing is served by a route of its own and rendered on demand, because `searchParams` is a request-time API and reading it in the catch-all would take the prerendering away from every page it serves. Such a route says so in `DYNAMIC_PAGE_SLUGS` (`src/collections/Pages.ts`), which is what keeps `generateStaticParams` and the build's route check (#178) from expecting a prerendered page that cannot exist.
 
 ## Streaming
 
