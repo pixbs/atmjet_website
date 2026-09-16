@@ -26,6 +26,7 @@ import { Footer } from './globals/Footer'
 import { SiteSettings } from './globals/SiteSettings'
 import { hasRole } from './access'
 import { DEFAULT_LOCALE, LOCALE_DEFINITIONS } from './i18n/locales'
+import { readEnvironment } from './lib/env'
 import { siteOrigin } from './lib/urls'
 
 const filename = fileURLToPath(import.meta.url)
@@ -41,6 +42,13 @@ const dirname = path.dirname(filename)
  */
 const serverURL = siteOrigin()
 const allowedOrigins = [serverURL]
+
+/**
+ * Read once, here, so a deployment missing one of them says which (issue #19). The adapter and
+ * the signing key were handed `|| ''` before, and the failure arrived later as a connection
+ * error or an unsigned cookie, naming neither variable.
+ */
+const env = readEnvironment()
 
 export default buildConfig({
   serverURL,
@@ -82,13 +90,13 @@ export default buildConfig({
       },
     },
   },
-  secret: process.env.PAYLOAD_SECRET || '',
+  secret: env.PAYLOAD_SECRET,
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },
   db: postgresAdapter({
     pool: {
-      connectionString: process.env.DATABASE_URL || '',
+      connectionString: env.DATABASE_URL,
     },
     // Drizzle push only under `next dev`, against the disposable local database;
     // CI, previews and production apply the committed migrations. See docs/adr/0008.
