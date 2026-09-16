@@ -476,7 +476,7 @@ describe('the listing the charter page reads', () => {
     const cheap = await charter({ charter: { customerPrice: 900, currency: 'AED' } })
     const dear = await charter({ charter: { customerPrice: 90_000, currency: 'AED' } })
     const unpriced = await charter()
-    const mine = [cheap.id, dear.id, unpriced.id]
+    const mine: (number | string)[] = [cheap.id, dear.id, unpriced.id]
     const order = (listed: { id: number | string }[]) =>
       listed.map((one) => one.id).filter((id) => mine.includes(id))
 
