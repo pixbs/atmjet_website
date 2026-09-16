@@ -1,8 +1,13 @@
-import type { Payload } from 'payload'
+import type { Payload, Where } from 'payload'
 import { cache } from 'react'
 
 import type { Locale } from '@/i18n/locales'
-import { canonicalRegistration, type AircraftQuery, type AircraftSort } from '@/lib/aircraft'
+import {
+  canonicalRegistration,
+  registrationsInSlug,
+  type AircraftQuery,
+  type AircraftSort,
+} from '@/lib/aircraft'
 import { mediaSource, type ImageSource } from '@/lib/media'
 
 import { getPayloadClient } from './payload'
@@ -206,6 +211,54 @@ export const searchAircraft = cache(
     } catch (error) {
       console.warn('[aircraft] the database was unreachable, so the listing is empty.', error)
       return { aircraft: [], total: 0 }
+    }
+  },
+)
+
+/**
+ * The aircraft a detail-page slug names, or nothing (issue #138).
+ *
+ * Three ways in, in the order the legacy page would have found them: the slug the listing card
+ * writes, the registration its first two parts name, and the whole slug read as a registration.
+ * Both columns are unique, so an attempt answers with one document or none and the provenance
+ * order the issue asks for can never be needed to choose between two.
+ *
+ * `cache()`, as the rest of the server data is: the head and the body of one request ask once.
+ */
+export const resolveAircraft = cache(
+  async (
+    slug: string,
+    locale: Locale,
+    // Injected so the integration tier can read through its own Payload instance.
+    client: () => Promise<Payload> = getPayloadClient,
+  ) => {
+    try {
+      const payload = await client()
+      const find = async (where: Where) => {
+        const { docs } = await payload.find({
+          collection: 'aircraft',
+          locale,
+          where,
+          // One level, for the uploads the photographs point at.
+          depth: 1,
+          limit: 1,
+          // Only what a visitor can read.
+          overrideAccess: false,
+        })
+
+        return docs[0]
+      }
+
+      return (
+        (await find({ slug: { equals: slug } })) ??
+        (await find({ registration: { in: registrationsInSlug(slug) } }))
+      )
+    } catch (error) {
+      console.warn(
+        '[aircraft] the database was unreachable, so the page cannot be resolved.',
+        error,
+      )
+      return undefined
     }
   },
 )
