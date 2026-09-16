@@ -8,11 +8,9 @@ import { servedStatusFor } from '@/collections/Redirects'
 import { AngleBar } from '@/components/sections/angle-bar'
 import { JsonLd } from '@/components/ui/json-ld'
 import type { Locale } from '@/i18n/locales'
-import { listPageParams } from '@/lib/data/pages'
-import { getPayloadClient } from '@/lib/data/payload'
+import { findPageBySlug, listPageParams, pageHead } from '@/lib/data/pages'
 import { findRedirect } from '@/lib/data/redirects'
 import { getEnabledLocales } from '@/lib/data/site-settings'
-import { pageMetadata } from '@/lib/metadata'
 import { breadcrumbs, faqPage } from '@/lib/structured-data'
 import { siteOrigin } from '@/lib/urls'
 
@@ -30,32 +28,7 @@ interface PageParams {
   slug?: string[]
 }
 
-/** The `plugin-seo` fields on a page; `image` is the document, not its id, at this depth. */
-interface PageSeo {
-  title?: string | null
-  description?: string | null
-  image?: string | number | { url?: string | null } | null
-}
-
 const slugFrom = (segments: string[] | undefined): string => (segments ?? []).join('/')
-
-// `depth` is 1: the blocks of the layout draw their own uploads, and `generateMetadata` reads
-// the share image off the same document (docs/conventions/rendering.md).
-async function findPage(locale: string, slug: string) {
-  const payload = await getPayloadClient()
-
-  const result = await payload.find({
-    collection: 'pages',
-    where: { slug: { equals: slug } },
-    locale: locale as 'en',
-    limit: 1,
-    depth: 1,
-    // Drafts stay invisible here: this is a public read, so `publishedOnly` applies.
-    overrideAccess: false,
-  })
-
-  return result.docs[0]
-}
 
 export async function generateStaticParams(): Promise<PageParams[]> {
   // Only the locales the site serves are prerendered, so enabling one in the admin adds its
@@ -63,46 +36,14 @@ export async function generateStaticParams(): Promise<PageParams[]> {
   return listPageParams(await getEnabledLocales())
 }
 
-/**
- * What the page tells a crawler and a link preview (issue #170). The legacy site gave twelve of
- * its thirteen routes no metadata at all and none of them a canonical URL or an `hreflang` link
- * (`docs/legacy-inventory.md` section 2.4), so `/en/yachts` and `/ru/yachts` read as two
- * unrelated pages competing for the same content.
- *
- * The strings are the editor's, from the `plugin-seo` fields, falling back to the page title and
- * the site description rather than to nothing.
- */
 export async function generateMetadata({
   params,
 }: {
   params: Promise<PageParams>
 }): Promise<Metadata> {
   const { locale, slug } = await params
-  const [page, locales, t] = await Promise.all([
-    findPage(locale, slugFrom(slug)),
-    getEnabledLocales(),
-    getTranslations({ locale, namespace: 'seo' }),
-  ])
 
-  // A path no page claims is a redirect or a 404; the layout's defaults are what it inherits.
-  if (!page) return {}
-
-  const meta = (page as { meta?: PageSeo }).meta
-  // The film the page opens on, which is what the legacy home page named to a scraper
-  // (`docs/legacy-inventory.md` section 2.4). A page without a hero video names none.
-  const hero = (page.layout ?? []).find((block) => block.blockType === 'heroVideo')
-
-  return pageMetadata({
-    locale: locale as Locale,
-    locales,
-    slug: slugFrom(slug),
-    title: meta?.title || page.title,
-    description: meta?.description || t('siteDescription'),
-    image: typeof meta?.image === 'object' ? meta.image?.url : undefined,
-    video: hero ? new URL(hero.video, siteOrigin()).href : undefined,
-    siteName: t('siteName'),
-    origin: siteOrigin(),
-  })
+  return pageHead(locale, slugFrom(slug))
 }
 
 /**
@@ -132,7 +73,7 @@ export default async function CatchAllPage({ params }: { params: Promise<PagePar
 
   setRequestLocale(locale)
 
-  const page = await findPage(locale, slugFrom(slug))
+  const page = await findPageBySlug(locale, slugFrom(slug))
 
   // Only a request that would otherwise be a 404 pays for the redirect lookup (issue #69), so an
   // old URL keeps resolving without every other page reading the table. Returned rather than
