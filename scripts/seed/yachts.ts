@@ -67,6 +67,9 @@ interface SeedCharterYacht {
   manufacturer: string
   photos: number
   length?: number
+  /** Where she lies. The detail page's request card opens on it and cannot be edited (#140). */
+  location?: string
+  description?: string
   charter: {
     customerPrice?: number
     currency?: 'AED'
@@ -85,6 +88,9 @@ export const SEED_CHARTER_YACHTS: readonly SeedCharterYacht[] = [
     manufacturer: 'Azimut',
     photos: 2,
     length: 78,
+    location: 'Dubai Marina',
+    description:
+      'A flybridge with room for twenty on deck and four cabins below. Refitted in 2021 and kept in Dubai Marina, she leaves from the pontoon she is moored at.',
     charter: {
       customerPrice: 4500,
       currency: 'AED',
@@ -101,6 +107,9 @@ export const SEED_CHARTER_YACHTS: readonly SeedCharterYacht[] = [
     manufacturer: 'Sunseeker',
     photos: 1,
     length: 55,
+    location: 'Dubai Harbour',
+    description:
+      'Twelve guests, three cabins and a three-hour minimum. The one photograph she has is the one her gallery opens on.',
     charter: {
       customerPrice: 2800,
       currency: 'AED',
@@ -117,6 +126,9 @@ export const SEED_CHARTER_YACHTS: readonly SeedCharterYacht[] = [
     manufacturer: 'Majesty',
     photos: 2,
     length: 110,
+    location: 'Port Rashid',
+    description:
+      'The largest of the fleet: forty-five guests by day, six cabins and a crew that stays aboard.',
     charter: {
       customerPrice: 9500,
       currency: 'AED',
@@ -217,6 +229,8 @@ export async function seedYachts(payload: Payload): Promise<SeedOutcome[]> {
         slug: yacht.slug,
         listingType: 'charter',
         length: yacht.length,
+        location: yacht.location,
+        description: yacht.description,
         photos: media.docs
           .slice(0, yacht.photos)
           .map((doc) => ({ media: doc.id, alt: `${yacht.manufacturer} ${yacht.name}` })),

@@ -62,6 +62,14 @@ describe('the legs a form was opened with', () => {
     expect(parseDirections(JSON.stringify(legs))).toEqual(legs)
   })
 
+  it('keeps the hours and the guests a yacht page hands over', () => {
+    // The Leads collection and the Telegram message have had rows for both since #152; what a
+    // yacht page writes reaches them because the query is read against the same shape (#140).
+    const charter = [{ from: 'Dubai Marina', date: '2026-10-01', hours: 4, guests: 6 }]
+
+    expect(parseDirections(JSON.stringify(charter))).toEqual(charter)
+  })
+
   it('answers with nothing where the legacy threw while the page was rendering', () => {
     // `JSON.parse(searchParams.get('direction'))` took the whole page down (section 13, entry 67).
     expect(parseDirections('{oops')).toBeUndefined()

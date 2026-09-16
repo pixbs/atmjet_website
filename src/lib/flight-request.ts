@@ -22,6 +22,9 @@ export const MAX_LEGS = 4
 const AIRPORT_MAX_LENGTH = 128
 const PASSENGERS_MAX = 25
 
+/** A charter of more than a fortnight is a conversation, not a form (issue #140). */
+const HOURS_MAX = 24 * 14
+
 /** A date the browser's date field produced, which is what `Date.parse` was given. */
 const isDate = (value: string) => !Number.isNaN(Date.parse(value))
 
@@ -43,6 +46,21 @@ export const flightRequestSchema = z.object({ legs: z.array(legSchema).min(1).ma
 export type FlightLeg = z.infer<typeof legSchema>
 export type FlightRequest = z.infer<typeof flightRequestSchema>
 
+/**
+ * A leg as it travels in the `?direction=` query and is recorded on the lead (section 7.6).
+ *
+ * Every field is optional because each form that writes one fills in a different set: the
+ * flight request names where and when and how many passengers, and the yacht detail page names
+ * how many guests and for how many hours (issue #140). The Leads collection and the Telegram
+ * message have carried all seven since #152; this is the shape they were carried in.
+ */
+export const directionSchema = legSchema.partial().extend({
+  guests: z.number().int().positive().max(PASSENGERS_MAX).optional(),
+  hours: z.number().int().positive().max(HOURS_MAX).optional(),
+})
+
+export type Direction = z.infer<typeof directionSchema>
+
 /** What a leg starts as: one passenger and nothing else, as the legacy default did. */
 export const emptyLeg = (): FlightLeg => ({ from: '', to: '', date: '', passengers: 1 })
 
@@ -54,12 +72,10 @@ export const emptyLeg = (): FlightLeg => ({ from: '', to: '', date: '', passenge
  * them without a round trip to the server; `returnDate` is left out where it is empty rather
  * than sent as `""`, which is what the legacy round-trip form did to a one-way leg.
  */
-export function handoffQuery(legs: readonly FlightLeg[], source = 'Flight_request'): string {
-  const direction = legs.map((leg) => ({
-    ...leg,
-    to: leg.to === '' ? undefined : leg.to,
-    returnDate: leg.returnDate === '' ? undefined : leg.returnDate,
-  }))
+export function handoffQuery(legs: readonly Direction[], source = 'Flight_request'): string {
+  const direction = legs.map((leg) =>
+    Object.fromEntries(Object.entries(leg).filter(([, value]) => value !== '')),
+  )
 
   return `?showBooking=${source}&direction=${encodeURIComponent(JSON.stringify(direction))}`
 }

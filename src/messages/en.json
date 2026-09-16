@@ -79,7 +79,8 @@
     "deleteLeg": "Delete leg",
     "addLeg": "Add leg",
     "roundTrip": "Round trip",
-    "multiLeg": "Multi-leg"
+    "multiLeg": "Multi-leg",
+    "hours": "Hours"
   },
   "units": {
     "hours": "{count, plural, one {# hour} other {# hours}}",
@@ -166,7 +167,9 @@
         "40": "From 20 to 40 ft",
         "60": "From 40 to 60 ft"
       }
-    }
+    },
+    "request": "Request {name}",
+    "hour": "Hour"
   },
   "seo": {
     "siteName": "ATM JET",

@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
 import {
+  directionSchema,
   emptyLeg,
   flightRequestSchema,
   handoffQuery,
@@ -82,5 +83,36 @@ describe('the handoff to the booking dialog', () => {
 
   it('names the section the request came from, as the legacy query did', () => {
     expect(handoffQuery([filled], 'Transfer')).toContain('?showBooking=Transfer&')
+  })
+})
+
+/**
+ * The leg as it travels in the query and is recorded on the lead (issue #140, section 7.6). The
+ * yacht detail page names a berth, a day, a number of hours and a number of guests, where the
+ * flight request names a destination and passengers; the Leads collection and the Telegram
+ * message have carried all of them since #152.
+ */
+describe('a direction', () => {
+  const charter = { from: 'Dubai Marina', date: '2026-10-01', hours: 4, guests: 6 }
+
+  it('takes the charter a yacht page asks for, with no passengers in it', () => {
+    expect(directionSchema.safeParse(charter).success).toBe(true)
+  })
+
+  it('still takes the leg a flight request writes', () => {
+    expect(directionSchema.safeParse(filled).success).toBe(true)
+  })
+
+  it('refuses hours and guests that no charter could mean', () => {
+    expect(directionSchema.safeParse({ ...charter, hours: 0 }).success).toBe(false)
+    expect(directionSchema.safeParse({ ...charter, guests: -1 }).success).toBe(false)
+    expect(directionSchema.safeParse({ ...charter, hours: 10_000 }).success).toBe(false)
+  })
+
+  it('reaches the dialog whole, so the office is told how long and for how many', () => {
+    const query = handoffQuery([charter], 'Yachts_detail')
+    const [, direction] = /direction=([^&]+)/.exec(query) ?? []
+
+    expect(JSON.parse(decodeURIComponent(direction ?? ''))).toEqual([charter])
   })
 })
