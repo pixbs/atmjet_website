@@ -25,6 +25,12 @@ jobs:
     name: static checks
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    # `generate:types` and `generate:importmap` build the Payload config, which reads these two
+    # and refuses an environment that cannot work (issue #19). Neither step opens a connection,
+    # so these only have to be well formed.
+    env:
+      DATABASE_URL: postgresql://payload:payload@localhost:5432/atmjet_types
+      PAYLOAD_SECRET: ci-only-not-a-secret-0123456789
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
