@@ -29,7 +29,8 @@ const FIGURE = 'bg-gold bg-clip-text font-serif text-6xl text-transparent md:bg-
 export interface WhyUsCardProps {
   /** Counted up when the card comes into view; the group charters cards carry no figure. */
   num?: string
-  title: string
+  /** The citizens cards have none, and the legacy kept the room the heading would have taken. */
+  title?: string
   description: string
   /** Left out where the section shows no photograph. */
   image?: ImageSource

@@ -17,7 +17,7 @@ const SECTION = '[data-section="faq"]'
 const HEIGHT = 520
 
 test('the FAQ section matches its baseline', async ({ page }) => {
-  await page.goto(pathFor('/citizens', 'en'))
+  await page.goto(pathFor('/', 'en'))
   const section = page.locator(SECTION)
   await expect(section).toBeVisible()
   await page.evaluate(() => document.fonts.ready)

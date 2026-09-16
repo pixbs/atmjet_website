@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { notFound } from 'next/navigation'
+import { notFound, redirect } from 'next/navigation'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 
 import { RenderBlocks } from '@/blocks/render-blocks'
@@ -9,6 +9,7 @@ import { AIRCRAFT_LISTING } from '@/lib/aircraft'
 import { findPageBySlug, pageHead } from '@/lib/data/pages'
 import { getEnabledLocales } from '@/lib/data/site-settings'
 import { parseListing, type SearchParams } from '@/lib/listing'
+import { servedLocales } from '@/lib/pages'
 import { breadcrumbs } from '@/lib/structured-data'
 import { siteOrigin } from '@/lib/urls'
 
@@ -52,6 +53,11 @@ export default async function AircraftPage({
 
   const page = await findPageBySlug(locale, SLUG)
   if (!page) notFound()
+
+  // A page an editor serves in fewer languages sends the rest to the home page, as the catch-all
+  // does for the pages it serves (issue #149).
+  if (!servedLocales(page.availableLocales, locales).includes(locale as Locale))
+    redirect(`/${locale}`)
 
   const t = await getTranslations({ locale, namespace: 'common' })
   // The trail a search result shows instead of a bare URL.

@@ -32,11 +32,12 @@ test.describe('the subpage hero', () => {
   })
 
   test('opens a page that has no sentence under the heading', async ({ page }) => {
-    // The legacy citizens page passed an empty description and kept the gap it left.
-    await page.goto(pathFor('/citizens', 'en'))
+    // The legacy citizens page passed an empty description and kept the gap it left; it is the
+    // page that answers in Russian alone (issue #149).
+    await page.goto(pathFor('/citizens', 'ru'))
     const hero = page.locator('[data-section="hero-subpage"]')
 
-    await expect(hero.getByRole('heading', { name: 'Citizens' })).toBeVisible()
+    await expect(hero.getByRole('heading', { name: 'Гражданам' })).toBeVisible()
     await expect(hero.locator('p')).toBeEmpty()
   })
 

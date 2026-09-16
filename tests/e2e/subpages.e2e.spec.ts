@@ -12,7 +12,16 @@ import { ENABLED_LOCALES, pathFor, type Locale } from './routes'
  * metadata at all (section 2.4). They are documents now, so what is asserted is the order the
  * seed lands and the head the server sends for it.
  */
-const PAGES = [
+interface Subpage {
+  slug: string
+  sections: readonly string[]
+  /** The languages the page answers in, where that is not every one it is written in (#149). */
+  locales?: readonly Locale[]
+  titles: Partial<Record<Locale, string>>
+  words: Partial<Record<Locale, string>>
+}
+
+const PAGES: readonly Subpage[] = [
   {
     slug: 'cargo_charter',
     sections: ['hero-subpage', 'why-us', 'contact-us'],
@@ -89,7 +98,23 @@ const PAGES = [
       ru: 'На каждой яхте из списка мы стояли сами',
     },
   },
-] as const
+  {
+    slug: 'citizens',
+    sections: [
+      'hero-subpage',
+      'wordmark-note',
+      'quote',
+      'quote',
+      'make-booking',
+      'why-us',
+      'contact-us',
+    ],
+    // The one page that answers in a single language, as the legacy page did (issue #149).
+    locales: ['ru'],
+    titles: { ru: 'Гражданам' },
+    words: { ru: 'Как мы работаем с гражданами РФ?' },
+  },
+]
 
 async function documentOf(request: APIRequestContext, path: string): Promise<string> {
   const response = await request.get(path)
@@ -113,15 +138,17 @@ const sectionsOf = (html: string): string[] =>
 
 for (const page of PAGES) {
   test.describe(`/${page.slug}`, () => {
+    const [first = 'en'] = page.locales ?? ENABLED_LOCALES
+
     test('is rendered on the server, in the order the legacy page had', async ({ request }) => {
-      const html = await documentOf(request, pathFor(`/${page.slug}`, 'en'))
+      const html = await documentOf(request, pathFor(`/${page.slug}`, first))
 
       // In order, and nothing else: a section on the wrong page shows up here as an extra.
       expect(sectionsOf(html)).toEqual([...page.sections])
-      expect(html).toContain(page.words.en)
+      expect(html).toContain(page.words[first])
     })
 
-    for (const locale of ENABLED_LOCALES) {
+    for (const locale of page.locales ?? ENABLED_LOCALES) {
       test(`[${locale}] says it in the language of the page, and titles itself`, async ({
         request,
       }) => {
@@ -129,8 +156,8 @@ for (const page of PAGES) {
         const title = html.match(/<title>([^<]*)<\/title>/)?.[1]
 
         // The legacy layout computed a title and never returned it, so every page had none.
-        expect(title).toBe(page.titles[locale as Locale as 'en'])
-        expect(html).toContain(page.words[locale as Locale as 'en'])
+        expect(title).toBe(page.titles[locale])
+        expect(html).toContain(page.words[locale])
       })
     }
   })

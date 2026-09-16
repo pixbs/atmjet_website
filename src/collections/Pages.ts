@@ -1,6 +1,7 @@
 import type { CollectionConfig } from 'payload'
 
 import { editorOrAdmin, publishedOnly } from '@/access'
+import { ALL_LOCALES, type Locale } from '@/i18n/locales'
 import { advantages } from '@/blocks/Advantages/config'
 import { aircraftListing } from '@/blocks/AircraftListing/config'
 import { bestPrice } from '@/blocks/BestPrice/config'
@@ -35,6 +36,7 @@ import { tiles } from '@/blocks/Tiles/config'
 import { transfer } from '@/blocks/Transfer/config'
 import { weInspect } from '@/blocks/WeInspect/config'
 import { whyUs } from '@/blocks/WhyUs/config'
+import { wordmarkNote } from '@/blocks/WordmarkNote/config'
 import { yachtsPromo } from '@/blocks/YachtsPromo/config'
 import { revalidateCollection } from '@/hooks/revalidate'
 
@@ -63,12 +65,24 @@ export const PAGE_SLUGS = [
   'yachts',
 ] as const
 
+export type PageSlug = (typeof PAGE_SLUGS)[number]
+
+/**
+ * The languages a route answers in, where the legacy site answered in fewer than all of them
+ * (issue #149, `docs/legacy-inventory.md` section 4). It is what the seed writes into
+ * `availableLocales` and what a finished build is expected to have prerendered; an editor moves
+ * a page off it afterwards by changing the field.
+ */
+export const PAGE_LOCALES: Partial<Record<PageSlug, readonly Locale[]>> = {
+  citizens: ['ru'],
+}
+
 /**
  * The routes a build has nothing to prerender for (issue #135). A listing reads its sort and
  * how far it has been read from the query, which cannot be known before the request, so the
  * page is rendered on demand (`docs/conventions/rendering.md`).
  */
-export const DYNAMIC_PAGE_SLUGS: readonly (typeof PAGE_SLUGS)[number][] = ['aircraft']
+export const DYNAMIC_PAGE_SLUGS: readonly PageSlug[] = ['aircraft']
 
 /** The path a page is served at. The home page is the locale root, not `/en/home`. */
 export function pathForPage(locale: string, slug: string): string {
@@ -128,6 +142,17 @@ export const Pages: CollectionConfig = {
       },
     },
     {
+      name: 'availableLocales',
+      type: 'select',
+      hasMany: true,
+      options: ALL_LOCALES.map((locale) => ({ label: locale, value: locale })),
+      admin: {
+        position: 'sidebar',
+        description:
+          'The languages this page answers in. None named means every language the site serves; the legacy citizens page answered in Russian only and sent everyone else to the home page (section 4).',
+      },
+    },
+    {
       name: 'layout',
       type: 'blocks',
       // Sections land here one at a time in E7, each with its own issue.
@@ -166,6 +191,7 @@ export const Pages: CollectionConfig = {
         transfer,
         weInspect,
         whyUs,
+        wordmarkNote,
         yachtsPromo,
       ],
       admin: { description: 'The sections of this page, in the order they are rendered.' },

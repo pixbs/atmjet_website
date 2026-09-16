@@ -6,7 +6,7 @@ import {
   missingRoutes,
   routesFromManifest,
 } from '../../scripts/ci/prerendered-routes'
-import { DYNAMIC_PAGE_SLUGS, PAGE_SLUGS } from '@/collections/Pages'
+import { DYNAMIC_PAGE_SLUGS, PAGE_SLUGS, pathForPage } from '@/collections/Pages'
 import { DEFAULT_LOCALES } from '@/i18n/locales'
 
 /**
@@ -30,10 +30,23 @@ describe('expectedRoutes', () => {
     // A route added to PAGE_SLUGS is expected here without anybody remembering to add it.
     const routes = expectedRoutes()
 
-    expect(routes).toHaveLength(
-      DEFAULT_LOCALES.length * (PAGE_SLUGS.length - DYNAMIC_PAGE_SLUGS.length) +
-        METADATA_ROUTES.length,
-    )
+    for (const slug of PAGE_SLUGS) {
+      // Bar the ones served on demand, which a build cannot prerender at all (issue #135).
+      if (DYNAMIC_PAGE_SLUGS.includes(slug)) continue
+
+      const anywhere = DEFAULT_LOCALES.map((locale) => pathForPage(locale, slug))
+
+      expect(routes.some((route) => anywhere.includes(route))).toBe(true)
+    }
+  })
+
+  it('leaves out the language a page does not answer in', () => {
+    // The citizens page is Russian only (issue #149, section 4), so an English one is not a
+    // route the build owes — and a build without it is not a build with a page missing.
+    const routes = expectedRoutes()
+
+    expect(routes).toContain('/ru/citizens')
+    expect(routes).not.toContain('/en/citizens')
   })
 
   it('leaves out a listing, which the build has nothing to prerender for', () => {

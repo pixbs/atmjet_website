@@ -11,6 +11,7 @@ import type { Locale } from '@/i18n/locales'
 import { findPageBySlug, listPageParams, pageHead } from '@/lib/data/pages'
 import { findRedirect } from '@/lib/data/redirects'
 import { getEnabledLocales } from '@/lib/data/site-settings'
+import { servedLocales } from '@/lib/pages'
 import { breadcrumbs, faqPage } from '@/lib/structured-data'
 import { siteOrigin } from '@/lib/urls'
 
@@ -79,6 +80,11 @@ export default async function CatchAllPage({ params }: { params: Promise<PagePar
   // old URL keeps resolving without every other page reading the table. Returned rather than
   // awaited: the helper is typed `Promise<never>`, which narrows `page` only through a `return`.
   if (!page) return redirectOrNotFound(locale as Locale, slug)
+
+  // A page an editor serves in fewer languages sends the rest to the home page, which is what
+  // the legacy citizens page did from inside its own component (section 13, entry 78, `keep`).
+  if (!servedLocales(page.availableLocales, locales).includes(locale as Locale))
+    redirect(`/${locale}`)
 
   const t = await getTranslations({ locale, namespace: 'common' })
   // The trail a search result shows instead of a bare URL; the home page is not its own trail.

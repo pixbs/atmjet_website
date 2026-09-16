@@ -8,35 +8,18 @@ import { hideDevOverlay, hideFloatingHeader } from './chrome'
  * words, the words against the lighter panel with the rule down their left, and the line saying
  * whose they are under that, in the gold gradient.
  *
- * A clip of the screen taken from the card's own corner rather than from the screen's, so what
- * is captured cannot move when a section above it changes.
+ * The capture is of the card itself, which is as tall as the words in it, on the page that
+ * carries them — the citizens page, which answers in Russian alone (issue #149).
  */
-
-/** Each card in full: they are as tall as the words in them, and his run to three lines. */
-const HEIGHTS = { press: 356, founder: 392 }
-
 for (const variant of ['press', 'founder'] as const) {
   test(`the ${variant} quote card matches its baseline`, async ({ page }) => {
-    await page.goto(pathFor('/citizens', 'en'))
+    await page.goto(pathFor('/citizens', 'ru'))
     const card = page.locator(`[data-quote="${variant}"]`)
     await expect(card).toBeVisible()
     await page.evaluate(() => document.fonts.ready)
     await hideFloatingHeader(page)
     await hideDevOverlay(page)
 
-    await card.evaluate((element) =>
-      window.scrollTo({
-        top: element.getBoundingClientRect().top + window.scrollY,
-        behavior: 'instant',
-      }),
-    )
-
-    const box = await card.boundingBox()
-    expect(box).not.toBeNull()
-    expect(box!.y + HEIGHTS[variant]).toBeLessThanOrEqual(page.viewportSize()!.height)
-
-    await expect(page).toHaveScreenshot(`quote-${variant}.png`, {
-      clip: { x: box!.x, y: box!.y, width: box!.width, height: HEIGHTS[variant] },
-    })
+    await expect(card).toHaveScreenshot(`quote-${variant}.png`)
   })
 }

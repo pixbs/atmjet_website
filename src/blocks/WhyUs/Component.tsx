@@ -15,13 +15,13 @@ export interface WhyUsProps {
   description?: string
   /** `bare` is the group charters page: the cards in the container, nothing around them. */
   variant?: 'stacked' | 'bare'
-  cards: { figure?: string; title: string; description: string; image?: ImageSource }[]
+  cards: { figure?: string; title?: string; description: string; image?: ImageSource }[]
 }
 
 export function WhyUs({ title, description, variant = 'stacked', cards }: WhyUsProps) {
   const stack = cards.map((card, index) => (
     <WhyUsCard
-      key={card.title}
+      key={card.title ?? card.description}
       description={card.description}
       image={card.image}
       num={card.figure}

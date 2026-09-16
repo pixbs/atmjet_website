@@ -6,6 +6,7 @@ import { cache } from 'react'
 import { DYNAMIC_PAGE_SLUGS } from '@/collections/Pages'
 import type { Locale } from '@/i18n/locales'
 import { pageMetadata } from '@/lib/metadata'
+import { servedLocales } from '@/lib/pages'
 import type { Listable } from '@/lib/sitemap'
 import { siteOrigin } from '@/lib/urls'
 
@@ -74,7 +75,7 @@ export async function listPageParams(
         locale,
         limit: 0,
         depth: 0,
-        select: { slug: true },
+        select: { slug: true, availableLocales: true },
         overrideAccess: false,
       })
 
@@ -87,6 +88,9 @@ export async function listPageParams(
         // A listing is served by a route of its own and rendered on demand, so the catch-all
         // has nothing to prerender for it (issue #135).
         if (DYNAMIC_PAGE_SLUGS.some((dynamic) => dynamic === page.slug)) continue
+
+        // A page this language is not served in has no URL here either: it redirects (#149).
+        if (!servedLocales(page.availableLocales, locales).includes(locale)) continue
 
         params.push({ locale, slug: page.slug === '' ? [] : page.slug.split('/') })
       }
@@ -124,7 +128,7 @@ export async function listPagesForSitemap(
       collection: 'pages',
       limit: 0,
       depth: 0,
-      select: { slug: true, updatedAt: true },
+      select: { slug: true, updatedAt: true, availableLocales: true },
       // Only what a visitor can read: a draft page has no URL to offer a crawler.
       overrideAccess: false,
     })
@@ -196,7 +200,9 @@ export async function pageHead(locale: string, slug: string): Promise<Metadata> 
 
   return pageMetadata({
     locale: locale as Locale,
-    locales,
+    // Only the languages this page answers in, so a crawler is not offered a URL that
+    // redirects (issue #149).
+    locales: servedLocales(page.availableLocales, locales),
     slug,
     title: meta?.title || page.title,
     description: meta?.description || t('siteDescription'),

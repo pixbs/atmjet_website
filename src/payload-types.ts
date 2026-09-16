@@ -254,6 +254,10 @@ export interface Page {
    */
   slug?: string | null;
   /**
+   * The languages this page answers in. None named means every language the site serves; the legacy citizens page answered in Russian only and sent everyone else to the home page (section 4).
+   */
+  availableLocales?: ('en' | 'ru' | 'uk')[] | null;
+  /**
    * The sections of this page, in the order they are rendered.
    */
   layout?:
@@ -292,6 +296,7 @@ export interface Page {
         | TransferBlock
         | WeInspectBlock
         | WhyUsBlock
+        | WordmarkNoteBlock
         | YachtsPromoBlock
       )[]
     | null;
@@ -982,7 +987,10 @@ export interface WhyUsBlock {
          * Counted up when the card arrives, as `20+`; some pages had none.
          */
         figure?: string | null;
-        title: string;
+        /**
+         * The citizens cards carry their reason in the sentence alone (#149).
+         */
+        title?: string | null;
         description: string;
         image?: (number | null) | Media;
         id?: string | null;
@@ -991,6 +999,19 @@ export interface WhyUsBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'whyUs';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "WordmarkNoteBlock".
+ */
+export interface WordmarkNoteBlock {
+  /**
+   * What stands beside the wordmark, across the rule from it.
+   */
+  note: string;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'wordmarkNote';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1907,6 +1928,7 @@ export interface MediaSelect<T extends boolean = true> {
 export interface PagesSelect<T extends boolean = true> {
   title?: T;
   slug?: T;
+  availableLocales?: T;
   layout?:
     | T
     | {
@@ -1944,6 +1966,7 @@ export interface PagesSelect<T extends boolean = true> {
         transfer?: T | TransferBlockSelect<T>;
         weInspect?: T | WeInspectBlockSelect<T>;
         whyUs?: T | WhyUsBlockSelect<T>;
+        wordmarkNote?: T | WordmarkNoteBlockSelect<T>;
         yachtsPromo?: T | YachtsPromoBlockSelect<T>;
       };
   meta?:
@@ -2479,6 +2502,15 @@ export interface WhyUsBlockSelect<T extends boolean = true> {
         image?: T;
         id?: T;
       };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "WordmarkNoteBlock_select".
+ */
+export interface WordmarkNoteBlockSelect<T extends boolean = true> {
+  note?: T;
   id?: T;
   blockName?: T;
 }

@@ -22,7 +22,8 @@ const SLUGS = [
 ] as const
 
 forEachLocale((locale) => {
-  for (const slug of SLUGS) {
+  // The citizens page answers in Russian alone (issue #149), so it is checked in that language.
+  for (const slug of locale === 'ru' ? [...SLUGS, 'citizens'] : SLUGS) {
     test(`/${slug} has no blocking accessibility violations`, async ({ page }) => {
       await page.goto(pathFor(`/${slug}`, locale))
       // The footer, because it is under every section whatever the page is made of.

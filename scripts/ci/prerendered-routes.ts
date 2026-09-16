@@ -1,5 +1,12 @@
-import { DYNAMIC_PAGE_SLUGS, PAGE_SLUGS, pathForPage } from '../../src/collections/Pages'
+import {
+  DYNAMIC_PAGE_SLUGS,
+  PAGE_LOCALES,
+  PAGE_SLUGS,
+  pathForPage,
+  type PageSlug,
+} from '../../src/collections/Pages'
 import { DEFAULT_LOCALES, type Locale } from '../../src/i18n/locales'
+import { servedLocales } from '../../src/lib/pages'
 
 /**
  * What a finished build must have prerendered (issue #178).
@@ -16,17 +23,21 @@ export const METADATA_ROUTES = ['/robots.txt', '/sitemap.xml'] as const
 /**
  * Every page of the seeded site, in every language it serves. The slugs are the collection's own
  * list rather than a copy, so a route added there is expected here without anyone remembering to
- * add it, and a listing served on demand is not expected at all: its sort and its page come from
- * the query, so a build has nothing to prerender for it (issue #135).
+ * add it. A page the build answers in one language only is expected in that one alone — the
+ * routing decides which through the same `servedLocales` the pages themselves are built from —
+ * and a listing served on demand is not expected at all, its sort and its page coming from the
+ * query, so a build has nothing to prerender for it (issue #135).
  */
 export function expectedRoutes(
   locales: readonly Locale[] = DEFAULT_LOCALES,
-  slugs: readonly string[] = PAGE_SLUGS,
+  slugs: readonly PageSlug[] = PAGE_SLUGS,
 ): string[] {
-  const prerendered = slugs.filter(
-    (slug) => !DYNAMIC_PAGE_SLUGS.some((dynamic) => dynamic === slug),
+  const prerendered = slugs.filter((slug) => !DYNAMIC_PAGE_SLUGS.includes(slug))
+  const pages = locales.flatMap((locale) =>
+    prerendered
+      .filter((slug) => servedLocales(PAGE_LOCALES[slug], locales).includes(locale))
+      .map((slug) => pathForPage(locale, slug)),
   )
-  const pages = locales.flatMap((locale) => prerendered.map((slug) => pathForPage(locale, slug)))
 
   return [...pages, ...METADATA_ROUTES]
 }
