@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
 
-import { listSaleYachts } from '@/lib/data/yachts'
+import { listSaleYachts, searchCharterYachts } from '@/lib/data/yachts'
 import { slugify } from '@/lib/slug'
 import {
   createAdmin,
@@ -436,6 +436,98 @@ describe('the listing the recent yachts section reads', () => {
 
     await expect(
       listSaleYachts('en', 5, () => Promise.reject(new Error('connection refused'))),
+    ).resolves.toEqual([])
+    expect(warn).toHaveBeenCalled()
+    warn.mockRestore()
+  })
+})
+
+/**
+ * The listing the charter page reads (issue #139, `docs/legacy-inventory.md` section 4). The
+ * legacy page read the whole `new_yachts` table and then filtered and ordered it in the browser,
+ * which is why the order a visitor chose could not be linked to and why an empty table took the
+ * page down (section 13, entry 51).
+ */
+describe('the listing the charter page reads', () => {
+  const client = () => Promise.resolve(registry.payload)
+
+  const charter = (overrides: Record<string, unknown> = {}) =>
+    createYacht(registry, {
+      listingType: 'charter',
+      slug: `charter-${uniqueSuffix()}`,
+      ...overrides,
+    })
+
+  it('lists the charter fleet and leaves the yachts for sale out of it', async () => {
+    const chartered = await charter({ charter: { customerPrice: 3_000, currency: 'AED' } })
+    const forSale = await createYacht(registry, {
+      listingType: 'sale',
+      slug: `sale-${uniqueSuffix()}`,
+    })
+
+    const listed = await searchCharterYachts('en', { sort: 'price', direction: 'asc' }, client)
+    const ids = listed.map((one) => one.id)
+
+    expect(ids).toContain(chartered.id)
+    expect(ids).not.toContain(forSale.id)
+  })
+
+  it('orders by what the URL asks for, and puts an unmeasured yacht last either way', async () => {
+    const cheap = await charter({ charter: { customerPrice: 900, currency: 'AED' } })
+    const dear = await charter({ charter: { customerPrice: 90_000, currency: 'AED' } })
+    const unpriced = await charter()
+    const mine = [cheap.id, dear.id, unpriced.id]
+    const order = (listed: { id: number | string }[]) =>
+      listed.map((one) => one.id).filter((id) => mine.includes(id))
+
+    const up = await searchCharterYachts('en', { sort: 'price', direction: 'asc' }, client)
+    const down = await searchCharterYachts('en', { sort: 'price', direction: 'desc' }, client)
+
+    expect(order(up)).toEqual([cheap.id, dear.id, unpriced.id])
+    expect(order(down)).toEqual([dear.id, cheap.id, unpriced.id])
+  })
+
+  it('reads what the card prints, including the first photograph', async () => {
+    const upload = await createMedia(registry)
+    const yacht = await charter({
+      name: 'Serenity',
+      length: 78,
+      photos: [{ media: upload.id, alt: 'Her bow' }],
+      charter: {
+        manufacturer: 'Azimut',
+        customerPrice: 4_500,
+        currency: 'AED',
+        guestsDay: 20,
+        minHours: 4,
+        cabins: '4',
+        bathrooms: '4',
+        refit: 2021,
+      },
+    })
+
+    const listed = (
+      await searchCharterYachts('en', { sort: 'price', direction: 'asc' }, client)
+    ).find((one) => one.id === yacht.id)
+
+    expect(listed?.manufacturer).toBe('Azimut')
+    expect(listed?.name).toBe('Serenity')
+    expect(listed?.price).toBe(4_500)
+    expect(listed?.currency).toBe('AED')
+    expect(listed?.guests).toBe(20)
+    expect(listed?.length).toBe(78)
+    expect(listed?.cabins).toBe('4')
+    expect(listed?.photo?.alt).toBe('Her bow')
+  })
+
+  it('lists none rather than taking the page down when the database cannot be reached', async () => {
+    // The legacy page derived ranges for a slider nobody could see by indexing the first element
+    // of an empty array, so a table with nothing in it threw (section 13, entry 51).
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined)
+
+    await expect(
+      searchCharterYachts('en', { sort: 'price', direction: 'asc' }, () =>
+        Promise.reject(new Error('connection refused')),
+      ),
     ).resolves.toEqual([])
     expect(warn).toHaveBeenCalled()
     warn.mockRestore()

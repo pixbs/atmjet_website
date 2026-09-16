@@ -16,9 +16,9 @@ import { DEFAULT_LOCALES } from '@/i18n/locales'
  */
 describe('expectedRoutes', () => {
   it('asks for every page of the site in every language it serves', () => {
-    const routes = expectedRoutes(['en', 'ru'], ['', 'yachts'])
+    const routes = expectedRoutes(['en', 'ru'], ['', 'empty_legs'])
 
-    expect(routes).toEqual(['/en', '/en/yachts', '/ru', '/ru/yachts', ...METADATA_ROUTES])
+    expect(routes).toEqual(['/en', '/en/empty_legs', '/ru', '/ru/empty_legs', ...METADATA_ROUTES])
   })
 
   it('puts the home page at the locale root rather than at /en/home', () => {
@@ -50,12 +50,13 @@ describe('expectedRoutes', () => {
   })
 
   it('leaves out a listing, which the build has nothing to prerender for', () => {
-    // The aircraft page is sorted and paged through its query, so it is rendered on demand
-    // (issue #135) and a build without it is not a build with a page missing.
+    // The aircraft and yachts pages are sorted through their query, so they are rendered on
+    // demand (issues #135 and #139) and a build without them is not one with a page missing.
     const routes = expectedRoutes()
 
     expect(routes).not.toContain('/en/aircraft')
-    expect(routes).toContain('/en/yachts')
+    expect(routes).not.toContain('/en/yachts')
+    expect(routes).toContain('/en/empty_legs')
   })
 
   it('expects robots and the sitemap, which live outside the locale segment', () => {
