@@ -102,7 +102,8 @@
       "ascending": "За зростанням",
       "descending": "За спаданням",
       "more": "Показати ще"
-    }
+    },
+    "request": "Запитати {registration}"
   },
   "yacht": {
     "guests": "Гостей:",
