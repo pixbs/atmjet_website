@@ -1,9 +1,12 @@
 import type { Locale } from '@/i18n/locales'
+import { AIRCRAFT_LISTING, type AircraftQuery } from '@/lib/aircraft'
+import { parseListing } from '@/lib/listing'
 import { mediaSource } from '@/lib/media'
 import { hrefForSlug } from '@/lib/nav'
 import type { Page } from '@/payload-types'
 
 import { Advantages } from './Advantages/Component'
+import { AircraftListing } from './AircraftListing/Component'
 import { BestPrice } from './BestPrice/Component'
 import { CatalogueAircraft } from './CatalogueAircraft/Component'
 import { ContactCard } from './ContactCard/Component'
@@ -48,8 +51,10 @@ import { WhyUs } from './WhyUs/Component'
  */
 type LayoutBlock = NonNullable<Page['layout']>[number]
 
-function blockFor(block: LayoutBlock, key: string, locale: Locale) {
+function blockFor(block: LayoutBlock, key: string, locale: Locale, listing: AircraftQuery) {
   switch (block.blockType) {
+    case 'aircraftListing':
+      return <AircraftListing key={key} query={listing} title={block.title} />
     case 'advantages': {
       const image = mediaSource(typeof block.image === 'object' ? block.image : null)
 
@@ -479,6 +484,23 @@ function blockFor(block: LayoutBlock, key: string, locale: Locale) {
   }
 }
 
-export function RenderBlocks({ layout, locale }: { layout: Page['layout']; locale: Locale }) {
-  return (layout ?? []).map((block, index) => blockFor(block, block.id ?? String(index), locale))
+export function RenderBlocks({
+  layout,
+  locale,
+  listing,
+}: {
+  layout: Page['layout']
+  locale: Locale
+  /**
+   * What the URL asked a listing for. Only the route that serves a listing reads the query, so
+   * a listing block an editor puts on an ordinary page draws the first batch in the order the
+   * listing opens on, which is what that page can be prerendered with.
+   */
+  listing?: AircraftQuery
+}) {
+  const asked = listing ?? parseListing({}, AIRCRAFT_LISTING)
+
+  return (layout ?? []).map((block, index) =>
+    blockFor(block, block.id ?? String(index), locale, asked),
+  )
 }

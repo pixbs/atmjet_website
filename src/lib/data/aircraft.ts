@@ -2,6 +2,7 @@ import type { Payload } from 'payload'
 import { cache } from 'react'
 
 import type { Locale } from '@/i18n/locales'
+import { canonicalRegistration, type AircraftQuery, type AircraftSort } from '@/lib/aircraft'
 import { mediaSource, type ImageSource } from '@/lib/media'
 
 import { getPayloadClient } from './payload'
@@ -87,6 +88,124 @@ export const listCatalogueAircraft = cache(
     } catch (error) {
       console.warn('[aircraft] the database was unreachable, so the section lists none.', error)
       return []
+    }
+  },
+)
+
+/**
+ * One aircraft as the listing draws it (issue #135, `docs/legacy-inventory.md` section 4): the
+ * photograph, the type and registration over it, and the class under the rule.
+ */
+export interface AircraftSummary {
+  id: number | string
+  /**
+   * Where the card leads. The legacy card used `aircrafts.slug`; a document that has none yet is
+   * reached by its registration, which is what the detail route resolves until the slugs arrive
+   * with the import (issue #138).
+   */
+  slug: string
+  name: string
+  registration: string
+  category: string
+  image: ImageSource
+}
+
+export interface AircraftSearch {
+  aircraft: AircraftSummary[]
+  /** How many the catalogue holds under this sort, so the page knows whether to offer more. */
+  total: number
+}
+
+/** The column each sort names. `size` is the cabin height the legacy sorted under that word. */
+const SORTED_BY: Record<AircraftSort, string> = {
+  size: 'specification.cabinHeight',
+  passengers: 'specification.passengers',
+  range: 'specification.rangeMaximum',
+}
+
+/**
+ * The aircraft a listing URL asks for (issue #135).
+ *
+ * Three of the legacy list's defects are fixed here rather than reproduced (section 13, entries
+ * 23, 24 and 26). Sorting by passengers sorts by passengers; no passenger range is applied, so
+ * an aircraft whose seat count nobody has filled in is still listed; and the aircraft without a
+ * photograph are left out by the query rather than dropped from the answer afterwards, which is
+ * what made the legacy batches shorter than the fifteen they claimed.
+ *
+ * Two queries rather than one, as the sales department carousel needs for the same reason:
+ * Postgres orders a descending column nulls first, so the aircraft nobody has measured would
+ * open the list under "the longest range first". They go last under either order, and the second
+ * query is the count of them, which the first page needs anyway to know whether to offer more.
+ */
+export const searchAircraft = cache(
+  async (
+    locale: Locale,
+    query: AircraftQuery,
+    // Injected so the integration tier can read through its own Payload instance.
+    client: () => Promise<Payload> = getPayloadClient,
+  ): Promise<AircraftSearch> => {
+    const field = SORTED_BY[query.sort]
+    // The page is how far the listing has been read, so it holds every batch up to it.
+    const shown = query.page * query.perPage
+
+    try {
+      const payload = await client()
+      const read = (measured: boolean, take: number) =>
+        payload.find({
+          collection: 'aircraft',
+          locale,
+          where: {
+            and: [
+              { availability: { equals: 'available' } },
+              // The card is its photograph, and the legacy cover was the first exterior one.
+              { 'images.type': { equals: 'exterior' } },
+              { [field]: { exists: measured } },
+            ],
+          },
+          // One level, for the uploads the photographs point at; no `populate` beside it, or an
+          // upload's computed `url` comes back null and the photograph disappears.
+          depth: 1,
+          select: { slug: true, registrationDisplay: true, type: true, images: true },
+          // Never nothing: a batch that is already full still asks for the count of the rest.
+          limit: Math.max(take, 1),
+          sort: measured ? (query.direction === 'desc' ? `-${field}` : field) : '-createdAt',
+          // Only what a visitor can read.
+          overrideAccess: false,
+        })
+
+      const measured = await read(true, shown)
+      const room = shown - measured.docs.length
+      const unmeasured = await read(false, room)
+
+      return {
+        aircraft: [...measured.docs, ...unmeasured.docs.slice(0, Math.max(room, 0))].flatMap(
+          (one) => {
+            const cover = one.images?.find((entry) => entry.type === 'exterior')?.media
+            // An upload an editor has deleted leaves a card with nothing to draw; the query
+            // has already left out the aircraft that never had a photograph.
+            const image = mediaSource(typeof cover === 'object' ? cover : null)
+            if (image === null) return []
+
+            return [
+              {
+                id: one.id,
+                slug:
+                  one.slug ||
+                  canonicalRegistration(one.registrationDisplay) ||
+                  one.registrationDisplay,
+                name: one.type?.name ?? one.type?.model ?? one.registrationDisplay,
+                registration: one.registrationDisplay,
+                category: one.type?.category ?? '',
+                image,
+              },
+            ]
+          },
+        ),
+        total: measured.totalDocs + unmeasured.totalDocs,
+      }
+    } catch (error) {
+      console.warn('[aircraft] the database was unreachable, so the listing is empty.', error)
+      return { aircraft: [], total: 0 }
     }
   },
 )

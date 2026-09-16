@@ -2,6 +2,7 @@ import type { CollectionConfig } from 'payload'
 
 import { editorOrAdmin, publishedOnly } from '@/access'
 import { advantages } from '@/blocks/Advantages/config'
+import { aircraftListing } from '@/blocks/AircraftListing/config'
 import { bestPrice } from '@/blocks/BestPrice/config'
 import { catalogueAircraft } from '@/blocks/CatalogueAircraft/config'
 import { contactCard } from '@/blocks/ContactCard/config'
@@ -61,6 +62,13 @@ export const PAGE_SLUGS = [
   'sales_yachts',
   'yachts',
 ] as const
+
+/**
+ * The routes a build has nothing to prerender for (issue #135). A listing reads its sort and
+ * how far it has been read from the query, which cannot be known before the request, so the
+ * page is rendered on demand (`docs/conventions/rendering.md`).
+ */
+export const DYNAMIC_PAGE_SLUGS: readonly (typeof PAGE_SLUGS)[number][] = ['aircraft']
 
 /** The path a page is served at. The home page is the locale root, not `/en/home`. */
 export function pathForPage(locale: string, slug: string): string {
@@ -125,6 +133,7 @@ export const Pages: CollectionConfig = {
       // Sections land here one at a time in E7, each with its own issue.
       blocks: [
         advantages,
+        aircraftListing,
         bestPrice,
         catalogueAircraft,
         contactCard,
