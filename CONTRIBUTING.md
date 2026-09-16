@@ -8,6 +8,18 @@ This repository is rebuilt from scratch on Payload 3 + Next.js 16 + Bun. The rul
 2. `cp .env.example .env` and set `DATABASE_URL` and `PAYLOAD_SECRET`. A local database: `docker compose up -d` (Postgres 17).
 3. `bun install` (installs the git hooks), `bun run dev` (Drizzle push creates the schema in the local database), then `bun run seed` (local admin `dev@atmjet.local` / `dev-password-change-me` and placeholder media). Do not run `bun run migrate` against a database that push created: Payload's docs say the two are not meant to be mixed.
 
+## Admin accounts
+
+Two roles, written out cell by cell in `docs/access-matrix.md`: an **editor** runs the content, an **admin** also runs the people and the settings. `editor` is what a new account gets, and only an admin may write the field — otherwise an editor could add `admin` to their own roles.
+
+- **The first account on a new environment** is created through Payload's own first-user flow: open `/admin` on the fresh deployment and fill the form. Payload allows it while the collection is empty, which is why `create` can be admin-only from the very first minute. Do it once, immediately, before the URL is shared: the second person to find an empty `/admin` becomes the administrator.
+- **Everyone after that** is created by an admin in the admin panel, under Users, with the role they need and no more.
+- **Nobody is imported.** The legacy `atmjet_admin__users` table stores its passwords in plain text (`docs/legacy-inventory.md` section 14), so it is a list of people to invite, never a list of accounts to migrate. No import or migration writes a user, and no deployment runs the seed: the build command (`bun run ci`) applies the migrations and builds, and the seed refuses to run with `NODE_ENV=production` unless somebody sets `SEED_ALLOW_PRODUCTION=1`.
+- **When someone leaves**, an admin deletes their user. There are no shared accounts and no API keys; a signed-in session is one person.
+- Five wrong passwords lock an account for ten minutes, so a stolen address is not worth guessing at.
+
+Locally, `bun run seed` creates `dev@atmjet.local` / `dev-password-change-me` in the disposable development database. It is a development account with a published password: it belongs in no database anyone else can reach.
+
 ## Branches, commits and pull requests
 
 - One pull request = one shippable slice (a page with its blocks, a block with its components, a collection with the page or import that reads it, or one process change); it closes every issue it completes. Aim for 200 to 800 hand-written lines, generated files excluded. Merge each slice before starting the next; stack at most two open pull requests (`gh pr create --base <lower-branch>`). Pull requests are **squash-merged** (the only merge method): `master` holds one commit per pull request, named after it; a stack merges bottom-up.
