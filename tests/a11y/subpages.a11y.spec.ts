@@ -20,6 +20,8 @@ const SLUGS = [
   'sales_dept',
   'sales_yachts',
   'yachts',
+  // One yacht, reached the way the listing card reaches it (issue #140).
+  'yachts/azimut-serenity',
 ] as const
 
 forEachLocale((locale) => {
