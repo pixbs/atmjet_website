@@ -96,3 +96,59 @@ test.describe('the order the fleet is read in', () => {
     await expect(page).toHaveURL(pathFor('/yachts', 'en'))
   })
 })
+
+/**
+ * The three bands the card narrows the fleet with (issue #139, `docs/legacy-inventory.md`
+ * section 4). The legacy trio wrote itself into the URL and then never read itself back out, so
+ * every box said "All" again the moment the page it had asked for arrived (section 13, entry 42).
+ */
+test.describe('narrowing the fleet', () => {
+  test('keeps only what every band asked for takes', async ({ page }) => {
+    const whole = await shown(page)
+    const dear = await shown(page, '?price=Lux')
+
+    expect(dear.length).toBeGreaterThan(0)
+    expect(dear.length).toBeLessThan(whole.length)
+    for (const yacht of dear) expect(whole).toContain(yacht)
+  })
+
+  test('means what it says by more than sixty guests', async ({ page }) => {
+    // The legacy case had no `break` and fell through into `All`, so the band that promised the
+    // largest yachts showed the whole fleet (section 13, entry 39).
+    const whole = await shown(page)
+    const largest = await shown(page, '?guests=60%2B')
+
+    expect(largest.length).toBeLessThan(whole.length)
+  })
+
+  test('says so when a band leaves nothing, and offers the way back', async ({ page }) => {
+    await page.goto(`${pathFor('/yachts', 'en')}?guests=60%2B`)
+
+    await expect(
+      page.locator(LISTING).getByRole('heading', { name: 'No yachts found' }),
+    ).toBeVisible()
+    await expect(page.getByRole('link', { name: 'Reset filters' })).toHaveAttribute(
+      'href',
+      pathFor('/yachts', 'en'),
+    )
+  })
+
+  test('opens every box on what the page was served with', async ({ page }) => {
+    await page.goto(`${pathFor('/yachts', 'en')}?price=Lux&guests=30`)
+
+    await expect(page.getByLabel('Price')).toHaveValue('Lux')
+    await expect(page.getByLabel('Guests')).toHaveValue('30')
+    await expect(page.getByLabel('Length ft')).toHaveValue('All')
+  })
+
+  test('writes the bands a visitor chose into the URL, and no others', async ({ page }) => {
+    await page.goto(pathFor('/yachts', 'en'))
+
+    await page.getByLabel('Price').selectOption('3500')
+    await page.getByRole('button', { name: 'Apply' }).click()
+
+    await expect(page).toHaveURL(/[?&]price=3500/)
+    await expect(page).not.toHaveURL(/guests=/)
+    await expect(page).not.toHaveURL(/length=/)
+  })
+})

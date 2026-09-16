@@ -142,7 +142,31 @@
       "guests": "Guests"
     },
     "none": "No yachts found",
-    "reset": "Reset filters"
+    "reset": "Reset filters",
+    "filters": {
+      "guests": {
+        "label": "Guests",
+        "All": "All",
+        "15": "To 15 guests",
+        "30": "From 15 to 30 guests",
+        "60": "From 30 to 60 guests",
+        "60+": "More than 60"
+      },
+      "price": {
+        "label": "Price",
+        "All": "All",
+        "1200": "To 1200 AED",
+        "3500": "To 3500 AED",
+        "Lux": "Lux"
+      },
+      "length": {
+        "label": "Length ft",
+        "All": "All",
+        "20": "To 20 ft",
+        "40": "From 20 to 40 ft",
+        "60": "From 40 to 60 ft"
+      }
+    }
   },
   "seo": {
     "siteName": "ATM JET",

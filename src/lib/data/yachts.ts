@@ -4,6 +4,7 @@ import { cache } from 'react'
 import type { Locale } from '@/i18n/locales'
 import { mediaSource, type ImageSource, type MediaLike } from '@/lib/media'
 import {
+  matchesCharter,
   sortedCharter,
   type CharterOrderable,
   type CharterQuery,
@@ -135,7 +136,7 @@ export interface CharterYachtListing extends CharterOrderable {
 export const searchCharterYachts = cache(
   async (
     locale: Locale,
-    query: Pick<CharterQuery, 'sort' | 'direction'>,
+    query: Pick<CharterQuery, 'sort' | 'direction' | 'filters'>,
     // Injected so the integration tier can read through its own Payload instance.
     client: () => Promise<Payload> = getPayloadClient,
   ): Promise<CharterYachtListing[]> => {
@@ -156,22 +157,25 @@ export const searchCharterYachts = cache(
         overrideAccess: false,
       })
 
+      const fleet = docs.map((yacht) => ({
+        id: yacht.id,
+        slug: yacht.slug,
+        name: yacht.name,
+        manufacturer: yacht.charter?.manufacturer,
+        price: yacht.charter?.customerPrice,
+        currency: yacht.charter?.currency,
+        length: yacht.length,
+        guests: yacht.charter?.guestsDay,
+        minHours: yacht.charter?.minHours,
+        cabins: yacht.charter?.cabins,
+        bathrooms: yacht.charter?.bathrooms,
+        refit: yacht.charter?.refit,
+        photo: photoSource(yacht.photos?.[0] ?? {}),
+      }))
+
+      // Narrowed before it is ordered, as the legacy did both in the browser.
       return sortedCharter(
-        docs.map((yacht) => ({
-          id: yacht.id,
-          slug: yacht.slug,
-          name: yacht.name,
-          manufacturer: yacht.charter?.manufacturer,
-          price: yacht.charter?.customerPrice,
-          currency: yacht.charter?.currency,
-          length: yacht.length,
-          guests: yacht.charter?.guestsDay,
-          minHours: yacht.charter?.minHours,
-          cabins: yacht.charter?.cabins,
-          bathrooms: yacht.charter?.bathrooms,
-          refit: yacht.charter?.refit,
-          photo: photoSource(yacht.photos?.[0] ?? {}),
-        })),
+        fleet.filter((yacht) => matchesCharter(yacht, query.filters)),
         query,
       )
     } catch (error) {

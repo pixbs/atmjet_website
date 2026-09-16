@@ -1,6 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
 
 import { listSaleYachts, searchCharterYachts } from '@/lib/data/yachts'
+import type { CharterQuery } from '@/lib/yachts'
 import { slugify } from '@/lib/slug'
 import {
   createAdmin,
@@ -451,6 +452,16 @@ describe('the listing the recent yachts section reads', () => {
 describe('the listing the charter page reads', () => {
   const client = () => Promise.resolve(registry.payload)
 
+  /** Everything, in the order named: the bands a call does not narrow by are all of them. */
+  const asked = (
+    overrides: Partial<CharterQuery> = {},
+  ): Pick<CharterQuery, 'sort' | 'direction' | 'filters'> => ({
+    sort: 'price',
+    direction: 'asc',
+    filters: { guests: 'All', price: 'All', length: 'All' },
+    ...overrides,
+  })
+
   const charter = (overrides: Record<string, unknown> = {}) =>
     createYacht(registry, {
       listingType: 'charter',
@@ -465,7 +476,11 @@ describe('the listing the charter page reads', () => {
       slug: `sale-${uniqueSuffix()}`,
     })
 
-    const listed = await searchCharterYachts('en', { sort: 'price', direction: 'asc' }, client)
+    const listed = await searchCharterYachts(
+      'en',
+      asked({ sort: 'price', direction: 'asc' }),
+      client,
+    )
     const ids = listed.map((one) => one.id)
 
     expect(ids).toContain(chartered.id)
@@ -480,8 +495,12 @@ describe('the listing the charter page reads', () => {
     const order = (listed: { id: number | string }[]) =>
       listed.map((one) => one.id).filter((id) => mine.includes(id))
 
-    const up = await searchCharterYachts('en', { sort: 'price', direction: 'asc' }, client)
-    const down = await searchCharterYachts('en', { sort: 'price', direction: 'desc' }, client)
+    const up = await searchCharterYachts('en', asked({ sort: 'price', direction: 'asc' }), client)
+    const down = await searchCharterYachts(
+      'en',
+      asked({ sort: 'price', direction: 'desc' }),
+      client,
+    )
 
     expect(order(up)).toEqual([cheap.id, dear.id, unpriced.id])
     expect(order(down)).toEqual([dear.id, cheap.id, unpriced.id])
@@ -506,7 +525,7 @@ describe('the listing the charter page reads', () => {
     })
 
     const listed = (
-      await searchCharterYachts('en', { sort: 'price', direction: 'asc' }, client)
+      await searchCharterYachts('en', asked({ sort: 'price', direction: 'asc' }), client)
     ).find((one) => one.id === yacht.id)
 
     expect(listed?.manufacturer).toBe('Azimut')
@@ -519,13 +538,37 @@ describe('the listing the charter page reads', () => {
     expect(listed?.photo?.alt).toBe('Her bow')
   })
 
+  it('narrows the fleet to the bands the URL asked for', async () => {
+    const small = await charter({
+      length: 18,
+      charter: { customerPrice: 900, currency: 'AED', guestsDay: 10 },
+    })
+    const large = await charter({
+      length: 110,
+      charter: { customerPrice: 9_000, currency: 'AED', guestsDay: 90 },
+    })
+    const mine: (number | string)[] = [small.id, large.id]
+    const kept = async (filters: Record<string, string>) =>
+      (await searchCharterYachts('en', asked({ filters }), client))
+        .map((one) => one.id)
+        .filter((id) => mine.includes(id))
+
+    expect(await kept({ guests: '15', price: 'All', length: 'All' })).toEqual([small.id])
+    expect(await kept({ guests: 'All', price: 'Lux', length: 'All' })).toEqual([large.id])
+    // The band that promised the largest yachts showed every one of them on the legacy site,
+    // its case having no `break` (section 13, entry 39).
+    expect(await kept({ guests: '60+', price: 'All', length: 'All' })).toEqual([large.id])
+    // Every band has to take it, not any of them.
+    expect(await kept({ guests: '15', price: 'Lux', length: 'All' })).toEqual([])
+  })
+
   it('lists none rather than taking the page down when the database cannot be reached', async () => {
     // The legacy page derived ranges for a slider nobody could see by indexing the first element
     // of an empty array, so a table with nothing in it threw (section 13, entry 51).
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined)
 
     await expect(
-      searchCharterYachts('en', { sort: 'price', direction: 'asc' }, () =>
+      searchCharterYachts('en', asked({ sort: 'price', direction: 'asc' }), () =>
         Promise.reject(new Error('connection refused')),
       ),
     ).resolves.toEqual([])
