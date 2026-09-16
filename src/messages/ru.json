@@ -144,7 +144,18 @@
     "none": "Яхты не найдены",
     "reset": "Сбросить фильтры",
     "request": "Заказать {name}",
-    "hour": "Час"
+    "hour": "Час",
+    "keyStats": "Основные факты",
+    "included": "Включено в стоимость:",
+    "about": "О {name}",
+    "stats": {
+      "paxDayNight": "пассажиров день/ночь",
+      "lengthFtM": "длина фт/м",
+      "cabins": "каюты",
+      "bathrooms": "санузлы",
+      "minHours": "мин. часов аренды",
+      "refit": "рефит"
+    }
   },
   "seo": {
     "siteName": "ATM JET",

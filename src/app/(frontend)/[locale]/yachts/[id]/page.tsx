@@ -1,8 +1,11 @@
 import type { Metadata } from 'next'
+import Image from 'next/image'
 import { notFound, redirect } from 'next/navigation'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 
+import { KeyStatsCard } from '@/components/cards/key-stats-card'
 import { YachtRequest } from '@/components/form/yacht-request'
+import { Bathrooms, Cabins, Clock, Guests, Length, Tools } from '@/components/icons'
 import { Line } from '@/components/motion/line'
 import { Gallery } from '@/components/ui/gallery'
 import { JsonLd } from '@/components/ui/json-ld'
@@ -25,6 +28,13 @@ import { siteOrigin } from '@/lib/urls'
  * refused to draw one (`if (!yacht || !yacht.photos) redirect('/yachts')`) and the gallery the
  * card sits beside would be an empty column.
  */
+/**
+ * The `size-10` the legacy gave every icon beside a figure, in the near-black the cards are
+ * outlined in (the legacy `text-gray-300`, ADR-0006); the `color-gray` beside it was never a
+ * class at all (`docs/legacy-inventory.md` section 13, entry 17).
+ */
+const STAT_ICON = 'size-10 shrink-0 text-graphite-800'
+
 interface DetailParams {
   locale: string
   id: string
@@ -99,6 +109,60 @@ export default async function YachtDetailPage({ params }: { params: Promise<Deta
     slug: `yachts/${id}`,
     title: name,
   })
+  const units = await getTranslations({ locale, namespace: 'units' })
+  const printed = (value: string | number | null | undefined): string =>
+    value === null || value === undefined ? '' : String(value)
+
+  /** The six figures, in the order the legacy card drew them. */
+  const stats = [
+    {
+      icon: <Guests className={STAT_ICON} />,
+      // `20 / 12`, as the legacy printed the two together.
+      value: `${printed(charter.guestsDay)} / ${printed(charter.guestsNight)}`,
+      label: t('stats.paxDayNight'),
+    },
+    {
+      icon: <Length className={STAT_ICON} />,
+      value: `${printed(yacht.length)} / ${printed(yacht.length === null || yacht.length === undefined ? null : Math.round(yacht.length * 0.3048))}`,
+      label: t('stats.lengthFtM'),
+    },
+    {
+      icon: <Cabins className={STAT_ICON} />,
+      value: printed(charter.cabins),
+      label: t('stats.cabins'),
+    },
+    {
+      icon: <Bathrooms className={STAT_ICON} />,
+      value: printed(charter.bathrooms),
+      label: t('stats.bathrooms'),
+    },
+    {
+      icon: <Clock className={STAT_ICON} />,
+      // The legacy wrote `4 hours` on the Russian page too (section 13, entry 49).
+      value: units('hours', { count: charter.minHours ?? 0 }),
+      label: t('stats.minHours'),
+    },
+    {
+      icon: <Tools className={STAT_ICON} />,
+      value: printed(charter.refit),
+      label: t('stats.refit'),
+    },
+  ]
+
+  /**
+   * One paragraph per line of the description. The legacy split it on full stops and dropped
+   * whatever followed the last one, so a sentence ending in an abbreviation or a decimal broke
+   * in two and the closing words were lost (section 13, entry 50); the field holds the breaks
+   * an editor typed, which is the decision of E4.13.
+   */
+  const paragraphs = (yacht.description ?? '')
+    .split('\n')
+    .map((line) => line.trim())
+    .filter((line) => line !== '')
+
+  /** The photograph the lower section opens with, and the ones the legacy stacked under it. */
+  const last = photographs[photographs.length - 1]
+  const stacked = photographs.slice(2, -1).slice(2)
 
   return (
     <>
@@ -142,6 +206,58 @@ export default async function YachtDetailPage({ params }: { params: Promise<Deta
         </div>
       </section>
       {/* Full width, as the legacy drew it between the sections of this page. */}
+      <Line />
+      <section className="md:py-16 md:pb-24" data-section="yacht-specs">
+        <div className="container gap-12">
+          <div className="gap-10 md:grid md:grid-cols-2">
+            <div className="overflow-clip">
+              {last && (
+                <Image
+                  alt={last.alt}
+                  className="sticky top-hero-band rounded-3xl border border-graphite-800 bg-graphite-950"
+                  height={400}
+                  src={last.src}
+                  width={600}
+                />
+              )}
+            </div>
+            {/* The rule after the last figure is the yacht card's own; the aircraft card stops
+                at the one before it (section 4). */}
+            <KeyStatsCard ruleAfterLast stats={stats} title={t('keyStats')}>
+              {charter.included && (
+                <div className="col-span-full">
+                  <p>{t('included')}</p>
+                  <h3>{charter.included}</h3>
+                </div>
+              )}
+            </KeyStatsCard>
+          </div>
+          <div className="relative items-start gap-6 md:grid md:grid-cols-2 md:gap-10">
+            <div className="top-hero-band gap-6 rounded-3xl border border-graphite-800 bg-graphite-950 p-6 py-10 pb-16 md:sticky md:gap-10 md:self-start md:p-10">
+              <h2>{t('about', { name: yacht.name })}</h2>
+              <div className="flex flex-col gap-4">
+                {paragraphs.map((paragraph) => (
+                  <p key={paragraph}>{paragraph}</p>
+                ))}
+              </div>
+            </div>
+            {/* The legacy took `photos.slice(2, -1).slice(2)`, which is the fifth photograph to
+                the second from last: the first four are spoken for by the band and the gallery. */}
+            <div className="gap-10">
+              {stacked.map((photo) => (
+                <Image
+                  key={photo.src}
+                  alt={photo.alt}
+                  className="rounded-3xl border border-graphite-800 bg-graphite-950"
+                  height={400}
+                  src={photo.src}
+                  width={600}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
       <Line />
       {trail && <JsonLd data={trail} />}
     </>
