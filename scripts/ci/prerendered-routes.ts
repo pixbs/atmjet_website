@@ -1,4 +1,4 @@
-import { PAGE_SLUGS, pathForPage } from '../../src/collections/Pages'
+import { DYNAMIC_PAGE_SLUGS, PAGE_SLUGS, pathForPage } from '../../src/collections/Pages'
 import { DEFAULT_LOCALES, type Locale } from '../../src/i18n/locales'
 
 /**
@@ -16,13 +16,17 @@ export const METADATA_ROUTES = ['/robots.txt', '/sitemap.xml'] as const
 /**
  * Every page of the seeded site, in every language it serves. The slugs are the collection's own
  * list rather than a copy, so a route added there is expected here without anyone remembering to
- * add it.
+ * add it, and a listing served on demand is not expected at all: its sort and its page come from
+ * the query, so a build has nothing to prerender for it (issue #135).
  */
 export function expectedRoutes(
   locales: readonly Locale[] = DEFAULT_LOCALES,
   slugs: readonly string[] = PAGE_SLUGS,
 ): string[] {
-  const pages = locales.flatMap((locale) => slugs.map((slug) => pathForPage(locale, slug)))
+  const prerendered = slugs.filter(
+    (slug) => !DYNAMIC_PAGE_SLUGS.some((dynamic) => dynamic === slug),
+  )
+  const pages = locales.flatMap((locale) => prerendered.map((slug) => pathForPage(locale, slug)))
 
   return [...pages, ...METADATA_ROUTES]
 }
