@@ -261,6 +261,51 @@ const KEY_FEATURES: { en: [string, string]; ru: [string, string] }[] = [
   },
 ]
 
+/**
+ * What the home page said a flight comes with (issue #134, section 4): the five cards the legacy
+ * `key-features` namespace held, in the order its images were listed.
+ */
+const HOME_KEY_FEATURES: { en: [string, string]; ru: [string, string] }[] = [
+  {
+    en: [
+      'Tailored to your preferences',
+      'The cabin, the catering and the crew, set once and remembered after.',
+    ],
+    ru: ['Под ваши предпочтения', 'Салон, кейтеринг и экипаж — согласованы один раз и запомнены.'],
+  },
+  {
+    en: [
+      'The aircraft you choose',
+      'Not the one that happens to be free: the type, the cabin and the operator are yours.',
+    ],
+    ru: [
+      'Самолёт, который выбираете вы',
+      'Не тот, что оказался свободен: тип, салон и оператор — ваш выбор.',
+    ],
+  },
+  {
+    en: [
+      'Payment after the flight',
+      'An account settled on landing, for the clients who fly with us often.',
+    ],
+    ru: ['Оплата после полёта', 'Счёт закрывается по прилёте — для тех, кто летает с нами часто.'],
+  },
+  {
+    en: [
+      'Paid any way you like',
+      'Transfer, card or crypto, in the currency the invoice is written in.',
+    ],
+    ru: ['Любой способ оплаты', 'Перевод, карта или криптовалюта — в валюте счёта.'],
+  },
+  {
+    en: ['Champagne on board', 'The bottle you asked for, cold, from the moment the door closes.'],
+    ru: [
+      'Шампанское на борту',
+      'Та бутылка, о которой вы просили, холодная, с момента закрытия двери.',
+    ],
+  },
+]
+
 type Layout = NonNullable<Page['layout']>
 
 /** What the seeded sections are built out of: the placeholder uploads and the pages they link to. */
@@ -926,7 +971,10 @@ function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout 
       image: fixture.photo,
     })
 
-  if (slug === '')
+  // The home page, in the order the legacy file drew it (issue #134, section 4, route
+  // `/[locale]`). Every one of these sections was on it, several of them on it alone, so they
+  // are gathered here rather than left scattered through the list a block at a time.
+  if (slug === '') {
     sections.push({
       blockType: 'heroVideo',
       // The legacy overline, and the legacy headline, which its Russian and Ukrainian
@@ -936,6 +984,126 @@ function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout 
       // The path the legacy markup named; the file arrives with the assets of E5.12.
       video: '/video/background_full.mp4',
     })
+    // Without a card, which is how the legacy home page passed it (section 5).
+    sections.push({ blockType: 'makeBooking', title: MAKE_BOOKING[locale], variant: 'plain' })
+    sections.push({
+      blockType: 'whyUs',
+      variant: 'stacked',
+      title: locale === 'en' ? 'Why us' : 'Почему мы',
+      cards: HOME_WHY_US.map((card) => ({
+        figure: card.figure,
+        title: card[locale][0],
+        description: card[locale][1],
+        image: fixture.photo,
+      })),
+    })
+    sections.push({
+      blockType: 'emptyLegs',
+      title: locale === 'en' ? 'Flights leaving soon' : 'Ближайшие перелёты',
+      description:
+        locale === 'en'
+          ? 'The cabin is going anyway, and the price says so. New ones appear as the schedule changes.'
+          : 'Салон всё равно летит, и цена это отражает. Новые появляются по мере изменения расписания.',
+      limit: 12,
+      cta: { label: locale === 'en' ? 'Make a booking' : 'Забронировать', source: 'Empty-legs' },
+      channel: {
+        title: locale === 'en' ? 'Be the first to know' : 'Узнавайте первыми',
+        description:
+          locale === 'en'
+            ? 'Every empty leg is posted to the Telegram channel the hour it is confirmed.'
+            : 'Каждый пустой перелёт публикуется в Telegram-канале в час подтверждения.',
+        label: locale === 'en' ? 'Open the channel' : 'Открыть канал',
+      },
+    })
+    sections.push({
+      blockType: 'keyFeatures',
+      title: locale === 'en' ? 'What a flight comes with' : 'Что входит в перелёт',
+      description:
+        locale === 'en'
+          ? 'The things arranged before you ask, and the ones you only have to ask for once.'
+          : 'То, что делается до вашей просьбы, и то, о чём достаточно попросить один раз.',
+      cards: HOME_KEY_FEATURES.map((card) => ({
+        title: card[locale][0],
+        description: card[locale][1],
+        image: fixture.photo,
+      })),
+    })
+    sections.push({
+      blockType: 'optionsTiles',
+      tiles: OPTIONS_TILES.flatMap((tile) => {
+        const page = fixture.pages.get(tile.slug)
+
+        return page === undefined
+          ? []
+          : [
+              {
+                image: fixture.photo,
+                title: tile[locale][0],
+                label: tile[locale][1],
+                page,
+                dim: tile.dim,
+              },
+            ]
+      }),
+    })
+    sections.push({
+      blockType: 'privilege',
+      title: locale === 'en' ? 'What flying with us' : 'Что даёт полёт',
+      goldTitle: locale === 'en' ? 'comes with' : 'с нами',
+      cards: PRIVILEGES.map((card) => ({
+        icon: card.icon,
+        title: card[locale][0],
+        description: card[locale][1],
+      })),
+      contact: {
+        title: locale === 'en' ? 'Tell us where you are going' : 'Расскажите, куда летите',
+        description:
+          locale === 'en'
+            ? 'A manager answers within minutes, at any hour, in either language.'
+            : 'Менеджер отвечает в течение нескольких минут, в любой час, на любом языке.',
+        telegram: 'Telegram',
+        whatsapp: 'WhatsApp',
+        background: fixture.surface,
+      },
+    })
+    const fleet = fixture.pages.get('yachts')
+    if (fleet !== undefined)
+      sections.push({
+        blockType: 'yachtsPromo',
+        title: locale === 'en' ? 'Yachts' : 'Яхты',
+        description:
+          locale === 'en'
+            ? 'The same crew arranges the week that follows the flight.'
+            : 'Та же команда организует неделю, которая следует за перелётом.',
+        image: fixture.photo,
+        columns: YACHT_COLUMNS.map((column) => ({
+          title: column[locale][0],
+          description: column[locale][1],
+        })),
+        invitation: {
+          image: fixture.photo,
+          title: locale === 'en' ? 'Tell us the week and the water' : 'Назовите неделю и место',
+          label: locale === 'en' ? 'See the fleet' : 'Посмотреть флот',
+          page: fleet,
+        },
+      })
+    // Eight, as the legacy grid sliced one picture into eight. Far down the page, as it was
+    // there: it is scrolled to, not landed on.
+    sections.push({
+      blockType: 'tiles',
+      // The two placeholders in turn, so the cells of the grid can be told apart; the legacy
+      // eight were eight slices of one picture.
+      tiles: Array.from({ length: 8 }, (_, index) => ({
+        image: index % 2 === 0 ? fixture.photo : fixture.surface,
+      })),
+    })
+    sections.push({ blockType: 'transfer', title: TRANSFER[locale], image: fixture.photo })
+    sections.push({
+      blockType: 'faq',
+      title: locale === 'en' ? 'Questions we are asked' : 'Что нас спрашивают',
+      questions: FAQ.map((entry) => ({ question: entry[locale][0], answer: entry[locale][1] })),
+    })
+  }
 
   if (slug === 'aircraft')
     sections.push({
@@ -1256,47 +1424,6 @@ function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout 
       })),
     })
   }
-
-  // The one page the legacy drew it on was the home page (section 4).
-  if (slug === '')
-    sections.push({
-      blockType: 'optionsTiles',
-      tiles: OPTIONS_TILES.flatMap((tile) => {
-        const page = fixture.pages.get(tile.slug)
-
-        return page === undefined
-          ? []
-          : [
-              {
-                image: fixture.photo,
-                title: tile[locale][0],
-                label: tile[locale][1],
-                page,
-                dim: tile.dim,
-              },
-            ]
-      }),
-    })
-
-  // Eight, as the legacy grid sliced one picture into eight, on the one page that had it. Far
-  // down it, as the legacy grid was: it is scrolled to, not landed on.
-  if (slug === '')
-    sections.push({
-      blockType: 'tiles',
-      // The two placeholders in turn, so the cells of the grid can be told apart; the legacy
-      // eight were eight slices of one picture.
-      tiles: Array.from({ length: 8 }, (_, index) => ({
-        image: index % 2 === 0 ? fixture.photo : fixture.surface,
-      })),
-    })
-
-  // Last on the home page, the one page the legacy drew it on (issue #123, section 5).
-  if (slug === '')
-    sections.push({
-      blockType: 'faq',
-      title: locale === 'en' ? 'Questions we are asked' : 'Что нас спрашивают',
-      questions: FAQ.map((entry) => ({ question: entry[locale][0], answer: entry[locale][1] })),
-    })
 
   const yachts = fixture.pages.get('yachts')
   if (slug === 'atm_jet_group' && yachts !== undefined)
