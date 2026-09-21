@@ -79,3 +79,25 @@ export function handoffQuery(legs: readonly Direction[], source = 'Flight_reques
 
   return `?showBooking=${source}&direction=${encodeURIComponent(JSON.stringify(direction))}`
 }
+
+/** The two detail pages that hand a leg to the dialog, as a lead records them. */
+const DETAIL_PAGES = { aircraft: 'Aircraft_detail', yacht: 'Yachts_detail' } as const
+
+export type DetailPage = keyof typeof DETAIL_PAGES
+
+/**
+ * What a detail page calls itself when it opens the dialog (issue #153).
+ *
+ * The legacy action wrote `showBooking=Yachts` from both pages, so every lead from the
+ * catalogue said the same thing and none of them said which aircraft or yacht it was about
+ * (`docs/legacy-inventory.md` section 13, entry 30). The page says which it is, and the slug
+ * it is served at says which vehicle, so the desk reads both off the lead.
+ *
+ * The slug rather than the name: it is what the URL already carries, it is unique, and it
+ * cannot bring a quotation mark into the Telegram message the way `Azimut "Serenity"` would.
+ */
+export function detailSource(page: DetailPage, slug: string): string {
+  const named = slug.trim()
+
+  return named === '' ? DETAIL_PAGES[page] : `${DETAIL_PAGES[page]}:${named}`
+}

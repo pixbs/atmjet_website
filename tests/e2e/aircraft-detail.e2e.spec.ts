@@ -84,7 +84,10 @@ test.describe('the request a detail page takes', () => {
 
     await page.getByRole('button', { name: 'Request M-OUSE' }).click()
 
-    await expect(page).toHaveURL(/showBooking=Aircraft_detail/)
+    // And which aircraft, which the legacy lead never said either (issue #153).
+    await expect(page).toHaveURL(
+      /showBooking=Aircraft_detail%3AMOUSE|showBooking=Aircraft_detail:MOUSE/,
+    )
     await expect(page).not.toHaveURL(/showBooking=Yachts/)
     await expect(page.locator('[data-section="booking-dialog"]')).toBeVisible()
   })

@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
 import {
+  detailSource,
   directionSchema,
   emptyLeg,
   flightRequestSchema,
@@ -114,5 +115,37 @@ describe('a direction', () => {
     const [, direction] = /direction=([^&]+)/.exec(query) ?? []
 
     expect(JSON.parse(decodeURIComponent(direction ?? ''))).toEqual([charter])
+  })
+})
+
+/**
+ * What a detail page calls itself when it hands the dialog a leg (issue #153). The legacy
+ * action wrote `showBooking=Yachts` from both pages, so a lead left on an aircraft page arrived
+ * saying it came from the yachts and never said which aircraft
+ * (`docs/legacy-inventory.md` section 13, entry 30).
+ */
+describe('detailSource', () => {
+  it('names the page and the vehicle a visitor was reading about', () => {
+    expect(detailSource('aircraft', 'ra-73025-gulfstream-g650')).toBe(
+      'Aircraft_detail:ra-73025-gulfstream-g650',
+    )
+    expect(detailSource('yacht', 'azimut-serenity')).toBe('Yachts_detail:azimut-serenity')
+  })
+
+  it('tells the two pages apart, which the legacy did not', () => {
+    expect(detailSource('aircraft', 'x')).not.toBe(detailSource('yacht', 'x'))
+  })
+
+  it('names the page alone when there is no slug to name', () => {
+    // A row the import has not given a slug yet is still a page a lead can be left on.
+    expect(detailSource('yacht', '')).toBe('Yachts_detail')
+    expect(detailSource('aircraft', '   ')).toBe('Aircraft_detail')
+  })
+
+  it('survives the query it travels in', () => {
+    const source = detailSource('aircraft', 'ra-73025')
+    const query = new URLSearchParams(handoffQuery([emptyLeg()], source).slice(1))
+
+    expect(query.get('showBooking')).toBe(source)
   })
 })

@@ -5,6 +5,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server'
 
 import { KeyStatsCard } from '@/components/cards/key-stats-card'
 import { YachtRequest } from '@/components/form/yacht-request'
+import { detailSource } from '@/lib/flight-request'
 import { Bathrooms, Cabins, Clock, Guests, Length, Tools } from '@/components/icons'
 import { Line } from '@/components/motion/line'
 import { Gallery } from '@/components/ui/gallery'
@@ -213,7 +214,7 @@ export default async function YachtDetailPage({ params }: { params: Promise<Deta
               maxGuests={charter.guestsDay ?? 10}
               minHours={charter.minHours ?? 1}
               price={price}
-              source="Yachts_detail"
+              source={detailSource('yacht', id)}
             />
           </div>
         </div>
