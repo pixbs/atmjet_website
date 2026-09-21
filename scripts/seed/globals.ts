@@ -1,6 +1,6 @@
 import type { Payload } from 'payload'
 
-import { DEFAULT_LOCALE, DEFAULT_LOCALES, type Locale } from '../../src/i18n/locales'
+import { ALL_LOCALES, DEFAULT_LOCALE, type Locale } from '../../src/i18n/locales'
 import type { SeedOutcome } from './report'
 
 /**
@@ -24,18 +24,26 @@ const translate = (value: Translated, locale: Locale): string => value[locale] ?
 
 /** Legacy `navigation.*`, keyed by the page each link opens. */
 const NAV_LABELS: Record<string, Translated> = {
-  '': { en: 'Home', ru: 'Главная' },
-  partners: { en: 'Partners', ru: 'Партнеры' },
-  business_agents: { en: 'Personal assistants', ru: 'Персональным ассистентам' },
-  medical_aviation: { en: 'Medical aviation', ru: 'Медицинская авиация' },
-  empty_legs: { en: 'Empty legs', ru: 'Empty Leg' },
-  cargo_charter: { en: 'Cargo charter', ru: 'Грузовые перевозки' },
-  atm_jet_group: { en: 'ATM JET group', ru: 'Группа компаний АТМ JET' },
-  aircraft: { en: 'Aircraft', ru: 'Самолеты' },
-  group_charters: { en: 'Group charters', ru: 'Для групповых рейсов' },
-  sales_dept: { en: 'Aircraft Sales', ru: 'Продажа самолетов' },
+  '': { en: 'Home', ru: 'Главная', uk: 'Головна' },
+  partners: { en: 'Partners', ru: 'Партнеры', uk: 'Партнери' },
+  business_agents: {
+    en: 'Personal assistants',
+    ru: 'Персональным ассистентам',
+    uk: 'Персональним асистентам',
+  },
+  medical_aviation: { en: 'Medical aviation', ru: 'Медицинская авиация', uk: 'Медична авіація' },
+  empty_legs: { en: 'Empty legs', ru: 'Empty Leg', uk: 'Empty Leg' },
+  cargo_charter: { en: 'Cargo charter', ru: 'Грузовые перевозки', uk: 'Вантажні перевезення' },
+  atm_jet_group: {
+    en: 'ATM JET group',
+    ru: 'Группа компаний АТМ JET',
+    uk: 'Група компаній АТМ JET',
+  },
+  aircraft: { en: 'Aircraft', ru: 'Самолеты', uk: 'Літаки' },
+  group_charters: { en: 'Group charters', ru: 'Для групповых рейсов', uk: 'Для групових рейсів' },
+  sales_dept: { en: 'Aircraft Sales', ru: 'Продажа самолетов', uk: 'Продажі літаків' },
   sales_yachts: { en: 'Yachts Sales', ru: 'Продажа яхт' },
-  yachts: { en: 'Yachts Charter', ru: 'Аренда яхт' },
+  yachts: { en: 'Yachts Charter', ru: 'Аренда яхт', uk: 'Яхти' },
 }
 
 /** The services column of the open menu, and the first footer row. */
@@ -71,13 +79,18 @@ const FOOTER_SECOND_ROW = [
 /** The globals this seed fills in. `site-settings` needs none: its legacy values are defaults. */
 export const SEEDED_GLOBALS = ['header', 'footer'] as const
 
-const BOOKING_LABEL: Translated = { en: 'Make a booking', ru: 'Забронировать' }
+const BOOKING_LABEL: Translated = { en: 'Make a booking', ru: 'Забронировать', uk: 'Забронювати' }
 
 const LEGAL: Record<'location' | 'copyright', Translated> = {
-  location: { en: 'Dubai +971 (50) 458-99-26', ru: 'Дубай +971 (50) 458-99-26' },
+  location: {
+    en: 'Dubai +971 (50) 458-99-26',
+    ru: 'Дубай +971 (50) 458-99-26',
+    uk: 'Дубай +971 (50) 458-99-26',
+  },
   copyright: {
     en: '©ATM JET, 2004-{year}. All rights reserved',
     ru: '©ATM JET, 2004-{year}. Все права защищены',
+    uk: '©ATM JET, 2004-{year}. Усі права захищені',
   },
 }
 
@@ -197,7 +210,7 @@ export async function seedGlobals(payload: Payload): Promise<SeedOutcome[]> {
     let written: { primaryNav?: WrittenRows; secondaryNav?: WrittenRows } | undefined
 
     // English first, then the translations onto the rows it created.
-    for (const locale of [DEFAULT_LOCALE, ...DEFAULT_LOCALES.filter((l) => l !== DEFAULT_LOCALE)]) {
+    for (const locale of [DEFAULT_LOCALE, ...ALL_LOCALES.filter((l) => l !== DEFAULT_LOCALE)]) {
       written = await payload.updateGlobal({
         slug,
         locale,
