@@ -20,4 +20,15 @@ export const routing = defineRouting({
   locales: ALL_LOCALES,
   defaultLocale: DEFAULT_LOCALE,
   localePrefix: 'always',
+  /**
+   * The pages say what their translations are, not the proxy (issue #168).
+   *
+   * next-intl offers the same thing as a `Link` response header, but it knows only the routing:
+   * it named an unprefixed `x-default` — the shape of URL the legacy sitemap advertised and a
+   * crawler is redirected from (`docs/legacy-inventory.md` section 2.3) — and an English
+   * alternate for the Russian-only citizens page, whose English URL redirects. Every route
+   * already emits the right set from `generateMetadata`, which reads `availableLocales`, so the
+   * header was a second answer that disagreed with the first.
+   */
+  alternateLinks: false,
 })
