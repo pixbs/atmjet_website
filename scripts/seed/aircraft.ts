@@ -3,9 +3,10 @@ import type { Payload } from 'payload'
 import type { SeedOutcome } from './report'
 
 /**
- * Four aircraft (issues #142 and #63, E2.5), so the section the sales department page carries
- * has something to show: three filled in as the legacy `vehicles` table filled a row, and one
- * an editor has only started — which is the card without a year under it.
+ * Five aircraft (issues #142 and #63, E2.5), so the section the sales department page carries
+ * has something to show: three filled in as the legacy `vehicles` table filled a row, one an
+ * editor has only started — which is the card without a year under it — and one nobody has
+ * photographed, which is the page that falls back to the basic layout (issue #137).
  *
  * The catalogue proper arrives with the import of E5.7; this is the fixture that lets the
  * section be rendered and captured before it does.
@@ -28,6 +29,12 @@ interface SeedAircraft {
   /** The two the rich layout's sentences name beside the figures (issue #136). */
   operator?: string
   baseAirportIcao?: string
+  /** The three remaining rows of the basic layout's card (issue #137). */
+  manufacturer?: string
+  interiorRefit?: string
+  exteriorRefit?: string
+  /** False for the one aircraft the catalogue holds no photograph of (issue #137). */
+  photographed?: false
 }
 
 // The registrations are ones no test writes by hand: the fixture and the integration tier share
@@ -72,6 +79,21 @@ export const SEED_AIRCRAFT: readonly SeedAircraft[] = [
   // The one an editor has only started: the listing sorts it last whichever way round it is
   // asked for, because nothing about it has been measured yet (issue #135).
   { registration: 'VP-CAT', model: 'Cessna Citation XLS+', category: 'Midsize jet' },
+  {
+    // The one nobody has photographed, which is the page the basic layout draws (issue #137):
+    // every row of its card is filled in, because the card is the whole of what it says.
+    registration: 'G-ATMB',
+    model: 'Dassault Falcon 7X',
+    category: 'Heavy jet',
+    manufacturer: 'Dassault',
+    year: 2014,
+    passengers: 12,
+    operator: 'ATM JET',
+    baseAirportIcao: 'LFPB',
+    interiorRefit: '2019',
+    exteriorRefit: '2018',
+    photographed: false,
+  },
 ]
 
 export async function seedAircraft(payload: Payload): Promise<SeedOutcome[]> {
@@ -120,7 +142,12 @@ export async function seedAircraft(payload: Payload): Promise<SeedOutcome[]> {
         registrationDisplay: aircraft.registration,
         availability: 'available',
         offerings: ['charter', 'sale'],
-        type: { name: aircraft.model, model: aircraft.model, category: aircraft.category },
+        type: {
+          name: aircraft.model,
+          model: aircraft.model,
+          category: aircraft.category,
+          manufacturer: aircraft.manufacturer,
+        },
         description: aircraft.description,
         operator: aircraft.operator === undefined ? undefined : { companyName: aircraft.operator },
         baseAirport: airportBy(aircraft.baseAirportIcao),
@@ -131,8 +158,13 @@ export async function seedAircraft(payload: Payload): Promise<SeedOutcome[]> {
           cabinLength: aircraft.cabinLength,
           cabinWidth: aircraft.cabinWidth,
           rangeMaximum: aircraft.rangeMaximum,
+          interiorRefit: aircraft.interiorRefit,
+          exteriorRefit: aircraft.exteriorRefit,
         },
-        images: photo === undefined ? [] : [{ type: 'exterior', media: photo }],
+        images:
+          photo === undefined || aircraft.photographed === false
+            ? []
+            : [{ type: 'exterior', media: photo }],
         provenance: { origin: 'manual' },
       },
       overrideAccess: true,
