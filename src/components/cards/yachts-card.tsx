@@ -45,6 +45,7 @@ export function YachtsCard({ image, columns, invitation, className }: YachtsCard
         alt={image.alt}
         className="min-h-64 object-cover object-center"
         height={BANNER.height}
+        sizes="90vw"
         src={image.src}
         width={BANNER.width}
       />
@@ -61,6 +62,7 @@ export function YachtsCard({ image, columns, invitation, className }: YachtsCard
           alt={invitation.image.alt}
           className="mx-auto aspect-banner w-full object-cover object-center"
           height={INVITATION.height}
+          sizes="90vw"
           src={invitation.image.src}
           width={INVITATION.width}
         />

@@ -28,6 +28,7 @@ export function Tiles({ tiles }: { tiles: ImageSource[] }) {
               alt={image.alt}
               className="object-cover"
               height={TILE.height}
+              sizes="(min-width: 768px) 30vw, 45vw"
               src={image.src}
               width={TILE.width}
             />
