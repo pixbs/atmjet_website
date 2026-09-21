@@ -414,19 +414,54 @@ const PRIVILEGE_CONTACT: Record<'en' | 'ru', { title: string; description: strin
   },
 }
 
-/** What the yachts promotion offers, in the three columns the legacy card carried. */
+/**
+ * The yachts promotion the home page and the group page both carry (issue #121, section 5), in
+ * the words the legacy `yachts` namespace held (issue #162) — a namespace that lives in
+ * `atm_jet_group.json` although both pages read it.
+ */
+const YACHTS_PROMO: Record<
+  'en' | 'ru',
+  { title: string; description: string; invitation: string; label: string }
+> = {
+  en: {
+    title: 'ATM JET | Yachts',
+    description: 'Yacht sales and charter, welcome to our yachts in Dubai and Europe.',
+    invitation: 'Personalised yacht selection at Dubai office or online',
+    label: 'Request now',
+  },
+  ru: {
+    title: 'ATM JET | Yachts',
+    description: 'Продажа и аренда яхт.',
+    invitation: 'Индивидуальный подбор яхты в офисе в Дубае или онлайн',
+    label: 'Оставить заявку',
+  },
+}
+
+/** What it offers, in the three columns the legacy card carried. */
 const YACHT_COLUMNS: { en: [string, string]; ru: [string, string] }[] = [
   {
-    en: ['The fleet', 'Motor yachts and sailing yachts from 20 to 100 metres.'],
-    ru: ['Флот', 'Моторные и парусные яхты от 20 до 100 метров.'],
+    en: ['Yachts for sale', 'We have access to over 3000 luxury yachts worldwide.'],
+    ru: ['Самый большой выбор яхт', 'У нас есть доступ к более чем 3000 роскошных по всему миру.'],
   },
   {
-    en: ['The crew', 'Captain, chef and stewardesses chosen for the party aboard.'],
-    ru: ['Экипаж', 'Капитан, шеф-повар и стюардессы под конкретную компанию.'],
+    en: [
+      'Expert knowledge',
+      'We will assist you in the selection, valuation, and negotiation of a yacht. Our specialists and mechanics will take care of everything for you.',
+    ],
+    ru: [
+      'Знаем все детали',
+      'Мы поможем вам в выборе, оценке и переговорах по приобретению яхты. Наши специалисты и механики с опытом подбора свыше 15ти лет позаботятся обо всем за вас.',
+    ],
   },
   {
-    en: ['The week', 'Berths, permits and the transfer from the airport, arranged here.'],
-    ru: ['Неделя', 'Стоянки, разрешения и трансфер из аэропорта — на нас.'],
+    en: [
+      'Charter yachts',
+      'Enjoy your holiday on the water on our yachts in Europe and Dubai. Also on our partner yachts around the world.',
+    ],
+    ru: [
+      'Аренда яхт',
+      'Наслаждайтесь отдыхом на воде на наших яхтах в Европе и Дубае. А также на яхтах наших партнеров по всему миру.',
+    ],
   },
 ]
 
@@ -537,35 +572,24 @@ const DOCUMENTS: { en: [string, string]; ru: [string, string] }[] = [
 
 /**
  * The two arms of the group the legacy `/atm_jet_group` page listed (issue #130, section 4),
- * each opening the part of the site it belongs to.
+ * in the words its `group1` and `group2` namespaces held (issue #162). Each opens the part of
+ * the site it belongs to; the legacy hrefs were the ones that resolved to a double slash.
  */
 const GROUP_CARDS: { slug: string; en: [string, string, string]; ru: [string, string, string] }[] =
   [
     {
       slug: 'aircraft',
-      en: [
-        'The fleet',
-        'Owned and managed aircraft, from light jets to airliners.',
-        'See the fleet',
-      ],
-      ru: [
-        'Флот',
-        'Собственные и управляемые борта, от лёгких джетов до лайнеров.',
-        'Посмотреть флот',
-      ],
+      en: ['ATM JET', 'Jet hire - from 10 flights every day.', 'Request now'],
+      ru: ['ATM JET', 'Организуем аренду самолетов свыше 10 рейсов ежедневно.', 'Запросить сейчас'],
     },
     {
       slug: 'sales_dept',
       en: [
-        'Sales',
-        'Buying, selling and managing an aircraft, with the paperwork.',
-        'Talk to sales',
+        'ATM JET Market',
+        'Sale of jets for companies and for private individuals.',
+        'Request now',
       ],
-      ru: [
-        'Продажи',
-        'Покупка, продажа и управление бортом, вместе с документами.',
-        'Связаться с отделом',
-      ],
+      ru: ['ATM JET Sales Dept.', 'Продаем самолеты для компаний и частных лиц.', 'Узнать больше'],
     },
   ]
 
@@ -1224,11 +1248,8 @@ function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout 
     if (fleet !== undefined)
       sections.push({
         blockType: 'yachtsPromo',
-        title: locale === 'en' ? 'Yachts' : 'Яхты',
-        description:
-          locale === 'en'
-            ? 'The same crew arranges the week that follows the flight.'
-            : 'Та же команда организует неделю, которая следует за перелётом.',
+        title: YACHTS_PROMO[locale].title,
+        description: YACHTS_PROMO[locale].description,
         image: fixture.photo,
         columns: YACHT_COLUMNS.map((column) => ({
           title: column[locale][0],
@@ -1236,8 +1257,8 @@ function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout 
         })),
         invitation: {
           image: fixture.photo,
-          title: locale === 'en' ? 'Tell us the week and the water' : 'Назовите неделю и место',
-          label: locale === 'en' ? 'See the fleet' : 'Посмотреть флот',
+          title: YACHTS_PROMO[locale].invitation,
+          label: YACHTS_PROMO[locale].label,
           page: fleet,
         },
       })
@@ -1323,12 +1344,12 @@ function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout 
   if (slug === 'atm_jet_group')
     sections.push({
       blockType: 'heroGroup',
-      chip: locale === 'en' ? 'Since 2004' : 'С 2004 года',
-      title: locale === 'en' ? 'The group behind the flight' : 'Группа, которая стоит за рейсом',
+      chip: locale === 'en' ? 'since 2004' : 'с 2004 года',
+      title: 'ATM JET Group',
       description:
         locale === 'en'
-          ? 'Charter, sales, management and yachts, run by the people who answer your call.'
-          : 'Чартер, продажи, управление и яхты — теми, кто отвечает на ваш звонок.',
+          ? 'Our group of companies has been dedicated to providing the highest level of freedom and comfort in the air and on the water for two decades.'
+          : 'Наша группа компаний 20 лет работает над тем, чтобы обеспечить высочайший уровень свободы и комфорта в воздухе и на воде.',
     })
 
   // The sales department page down to the services it offers, in the legacy order (issue #142,
@@ -1596,11 +1617,8 @@ function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout 
   if (slug === 'atm_jet_group' && yachts !== undefined)
     sections.push({
       blockType: 'yachtsPromo',
-      title: locale === 'en' ? 'Yachts' : 'Яхты',
-      description:
-        locale === 'en'
-          ? 'The same crew arranges the week that follows the flight.'
-          : 'Та же команда организует неделю, которая следует за перелётом.',
+      title: YACHTS_PROMO[locale].title,
+      description: YACHTS_PROMO[locale].description,
       image: fixture.photo,
       columns: YACHT_COLUMNS.map((column) => ({
         title: column[locale][0],
@@ -1608,8 +1626,8 @@ function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout 
       })),
       invitation: {
         image: fixture.photo,
-        title: locale === 'en' ? 'Tell us the week and the water' : 'Назовите неделю и место',
-        label: locale === 'en' ? 'See the fleet' : 'Посмотреть флот',
+        title: YACHTS_PROMO[locale].invitation,
+        label: YACHTS_PROMO[locale].label,
         page: yachts,
       },
     })

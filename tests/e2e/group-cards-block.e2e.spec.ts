@@ -14,21 +14,19 @@ test.describe('the group cards', () => {
     const html = await (await request.get(pathFor('/atm_jet_group', 'en'))).text()
 
     expect(html).toContain('data-section="group-cards"')
-    expect(html).toContain('Owned and managed aircraft, from light jets to airliners.')
+    expect(html).toContain('Jet hire - from 10 flights every day.')
   })
 
   test('open the pages they name, with one slash', async ({ page }) => {
     await page.goto(pathFor('/atm_jet_group', 'en'))
     const section = page.locator(SECTION)
 
-    await expect(section.getByRole('link', { name: 'See the fleet' })).toHaveAttribute(
-      'href',
-      '/en/aircraft',
-    )
-    await expect(section.getByRole('link', { name: 'Talk to sales' })).toHaveAttribute(
-      'href',
-      '/en/sales_dept',
-    )
+    // Both cards carry the same wording, as the legacy pair did, so they are told apart by
+    // the page each one opens.
+    const links = section.getByRole('link', { name: 'Request now' })
+
+    await expect(links.first()).toHaveAttribute('href', '/en/aircraft')
+    await expect(links.last()).toHaveAttribute('href', '/en/sales_dept')
   })
 
   test('rule one card off from the next, and not the first', async ({ page }) => {
@@ -41,7 +39,7 @@ test.describe('the group cards', () => {
   test('speak the language of the page they are on', async ({ request }) => {
     const html = await (await request.get(pathFor('/atm_jet_group', 'ru'))).text()
 
-    expect(html).toContain('Посмотреть флот')
-    expect(html).not.toContain('See the fleet')
+    expect(html).toContain('Запросить сейчас')
+    expect(html).not.toContain('Request now')
   })
 })

@@ -15,8 +15,8 @@ test.describe('the yachts promotion', () => {
     const html = await (await request.get(pathFor('/atm_jet_group', 'en'))).text()
 
     expect(html).toContain('data-section="yachts-promo"')
-    expect(html).toContain('The same crew arranges the week that follows the flight.')
-    expect(html).toContain('Motor yachts and sailing yachts from 20 to 100 metres.')
+    expect(html).toContain('Yacht sales and charter, welcome to our yachts in Dubai and Europe.')
+    expect(html).toContain('We have access to over 3000 luxury yachts worldwide.')
   })
 
   test('opens the page the block points at, in the language of the page it is on', async ({
@@ -24,14 +24,15 @@ test.describe('the yachts promotion', () => {
   }) => {
     await page.goto(pathFor('/atm_jet_group', 'en'))
 
-    await expect(
-      page.locator(SECTION).getByRole('link', { name: 'See the fleet' }),
-    ).toHaveAttribute('href', '/en/yachts')
+    await expect(page.locator(SECTION).getByRole('link', { name: 'Request now' })).toHaveAttribute(
+      'href',
+      '/en/yachts',
+    )
 
     await page.goto(pathFor('/atm_jet_group', 'ru'))
 
     await expect(
-      page.locator(SECTION).getByRole('link', { name: 'Посмотреть флот' }),
+      page.locator(SECTION).getByRole('link', { name: 'Оставить заявку' }),
     ).toHaveAttribute('href', '/ru/yachts')
   })
 })
