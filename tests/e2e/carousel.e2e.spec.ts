@@ -103,4 +103,27 @@ test.describe('the carousel', () => {
     await expect.poll(width).toBeGreaterThan(0)
     expect(await width()).toBeLessThanOrEqual(100)
   })
+
+  test('pins the gradient to the viewport from the medium width up, as the legacy did', async ({
+    page,
+  }) => {
+    await page.goto(STYLEGUIDE)
+    const bar = page.locator(SECTION).locator('[aria-hidden="true"]').last()
+    // The gold token paints in two layers, so the computed value names one per layer.
+    const attachment = async () => [
+      ...new Set(
+        (await bar.evaluate((node) => getComputedStyle(node).backgroundAttachment)).split(', '),
+      ),
+    ]
+
+    // Pinned, the bar shows the slice of the page-wide gradient it happens to cover; unpinned it
+    // compresses the whole gradient into its own width, which is a different set of colours
+    // along the same line (`docs/legacy-inventory.md` section 13, the `bg-fixed` list).
+    await page.setViewportSize({ width: 1280, height: 720 })
+    expect(await attachment()).toEqual(['fixed'])
+
+    // Below it the legacy left the gradient where it was, as the why-us figure does.
+    await page.setViewportSize({ width: 390, height: 844 })
+    expect(await attachment()).toEqual(['scroll'])
+  })
 })

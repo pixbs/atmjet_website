@@ -18,6 +18,7 @@
     "lint": "cross-env NODE_OPTIONS=--no-deprecation eslint .",
     "lint:fix": "cross-env NODE_OPTIONS=--no-deprecation eslint . --fix",
     "knip": "knip --production && knip",
+    "db:reset": "cross-env NODE_OPTIONS=--no-deprecation payload run scripts/db/reset.ts",
     "migrate": "cross-env NODE_OPTIONS=--no-deprecation payload migrate",
     "migrate:create": "cross-env NODE_OPTIONS=--no-deprecation payload migrate:create",
     "migrate:status": "cross-env NODE_OPTIONS=--no-deprecation payload migrate:status",

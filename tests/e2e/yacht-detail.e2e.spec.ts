@@ -104,7 +104,10 @@ test.describe('the request a yacht page takes', () => {
 
     await page.getByRole('button', { name: 'Request Serenity' }).click()
 
-    await expect(page).toHaveURL(/showBooking=Yachts_detail/)
+    // And which yacht, which the legacy lead never said either (issue #153).
+    await expect(page).toHaveURL(
+      /showBooking=Yachts_detail%3Aazimut-serenity|showBooking=Yachts_detail:azimut-serenity/,
+    )
     await expect(page.locator('[data-section="booking-dialog"]')).toBeVisible()
   })
 

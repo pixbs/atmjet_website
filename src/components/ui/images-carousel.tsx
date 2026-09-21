@@ -45,6 +45,7 @@ export function ImagesCarousel({ images, labels, className }: ImagesCarouselProp
           // empty until the browser got round to it. The one on show arrives with the page; the
           // rest wait to be asked for, as they did.
           loading={index === 0 ? 'eager' : 'lazy'}
+          sizes="(min-width: 1024px) 50vw, 75vw"
           src={image.src}
           width={720}
         />
