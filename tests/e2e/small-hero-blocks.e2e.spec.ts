@@ -20,7 +20,7 @@ test.describe('the small heroes', () => {
     expect(emptyLegs).toContain('75%')
     expect(emptyLegs).toContain('The aircraft is going anyway')
     expect(partners).toContain('4x')
-    expect(group).toContain('Since 2004')
+    expect(group).toContain('since 2004')
   })
 
   test('head the page they open, each of them', async ({ page }) => {
@@ -28,7 +28,7 @@ test.describe('the small heroes', () => {
       ['/aircraft', 'We have access to over'],
       ['/empty_legs', 'off the charter price'],
       ['/partners', 'more often'],
-      ['/atm_jet_group', 'The group behind the flight'],
+      ['/atm_jet_group', 'ATM JET Group'],
     ] as const) {
       await page.goto(pathFor(route, 'en'))
 
@@ -51,7 +51,7 @@ test.describe('the small heroes', () => {
   test('speak the language of the page they are on', async ({ request }) => {
     const html = await (await request.get(pathFor('/atm_jet_group', 'ru'))).text()
 
-    expect(html).toContain('С 2004 года')
-    expect(html).not.toContain('Since 2004')
+    expect(html).toContain('с 2004 года')
+    expect(html).not.toContain('since 2004')
   })
 })

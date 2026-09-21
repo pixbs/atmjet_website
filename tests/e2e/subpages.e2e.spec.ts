@@ -44,7 +44,7 @@ const PAGES: readonly Subpage[] = [
     slug: 'atm_jet_group',
     sections: ['hero-group', 'group-cards', 'yachts-promo', 'privilege'],
     titles: { en: 'ATM JET Group', ru: 'Группа ATM JET' },
-    words: { en: 'The group behind the flight', ru: 'Группа, которая стоит за рейсом' },
+    words: { en: 'ATM JET Market', ru: 'ATM JET Sales Dept.' },
   },
   {
     slug: 'business_agents',
