@@ -1,3 +1,5 @@
+import { Analytics } from '@vercel/analytics/next'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 import { NextIntlClientProvider } from 'next-intl'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import type { Metadata } from 'next'
@@ -127,6 +129,11 @@ export default async function LocaleLayout({
         </NextIntlClientProvider>
         {contact && <JsonLd data={organisation(origin, t('siteName'), contact)} />}
         <JsonLd data={webSite(origin, locale as Locale, t('siteName'), t('siteDescription'))} />
+        {/* The two the legacy layout carried (issue #55). Both are cookieless and count a page
+            view rather than a person, so they are not behind the cookie question the tag
+            manager is behind (issue #91); outside Vercel they load nothing. */}
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   )
