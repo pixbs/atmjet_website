@@ -43,7 +43,10 @@ Settings that cannot live in code. Tick them in the epic issue (#3) as they are 
 - [ ] Environment variables per environment: the table in `docs/environment.md` says which of them each environment holds, what the site does without each one, and who rotates it. `DATABASE_URL` and `PAYLOAD_SECRET` are the two a deployment cannot start without, and it says so by name.
 - [ ] Cron: `vercel.json` runs `/api/payload-jobs/run` every minute, which is the queue that sends leads to Telegram (E9.5). Vercel signs the call with `CRON_SECRET`, so the variable has to be set for the run to be allowed; a plan without minute-level crons needs the schedule widened.
 - [ ] Neon integration with preview branches so preview builds migrate a branch, never production.
-- [ ] Staging domain on the new project; the production domain moves only at cutover (ADR-0002).
+- [ ] Staging domain on the new project; the production domain moves only at cutover (ADR-0002),
+      following `docs/runbooks/domain-switch.md`. Retiring the legacy Vercel project, the legacy
+      admin and the legacy Neon project afterwards follows `docs/runbooks/decommission.md`, which
+      starts with a written sign-off.
 
 ## Neon
 
