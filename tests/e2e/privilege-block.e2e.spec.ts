@@ -17,8 +17,8 @@ test.describe('the privileges section', () => {
     const html = await (await request.get(pathFor('/atm_jet_group', 'en'))).text()
 
     expect(html).toContain('data-section="privilege"')
-    expect(html).toContain('A jet within three hours')
-    expect(html).toContain('Tell us where you are going')
+    expect(html).toContain('Fly at cost')
+    expect(html).toContain('Contact Key Account Manager')
   })
 
   test('comes to rest lower for each privilege the page carries', async ({ page }) => {
@@ -48,7 +48,7 @@ test.describe('the privileges section', () => {
   test('speaks the language of the page it is on', async ({ request }) => {
     const html = await (await request.get(pathFor('/atm_jet_group', 'ru'))).text()
 
-    expect(html).toContain('Самолёт за три часа')
-    expect(html).not.toContain('A jet within three hours')
+    expect(html).toContain('Летайте по себестоимости')
+    expect(html).not.toContain('Fly at cost')
   })
 })

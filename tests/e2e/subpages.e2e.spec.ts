@@ -50,7 +50,7 @@ const PAGES: readonly Subpage[] = [
     slug: 'business_agents',
     sections: ['guide', 'why-us', 'documents', 'transfer', 'best-price'],
     titles: { en: 'Business agents', ru: 'Бизнес-агентам' },
-    words: { en: 'Why select us?', ru: 'Почему выбирают нас?' },
+    words: { en: 'Why select us?', ru: 'Почему стоит выбрать именно нас?' },
   },
   {
     slug: 'sales_dept',
