@@ -1,4 +1,12 @@
-import type { BreadcrumbList, FAQPage, Organization, Thing, WebSite, WithContext } from 'schema-dts'
+import type {
+  BreadcrumbList,
+  FAQPage,
+  Organization,
+  Product,
+  Thing,
+  WebSite,
+  WithContext,
+} from 'schema-dts'
 
 import type { Locale } from '@/i18n/locales'
 
@@ -120,5 +128,63 @@ export function faqPage(
       name: question,
       acceptedAnswer: { '@type': 'Answer', text: answer },
     })),
+  }
+}
+
+/**
+ * One aircraft or one yacht, as a search engine catalogues it (issue #173).
+ *
+ * `Product` rather than the more precise `Vehicle`, which schema.org defines widely enough to
+ * cover both: `Product` is the type search engines actually build a result from, and `Vehicle`
+ * inherits everything said here from it anyway.
+ */
+export interface Catalogued {
+  /** The path after the locale: `aircraft/<slug>` or `yachts/<slug>`. */
+  slug: string
+  name: string
+  description?: string | null
+  /** The photographs the page draws, in its order; relative ones are resolved against `origin`. */
+  images: readonly string[]
+  /** The maker, where the catalogue records one. */
+  brand?: string | null
+  /** What an hour costs, where a price is published; an aircraft is quoted on request. */
+  hourlyPrice?: { amount: number; currency: string } | null
+}
+
+/** An upload of this site's own is a path (`mediaSource`); structured data wants a full address. */
+const absolute = (origin: string, src: string): string => new URL(src, `${origin}/`).href
+
+export function product(origin: string, locale: Locale, item: Catalogued): Node<Product> {
+  const url = localeUrl(origin, locale, item.slug)
+  const description = (item.description ?? '').trim()
+  const brand = (item.brand ?? '').trim()
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    '@id': `${url}#product`,
+    name: item.name,
+    url,
+    ...(description === '' ? {} : { description }),
+    ...(item.images.length === 0 ? {} : { image: item.images.map((src) => absolute(origin, src)) }),
+    ...(brand === '' ? {} : { brand: { '@type': 'Brand', name: brand } }),
+    ...(item.hourlyPrice
+      ? {
+          offers: {
+            '@type': 'Offer',
+            url,
+            priceCurrency: item.hourlyPrice.currency,
+            // The legacy card quoted the fleet by the hour, so the unit is said rather than
+            // left for a reader to assume a total. `HUR` is the UN/CEFACT code for an hour.
+            priceSpecification: {
+              '@type': 'UnitPriceSpecification',
+              price: item.hourlyPrice.amount,
+              priceCurrency: item.hourlyPrice.currency,
+              unitCode: 'HUR',
+            },
+            seller: { '@id': organisationId(origin) },
+          },
+        }
+      : {}),
   }
 }

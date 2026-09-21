@@ -4,6 +4,7 @@ import {
   breadcrumbs,
   faqPage,
   organisation,
+  product,
   webSite,
   type SiteContact,
 } from '@/lib/structured-data'
@@ -110,5 +111,68 @@ describe('faqPage', () => {
 
   it('says nothing at all on a page that asks nothing', () => {
     expect(faqPage([])).toBeNull()
+  })
+})
+
+/**
+ * One aircraft or one yacht (issue #173). Both detail pages describe what they are showing, so
+ * a search result can carry the photograph and the price rather than a bare link.
+ */
+describe('product', () => {
+  const YACHT = {
+    slug: 'yachts/azimut-serenity',
+    name: 'Azimut "Serenity"',
+    description: 'A flybridge with room for twenty on deck.',
+    images: ['/api/media/file/serenity.jpg', 'https://cdn.example.com/serenity-2.jpg'],
+    brand: 'Azimut',
+    hourlyPrice: { amount: 4500, currency: 'AED' },
+  }
+
+  it('points at the page it describes, in the language being read', () => {
+    expect(product(ORIGIN, 'ru', YACHT).url).toBe('https://atmjet.com/ru/yachts/azimut-serenity')
+  })
+
+  it('gives every photograph a full address, whichever way it is stored', () => {
+    // An upload of this site's own is a path by the time a component has it (`mediaSource`),
+    // and structured data is read away from the page it came from.
+    expect(product(ORIGIN, 'en', YACHT).image).toEqual([
+      'https://atmjet.com/api/media/file/serenity.jpg',
+      'https://cdn.example.com/serenity-2.jpg',
+    ])
+  })
+
+  it('says the price is for an hour, which is how the fleet is quoted', () => {
+    const offer = product(ORIGIN, 'en', YACHT).offers
+
+    expect(offer).toMatchObject({
+      priceCurrency: 'AED',
+      priceSpecification: { price: 4500, priceCurrency: 'AED', unitCode: 'HUR' },
+    })
+  })
+
+  it('offers no price for something quoted on request', () => {
+    // The aircraft page asks for the leg instead of naming a figure, as the legacy page did.
+    const aircraft = product(ORIGIN, 'en', {
+      slug: 'aircraft/ra-73025',
+      name: 'Gulfstream G650ER RA-73025',
+      images: [],
+      brand: 'Gulfstream',
+    })
+
+    expect(aircraft.offers).toBeUndefined()
+    expect(aircraft.image).toBeUndefined()
+  })
+
+  it('leaves out what the catalogue has not recorded rather than saying it is empty', () => {
+    const bare = product(ORIGIN, 'en', { slug: 'aircraft/m-ouse', name: 'M-OUSE', images: [] })
+
+    expect(bare.description).toBeUndefined()
+    expect(bare.brand).toBeUndefined()
+  })
+
+  it('names the company as the seller, the same one the site is published by', () => {
+    expect(product(ORIGIN, 'en', YACHT).offers).toMatchObject({
+      seller: { '@id': organisation(ORIGIN, 'ATM JET', CONTACT)['@id'] },
+    })
   })
 })

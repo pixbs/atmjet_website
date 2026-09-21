@@ -14,7 +14,7 @@ import { resolveYacht, yachtPhotographs } from '@/lib/data/yachts'
 import { getEnabledLocales } from '@/lib/data/site-settings'
 import type { ImageSource } from '@/lib/media'
 import { pageMetadata } from '@/lib/metadata'
-import { breadcrumbs } from '@/lib/structured-data'
+import { breadcrumbs, product } from '@/lib/structured-data'
 import { siteOrigin } from '@/lib/urls'
 
 /**
@@ -105,9 +105,22 @@ export default async function YachtDetailPage({ params }: { params: Promise<Deta
     typeof charter.customerPrice === 'number' && charter.currency
       ? `${charter.customerPrice.toLocaleString(locale)} ${charter.currency}/${t('hour')}`
       : ''
-  const trail = breadcrumbs(siteOrigin(), locale as Locale, common('home'), {
+  const origin = siteOrigin()
+  const trail = breadcrumbs(origin, locale as Locale, common('home'), {
     slug: `yachts/${id}`,
     title: name,
+  })
+  // The yacht herself, catalogued: what the page shows, with the hourly price it quotes (#173).
+  const catalogued = product(origin, locale as Locale, {
+    slug: `yachts/${id}`,
+    name,
+    description: yacht.description,
+    images: photographs.map((photo) => photo.src),
+    brand: charter.manufacturer,
+    hourlyPrice:
+      typeof charter.customerPrice === 'number' && charter.currency
+        ? { amount: charter.customerPrice, currency: charter.currency }
+        : null,
   })
   const units = await getTranslations({ locale, namespace: 'units' })
   const printed = (value: string | number | null | undefined): string =>
@@ -259,6 +272,7 @@ export default async function YachtDetailPage({ params }: { params: Promise<Deta
         </div>
       </section>
       <Line />
+      <JsonLd data={catalogued} />
       {trail && <JsonLd data={trail} />}
     </>
   )
