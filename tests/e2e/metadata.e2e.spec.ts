@@ -41,6 +41,62 @@ async function documentOf(request: APIRequestContext, path: string): Promise<str
   return response.text()
 }
 
+/**
+ * Every route the site advertises, read off its own sitemaps rather than from a list kept beside
+ * them: a page an editor adds is a route these cover without anyone remembering to add it, which
+ * is how the legacy site came to ship twelve routes with no metadata at all
+ * (`docs/legacy-inventory.md` section 2.4).
+ */
+async function advertisedUrls(request: APIRequestContext): Promise<string[]> {
+  const sitemaps = ['/sitemap.xml', '/aircraft/sitemap.xml', '/yachts/sitemap.xml']
+  const urls: string[] = []
+
+  for (const sitemap of sitemaps) {
+    const response = await request.get(sitemap)
+
+    expect(response.status(), sitemap).toBe(200)
+
+    const xml = await response.text()
+
+    // The alternates as well as the canonical, so both locales of every page are covered.
+    urls.push(
+      ...[...xml.matchAll(/hreflang="(?!x-default)[^"]+"\s+href="([^"]+)"/g)].map(([, u]) => u),
+    )
+  }
+
+  expect(urls.length, 'the sitemaps advertise nothing').toBeGreaterThan(0)
+
+  return [...new Set(urls)]
+}
+
+test.describe('every route the site advertises', () => {
+  test('ships a title, a description and a canonical of its own', async ({ request }) => {
+    for (const url of await advertisedUrls(request)) {
+      const path = new URL(url).pathname
+      const head = await documentOf(request, path)
+      const title = attribute(head, /<title>([^<]*)<\/title>/)
+
+      // The legacy layout computed a title and never returned it, so every page had an empty one.
+      expect(title, `title of ${path}`).toBeTruthy()
+      expect(metaContent(head, 'description'), `description of ${path}`).toBeTruthy()
+      expect(new URL(String(linkHref(head, 'canonical'))).pathname, `canonical of ${path}`).toBe(
+        path,
+      )
+    }
+  })
+
+  test('describes itself to a link preview, whatever kind of page it is', async ({ request }) => {
+    for (const url of await advertisedUrls(request)) {
+      const path = new URL(url).pathname
+      const head = await documentOf(request, path)
+
+      expect(metaContent(head, 'og:title'), `og:title of ${path}`).toBeTruthy()
+      expect(new URL(String(metaContent(head, 'og:url'))).pathname, `og:url of ${path}`).toBe(path)
+      expect(metaContent(head, 'twitter:card'), `twitter:card of ${path}`).toBeTruthy()
+    }
+  })
+})
+
 test.describe('page metadata', () => {
   for (const locale of ENABLED_LOCALES) {
     test(`[${locale}] gives every page a title of its own`, async ({ request }) => {
