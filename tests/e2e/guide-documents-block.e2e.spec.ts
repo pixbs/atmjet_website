@@ -18,14 +18,14 @@ test.describe('the guide', () => {
     const html = await (await request.get(pathFor('/business_agents', 'en'))).text()
 
     expect(html).toContain('data-section="guide"')
-    expect(html).toContain('What working with us gives you')
-    expect(html).toContain('A desk that answers in minutes')
+    expect(html).toContain('Personal assistant guides')
+    expect(html).toContain('we understand the challenges personal assistants face')
   })
 
   test('is the heading of the page it opens', async ({ page }) => {
     await page.goto(pathFor('/business_agents', 'en'))
 
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText('For business agents')
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('For personal assistants')
   })
 
   test('rules off one point from the next, and not the first', async ({ page }) => {
@@ -45,7 +45,7 @@ test.describe('the documents', () => {
 
   test('open a file that answers, in a tab of its own', async ({ page, request }) => {
     await page.goto(pathFor('/business_agents', 'en'))
-    const download = page.locator(DOCUMENTS).getByRole('link', { name: 'Download the checklist' })
+    const download = page.locator(DOCUMENTS).getByRole('link', { name: 'Open guide' }).first()
 
     await expect(download).toHaveAttribute('target', '_blank')
     const href = await download.getAttribute('href')
@@ -57,6 +57,6 @@ test.describe('the documents', () => {
     const html = await (await request.get(pathFor('/business_agents', 'ru'))).text()
 
     expect(html).toContain('Скачать чек-лист')
-    expect(html).not.toContain('Download the checklist')
+    expect(html).not.toContain('Open guide')
   })
 })

@@ -208,28 +208,50 @@ const HOME_WHY_US: {
 ]
 
 /**
- * What the partners page offers, under a heading of its own (issue #148, section 4). Four of
- * them, none with a figure, which is the shape the legacy cards had there.
+ * What the partners page offers, under a heading of its own (issue #148, section 4), in the
+ * words the legacy `we-offer` namespace held (issue #162). Four of them, none with a figure,
+ * which is the shape the legacy cards had there.
  */
 const WE_OFFER: { en: [string, string]; ru: [string, string] }[] = [
   {
-    en: ['White label partnership', 'Fly under your own name, on our aircraft and our permits.'],
-    ru: ['White Label партнёрство', 'Летайте под своим именем, на наших бортах и разрешениях.'],
-  },
-  {
-    en: ['Pricing confidentiality', 'What you charge is yours; what we charge stays between us.'],
-    ru: ['Конфиденциальность цен', 'Ваша цена — ваша; наша остаётся между нами.'],
-  },
-  {
-    en: ['Affiliate programme', 'A commission agreed once and paid on the day the flight closes.'],
+    en: [
+      'White label partnership',
+      "Strengthen your brand by operating as a private air carrier under your own name, while leveraging ATM JET's expertise and resources. You gain access to over 25,000 aircraft worldwide, full operational support, and the flexibility to maintain your branding.",
+    ],
     ru: [
-      'Партнёрская программа',
-      'Комиссия согласована один раз и выплачена в день закрытия рейса.',
+      'White Label партнёрство',
+      'Укрепите свой бренд, работая под собственным именем и используя ресурсы и профессионализм ATM JET. Ваш бренд получит все преимущества опытной чартерной компании без необходимости дополнительного управления.',
     ],
   },
   {
-    en: ['Payment flexibility', 'By transfer, by card, or by whatever the charter needs.'],
-    ru: ['Гибкость оплаты', 'Переводом, картой или так, как требует чартер.'],
+    en: [
+      'Pricing confidentiality',
+      'ATM JET guarantees the highest level of discretion, ensuring your pricing policies remain fully confidential. We protect your business strategies and allow you to maintain full control over your pricing structure, offering secure and transparent operations.',
+    ],
+    ru: [
+      'Гарантируем конфиденциальность цен',
+      'Наша ценовая политика сохраняется в тайне. Готовы оформлять документы по согласованной вами цене и отправлять комиссионное вознаграждение',
+    ],
+  },
+  {
+    en: [
+      'Affiliate program',
+      'Maximize your earnings with ATM JET’s affiliate program. The more bookings you complete, the greater your discounts and commissions. We reward successful partnerships by offering increasing incentives that align with your business growth, ensuring mutual benefit.',
+    ],
+    ru: [
+      'Партнёрские условия',
+      'Увеличивайте свои доходы с каждым выполненным заказом благодаря нашей партнёрской программе. Мы предлагаем выгодные условия и повышаем комиссионные, поощряя успешное сотрудничество.',
+    ],
+  },
+  {
+    en: [
+      'Payment flexibility',
+      'ATM JET provides flexible payment solutions tailored to your needs. We accept various forms of payment, including bank transfers, corporate accounts, and cryptocurrency. This flexibility extends to commission payments, simplifying financial management for our partners.',
+    ],
+    ru: [
+      'Принимаем любые формы платежей',
+      'Принимаем любые формы оплаты как и готовы отправлять любые формы комиссионных вознаграждений.',
+    ],
   },
 ]
 
@@ -270,11 +292,6 @@ const GROUP_CHARTERS: { en: [string, string]; ru: [string, string] }[] = [
   },
 ]
 
-/**
- * The reasons the cargo charter page stacks (issue #116, section 5). Three of them, because the
- * three shapes the card comes in are what a fixture is for: with a figure and a photograph, and
- * with neither.
- */
 const WHY_US: {
   figure?: string
   withImage: boolean
@@ -633,27 +650,28 @@ const FAQ: { en: [string, string]; ru: [string, string] }[] = [
 
 /**
  * What the business agents page offers an agent, and the two documents under it (issue #131,
- * section 4). The legacy chose between two hard-coded PDF addresses by comparing the locale.
+ * section 4), in the words its `guide` and `documents` namespaces held (issue #162). The legacy
+ * chose between two hard-coded PDF addresses by comparing the locale.
  */
 const GUIDE_POINTS: { en: string; ru: string }[] = [
   {
-    en: 'A desk that answers in minutes, at any hour, in the language your client writes in.',
-    ru: 'Стол, который отвечает за минуты, в любой час, на языке вашего клиента.',
+    en: 'At ATM JET, we understand the challenges personal assistants face when managing executive travel. Our goal is to support clients from the start of every task.',
+    ru: 'Мы в ATM JET знаем, как много задач приходится решать бизнес-ассистенту. Мы поможем сделать организацию перелета простой и при этом не упустить ни малейшей детали.',
   },
   {
-    en: 'Commission agreed before the quote goes out, and paid on the day the flight closes.',
-    ru: 'Комиссия согласована до отправки предложения и выплачивается в день закрытия рейса.',
+    en: 'To make flight planning seamless, we’ve created a comprehensive flight preparation checklist. This guide helps you organize private jet flights easily, ensuring all executive preferences are met with precision.',
+    ru: 'Мы составили для вас чек-лист подготовки к полету, он поможет вам легче организовать перелет, учитывая все пожелания вашего руководителя. Так же, мы за вас подготовим презентацию для вашего руководителя для комфорта принятия решения.',
   },
 ]
 
 const DOCUMENTS: { en: [string, string]; ru: [string, string] }[] = [
   {
-    en: ['Checklist for ordering a private jet', 'Download the checklist'],
-    ru: ['Чек-лист для заказа частного самолёта', 'Скачать чек-лист'],
+    en: ['Checklist', 'Open guide'],
+    ru: ['Чек-лист', 'Скачать чек-лист'],
   },
   {
-    en: ['ATM JET presentation', 'Download the presentation'],
-    ru: ['Презентация ATM JET', 'Скачать презентацию'],
+    en: ['Presentation', 'Open guide'],
+    ru: ['Презентация', 'Скачать пример'],
   },
 ]
 
@@ -720,14 +738,14 @@ const ADVANTAGES: { en: [string, string]; ru: [string, string] }[] = [
 /** The price promise the legacy business agents page closed on (issue #125, section 5). */
 const BEST_PRICE: Record<'en' | 'ru', [string, string, string]> = {
   en: [
-    'The best price, or we say so',
-    'We quote the aircraft an operator will actually fly, at the price they will actually fly it for.',
-    'Ask for a quote',
+    'Best price assurance',
+    'At ATM JET, we value your time and are dedicated to offering the most competitive prices in the private aviation market. Contact us today to receive the best price and personalized offers for your private jet charter needs.',
+    'Contact us',
   ],
   ru: [
-    'Лучшая цена или прямой ответ',
-    'Мы называем борт, который оператор действительно поднимет, и цену, по которой он это сделает.',
-    'Запросить расчёт',
+    'Гарантия лучшей цены',
+    'Мы ценим ваше время и знаем, как обеспечить вам превосходный перелет по лучшей цене. Гарантируем самые конкурентные условия на рынке. Свяжитесь с нами, чтобы получить персонализированное предложение и лучшую цену среди конкурентов.',
+    'Оставить заявку',
   ],
 }
 
@@ -1407,26 +1425,26 @@ function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout 
   if (slug === 'aircraft')
     sections.push({
       blockType: 'heroAircraft',
-      title: locale === 'en' ? 'We have access to over ' : 'Нам доступно более ',
+      title: locale === 'en' ? 'We have access to over ' : 'У нас есть доступ к более чем ',
       figure: '50,000',
-      title2: locale === 'en' ? ' aircraft' : ' бортов',
+      title2: locale === 'en' ? ' aircraft' : ' воздушным суднам доступным к вылету',
       description:
         locale === 'en'
-          ? 'Every type, in every region, with the operator vetted before the quote goes out.'
-          : 'Любой тип в любом регионе, с проверкой оператора до того, как уйдёт расчёт.',
+          ? 'Our group of companies has been working since 2004 to combine the highest level of freedom and comfort in the air and at sea.'
+          : 'Наша группа компаний с 2004 года работает над тем, чтобы обеспечить высочайший уровень свободы и комфорта в воздухе и на воде.',
     })
 
   if (slug === 'aircraft')
     sections.push({
       blockType: 'contactCard',
-      title: locale === 'en' ? 'Not sure which aircraft?' : 'Не знаете, какой борт нужен?',
+      title: locale === 'en' ? 'Contact us' : 'Свяжитесь с нами',
       description:
         locale === 'en'
-          ? 'Tell us the route, the party and the day, and a manager comes back with two or three that fit.'
-          : 'Назовите маршрут, состав и день — менеджер вернётся с двумя-тремя подходящими бортами.',
+          ? 'Please contact us to request a selection of the five most suitable aircraft models, along with an explanation of the benefits of each model to suit your requirements.'
+          : 'Напишите нам, и мы предоставим вам подборку из 5ти наиболее подходящих моделей самолетов и расскажем преимущества каждого под ваш запрос.',
       image: fixture.photo,
       cta: {
-        label: locale === 'en' ? 'Ask a manager' : 'Спросить менеджера',
+        label: locale === 'en' ? 'Contact now' : 'Оставить контакты',
         source: 'Contact_us_aircraft',
       },
     })
@@ -1458,13 +1476,13 @@ function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout 
   if (slug === 'partners')
     sections.push({
       blockType: 'heroPartners',
-      title: locale === 'en' ? 'Clients who fly with us fly ' : 'Клиенты, летающие с нами, летают ',
-      figure: '4x',
-      title2: locale === 'en' ? ' more often' : ' чаще',
+      title: locale === 'en' ? 'Over ' : 'Нам доверяют более ',
+      figure: '12',
+      title2: locale === 'en' ? ' partners trust us.' : ' партнеров.',
       description:
         locale === 'en'
-          ? 'White label, insurance and payment handled by us, under your name.'
-          : 'White label, страхование и платежи — на нас, под вашим именем.',
+          ? 'ATM JET: Exclusive Private Aviation Solutions for Elite Clients'
+          : 'ATM JET: эксклюзивные решения в области частной авиации для элитных клиентов',
       image: fixture.photo,
     })
 
@@ -1608,8 +1626,8 @@ function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout 
   if (slug === 'business_agents') {
     sections.push({
       blockType: 'guide',
-      title: locale === 'en' ? 'For business agents' : 'Бизнес-агентам',
-      heading: locale === 'en' ? 'What working with us gives you' : 'Что даёт работа с нами',
+      title: locale === 'en' ? 'For personal assistants' : 'Для бизнес-ассистентов',
+      heading: locale === 'en' ? 'Personal assistant guides' : 'Руководства для бизнес-ассистентов',
       points: GUIDE_POINTS.map((point) => ({ text: point[locale] })),
       image: fixture.photo,
     })
@@ -1768,8 +1786,8 @@ function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout 
       title: locale === 'en' ? 'We offer:' : 'Мы предлагаем:',
       description:
         locale === 'en'
-          ? 'Partnerships built to last, with concierges, agencies and travel companies.'
-          : 'Партнёрство надолго — с консьерж-сервисами, агентствами и туристическими компаниями.',
+          ? 'Unlock exclusive benefits and strong partnerships tailored for long-term cooperation at the highest level.'
+          : 'Мы строим прочные партнёрские отношения с консьерж-сервисами, туристическими компаниями и агентами',
       cards: WE_OFFER.map((card) => ({
         title: card[locale][0],
         description: card[locale][1],

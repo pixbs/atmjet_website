@@ -14,16 +14,17 @@ test.describe('the contact card', () => {
     const html = await (await request.get(pathFor('/aircraft', 'en'))).text()
 
     expect(html).toContain('data-section="contact-card"')
-    expect(html).toContain('Not sure which aircraft?')
-    expect(html).toContain('Ask a manager')
+    expect(html).toContain('Please contact us to request a selection of the five most suitable')
+    expect(html).toContain('Contact now')
   })
 
   test('asks for the booking dialog without leaving the page', async ({ page }) => {
     await page.goto(pathFor('/aircraft', 'en'))
 
-    await expect(
-      page.locator(SECTION).getByRole('link', { name: 'Ask a manager' }),
-    ).toHaveAttribute('href', '?showBooking=Contact_us_aircraft')
+    await expect(page.locator(SECTION).getByRole('link', { name: 'Contact now' })).toHaveAttribute(
+      'href',
+      '?showBooking=Contact_us_aircraft',
+    )
   })
 
   test('keeps its picture inside the card it belongs to', async ({ page }) => {
@@ -43,7 +44,7 @@ test.describe('the contact card', () => {
   test('speaks the language of the page it is on', async ({ request }) => {
     const html = await (await request.get(pathFor('/aircraft', 'ru'))).text()
 
-    expect(html).toContain('Спросить менеджера')
-    expect(html).not.toContain('Ask a manager')
+    expect(html).toContain('Оставить контакты')
+    expect(html).not.toContain('Contact now')
   })
 })
