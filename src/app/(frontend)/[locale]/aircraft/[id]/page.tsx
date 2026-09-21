@@ -5,6 +5,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server'
 
 import { Line } from '@/components/motion/line'
 import { VehicleRequest } from '@/components/form/vehicle-request'
+import { detailSource } from '@/lib/flight-request'
 import { Gallery } from '@/components/ui/gallery'
 import { JsonLd } from '@/components/ui/json-ld'
 import type { Locale } from '@/i18n/locales'
@@ -137,7 +138,7 @@ export default async function AircraftDetailPage({ params }: { params: Promise<D
                 submit: t('request', { registration: aircraft.registrationDisplay }),
               }}
               locale={locale as Locale}
-              source="Aircraft_detail"
+              source={detailSource('aircraft', id)}
             />
           </div>
         </div>
