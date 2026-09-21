@@ -24,12 +24,16 @@ Never read Payload from a client component, and never fetch the initial content 
 
 ## Static, dynamic and cached
 
-| Page kind                                   | Strategy                                                             |
-| ------------------------------------------- | -------------------------------------------------------------------- |
-| Content pages (the 13 static routes)        | `generateStaticParams` over the enabled locales, prerendered         |
-| Collection detail (aircraft, yacht)         | `generateStaticParams` where the set is bounded, cached otherwise    |
-| Listings with `searchParams`                | Cached dynamic: rendered on demand, tagged, reused until invalidated |
-| Anything reading `headers()` or `cookies()` | Dynamic; keep it to the smallest possible subtree                    |
+| Page kind                                           | Strategy                                                          | What a running build answers (#178)                                 |
+| --------------------------------------------------- | ----------------------------------------------------------------- | ------------------------------------------------------------------- |
+| Content pages (the 13 static routes)                | `generateStaticParams` over the enabled locales, prerendered      | `x-nextjs-prerender: 1`, `x-nextjs-cache: HIT`                      |
+| A locale a content page is not served in            | Rendered once, then the 307 is cached like a page                 | `x-nextjs-cache: HIT`, `location` (see #364)                        |
+| `sitemap.xml`, the catalogue sitemaps, `robots.txt` | Prerendered with the content they list                            | `x-nextjs-cache: HIT`                                               |
+| Collection detail (aircraft, yacht)                 | `generateStaticParams` where the set is bounded, cached otherwise | **rendered per request today**: no `generateStaticParams` on either |
+| Listings with `searchParams`                        | Rendered on demand, one render per query                          | **rendered per request**: `searchParams` is a request-time API      |
+| Anything reading `headers()` or `cookies()`         | Dynamic; keep it to the smallest possible subtree                 | dynamic                                                             |
+
+The third column is what `tests/e2e/caching.e2e.spec.ts` reads back off a running build, and the last two rows are the gap between the plan and the site: neither catalogue opts into a cache, so every visit re-queries Payload. Closing it means a `generateStaticParams` over each catalogue (both sets are already enumerated, by `listAircraftForSitemap` and `listCharterYachtsForSitemap`) or a `'use cache'` reader; it belongs to the issue that decides it, not to a page that happens to be edited.
 
 `generateStaticParams` reads `getEnabledLocales()` (`src/lib/data/site-settings.ts`), never a hard-coded list, so a language an administrator enables is prerendered without touching a page (issue #53).
 
@@ -38,6 +42,8 @@ Reaching for `headers()` or `cookies()` at the top of a page makes the whole pag
 ## Cache tags
 
 A write invalidates one tag, the collection slug (`media`, `aircraft`), with the `max` profile. Tag a cached read with `cacheTag(<collection>)` inside a `'use cache'` function. Finer tags (one listing, one document, one locale) are added together with the first reader that needs them, never ahead of it (ADR-0008).
+
+**Nothing carries one yet.** A page reads Payload through the Local API rather than through a cached function, so what Next stored carries only the path tags it writes itself — read `x-next-cache-tags` off any `.meta` under `.next/server/app` — and the tag the hooks drop matches nothing. That is why the hooks drop the rendered pages by path as well (below). The tag call stays for the first reader that opts into `'use cache'`.
 
 ## Invalidation
 
@@ -52,9 +58,11 @@ hooks: {
 }
 ```
 
-A write, a delete included, invalidates the collection tag.
+A write, a delete included, invalidates the collection tag **and drops every rendered page** with `revalidatePath('/', 'layout')`. Until #178 it dropped the tag alone, which reached nothing: an editor published a change, the database held it, the API served it, and the site kept the old page for ever. `tests/e2e/caching.e2e.spec.ts` saves a page through the API and reads the new title back off the next request, so the gap cannot reopen quietly.
 
-Two details worth knowing:
+Three details worth knowing:
+
+- The path invalidation is deliberately blunt: one save drops the whole tree. Only the editorial collections install these hooks, a bulk import opts out, and `max` serves the stale page while the new one renders, so a save costs a re-render and never a visitor's wait. A narrower instrument is worth having only once a reader carries a tag.
 
 - The hooks pass `'max'` as the revalidation profile. Next 16 deprecated the single-argument `revalidateTag`, and `max` means the next visitor is served the stale page while the new one renders behind them, instead of waiting for a blocking cache miss.
 - A write carrying `context.skipRevalidation` is ignored. The E5 importers write tens of thousands of rows and must not queue one invalidation per row (ADR-0002 section 6 runs them with hooks skipped through `context`).
