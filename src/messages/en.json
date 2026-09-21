@@ -115,7 +115,8 @@
       "range": "range"
     },
     "metres": "{value}m",
-    "kilometres": "{value}km"
+    "kilometres": "{value}km",
+    "summary": "Aircraft {model} flies under the tail number {registration}.\nOperated by {operator}, the aircraft {model} was built in {year}. {model} is based at {homeBase} and has a passenger capacity of {passengers} people.\nATM JET offers the opportunity to order a private aircraft {model} for a flight to any point on the planet.\nWe have been working for you for over 20 years and have extensive experience in organizing business aviation flights."
   },
   "yacht": {
     "guests": "Guests:",

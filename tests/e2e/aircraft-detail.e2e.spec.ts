@@ -150,14 +150,21 @@ test.describe('what a detail page says about the aircraft', () => {
     await expect(page.locator(`${SPECS} h3 + p`)).toHaveText(['type'])
   })
 
-  test('keeps the description in the paragraphs an editor typed', async ({ page }) => {
+  test('says what the legacy said about the aircraft, from the catalogue', async ({ page }) => {
     await page.goto(pathFor('/aircraft/MOUSE', 'en'))
     const card = page.locator(`${SPECS} .md\\:sticky`).first()
 
     await expect(card.getByRole('heading', { level: 2 })).toHaveText(
       'Bombardier Global 6000 M-OUSE',
     )
-    await expect(card.locator('p')).toHaveCount(2)
+    // The sentences the legacy built from the row rather than the description column, which it
+    // never rendered here (section 4): the operator, the year, the base and the seats.
+    await expect(card).toContainText('Operated by ATM JET')
+    await expect(card).toContainText('built in 2021')
+    await expect(card).toContainText('based at OMDB')
+    await expect(card).toContainText('capacity of 13 people')
+    // In the paragraphs the catalogue's line breaks make, not one run of text.
+    await expect(card.locator('p')).toHaveCount(4)
   })
 
   test('stacks the photographs beside the figures, the newest first', async ({ page }) => {

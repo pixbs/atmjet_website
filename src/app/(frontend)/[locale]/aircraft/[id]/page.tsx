@@ -158,8 +158,21 @@ export default async function AircraftDetailPage({ params }: { params: Promise<D
     },
   ].flatMap(({ show, ...stat }) => (show ? [stat] : []))
 
-  /** The description an editor wrote, in the paragraphs they typed it in. */
-  const paragraphs = (aircraft.description ?? '')
+  /**
+   * What the card says about the aircraft: the sentences the legacy built from the catalogue
+   * rather than the `extension_description` column, which it never rendered on this page
+   * (`docs/legacy-inventory.md` section 4). A value the catalogue has not got leaves its gap, as
+   * the legacy left it; the column itself still feeds the head and the structured data.
+   */
+  const homeBase = typeof aircraft.baseAirport === 'object' ? aircraft.baseAirport : null
+  const paragraphs = t('summary', {
+    model: aircraft.type?.name ?? aircraft.type?.model ?? '',
+    registration: aircraft.registrationDisplay,
+    operator: aircraft.operator?.companyName ?? '',
+    year: printed(specification.yearOfProduction),
+    homeBase: homeBase?.icao ?? '',
+    passengers: printed(specification.passengers),
+  })
     .split('\n')
     .map((line) => line.trim())
     .filter((line) => line !== '')
