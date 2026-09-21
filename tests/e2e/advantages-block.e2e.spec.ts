@@ -14,8 +14,8 @@ test.describe('the advantages section', () => {
     const html = await (await request.get(pathFor('/sales_dept', 'en'))).text()
 
     expect(html).toContain('data-section="advantages"')
-    expect(html).toContain('Selling through us')
-    expect(html).toContain('What the aircraft is worth on the day, not what it cost to buy.')
+    expect(html).toContain('Each aircraft is assessed by a team of mechanics')
+    expect(html).toContain('ABC check verification')
   })
 
   test('draws one column per advantage the block carries', async ({ page }) => {
@@ -27,7 +27,7 @@ test.describe('the advantages section', () => {
   test('speaks the language of the page it is on', async ({ request }) => {
     const html = await (await request.get(pathFor('/sales_dept', 'ru'))).text()
 
-    expect(html).toContain('Честная оценка')
-    expect(html).not.toContain('Valued honestly')
+    expect(html).toContain('Проверка АВС')
+    expect(html).not.toContain('ABC check verification')
   })
 })
