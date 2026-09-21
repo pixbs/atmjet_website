@@ -17,6 +17,7 @@ import { SOCIAL_NETWORKS, telHref } from '@/lib/links'
 import { organisation, webSite } from '@/lib/structured-data'
 import { siteOrigin } from '@/lib/urls'
 
+import { inter, regresso } from '../fonts'
 import '../globals.css'
 
 /**
@@ -89,7 +90,9 @@ export default async function LocaleLayout({
   )
 
   return (
-    <html lang={locale}>
+    // The faces are variables on the root element, which is where the `@theme` tokens that
+    // resolve `font-sans` and `font-serif` are read from (issue #51).
+    <html className={`${inter.variable} ${regresso.variable}`} lang={locale}>
       {/* The page colour is the parity layer's, on `:root` as the legacy stylesheet had it.
           Painting it here as well would put the body's background over anything a section
           sends behind itself with a negative z-index, which is how the legacy drew the
