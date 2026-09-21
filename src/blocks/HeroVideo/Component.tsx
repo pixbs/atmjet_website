@@ -11,6 +11,12 @@ import type { ImageSource } from '@/lib/media'
  *
  * No client code: a video that plays itself needs none, and the attributes below are what let
  * it play unasked — `muted` and `playsInline`, which is what iOS requires.
+ *
+ * `preload` asks for the metadata rather than the file (issue #175). Autoplay fetches what it
+ * needs whatever this says, so on a screen where the video plays nothing changes; where autoplay
+ * is refused — Low Power Mode, Data Saver, a browser that waits for a gesture — it is the
+ * difference between a few kilobytes and the whole hero video, for the visitors least able to
+ * afford it.
  */
 export interface HeroVideoProps {
   overline: string
@@ -35,7 +41,7 @@ export function HeroVideo({ overline, title, video, videoMobile, poster }: HeroV
           muted
           playsInline
           poster={poster?.src}
-          preload="auto"
+          preload="metadata"
         >
           {videoMobile !== undefined && videoMobile !== '' && (
             <source media="(max-width: 767px)" src={videoMobile} type="video/mp4" />
