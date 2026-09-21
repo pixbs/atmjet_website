@@ -12,7 +12,7 @@ import { resolveAircraft } from '@/lib/data/aircraft'
 import { getEnabledLocales } from '@/lib/data/site-settings'
 import { mediaSource } from '@/lib/media'
 import { pageMetadata } from '@/lib/metadata'
-import { breadcrumbs } from '@/lib/structured-data'
+import { breadcrumbs, product } from '@/lib/structured-data'
 import { siteOrigin } from '@/lib/urls'
 
 /**
@@ -88,9 +88,19 @@ export default async function AircraftDetailPage({ params }: { params: Promise<D
     return image === null ? [] : [image]
   })
   const name = [aircraft.type?.name, aircraft.registrationDisplay].filter(Boolean).join(' ')
-  const trail = breadcrumbs(siteOrigin(), locale as Locale, common('home'), {
+  const origin = siteOrigin()
+  const trail = breadcrumbs(origin, locale as Locale, common('home'), {
     slug: `aircraft/${id}`,
     title: name,
+  })
+  // The aircraft itself, catalogued (#173). No price: the page asks for the leg instead of
+  // quoting one, exactly as the legacy detail page did.
+  const catalogued = product(origin, locale as Locale, {
+    slug: `aircraft/${id}`,
+    name,
+    description: aircraft.description,
+    images: photographs.map((photo) => photo.src),
+    brand: aircraft.type?.manufacturer,
   })
 
   return (
@@ -134,6 +144,7 @@ export default async function AircraftDetailPage({ params }: { params: Promise<D
       </section>
       {/* Full width, as the legacy drew it between the sections of this page. */}
       <Line />
+      <JsonLd data={catalogued} />
       {trail && <JsonLd data={trail} />}
     </>
   )

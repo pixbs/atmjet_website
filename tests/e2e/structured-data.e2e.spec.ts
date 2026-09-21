@@ -99,3 +99,60 @@ test.describe('structured data', () => {
     expect(await graphOf(request, pathFor('/partners', 'en'))).not.toHaveProperty('FAQPage')
   })
 })
+
+/**
+ * The detail pages of the two catalogues (issue #173). A listing card is a link in a result;
+ * these are what let a result carry the photograph, the maker and the price instead.
+ */
+test.describe('a page that shows one of something', () => {
+  /** Seeded fixtures, as the detail specs name them: a yacht with a price, an aircraft without. */
+  const YACHT = '/yachts/azimut-serenity'
+  const AIRCRAFT = '/aircraft/MOUSE'
+
+  test('describes the yacht it is showing, with the hour she is quoted by', async ({ request }) => {
+    const graph = await graphOf(request, pathFor(YACHT, 'en'))
+
+    expect(graph.Product).toMatchObject({
+      '@context': 'https://schema.org',
+      name: expect.stringContaining('Serenity'),
+      url: expect.stringContaining(`/en${YACHT}`),
+      brand: { '@type': 'Brand', name: 'Azimut' },
+      offers: {
+        '@type': 'Offer',
+        priceCurrency: 'AED',
+        // Said rather than left for a reader to take as a total; HUR is an hour.
+        priceSpecification: { unitCode: 'HUR', price: expect.any(Number) },
+      },
+    })
+  })
+
+  test('gives every photograph an address a crawler can fetch', async ({ request }) => {
+    const graph = await graphOf(request, pathFor(YACHT, 'en'))
+    const images = graph.Product.image as string[]
+
+    expect(images.length).toBeGreaterThan(0)
+    for (const image of images) {
+      const response = await request.get(new URL(image).pathname)
+
+      expect(response.status(), image).toBe(200)
+    }
+  })
+
+  test('describes the aircraft it is showing, and quotes no price for it', async ({ request }) => {
+    const graph = await graphOf(request, pathFor(AIRCRAFT, 'en'))
+
+    expect(graph.Product).toMatchObject({ name: expect.stringMatching(/\S/) })
+    // The page asks for the leg instead of naming a figure, as the legacy page did.
+    expect(graph.Product.offers).toBeUndefined()
+  })
+
+  test('names the same page its canonical does, in the language being read', async ({
+    request,
+  }) => {
+    for (const locale of ENABLED_LOCALES) {
+      const graph = await graphOf(request, pathFor(YACHT, locale))
+
+      expect(new URL(String(graph.Product.url)).pathname, locale).toBe(`/${locale}${YACHT}`)
+    }
+  })
+})
