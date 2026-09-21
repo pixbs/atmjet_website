@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { canonicalRegistration, registrationsInSlug } from '@/lib/aircraft'
+import { aircraftSlug, canonicalRegistration, registrationsInSlug } from '@/lib/aircraft'
 
 /**
  * Aircraft value handling (issue #63). The registration rule decides which legacy rows E5.7
@@ -60,5 +60,29 @@ describe('registrationsInSlug', () => {
   it('offers nothing for a slug with nothing in it', () => {
     expect(registrationsInSlug('')).toEqual([])
     expect(registrationsInSlug('---')).toEqual([])
+  })
+})
+
+/**
+ * The address the listing card links to and the sitemap advertises (issues #138 and #171). They
+ * have to agree: a sitemap naming a URL the cards never link to is the legacy
+ * `aircraft/sitemap.xml` mistake (`docs/legacy-inventory.md` section 2.3).
+ */
+describe('aircraftSlug', () => {
+  it('uses the slug the import kept, so a published URL does not move', () => {
+    expect(
+      aircraftSlug({ slug: 'ra-73025-gulfstream-g650', registrationDisplay: 'RA-73025' }),
+    ).toBe('ra-73025-gulfstream-g650')
+  })
+
+  it('falls back to the canonical registration, which the detail page resolves', () => {
+    const slug = aircraftSlug({ slug: null, registrationDisplay: 'RA-73025' })
+
+    expect(slug).toBe('RA73025')
+    expect(registrationsInSlug(slug)).toContain('RA73025')
+  })
+
+  it('keeps the registration as painted when there is nothing to canonicalise', () => {
+    expect(aircraftSlug({ slug: '', registrationDisplay: 'M-OUSE' })).toBe('MOUSE')
   })
 })

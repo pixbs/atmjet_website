@@ -3,6 +3,7 @@ import { cache } from 'react'
 
 import type { Locale } from '@/i18n/locales'
 import { mediaSource, type ImageSource, type MediaLike } from '@/lib/media'
+import type { Listable } from '@/lib/sitemap'
 import {
   matchesCharter,
   sortedCharter,
@@ -233,4 +234,43 @@ export function yachtPhotographs(photos: YachtPhoto[] | null | undefined): Image
 
     return source === null ? [] : [source]
   })
+}
+
+/**
+ * Every charter yacht `/yachts/sitemap.xml` offers a crawler (issue #171).
+ *
+ * The legacy site had no sitemap for the fleet at all (`docs/legacy-inventory.md` section 2.3).
+ * A yacht with nothing to draw is left out rather than advertised: the detail page redirects to
+ * the listing for one whose photographs are all gone (issue #140), and a sitemap that lists a
+ * redirect is the legacy mistake in a new place.
+ */
+export async function listCharterYachtsForSitemap(
+  // Injected so the unreachable-database path can be tested without breaking the database.
+  client: () => Promise<Payload> = getPayloadClient,
+): Promise<Listable[]> {
+  try {
+    const payload = await client()
+    const { docs } = await payload.find({
+      collection: 'yachts',
+      where: { listingType: { equals: 'charter' } },
+      // One level, for the uploads the photographs point at: whether one can be drawn is what
+      // decides between a page and a redirect.
+      depth: 1,
+      select: { slug: true, photos: true, updatedAt: true },
+      limit: 0,
+      pagination: false,
+      // Only what a visitor can read.
+      overrideAccess: false,
+    })
+
+    return docs
+      .filter((yacht) => yachtPhotographs(yacht.photos).length > 0)
+      .map((yacht) => ({ slug: yacht.slug, updatedAt: yacht.updatedAt }))
+  } catch (error) {
+    console.warn(
+      '[yachts] the sitemap is empty: the content database was unreachable at build time.',
+      error,
+    )
+    return []
+  }
 }

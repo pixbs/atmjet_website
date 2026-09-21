@@ -3,12 +3,13 @@ import { cache } from 'react'
 
 import type { Locale } from '@/i18n/locales'
 import {
-  canonicalRegistration,
+  aircraftSlug,
   registrationsInSlug,
   type AircraftQuery,
   type AircraftSort,
 } from '@/lib/aircraft'
 import { mediaSource, type ImageSource } from '@/lib/media'
+import type { Listable } from '@/lib/sitemap'
 
 import { getPayloadClient } from './payload'
 
@@ -121,6 +122,16 @@ export interface AircraftSearch {
   total: number
 }
 
+/**
+ * What puts an aircraft in the catalogue: the commercial state, and the exterior photograph a
+ * card is drawn from. The sitemap asks the same question, so it advertises the pages the
+ * listing links to and no others (issue #171).
+ */
+const CATALOGUED: Where[] = [
+  { availability: { equals: 'available' } },
+  { 'images.type': { equals: 'exterior' } },
+]
+
 /** The column each sort names. `size` is the cabin height the legacy sorted under that word. */
 const SORTED_BY: Record<AircraftSort, string> = {
   size: 'specification.cabinHeight',
@@ -159,14 +170,7 @@ export const searchAircraft = cache(
         payload.find({
           collection: 'aircraft',
           locale,
-          where: {
-            and: [
-              { availability: { equals: 'available' } },
-              // The card is its photograph, and the legacy cover was the first exterior one.
-              { 'images.type': { equals: 'exterior' } },
-              { [field]: { exists: measured } },
-            ],
-          },
+          where: { and: [...CATALOGUED, { [field]: { exists: measured } }] },
           // One level, for the uploads the photographs point at; no `populate` beside it, or an
           // upload's computed `url` comes back null and the photograph disappears.
           depth: 1,
@@ -194,10 +198,7 @@ export const searchAircraft = cache(
             return [
               {
                 id: one.id,
-                slug:
-                  one.slug ||
-                  canonicalRegistration(one.registrationDisplay) ||
-                  one.registrationDisplay,
+                slug: aircraftSlug(one),
                 name: one.type?.name ?? one.type?.model ?? one.registrationDisplay,
                 registration: one.registrationDisplay,
                 category: one.type?.category ?? '',
@@ -262,3 +263,37 @@ export const resolveAircraft = cache(
     }
   },
 )
+
+/**
+ * Every aircraft `/aircraft/sitemap.xml` offers a crawler (issue #171).
+ *
+ * The legacy sitemap at this path enumerated the `vehicles` table into unprefixed URLs
+ * (`docs/legacy-inventory.md` section 2.3); this reads the catalogue through the same predicate
+ * the listing does, so a crawler is sent to the pages the site itself links to.
+ */
+export async function listAircraftForSitemap(
+  // Injected so the unreachable-database path can be tested without breaking the database.
+  client: () => Promise<Payload> = getPayloadClient,
+): Promise<Listable[]> {
+  try {
+    const payload = await client()
+    const { docs } = await payload.find({
+      collection: 'aircraft',
+      where: { and: CATALOGUED },
+      depth: 0,
+      select: { slug: true, registrationDisplay: true, updatedAt: true },
+      limit: 0,
+      pagination: false,
+      // Only what a visitor can read.
+      overrideAccess: false,
+    })
+
+    return docs.map((one) => ({ slug: aircraftSlug(one), updatedAt: one.updatedAt }))
+  } catch (error) {
+    console.warn(
+      '[aircraft] the sitemap is empty: the content database was unreachable at build time.',
+      error,
+    )
+    return []
+  }
+}

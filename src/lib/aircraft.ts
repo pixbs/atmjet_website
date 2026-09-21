@@ -55,3 +55,23 @@ export function registrationsInSlug(slug: string): string[] {
 
   return [...new Set([named, whole].filter((one): one is string => one !== undefined))]
 }
+
+/**
+ * The slug an aircraft is served at (issues #138 and #171): the one the import kept, or the
+ * canonical registration for a row that never had one, which `registrationsInSlug` reads back.
+ *
+ * The listing card and the sitemap write the same URL because they ask the same question here:
+ * a catalogue advertising an address its own cards do not link to is how the legacy
+ * `aircraft/sitemap.xml` came to list paths that answer only through a redirect
+ * (`docs/legacy-inventory.md` section 2.3).
+ */
+export function aircraftSlug(aircraft: {
+  slug?: string | null
+  registrationDisplay: string
+}): string {
+  return (
+    aircraft.slug ||
+    canonicalRegistration(aircraft.registrationDisplay) ||
+    aircraft.registrationDisplay
+  )
+}
