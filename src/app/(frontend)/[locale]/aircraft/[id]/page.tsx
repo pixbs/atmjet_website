@@ -2,7 +2,9 @@ import type { Metadata } from 'next'
 import Image from 'next/image'
 import { notFound, redirect } from 'next/navigation'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
+import { Fragment } from 'react'
 
+import { MakeBooking } from '@/blocks/MakeBooking/Component'
 import { KeyStatsCard, type KeyStat } from '@/components/cards/key-stats-card'
 import { Guests, Length, Tools } from '@/components/icons'
 import { Line } from '@/components/motion/line'
@@ -19,9 +21,13 @@ import { breadcrumbs, product } from '@/lib/structured-data'
 import { siteOrigin } from '@/lib/urls'
 
 /**
- * One aircraft (issues #138 and #136, `docs/legacy-inventory.md` section 4, route
+ * One aircraft (issues #138, #136 and #137, `docs/legacy-inventory.md` section 4, route
  * `/[locale]/aircraft/[id]`): the photograph it is met by, the gallery of the rest, and the card
  * that asks for it.
+ *
+ * Two layouts, chosen from the photographs the catalogue holds and never stored, as the legacy
+ * chose between `page.tsx` and `old.tsx`: the rich one below, and the basic one for an aircraft
+ * nobody has photographed.
  *
  * The slug is resolved rather than parsed into a query: the legacy page split it on `-`, read
  * the first two parts as a registration and looked that up case-insensitively, so a catalogue
@@ -105,13 +111,120 @@ export default async function AircraftDetailPage({ params }: { params: Promise<D
   })
   const printed = (value: number | null | undefined): string =>
     value === null || value === undefined ? '' : String(value)
+  const specification = aircraft.specification ?? {}
+
+  /**
+   * What the page says about the aircraft: the sentences the legacy built from the catalogue
+   * rather than the `extension_description` column, which it never rendered on this page
+   * (`docs/legacy-inventory.md` section 4). A value the catalogue has not got leaves its gap, as
+   * the legacy left it; the column itself still feeds the head and the structured data.
+   *
+   * The model is the caller's because the two layouts named it from different tables: the rich
+   * one from the catalogue's type, the basic one from the `vehicles` row (section 4).
+   */
+  const homeBase = typeof aircraft.baseAirport === 'object' ? aircraft.baseAirport : null
+  const summary = (model: string): string[] =>
+    t('summary', {
+      model,
+      registration: aircraft.registrationDisplay,
+      operator: aircraft.operator?.companyName ?? '',
+      year: printed(specification.yearOfProduction),
+      homeBase: homeBase?.icao ?? '',
+      passengers: printed(specification.passengers),
+    })
+      .split('\n')
+      .map((line) => line.trim())
+      .filter((line) => line !== '')
+
+  // The aircraft itself, catalogued (#173). No price: the page asks for the leg instead of
+  // quoting one, exactly as the legacy detail page did.
+  const catalogued = product(origin, locale as Locale, {
+    slug: `aircraft/${id}`,
+    name,
+    description: aircraft.description,
+    images: photographs.map((photo) => photo.src),
+    brand: aircraft.type?.manufacturer,
+  })
+
+  /**
+   * The basic layout (issue #137, `docs/legacy-inventory.md` section 4,
+   * `aircraft/[id]/old.tsx`): what the legacy drew for an aircraft its catalogue held no
+   * photograph of — the band, the model with the same sentences under it, the invitation to
+   * book, and the card of ten rows. The choice is made here and stored nowhere, as it was.
+   *
+   * The legacy headed this page with the model alone, where the rich layout's heading carries
+   * the registration beside it.
+   */
+  if (photographs.length === 0) {
+    const model = aircraft.type?.model ?? aircraft.type?.name ?? aircraft.registrationDisplay
+    const rows = [
+      { label: t('details.registration'), value: aircraft.registrationDisplay },
+      { label: t('details.operator'), value: aircraft.operator?.companyName },
+      { label: t('details.year'), value: printed(specification.yearOfProduction) },
+      { label: t('details.passengers'), value: printed(specification.passengers) },
+      { label: t('details.homeBase'), value: homeBase?.icao },
+      { label: t('details.homeCity'), value: homeBase?.city },
+      { label: t('details.homeCountry'), value: homeBase?.country },
+      { label: t('details.manufacturer'), value: aircraft.type?.manufacturer },
+      { label: t('details.interiorRefit'), value: specification.interiorRefit },
+      { label: t('details.exteriorRefit'), value: specification.exteriorRefit },
+    ]
+
+    return (
+      <>
+        {/* The band the page opens on, which is the darkening alone: the legacy laid it over
+            the `vehicles.image` column, and this collection folds that column into `images`
+            (`src/collections/Aircraft.ts`), so an aircraft that reaches this layout has no
+            photograph anywhere to lay it over. */}
+        <section className="relative h-hero-basic w-full">
+          <div className="hero-darkening absolute inset-0 z-10" />
+        </section>
+        <section data-section="aircraft-basic">
+          <div className="container gap-4">
+            <h1>{model}</h1>
+            {/* A break between the sentences rather than the blank line the rich layout's card
+                leaves, which is the difference between the legacy's single and double `br`. */}
+            <p>
+              {summary(model).map((line) => (
+                <Fragment key={line}>
+                  {line}
+                  <br />
+                </Fragment>
+              ))}
+            </p>
+          </div>
+        </section>
+        {/* The legacy's own next step, and the only way this page offers to ask for the
+            aircraft: the rich layout has the request card beside its gallery instead. */}
+        <MakeBooking locale={locale as Locale} title={form('title')} variant="plain" />
+        <section data-section="aircraft-context">
+          <div className="container md:flex-row">
+            <div className="card w-full bg-graphite-950 p-8 md:p-10">
+              {/* Every row, whatever the catalogue holds: the card is a table of what is known
+                  about the aircraft, and a row it has no value for is drawn empty. */}
+              {rows.map((row) => (
+                <div
+                  key={row.label}
+                  className="h-10 flex-row items-center justify-between border-b border-graphite-800"
+                >
+                  <p className="w-full">{row.label}</p>
+                  <p className="w-full">{row.value}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+        <JsonLd data={catalogued} />
+        {trail && <JsonLd data={trail} />}
+      </>
+    )
+  }
 
   /**
    * The six figures, in the order the legacy card drew them, and each only where the catalogue
    * has it: the legacy hid a figure it had no value for rather than printing a zero
    * (`docs/legacy-inventory.md` section 4).
    */
-  const specification = aircraft.specification ?? {}
   const stats: KeyStat[] = [
     {
       show: typeof specification.passengers === 'number',
@@ -158,39 +271,12 @@ export default async function AircraftDetailPage({ params }: { params: Promise<D
     },
   ].flatMap(({ show, ...stat }) => (show ? [stat] : []))
 
-  /**
-   * What the card says about the aircraft: the sentences the legacy built from the catalogue
-   * rather than the `extension_description` column, which it never rendered on this page
-   * (`docs/legacy-inventory.md` section 4). A value the catalogue has not got leaves its gap, as
-   * the legacy left it; the column itself still feeds the head and the structured data.
-   */
-  const homeBase = typeof aircraft.baseAirport === 'object' ? aircraft.baseAirport : null
-  const paragraphs = t('summary', {
-    model: aircraft.type?.name ?? aircraft.type?.model ?? '',
-    registration: aircraft.registrationDisplay,
-    operator: aircraft.operator?.companyName ?? '',
-    year: printed(specification.yearOfProduction),
-    homeBase: homeBase?.icao ?? '',
-    passengers: printed(specification.passengers),
-  })
-    .split('\n')
-    .map((line) => line.trim())
-    .filter((line) => line !== '')
-
+  /** What the card beside the photograph says, from the catalogue's own name for the type. */
+  const paragraphs = summary(aircraft.type?.name ?? aircraft.type?.model ?? '')
   /** The legacy opened this row on the second photograph, falling back to the first. */
   const [beside] = photographs.slice(1).concat(photographs)
   /** And stacked every one of them beside the figures, newest first. */
   const stacked = [...photographs].reverse()
-
-  // The aircraft itself, catalogued (#173). No price: the page asks for the leg instead of
-  // quoting one, exactly as the legacy detail page did.
-  const catalogued = product(origin, locale as Locale, {
-    slug: `aircraft/${id}`,
-    name,
-    description: aircraft.description,
-    images: photographs.map((photo) => photo.src),
-    brand: aircraft.type?.manufacturer,
-  })
 
   return (
     <>
@@ -233,54 +319,48 @@ export default async function AircraftDetailPage({ params }: { params: Promise<D
       </section>
       {/* Full width, as the legacy drew it between the sections of this page. */}
       <Line />
-      {/* The rich layout, which the legacy drew only for an aircraft that has photographs: the
-          catalogue without them falls back to the `vehicles` row and a plainer page (#137). */}
-      {photographs.length > 0 && (
-        <>
-          <section data-section="aircraft-specs">
-            <div className="container gap-12">
-              <div className="gap-10 md:grid md:grid-cols-2">
-                {beside && (
-                  <Image
-                    alt={beside.alt === '' ? name : beside.alt}
-                    className="rounded-3xl"
-                    height={600}
-                    src={beside.src}
-                    width={600}
-                  />
-                )}
-                <div className="top-hero-band gap-6 rounded-3xl border border-graphite-800 bg-graphite-950 p-6 py-10 pb-16 md:sticky md:gap-10 md:self-start md:p-10">
-                  <h2>{name}</h2>
-                  <div className="flex flex-col gap-4">
-                    {paragraphs.map((paragraph) => (
-                      <p key={paragraph}>{paragraph}</p>
-                    ))}
-                  </div>
-                </div>
-              </div>
-              <div className="gap-10 md:grid md:grid-cols-2">
-                {/* No rule after the last figure here, where the yacht card draws one
-                    (`docs/legacy-inventory.md` section 4). */}
-                <KeyStatsCard stats={stats} title={t('keyStats')} />
-                <div className="gap-10">
-                  {stacked.map((photo) => (
-                    <Image
-                      key={photo.src}
-                      alt={photo.alt === '' ? name : photo.alt}
-                      className="rounded-3xl border border-graphite-800 bg-graphite-950"
-                      height={400}
-                      sizes="(min-width: 768px) 45vw, 90vw"
-                      src={photo.src}
-                      width={600}
-                    />
-                  ))}
-                </div>
+      <section data-section="aircraft-specs">
+        <div className="container gap-12">
+          <div className="gap-10 md:grid md:grid-cols-2">
+            {beside && (
+              <Image
+                alt={beside.alt === '' ? name : beside.alt}
+                className="rounded-3xl"
+                height={600}
+                src={beside.src}
+                width={600}
+              />
+            )}
+            <div className="top-hero-band gap-6 rounded-3xl border border-graphite-800 bg-graphite-950 p-6 py-10 pb-16 md:sticky md:gap-10 md:self-start md:p-10">
+              <h2>{name}</h2>
+              <div className="flex flex-col gap-4">
+                {paragraphs.map((paragraph) => (
+                  <p key={paragraph}>{paragraph}</p>
+                ))}
               </div>
             </div>
-          </section>
-          <Line />
-        </>
-      )}
+          </div>
+          <div className="gap-10 md:grid md:grid-cols-2">
+            {/* No rule after the last figure here, where the yacht card draws one
+                (`docs/legacy-inventory.md` section 4). */}
+            <KeyStatsCard stats={stats} title={t('keyStats')} />
+            <div className="gap-10">
+              {stacked.map((photo) => (
+                <Image
+                  key={photo.src}
+                  alt={photo.alt === '' ? name : photo.alt}
+                  className="rounded-3xl border border-graphite-800 bg-graphite-950"
+                  height={400}
+                  sizes="(min-width: 768px) 45vw, 90vw"
+                  src={photo.src}
+                  width={600}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+      <Line />
       <JsonLd data={catalogued} />
       {trail && <JsonLd data={trail} />}
     </>
