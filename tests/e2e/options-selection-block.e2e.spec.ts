@@ -13,7 +13,7 @@ test.describe('the options selection', () => {
     const html = await (await request.get(pathFor('/sales_dept', 'en'))).text()
 
     expect(html).toContain('data-section="options-selection"')
-    expect(html).toContain('Buying an aircraft, start to finish')
+    expect(html).toContain('Comprehensive aircraft services')
     expect(html).toContain('Legal department')
     expect(html).toContain('Finance department')
   })
@@ -24,8 +24,8 @@ test.describe('the options selection', () => {
     await expect(cards).toHaveCount(2)
 
     // The legacy card split one string into these; they are rows now (issue #72).
-    await expect(cards.first().getByText('A lien check on the airframe')).toBeVisible()
-    await expect(cards.first().locator('[class*="bg-graphite-900"]')).toHaveCount(5)
+    await expect(cards.first().getByText('Bank lien verification of the aircraft')).toBeVisible()
+    await expect(cards.first().locator('[class*="bg-graphite-900"]')).toHaveCount(6)
     await expect(cards.last().locator('[class*="bg-graphite-900"]')).toHaveCount(4)
   })
 
@@ -34,8 +34,8 @@ test.describe('the options selection', () => {
     const yachts = await (await request.get(pathFor('/sales_yachts', 'ru'))).text()
 
     expect(aircraft).toContain('Юридический отдел')
-    expect(aircraft).toContain('Проверка залога по борту')
-    expect(aircraft).not.toContain('A lien check on the airframe')
+    expect(aircraft).toContain('Банковская проверка о нахождении самолета в залоге')
+    expect(aircraft).not.toContain('Bank lien verification of the aircraft')
     // The same two departments, saying what a hull needs rather than an airframe.
     expect(yachts).toContain('Проверку наличия яхты в банковском залоге')
   })

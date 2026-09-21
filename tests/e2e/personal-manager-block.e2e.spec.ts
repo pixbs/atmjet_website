@@ -13,9 +13,9 @@ test.describe('the personal manager', () => {
     const html = await (await request.get(pathFor('/partners', 'en'))).text()
 
     expect(html).toContain('data-section="personal-manager"')
-    expect(html).toContain('A manager who knows the flight')
-    expect(html).toContain('Permits')
-    expect(html).toContain('Transfers')
+    expect(html).toContain('Personal aviation manager')
+    expect(html).toContain('Price expectations')
+    expect(html).toContain('Best profitability')
   })
 
   test('draws one box per chip the block carries', async ({ page }) => {
@@ -39,8 +39,8 @@ test.describe('the personal manager', () => {
   test('speaks the language of the page it is on', async ({ request }) => {
     const html = await (await request.get(pathFor('/sales_dept', 'ru'))).text()
 
-    expect(html).toContain('Менеджер, который знает рейс')
-    expect(html).toContain('Разрешения')
-    expect(html).not.toContain('A manager who knows the flight')
+    expect(html).toContain('Персональный менеджер по авиации')
+    expect(html).toContain('Ожидаемая цена')
+    expect(html).not.toContain('Personal aviation manager')
   })
 })

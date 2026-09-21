@@ -569,19 +569,40 @@ const GROUP_CARDS: { slug: string; en: [string, string, string]; ru: [string, st
     },
   ]
 
-/** The three advantages the legacy sales department page listed (issue #128, section 5). */
+/**
+ * What a team of mechanics does before a buyer signs (issue #128, section 5), in the words the
+ * legacy `aircraft-descriptor` namespace held (issue #162).
+ */
 const ADVANTAGES: { en: [string, string]; ru: [string, string] }[] = [
   {
-    en: ['Valued honestly', 'What the aircraft is worth on the day, not what it cost to buy.'],
-    ru: ['Честная оценка', 'Сколько борт стоит сегодня, а не сколько за него заплатили.'],
+    en: [
+      'ABC check verification',
+      'Mechanics review the reports for each ABC inspection and verify that the observations have been resolved.',
+    ],
+    ru: [
+      'Проверка АВС',
+      'Механики просматривают отчеты по каждой ABC проверке и проверяем устранение замечаний.',
+    ],
   },
   {
-    en: ['Shown to buyers', 'A list of people who fly the type, not an advertisement.'],
-    ru: ['Показ покупателям', 'Список тех, кто летает на этом типе, а не объявление.'],
+    en: [
+      'Test flight evaluation',
+      "Our certified technician will conduct a comprehensive test flight to assess the aircraft's performance and ensure it meets the highest standards of safety and efficiency.",
+    ],
+    ru: [
+      'Проводят испытательный полет',
+      'Специалист проводит испытательный полет и выдает комплексную оценку характеристик и состояния самолета.',
+    ],
   },
   {
-    en: ['Closed properly', 'Escrow, export papers and the pre-buy inspection arranged here.'],
-    ru: ['Корректное закрытие', 'Эскроу, экспортные документы и предпродажная инспекция — на нас.'],
+    en: [
+      'Detailed inspection report',
+      'After the inspection, we will provide a comprehensive report detailing any discrepancies found and the estimated cost of repairs.',
+    ],
+    ru: [
+      'Подробный отчет о проверке',
+      'По окончании проверки мы предоставим подробный отчет о найденных несоответствиях и стоимости их устранения.',
+    ],
   },
 ]
 
@@ -651,34 +672,28 @@ const SALES_WHY_US: {
   cards: { figure?: string; en: [string, string]; ru: [string, string] }[]
 } = {
   description: {
-    en: 'An aircraft bought through us is managed on terms written for the aircraft.',
-    ru: 'Самолёт, купленный через нас, управляется на условиях, написанных под него.',
+    en: 'Special management conditions apply to rental from ATM JET',
+    ru: 'При приобретении воздушного судна в ATM JET действуют особые условия по управлению самолетом',
   },
   cards: [
     {
       figure: '5',
-      en: ['Flights a month', 'More than ten a month pass through us as a broker.'],
-      ru: ['Рейсов в месяц', 'Как брокер мы обслуживаем больше десяти рейсов в месяц.'],
+      en: ['Flights per month', 'We handle over 10 flights per month as a broker.'],
+      ru: ['Рейсов в месяц', 'В качестве брокера мы обслуживаем более 10 рейсов в месяц.'],
     },
     {
       en: [
-        'Fleet management with experience',
-        'The terms for managing what you bought, agreed with you rather than handed to you.',
+        'Experienced fleet management',
+        'Customised terms and conditions for the management of the purchased aircraft from ATM JET.',
       ],
       ru: [
         'Опытное управление авиапарком',
-        'Условия управления купленным самолётом согласуются с вами, а не выдаются вам.',
+        'Индивидуальные условия по управлению приобретенным самолетом от ATM JET',
       ],
     },
     {
-      en: [
-        'Yields that lead the market',
-        'The best return the market offers, and the model behind it.',
-      ],
-      ru: [
-        'Лучшая на рынке доходность',
-        'Лучшая доходность на рынке и модель, которая её показывает.',
-      ],
+      en: ['Market-leading yields', 'We offer the best yields in the market'],
+      ru: ['Лучшие на рынке показатели доходности', 'Мы предлагаем лучшую доходность на рынке'],
     },
   ],
 }
@@ -858,22 +873,24 @@ const HERO_SALES: Record<
   { overline: string; lines: [string, string][]; description: string; button: string }
 > = {
   en: {
-    overline: 'Aircraft sales',
+    overline: 'Sales dept.',
     lines: [
-      ['20+', 'years of deals'],
-      ['500+', 'aircraft placed'],
+      ['20+', 'Years'],
+      ['500+', 'Aircraft'],
     ],
-    description: 'We sell the aircraft you fly.\nAnd we buy the one you fly next.',
-    button: 'Talk to the desk',
+    description:
+      'We offer access to over 500 aircraft for sale, ensuring a wide range of options for private and business aviation needs.\nWith more than 20 years of expertise in the industry, ATM JET provides comprehensive support to make your aircraft purchase both secure and profitable.',
+    button: 'Contact us',
   },
   ru: {
-    overline: 'Продажа самолётов',
+    overline: 'Продажи самолетов',
     lines: [
-      ['20+', 'лет сделок'],
-      ['500+', 'бортов продано'],
+      ['20+', 'Лет опыта'],
+      ['500+', 'Воздушных судов'],
     ],
-    description: 'Мы продаём борт, на котором вы летаете.\nИ покупаем тот, на котором полетите.',
-    button: 'Связаться с отделом',
+    description:
+      'Мы имеем доступ к более чем 500 самолетам, выставленным на продажу прямо сейчас.\nНаш более чем 20-летний опыт позволит вам выгодно и безопасно провести сделку.',
+    button: 'Свяжитесь с нами',
   },
 }
 
@@ -935,16 +952,28 @@ const PERSONAL_MANAGER: Record<
   { title: string; description: string; chips: string[] }
 > = {
   en: {
-    title: 'A manager who knows the flight',
+    title: 'Personal aviation manager',
     description:
-      'One person answers, whatever the hour and whatever the question: the aircraft, the permits, the car at the steps.',
-    chips: ['Permits', 'Slots', 'Catering', 'Handling', 'Transfers'],
+      'We provide a dedicated aviation manager with over 20 years of industry experience. Your personal advisor will help you choose the ideal aircraft tailored to your specific needs, ensuring a seamless and informed buying process. With expert knowledge and personalized guidance, we ensure you receive the best solution based on your unique aviation requirements.',
+    chips: [
+      'Your plans for using the aircraft',
+      'Price expectations',
+      'High residual value',
+      'Required parameters (range, passengers quantity, based airport)',
+      'Best profitability',
+    ],
   },
   ru: {
-    title: 'Менеджер, который знает рейс',
+    title: 'Персональный менеджер по авиации',
     description:
-      'Отвечает один человек — в любой час и на любой вопрос: борт, разрешения, машина у трапа.',
-    chips: ['Разрешения', 'Слоты', 'Кейтеринг', 'Наземка', 'Трансферы'],
+      'Мы предоставим вам персонального авиационного менеджера с большим опытом работы более 20 лет. Он поможет вам определить наиболее подходящий самолет, исходя из ваших требований:',
+    chips: [
+      'Ваши планы по использованию самолета',
+      'Ожидаемая цена',
+      'Высокая остаточная стоимость',
+      'Необходимые параметры (дальность полета, количество пассажиров, аэропорт базирования)',
+      'Наилучшая рентабельность при сдаче в аренду',
+    ],
   },
 }
 
@@ -965,53 +994,59 @@ const OPTIONS: Record<
 > = {
   sales_dept: {
     en: {
-      title: 'Buying an aircraft, start to finish',
+      title: 'Comprehensive aircraft services',
       cards: [
         {
           title: 'Legal department',
-          description: 'Everything the transfer of an aircraft needs, prepared before you sign:',
+          description:
+            'The legal department is committed to ensuring the complete security of the transaction from start to finish. We will prepare the following:',
           items: [
-            'A letter of intent with its guarantees',
-            'A lien check on the airframe',
-            'The purchase agreement',
-            'The change of ownership on the register',
-            'Export and airworthiness certificates',
+            'Proposal of intent with guarantees and commitments',
+            'Bank lien verification of the aircraft',
+            'Purchase agreement',
+            'Change of ownership structure in the aircraft registration decision',
+            'Export certificates, airworthiness certificate',
+            'Other necessary documents',
           ],
         },
         {
           title: 'Finance department',
-          description: 'We negotiate on your side of the table and cost the years after it:',
+          description:
+            'We will negotiate on your behalf to secure the most favourable terms. The finance department will select the most appropriate option from the following:',
           items: [
-            'The tax jurisdiction the deal is best held in',
-            'The insurance that covers how you fly',
-            'What a year of ownership costs',
-            'What the aircraft earns when you are not on it',
+            'Select the most advantageous tax jurisdiction for the transaction',
+            'Select the most suitable insurance',
+            'Project the cost of ownership',
+            'Calculate the projected rental income',
           ],
         },
       ],
     },
     ru: {
-      title: 'Покупка самолёта — от первого письма до передачи',
+      title: 'Комплексное оформление сделки по самолетам',
       cards: [
         {
           title: 'Юридический отдел',
-          description: 'Всё, что нужно для передачи борта, готово до вашей подписи:',
+          description:
+            'Юридический отдел стремится обеспечить полную безопасность сделки от начала и до конца. Мы подготовим:',
           items: [
-            'Письмо о намерениях с гарантиями',
-            'Проверка залога по борту',
-            'Договор купли-продажи',
-            'Смена собственника в реестре',
-            'Экспортный сертификат и сертификат лётной годности',
+            'Предложение о намерениях с гарантиями и обязательствами',
+            'Банковская проверка о нахождении самолета в залоге',
+            'Подготовка договора купли-продажи',
+            'Изменение структуры собственности в решении о регистрации самолета',
+            'Подготовка экспортных сертификатов, сертификатов летной годности',
+            'Все необходимые документы',
           ],
         },
         {
           title: 'Финансовый отдел',
-          description: 'Мы ведём переговоры на вашей стороне стола и считаем годы после сделки:',
+          description:
+            'Мы будем вести переговоры от вашего имени, чтобы получить наиболее выгодные условия. Финансовый отдел подготовит подробный отчет включающий в себя:',
           items: [
-            'Налоговая юрисдикция, в которой сделку выгоднее держать',
-            'Страхование под то, как вы летаете',
-            'Стоимость года владения',
-            'Доход от борта, когда вы не на нём',
+            'Наиболее выгодную налоговую юрисдикцию для сделки',
+            'Выгодные условия страхования',
+            'Прогноз по стоимости владения',
+            'Рассчет потенциального дохода от аренды',
           ],
         },
       ],
@@ -1634,7 +1669,10 @@ function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout 
   if (slug === 'sales_dept') {
     sections.push({
       blockType: 'advantages',
-      title: locale === 'en' ? 'Selling through us' : 'Продажа через нас',
+      title:
+        locale === 'en'
+          ? 'Each aircraft is assessed by a team of mechanics licensed by the manufacturer of the desired aircraft.'
+          : 'Мы подбираем команду механиков, лицензированных производителем желаемого самолета.',
       image: fixture.photo,
       cards: ADVANTAGES.map((card) => ({ title: card[locale][0], description: card[locale][1] })),
     })
