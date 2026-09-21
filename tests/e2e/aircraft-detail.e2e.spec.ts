@@ -2,9 +2,9 @@ import { expect, test } from './fixtures'
 import { pathFor } from './routes'
 
 /**
- * One aircraft (issues #138 and #136, `docs/legacy-inventory.md` section 4, route
- * `/[locale]/aircraft/[id]`): what the slug resolves to, what the page draws, and where the
- * request the card takes ends up.
+ * One aircraft (issues #138, #136 and #137, `docs/legacy-inventory.md` section 4, route
+ * `/[locale]/aircraft/[id]`): what the slug resolves to, which of the two layouts it is drawn
+ * in, what each one says, and where the request the card takes ends up.
  *
  * The slug the listing writes for a seeded aircraft is its registration, because the import that
  * brings the catalogue's own slugs is E5.7; both shapes answer here, which is what the legacy
@@ -172,5 +172,93 @@ test.describe('what a detail page says about the aircraft', () => {
 
     // The legacy reversed the whole set here, having drawn them the other way round above.
     await expect(page.locator(`${SPECS} img`)).toHaveCount(2)
+  })
+})
+
+/**
+ * The layout the legacy fell back to for an aircraft its catalogue held no photograph of
+ * (issue #137, `docs/legacy-inventory.md` section 4, `aircraft/[id]/old.tsx`): the model with
+ * the same sentences under it, the invitation to book, and the card of ten rows.
+ *
+ * `G-ATMB` is the one the fixture leaves unphotographed; `M-OUSE` is photographed, so the two
+ * together are the switch the image count makes.
+ */
+test.describe('an aircraft nobody has photographed', () => {
+  const BASIC = '[data-section="aircraft-basic"]'
+  const ROWS = '[data-section="aircraft-context"] .card > div'
+
+  test('is drawn in the basic layout, and one that is photographed is not', async ({ request }) => {
+    const basic = await (await request.get(pathFor('/aircraft/GATMB', 'en'))).text()
+    const rich = await (await request.get(pathFor('/aircraft/MOUSE', 'en'))).text()
+
+    // The choice is the image count's, and it is made on the server: neither page carries the
+    // other's sections at all.
+    expect(basic).toContain('data-section="aircraft-basic"')
+    expect(basic).not.toContain('data-section="aircraft-detail"')
+    expect(basic).not.toContain('data-section="aircraft-specs"')
+    expect(rich).toContain('data-section="aircraft-detail"')
+    expect(rich).not.toContain('data-section="aircraft-basic"')
+  })
+
+  test('is headed by the model alone, and says the same sentences about itself', async ({
+    page,
+  }) => {
+    await page.goto(pathFor('/aircraft/GATMB', 'en'))
+
+    // The legacy headed this page with the model, where the rich layout carries the
+    // registration beside it.
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Dassault Falcon 7X')
+
+    const said = page.locator(`${BASIC} p`)
+
+    await expect(said).toContainText('flies under the tail number G-ATMB')
+    await expect(said).toContainText('Operated by ATM JET')
+    await expect(said).toContainText('based at LFPB')
+  })
+
+  test('lists the ten rows the legacy card carried, in its order', async ({ page }) => {
+    await page.goto(pathFor('/aircraft/GATMB', 'en'))
+
+    await expect(page.locator(`${ROWS} p:first-child`)).toHaveText([
+      'Number:',
+      'Operator:',
+      'Year:',
+      'Max pax:',
+      'Home base:',
+      'Home city:',
+      'Home country:',
+      'Manufacturer:',
+      'Interior refit:',
+      'Exterior refit:',
+    ])
+    await expect(page.locator(`${ROWS} p:last-child`)).toHaveText([
+      'G-ATMB',
+      'ATM JET',
+      '2014',
+      '12',
+      'LFPB',
+      'Paris',
+      'France',
+      'Dassault',
+      '2019',
+      '2018',
+    ])
+  })
+
+  test('offers the flight request the legacy put under the sentences', async ({ page }) => {
+    // The rich layout asks for the aircraft through the card beside its gallery; this page has
+    // the booking invitation instead, as the legacy fallback did.
+    await page.goto(pathFor('/aircraft/GATMB', 'en'))
+
+    await expect(page.locator('[data-section="make-booking"]')).toBeVisible()
+  })
+
+  test('says the rows in the language of the page', async ({ request }) => {
+    const html = await (await request.get(pathFor('/aircraft/GATMB', 'ru'))).text()
+
+    expect(html).toContain('Место стоянки:')
+    expect(html).toContain('Производитель:')
+    // The airport is localized in the catalogue, so the city follows the page too.
+    expect(html).toContain('Париж')
   })
 })
