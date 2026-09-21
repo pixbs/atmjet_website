@@ -20,7 +20,9 @@ test.describe('the descriptors', () => {
     await page.goto(pathFor('/sales_yachts', 'en'))
     const framed = page.locator('[data-section="framed-descriptor"]')
 
-    await expect(framed.getByRole('heading')).toHaveText('Every yacht we list, we have stood on')
+    await expect(framed.getByRole('heading')).toHaveText(
+      'We buy yachts for our clients as well as for ourselves.',
+    )
     // The legacy frame held the heading and nothing else.
     await expect(framed.locator('p')).toHaveCount(0)
   })
@@ -28,7 +30,7 @@ test.describe('the descriptors', () => {
   test('hang the photograph under the words it belongs to', async ({ page }) => {
     await page.goto(pathFor('/sales_yachts', 'en'))
     const section = page.locator('[data-section="photo-descriptor"]')
-    const heading = section.getByRole('heading', { name: 'Twenty years on the water' })
+    const heading = section.getByRole('heading', { name: "20 years' experience" })
     await expect(heading).toBeVisible()
 
     const words = await heading.boundingBox()

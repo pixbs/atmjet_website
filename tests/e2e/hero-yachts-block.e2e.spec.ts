@@ -14,16 +14,17 @@ test.describe('the yachts hero', () => {
     const html = await (await request.get(pathFor('/sales_yachts', 'en'))).text()
 
     expect(html).toContain('data-section="hero-yachts"')
-    expect(html).toContain('A yacht bought the way an aircraft is')
-    expect(html).toContain('Ask about a yacht')
+    expect(html).toContain('Yacht Sales')
+    expect(html).toContain('Get a quote')
   })
 
   test('offers the booking dialog where the page asks for it', async ({ page }) => {
     await page.goto(pathFor('/sales_yachts', 'en'))
 
-    await expect(
-      page.locator(SECTION).getByRole('link', { name: 'Ask about a yacht' }),
-    ).toHaveAttribute('href', '?showBooking=Hero_yachts')
+    await expect(page.locator(SECTION).getByRole('link', { name: 'Get a quote' })).toHaveAttribute(
+      'href',
+      '?showBooking=Hero_yachts',
+    )
   })
 
   test('draws no button on a page that gave it no wording', async ({ page }) => {
@@ -34,16 +35,16 @@ test.describe('the yachts hero', () => {
     await expect(section.getByRole('link')).toHaveCount(0)
     // The charter hero is the one with a second paragraph under the first.
     await expect(section.locator('p')).toContainText([
-      'Yacht charter',
-      'Motor and sailing yachts from 20 to 100 metres, crewed and provisioned.',
-      'Berths, permits and the transfer from the airport are arranged here.',
+      'ATM JET',
+      'ATM JET Yachts is proud to offer the largest fleet of superyachts for charter',
+      'Our extensive network of owners and operators',
     ])
   })
 
   test('speaks the language of the page it is on', async ({ request }) => {
     const html = await (await request.get(pathFor('/yachts', 'ru'))).text()
 
-    expect(html).toContain('Неделя, которая следует за перелётом')
-    expect(html).not.toContain('The week that follows the flight')
+    expect(html).toContain('ATM JET Yachts предлагает в аренду самый большой флот яхт')
+    expect(html).not.toContain('ATM JET Yachts is proud to offer')
   })
 })

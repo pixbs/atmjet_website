@@ -14,9 +14,9 @@ test.describe('the we inspect section', () => {
     const html = await (await request.get(pathFor('/sales_yachts', 'en'))).text()
 
     expect(html).toContain('data-section="we-inspect"')
-    expect(html).toContain('What we inspect')
-    expect(html).toContain('The hull')
-    expect(html).toContain('A day at sea with the systems under load, not at the dock.')
+    expect(html).toContain('Conducting a technical assessment')
+    expect(html).toContain('Hull')
+    expect(html).toContain('Hull structure integrity, engine thermal inspection, electric')
   })
 
   test('draws one card per slide the block carries', async ({ page }) => {
@@ -61,7 +61,7 @@ test.describe('the we inspect section', () => {
   test('speaks the language of the page it is on', async ({ request }) => {
     const html = await (await request.get(pathFor('/sales_yachts', 'ru'))).text()
 
-    expect(html).toContain('Ходовые испытания')
-    expect(html).not.toContain('The sea trial')
+    expect(html).toContain('Тепловизионная диагностика')
+    expect(html).not.toContain('Thermal imaging inspection')
   })
 })

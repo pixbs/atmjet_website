@@ -94,8 +94,8 @@ const PAGES: readonly Subpage[] = [
     ],
     titles: { en: 'Yachts for sale', ru: 'Яхты на продажу' },
     words: {
-      en: 'Every yacht we list, we have stood on',
-      ru: 'На каждой яхте из списка мы стояли сами',
+      en: 'We buy yachts for our clients as well as for ourselves.',
+      ru: 'Нашим клиентам мы покупаем так же трепетно, как себе.',
     },
   },
   {
