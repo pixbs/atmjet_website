@@ -29,10 +29,10 @@ async function publishedPageCount(request: APIRequestContext): Promise<number> {
   return docs.filter((page) => typeof page.slug === 'string').length
 }
 
-async function sitemapXml(request: APIRequestContext): Promise<string> {
-  const response = await request.get('/sitemap.xml')
+async function sitemapXml(request: APIRequestContext, path = '/sitemap.xml'): Promise<string> {
+  const response = await request.get(path)
 
-  expect(response.status()).toBe(200)
+  expect(response.status(), path).toBe(200)
   expect(response.headers()['content-type']).toContain('xml')
 
   return response.text()
@@ -102,22 +102,77 @@ test.describe('sitemap.xml', () => {
   })
 })
 
+/**
+ * The catalogues (issue #171): the aircraft sitemap at the path the legacy site used, and one
+ * for the charter fleet, which the legacy site never offered at all.
+ */
+const CATALOGUES = [
+  { path: '/aircraft/sitemap.xml', listing: 'aircraft' },
+  { path: '/yachts/sitemap.xml', listing: 'yachts' },
+] as const
+
+for (const { path, listing } of CATALOGUES) {
+  test.describe(path, () => {
+    test('lists the detail pages of its catalogue, once each', async ({ request }) => {
+      const locations = locationsIn(await sitemapXml(request, path))
+
+      expect(locations.length).toBeGreaterThan(0)
+      expect(new Set(locations).size).toBe(locations.length)
+      for (const url of locations) {
+        // The legacy aircraft sitemap listed unprefixed URLs that answer with a redirect.
+        expect(new URL(url).pathname).toMatch(
+          new RegExp(`^/(${ENABLED_LOCALES.join('|')})/${listing}/.+`),
+        )
+      }
+    })
+
+    test('offers each page in every served locale, with x-default', async ({ request }) => {
+      const xml = await sitemapXml(request, path)
+      const [first] = locationsIn(xml)
+
+      expect(Object.keys(alternatesFor(xml, first)).sort()).toEqual(
+        [...ENABLED_LOCALES, 'x-default'].sort(),
+      )
+    })
+
+    test('advertises no URL that answers with a redirect or a 404', async ({ request }) => {
+      const paths = locationsIn(await sitemapXml(request, path)).map((url) => new URL(url).pathname)
+
+      for (const url of paths) {
+        const response = await request.get(url, { maxRedirects: 0 })
+
+        expect(response.status(), url).toBe(200)
+      }
+    })
+
+    test('names the same host the pages sitemap does', async ({ request }) => {
+      const [listed] = locationsIn(await sitemapXml(request, path))
+      const [page] = locationsIn(await sitemapXml(request))
+
+      expect(new URL(listed).origin).toBe(new URL(page).origin)
+    })
+  })
+}
+
 test.describe('robots.txt', () => {
-  test('points a crawler at the sitemap, on the same host the sitemap names', async ({
-    request,
-  }) => {
+  test('points a crawler at every sitemap, on the host the sitemaps name', async ({ request }) => {
     const response = await request.get('/robots.txt')
 
     expect(response.status()).toBe(200)
 
     const body = await response.text()
-    const [, sitemap] = body.match(/Sitemap:\s*(\S+)/) ?? []
+    const sitemaps = [...body.matchAll(/Sitemap:\s*(\S+)/g)].map(([, url]) => url)
     const [listed] = locationsIn(await sitemapXml(request))
 
     // The legacy robots.txt named atmjet.com from the source while the sitemap built its URLs
     // from the deployment, so a preview sent crawlers to production.
-    expect(new URL(sitemap ?? '').pathname).toBe('/sitemap.xml')
-    expect(new URL(sitemap ?? '').origin).toBe(new URL(listed).origin)
+    expect(sitemaps.map((url) => new URL(url).pathname)).toEqual([
+      '/sitemap.xml',
+      ...CATALOGUES.map(({ path }) => path),
+    ])
+    for (const url of sitemaps) {
+      expect(new URL(url).origin).toBe(new URL(listed).origin)
+    }
   })
 
   test('keeps the admin and the API out of the index', async ({ request }) => {

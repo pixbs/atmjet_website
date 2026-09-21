@@ -60,3 +60,42 @@ export function pageEntries(
       })
   )
 }
+
+/**
+ * One entry per document of a catalogue served under a listing: `/en/aircraft/<slug>` and
+ * `/en/yachts/<slug>` (issue #171).
+ *
+ * The legacy `aircraft/sitemap.xml` enumerated the `vehicles` table into unprefixed URLs that
+ * only answer through a redirect, and the charter fleet had no sitemap at all
+ * (`docs/legacy-inventory.md` section 2.3). A catalogue answers in every language the site
+ * serves, so each entry carries the same alternates a page does.
+ */
+export function detailEntries(
+  origin: string,
+  locales: readonly Locale[],
+  listing: string,
+  documents: readonly Listable[],
+): MetadataRoute.Sitemap {
+  const [canonical] = locales
+  if (!canonical) return []
+
+  return documents.flatMap((document) => {
+    // A row the import has not given a slug yet has no URL, exactly as on the listing card.
+    const slug = (document.slug ?? '').trim()
+    if (slug === '') return []
+
+    const path = `${listing}/${slug}`
+
+    return [
+      {
+        url: localeUrl(origin, canonical, path),
+        lastModified: document.updatedAt ?? undefined,
+        // A fleet changes when an aircraft joins or leaves it, not daily as an edited page does.
+        changeFrequency: 'weekly' as const,
+        // Below the pages that link to them: a detail page is reached through its listing.
+        priority: 0.5,
+        alternates: { languages: localeUrls(origin, locales, path) },
+      },
+    ]
+  })
+}

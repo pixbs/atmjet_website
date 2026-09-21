@@ -17,8 +17,13 @@ import { servedLocales } from '../../src/lib/pages'
  * without anybody noticing (#252). This says out loud which routes a seeded build owes.
  */
 
-/** Prerendered whatever the content holds, and both outside the locale segment. */
-export const METADATA_ROUTES = ['/robots.txt', '/sitemap.xml'] as const
+/** Prerendered whatever the content holds, and all of them outside the locale segment. */
+export const METADATA_ROUTES = [
+  '/robots.txt',
+  '/sitemap.xml',
+  '/aircraft/sitemap.xml',
+  '/yachts/sitemap.xml',
+] as const
 
 /**
  * Every page of the seeded site, in every language it serves. The slugs are the collection's own
