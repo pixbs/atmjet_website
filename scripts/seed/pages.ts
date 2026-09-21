@@ -599,27 +599,45 @@ const BEST_PRICE: Record<'en' | 'ru', [string, string, string]> = {
   ],
 }
 
-/** What the legacy yachts for sale page said it checks (issue #126, section 5). */
+/**
+ * What the legacy yachts for sale page said it checks (issue #126, section 5), in the words its
+ * `we-incpect` namespace held (issue #162). The namespace name is the legacy's own misspelling.
+ */
 const INSPECTIONS: { en: [string, string]; ru: [string, string] }[] = [
   {
-    en: ['The hull', 'Out of the water, by a surveyor who works for you and not for the yard.'],
-    ru: ['Корпус', 'На суше, сюрвейером, который работает на вас, а не на верфь.'],
+    en: [
+      'Hull',
+      'Inspection of the hull, deck, set, cabins and bulkheads, assessing for geometric changes and internal moisture.',
+    ],
+    ru: [
+      'Корпус',
+      'Осмотр корпуса, палубы, каюты, оценка геометрических изменений и оценка влажности корпуса.',
+    ],
   },
   {
-    en: ['The engines', 'Hours read off the counters and compared with the log book.'],
-    ru: ['Двигатели', 'Часы снимаются со счётчиков и сверяются с судовым журналом.'],
+    en: ['Engine', 'Engine, engine compartment inspection, Computer diagnostics'],
+    ru: ['Двигатель', 'Оценка работы двигателя, осмотр моторного отсека, компьютерная диагностика'],
   },
   {
-    en: ['The papers', 'Flag, registry and every lien against the boat, in writing.'],
-    ru: ['Документы', 'Флаг, регистр и все обременения — в письменном виде.'],
+    en: ['Electronics', 'Electrical systems, drains, taps, computers and navigation systems.'],
+    ru: [
+      'Электроника',
+      'Оценка электрические системы, системы водостоков, состояния систем управления и навигационных систем.',
+    ],
   },
   {
-    en: ['The interior', 'Every cabin photographed as it is, before anything is tidied away.'],
-    ru: ['Интерьер', 'Каждая каюта снимается как есть, до того как что-то уберут.'],
+    en: ['Steering', 'Rudder, steering gear, Gearbox, shafting'],
+    ru: ['Рулевое управление', 'Руль, рулевое управление, редуктор, валы'],
   },
   {
-    en: ['The sea trial', 'A day at sea with the systems under load, not at the dock.'],
-    ru: ['Ходовые испытания', 'День в море с нагрузкой на системы, а не у причала.'],
+    en: [
+      'Thermal imaging inspection',
+      'Hull structure integrity, engine thermal inspection, electric',
+    ],
+    ru: [
+      'Тепловизионная диагностика',
+      'Целостность конструкции корпуса, тепловой контроль двигателя',
+    ],
   },
 ]
 
@@ -709,7 +727,7 @@ const CITIZENS_WHY_US: {
 
 /**
  * What the yachts for sale page settles before it shows a yacht (issue #141, section 4, item 2):
- * the four parameters the legacy `carousel` namespace named, in the block that carries them.
+ * the four parameters the legacy `carousel` namespace named, in its words (issue #162).
  */
 const YACHT_PARAMETERS: {
   title: Record<'en' | 'ru', string>
@@ -717,86 +735,86 @@ const YACHT_PARAMETERS: {
   cards: { en: [string, string]; ru: [string, string] }[]
 } = {
   title: {
-    en: 'We will find you the right one',
-    ru: 'Подберём для вас идеальный вариант',
+    en: 'We\u2019ll find you the perfect one',
+    ru: 'Мы подберем для вас идеальный вариант',
   },
   description: {
-    en: 'An introductory meeting first, to settle which parameters actually matter.',
-    ru: 'Сначала встреча, чтобы понять, какие параметры действительно важны.',
+    en: 'We will conduct an introductory meeting to assist you in defining the most crucial parameters.',
+    ru: 'Проведем ознакомительную встречу, чтобы помочь вам определить наиболее важные параметры будущей яхты.',
   },
   cards: [
     {
       en: [
-        'The architecture bureaux',
-        'The designers whose drawings become the yacht you asked for.',
+        'Top yacht architecture bureaus',
+        'Know talented designers and architects who can create yachts that are works of art.',
       ],
       ru: [
-        'Работаем с лучшими бюро',
-        'Дизайнеры, чьи чертежи становятся именно той яхтой, о которой вы просили.',
+        'Работаем с лучшими архитектурными бюро',
+        'Познакомим вас с работами талантливых дизайнеров и архитекторов, которые могут создавать яхты, являющиеся произведениями искусства.',
       ],
     },
     {
       en: [
-        'The length it takes',
-        'How many guests, how much crew, and how much comfort each of them needs.',
+        'Length required',
+        'Will assess your expectations of comfort, planned number of guests, and required crew.',
       ],
       ru: [
-        'Подбираем длину под задачу',
-        'Сколько гостей, сколько экипажа и сколько комфорта нужно каждому из них.',
+        'Подберем оптимальную яхту под задачи',
+        'Поможем определить необходимые параметры под ваши привычки к путешествиям, ожидания от комфорта, планируемое количество гостей и необходимый экипаж.',
+      ],
+    },
+    {
+      en: ['Price', 'Includes transaction cost, cost of ownership, and amortisation'],
+      ru: [
+        'Получим желаемую цену',
+        'Поможем провести переговоры о цене, так же оценить стоимость сделки, владения и амортизацию',
       ],
     },
     {
       en: [
-        'The price of the whole thing',
-        'The transaction, the years of ownership, and what it is worth at the end of them.',
+        'Yield',
+        'Yachts offer excellent returns when managed by experienced professionals. We will create a financial model for you.',
       ],
       ru: [
-        'Считаем цену целиком',
-        'Сделка, годы владения и то, сколько яхта будет стоить в конце.',
-      ],
-    },
-    {
-      en: ['What it earns back', 'A financial model, and the charter weeks that pay for a season.'],
-      ru: [
-        'Обеспечиваем доходность',
-        'Финансовая модель и чартерные недели, которые окупают сезон.',
+        'Обеспечим доходность',
+        'Умеем зарабатывать прибыль на яхтах. Мы разработаем для вас финансовую модель и предложим варианты по управлению.',
       ],
     },
   ],
 }
 
 /**
- * What the company does for a yacht it manages (issue #141, section 4, item 8): four reasons
- * under the heading the "twenty years" section above them already carries — the legacy passed
- * the same translation key to both, and the page reads with it twice.
+ * What the company does for a yacht it manages (issue #141, section 4, item 8), in the words its
+ * `yachts-why-us` namespace held (issue #162): four reasons under the heading the "twenty years"
+ * section above them already carries — the legacy passed the same key to both.
  */
 const YACHT_MANAGEMENT: { en: [string, string]; ru: [string, string] }[] = [
   {
-    en: ['A management calendar', 'A year of it, with the financial planning inside it.'],
-    ru: ['Календарь управления', 'На год вперёд, вместе с финансовым планированием.'],
+    en: ['Management calendar', 'Management calendar including financial planning.'],
+    ru: [
+      'Календарь управления',
+      'Управленческий календарь, включая финансовое планирование на год.',
+    ],
   },
   {
-    en: ['A marketing plan for the year', 'Online and off, written before the season starts.'],
-    ru: ['Годовой маркетинговый план', 'Онлайн и офлайн, составленный до начала сезона.'],
+    en: ['Yearly marketing plan', 'Online/offline marketing strategy for the year.'],
+    ru: ['Годовой маркетинговый план', 'Стратегия онлайн/оффлайн маркетинга на год.'],
   },
   {
     en: [
-      'The databases that matter',
-      'Every yacht we manage, listed where the brokerages actually look.',
+      'Top database listings',
+      'All of our managed yachts in key databases, portals and MLS systems with only the top brokerage firms as members such as; Yachtfolio, Boat International, Superyachts.com, Charter Index, etc.',
     ],
     ru: [
-      'Лучшие места в базах',
-      'Каждая яхта под управлением — там, где её действительно ищут брокеры.',
+      'Лучшие места в базах данных',
+      'Все наши яхты находятся в ключевых базах данных, порталах и системах MLS, членами которых являются только лучшие брокерские компании, такие как Yachtfolio, Boat International, Superyachts.com, Charter Index и др.',
     ],
   },
   {
-    en: [
-      'The events, as partners',
-      'The weeks our yachts are chartered are the weeks the events are running.',
-    ],
+    en: ['Luxury event partnerships', 'We partner with luxury and charity events.'],
     ru: [
-      'Партнёрство с организаторами',
-      'Недели, когда наши яхты в чартере, — это недели, когда идут мероприятия.',
+      'Регулярное партнерство с организаторами элитных мероприятий',
+      'Наши яхты регулярно участвуют в мероприятиях, что обеспечивает им высокую арендную загрузку круглый год.',
     ],
   },
 ]
@@ -869,30 +887,41 @@ const HERO_YACHTS: Record<
 > = {
   sales_yachts: {
     en: {
-      overline: 'Yachts for sale',
-      title: 'A yacht bought the way an aircraft is',
-      description: 'Surveyed, valued and closed by the people who do it every week.',
-      button: 'Ask about a yacht',
+      overline: 'ATM JET',
+      title: 'Yacht Sales',
+      description:
+        'ATM JET Yachts is proud to offer the largest fleet of superyachts for sale over 20 metres worldwide.',
+      description2:
+        'Our extensive network of owners and shipyards allows us to access thousands of additional yachts, including those not publicly listed for sale.',
+      button: 'Get a quote',
     },
     ru: {
-      overline: 'Яхты на продажу',
-      title: 'Яхта покупается так же, как борт',
-      description: 'Осмотр, оценка и сделка — теми, кто делает это каждую неделю.',
-      button: 'Спросить о яхте',
+      overline: 'ATM JET',
+      title: 'Продажа яхт',
+      description:
+        'ATM JET Yachts предлагает на продажу самый большой флот яхт длиной более 20 метров по всему миру.',
+      description2:
+        'Наша обширная сеть владельцев и верфей позволяет нам получить доступ к тысячам яхт, включая те, которые не выставлены на продажу в открытом доступе.',
+      button: 'Получить предложение',
     },
   },
+  // The charter page drew the same hero with its own words and its button hidden (section 4).
   yachts: {
     en: {
-      overline: 'Yacht charter',
-      title: 'The week that follows the flight',
-      description: 'Motor and sailing yachts from 20 to 100 metres, crewed and provisioned.',
-      description2: 'Berths, permits and the transfer from the airport are arranged here.',
+      overline: 'ATM JET',
+      title: 'Yacht Charter',
+      description:
+        'ATM JET Yachts is proud to offer the largest fleet of superyachts for charter over 20 metres worldwide.',
+      description2:
+        'Our extensive network of owners and operators gives us access to a vast selection of additional yachts, including those not publicly available for charter.',
     },
     ru: {
-      overline: 'Аренда яхт',
-      title: 'Неделя, которая следует за перелётом',
-      description: 'Моторные и парусные яхты от 20 до 100 метров, с экипажем и снабжением.',
-      description2: 'Стоянки, разрешения и трансфер из аэропорта — на нас.',
+      overline: 'ATM JET',
+      title: 'Аренда яхт',
+      description:
+        'ATM JET Yachts предлагает в аренду самый большой флот яхт длиной более 20 метров по всему миру.',
+      description2:
+        'Наша обширная сеть владельцев и верфей позволяет нам получить доступ к тысячам яхт, включая те, которые не выставлены в аренду в открытом доступе.',
     },
   },
 }
@@ -990,53 +1019,60 @@ const OPTIONS: Record<
   },
   sales_yachts: {
     en: {
-      title: 'Buying a yacht, start to finish',
+      title: 'Comprehensive yacht services',
       cards: [
         {
           title: 'Legal department',
-          description: 'The paperwork a hull changes hands on, ready before the survey ends:',
+          description:
+            'The legal department is committed to ensuring that the transaction is completely secure from start to finish. We will prepare the following:',
           items: [
-            'A letter of intent with its guarantees',
-            'A lien check on the hull',
-            'The sale and purchase agreement',
-            'The change of ownership on the register',
-            'Registration under the flag that suits you',
+            'Letter of intent with guarantees and undertakings',
+            "Verification of the yacht's bank lien",
+            'Sale and Purchase Agreement',
+            'Change of ownership in the decision to register the yacht',
+            'Registration of the yacht under a flag of convenience',
+            'Other documents required',
           ],
         },
         {
           title: 'Finance department',
-          description: 'What the yacht costs after the price is agreed:',
+          description:
+            'The finance department will select the most appropriate option from the following:',
           items: [
-            'The tax jurisdiction the deal is best held in',
-            'The insurance that covers where you sail',
-            'What a season of ownership costs',
-            'The crew the yacht needs, and what they cost',
+            'Select the most advantageous tax jurisdiction for the transaction.',
+            'Select the most suitable insurance.',
+            'Project the cost of ownership.',
+            'Calculate the projected rental income.',
+            'Number and cost of crew required',
           ],
         },
       ],
     },
     ru: {
-      title: 'Покупка яхты — от первого письма до передачи',
+      title: 'Комплексное сопровождение в покупке',
       cards: [
         {
           title: 'Юридический отдел',
-          description: 'Документы, по которым яхта меняет владельца, готовы до конца осмотра:',
+          description:
+            'Юридический отдел обеспечит полную безопасность сделки от начала и до конца. Мы подготовим:',
           items: [
-            'Письмо о намерениях с гарантиями',
-            'Проверка залога по корпусу',
-            'Договор купли-продажи',
-            'Смена собственника в реестре',
-            'Регистрация под подходящим флагом',
+            'Письмо о намерениях с гарантиями и обязательствами',
+            'Проверку наличия яхты в банковском залоге',
+            'Соглашение о купле-продаже',
+            'Смена владельца в решении о регистрации яхты',
+            'Регистрация яхты под удобным флагом',
+            'Другие необходимые документы',
           ],
         },
         {
           title: 'Финансовый отдел',
-          description: 'Во что обходится яхта после того, как цена согласована:',
+          description: 'Финансовый отдел поможет с организацией:',
           items: [
-            'Налоговая юрисдикция, в которой сделку выгоднее держать',
-            'Страхование под то, где вы ходите',
-            'Стоимость сезона владения',
-            'Экипаж, который нужен яхте, и его стоимость',
+            'Наиболее выгодной налоговой юрисдикции для сделки.',
+            'Подходящая страховая компания.',
+            'Прогноз стоимости владения.',
+            'Плановый доход от сдачи в аренду.',
+            'Количество и стоимость необходимого экипажа',
           ],
         },
       ],
@@ -1471,17 +1507,21 @@ function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout 
       blockType: 'framedDescriptor',
       title:
         locale === 'en'
-          ? 'Every yacht we list, we have stood on'
-          : 'На каждой яхте из списка мы стояли сами',
+          ? 'We buy yachts for our clients as well as for ourselves.'
+          : 'Нашим клиентам мы покупаем так же трепетно, как себе.',
     })
     sections.push({
       blockType: 'recentYachts',
-      title: locale === 'en' ? 'Recently listed' : 'Недавно выставленные',
+      title:
+        locale === 'en'
+          ? 'Recently bought yachts for ourselves'
+          : 'Наши последние покупки в собственный флот',
       limit: 8,
     })
     sections.push({
       blockType: 'weInspect',
-      title: locale === 'en' ? 'What we inspect' : 'Что мы проверяем',
+      title:
+        locale === 'en' ? 'Conducting a technical assessment' : 'Проведение технической оценки',
       slides: INSPECTIONS.map((slide) => ({
         title: slide[locale][0],
         description: slide[locale][1],
@@ -1615,14 +1655,14 @@ function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout 
   // The twenty years, and what they buy a yacht under management. The legacy gave both the same
   // heading, so the page says it twice (section 4, items 7 and 8).
   if (slug === 'sales_yachts') {
-    const years = locale === 'en' ? 'Twenty years on the water' : 'Двадцать лет на воде'
+    const years = locale === 'en' ? "20 years' experience" : '20 лет опыта'
     sections.push({
       blockType: 'photoDescriptor',
       title: years,
       description:
         locale === 'en'
-          ? 'The same brokers, the same yards, and a list of buyers who answer the telephone.'
-          : 'Те же брокеры, те же верфи и список покупателей, которые берут трубку.',
+          ? 'We will negotiate on your behalf to secure the most favorable terms.'
+          : 'Мы будем вести переговоры от вашего имени, и получим наиболее выгодные условия.',
       image: fixture.photo,
     })
     sections.push({

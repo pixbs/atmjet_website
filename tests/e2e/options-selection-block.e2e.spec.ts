@@ -37,6 +37,6 @@ test.describe('the options selection', () => {
     expect(aircraft).toContain('Проверка залога по борту')
     expect(aircraft).not.toContain('A lien check on the airframe')
     // The same two departments, saying what a hull needs rather than an airframe.
-    expect(yachts).toContain('Проверка залога по корпусу')
+    expect(yachts).toContain('Проверку наличия яхты в банковском залоге')
   })
 })

@@ -13,7 +13,7 @@ test.describe('the recent yachts', () => {
     const html = await (await request.get(pathFor('/sales_yachts', 'en'))).text()
 
     expect(html).toContain('data-section="recent-yachts"')
-    expect(html).toContain('Recently listed')
+    expect(html).toContain('Recently bought yachts for ourselves')
     expect(html).toContain('Benetti')
     // The length is composed with its unit, as the legacy card composed it.
     expect(html).toContain('120 feet')
