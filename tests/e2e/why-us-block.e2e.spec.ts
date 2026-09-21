@@ -16,15 +16,15 @@ test.describe('the why us section', () => {
     const html = await (await request.get(pathFor('/cargo_charter', 'en'))).text()
 
     expect(html).toContain('data-section="why-us"')
-    expect(html).toContain('What a charter with us comes with, whatever is in the hold.')
-    expect(html).toContain('Years in the air')
+    expect(html).toContain('Why choose us?')
+    expect(html).toContain('Global coverage')
   })
 
   test('comes to rest lower for each reason the page carries', async ({ page }) => {
     await page.goto(pathFor('/cargo_charter', 'en'))
     const cards = page.locator(CARDS)
 
-    await expect(cards).toHaveCount(3)
+    await expect(cards).toHaveCount(4)
     for (const [index, card] of (await cards.all()).entries())
       await expect(card).toHaveCSS('top', `${(index + 1) * 32}px`)
   })
@@ -51,15 +51,15 @@ test.describe('the why us section', () => {
     await page.goto(pathFor('/cargo_charter', 'en'))
     const last = page.locator(CARDS).last()
 
-    await expect(last.getByText('A price agreed once')).toBeVisible()
+    await expect(last.getByText('Guarantees')).toBeVisible()
     await expect(last.locator('img')).toHaveCount(0)
   })
 
   test('speaks the language of the page it is on', async ({ request }) => {
     const html = await (await request.get(pathFor('/cargo_charter', 'ru'))).text()
 
-    expect(html).toContain('Лет в воздухе')
-    expect(html).not.toContain('Years in the air')
+    expect(html).toContain('Глобальный охват')
+    expect(html).not.toContain('Global coverage')
   })
 })
 

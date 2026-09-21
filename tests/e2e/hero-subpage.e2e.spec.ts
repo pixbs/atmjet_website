@@ -13,7 +13,7 @@ test.describe('the subpage hero', () => {
     const html = await (await request.get(pathFor('/cargo_charter', 'en'))).text()
 
     expect(html).toContain('data-section="hero-subpage"')
-    expect(html).toContain('Freight where a scheduled service will not go.')
+    expect(html).toContain('Recognizing the critical need for speed in logistics')
     // Fetched with the markup rather than when it scrolls into view: the legacy marked every
     // hero `loading='lazy'` (section 13, entry 15).
     expect(html).toContain('rel="preload" as="image"')
@@ -22,7 +22,7 @@ test.describe('the subpage hero', () => {
   test('speaks the language of the page it opens', async ({ request }) => {
     const html = await (await request.get(pathFor('/cargo_charter', 'ru'))).text()
 
-    expect(html).toContain('Грузы туда, куда не летают регулярные рейсы.')
+    expect(html).toContain('Понимая критическую важность скорости в логистике')
   })
 
   test('is the heading of the page, which the title above it used to be', async ({ page }) => {
@@ -37,7 +37,9 @@ test.describe('the subpage hero', () => {
     await page.goto(pathFor('/citizens', 'ru'))
     const hero = page.locator('[data-section="hero-subpage"]')
 
-    await expect(hero.getByRole('heading', { name: 'Гражданам' })).toBeVisible()
+    await expect(
+      hero.getByRole('heading', { name: 'Для граждан Российской Федерации' }),
+    ).toBeVisible()
     await expect(hero.locator('p')).toBeEmpty()
   })
 
