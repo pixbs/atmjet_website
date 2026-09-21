@@ -249,3 +249,41 @@ describe('the map as a whole', () => {
     }
   })
 })
+
+/**
+ * The Ukrainian the seed enters (issue #166). The site does not serve it — `enabledLocales`
+ * starts at the two locales the legacy served, and `tests/e2e/i18n.e2e.spec.ts` holds `/uk` to a
+ * 404 — so what this asserts is that an editor who opens the admin in Ukrainian finds the
+ * language filled in rather than empty, for the day the owner enables it.
+ *
+ * `fallbackLocale: false` on every read: with the fallback on, a field nobody has written comes
+ * back as the English one and the assertion passes on nothing.
+ */
+describe('the Ukrainian content', () => {
+  it(
+    'is entered for every page the seed writes',
+    async () => {
+      await runSeed(registry.payload)
+
+      const pages = await registry.payload.find({
+        collection: 'pages',
+        where: { slug: { in: [...PAGE_SLUGS] } },
+        locale: 'uk',
+        fallbackLocale: false,
+        depth: 0,
+        limit: 0,
+        overrideAccess: true,
+      })
+
+      expect(pages.docs.every((page) => (page.layout?.length ?? 0) > 0)).toBe(true)
+
+      const home = pages.docs.find((page) => page.slug === '')
+      expect(home?.title).toBe('Головна')
+
+      // One section of it, to show the sections are translated and not only the title.
+      const whyUs = home?.layout?.find((block) => block.blockType === 'whyUs')
+      expect(whyUs).toMatchObject({ title: 'Чому варто вибрати саме нас?' })
+    },
+    SEED_TIMEOUT,
+  )
+})
