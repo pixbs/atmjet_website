@@ -20,6 +20,14 @@ interface SeedAircraft {
   cabinHeight?: number
   /** Kilometres, as the legacy `aircraft_type_range_maximum` held them. */
   rangeMaximum?: number
+  /** Metres, the pair the rich layout prints as `length/width` (issue #136). */
+  cabinLength?: number
+  cabinWidth?: number
+  /** From the legacy extension_description; the head and the structured data read it (#170). */
+  description?: string
+  /** The two the rich layout's sentences name beside the figures (issue #136). */
+  operator?: string
+  baseAirportIcao?: string
 }
 
 // The registrations are ones no test writes by hand: the fixture and the integration tier share
@@ -33,6 +41,15 @@ export const SEED_AIRCRAFT: readonly SeedAircraft[] = [
     passengers: 13,
     cabinHeight: 1.88,
     rangeMaximum: 11112,
+    // The one aircraft filled in far enough to draw the rich layout whole (issue #136): the
+    // pair of cabin measurements and a description of more than one paragraph.
+    cabinLength: 13.18,
+    cabinWidth: 2.49,
+    operator: 'ATM JET',
+    // A seeded airport, so the sentence about where she is based has somewhere to name.
+    baseAirportIcao: 'OMDB',
+    description:
+      'Thirteen seats and a bed, out of Dubai, with the range for a leg nobody wants to break.\nRefurbished in 2021 and flown by the crew who know her, she leaves from the stand she is parked on.',
   },
   {
     registration: 'T7-ATM',
@@ -69,6 +86,16 @@ export async function seedAircraft(payload: Payload): Promise<SeedOutcome[]> {
   })
   const photo = media.docs[0]?.id
 
+  /** The airports the empty-legs fixture seeds, so a base can be named by its ICAO (#136). */
+  const airports = await payload.find({
+    collection: 'airports',
+    limit: 0,
+    depth: 0,
+    overrideAccess: true,
+  })
+  const airportBy = (icao: string | undefined) =>
+    icao === undefined ? undefined : airports.docs.find((airport) => airport.icao === icao)?.id
+
   for (const aircraft of SEED_AIRCRAFT) {
     const existing = await payload.find({
       collection: 'aircraft',
@@ -94,10 +121,15 @@ export async function seedAircraft(payload: Payload): Promise<SeedOutcome[]> {
         availability: 'available',
         offerings: ['charter', 'sale'],
         type: { name: aircraft.model, model: aircraft.model, category: aircraft.category },
+        description: aircraft.description,
+        operator: aircraft.operator === undefined ? undefined : { companyName: aircraft.operator },
+        baseAirport: airportBy(aircraft.baseAirportIcao),
         specification: {
           passengers: aircraft.passengers,
           yearOfProduction: aircraft.year,
           cabinHeight: aircraft.cabinHeight,
+          cabinLength: aircraft.cabinLength,
+          cabinWidth: aircraft.cabinWidth,
           rangeMaximum: aircraft.rangeMaximum,
         },
         images: photo === undefined ? [] : [{ type: 'exterior', media: photo }],
