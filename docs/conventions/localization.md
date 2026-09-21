@@ -40,6 +40,18 @@ The proxy holds the setting for a minute rather than reading it per request, so 
 
 This means a page is never blank in a locale that has not been translated yet, which is what makes `uk` safe to enter ahead of launch.
 
+## Alternates and hreflang
+
+One answer per page, and the page gives it. Every route builds its own `alternates` in `generateMetadata` through `pageMetadata` (`src/lib/metadata.ts`), which emits `canonical`, one `hreflang` per locale the page answers in, and `x-default`. `alternateLinks` is off in `src/i18n/routing.ts` (issue #168): next-intl offers the same set as a `Link` response header, but it knows only the routing, so it named an unprefixed `x-default` and an alternate for every routed locale whether the page answers in it or not.
+
+Three rules decide the set:
+
+- **Enabled locales only.** The list comes from `getEnabledLocales()`, never from `ALL_LOCALES`, so a hidden locale is never advertised — the same flag the sitemap and the switcher read.
+- **Locales this page answers in.** `servedLocales(page.availableLocales, locales)` narrows it again: the Russian-only citizens page offers `ru` and nothing else, because `/en/citizens` answers 307 and an alternate a crawler is redirected from is worse than none (issue #149).
+- **`x-default` is the first of what is left**, which is `en` for a page served in every language and `ru` for a page served only in Russian. It is the URL a visitor whose language the site does not serve should land on, so it has to be one that answers.
+
+**A page whose content is the English fallback still answers in its own locale and keeps its alternate.** `localization.fallback` means a Russian page with an untranslated field renders the English value rather than nothing (see below), so `/ru/<slug>` is a real page with real content and a URL of its own. Dropping its alternate would hide a working URL; `availableLocales` is the only thing that removes a locale from the set, and an editor sets it deliberately.
+
 ## Which fields are localized
 
 Localize anything a visitor reads and a translator would rewrite: headings, body copy, button labels, image `alt`, SEO title and description, slugs only when the URL itself differs per locale (it does not on this site, see ADR-0003).
