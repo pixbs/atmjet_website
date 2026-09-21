@@ -26,13 +26,19 @@ const PAGES: readonly Subpage[] = [
     slug: 'cargo_charter',
     sections: ['hero-subpage', 'why-us', 'contact-us'],
     titles: { en: 'Cargo charter', ru: 'Грузовые перевозки' },
-    words: { en: 'Freight where a scheduled service will not go.', ru: 'Грузы туда, куда' },
+    words: {
+      en: 'Recognizing the critical need for speed in logistics',
+      ru: 'Понимая критическую важность скорости в логистике',
+    },
   },
   {
     slug: 'medical_aviation',
     sections: ['hero-subpage', 'key-features', 'contact-us'],
     titles: { en: 'Medical aviation', ru: 'Медицинская авиация' },
-    words: { en: 'An intensive care unit at cruising altitude.', ru: 'Реанимация на высоте' },
+    words: {
+      en: 'We will take care of everything while you take care of the people important to you',
+      ru: 'Мы позаботимся обо всем, пока вы заботитесь о важных для вас людях.',
+    },
   },
   {
     slug: 'empty_legs',

@@ -14,15 +14,15 @@ test.describe('the key features section', () => {
     const html = await (await request.get(pathFor('/medical_aviation', 'en'))).text()
 
     expect(html).toContain('data-section="key-features"')
-    expect(html).toContain('The aircraft is fitted for the patient, not for the route.')
-    expect(html).toContain('An intensive care cabin')
-    expect(html).toContain('Door to door')
+    expect(html).toContain('Unlock exceptional benefits with our exclusive key features')
+    expect(html).toContain('Find a medical aircraft')
+    expect(html).toContain('Transplant delivery')
   })
 
   test('moves the features along on the next arrow', async ({ page }) => {
     await page.goto(pathFor('/medical_aviation', 'en'))
     const section = page.locator(SECTION)
-    const first = section.getByRole('heading', { name: 'An intensive care cabin' })
+    const first = section.getByRole('heading', { name: 'Find a medical aircraft' })
     await expect(first).toBeVisible()
     const before = (await first.boundingBox())?.x ?? 0
 
@@ -37,6 +37,8 @@ test.describe('the key features section', () => {
     const section = page.locator(SECTION)
 
     await expect(section.getByRole('button', { name: 'Вперёд' })).toBeVisible()
-    await expect(section.getByRole('heading', { name: 'Реанимационная кабина' })).toBeVisible()
+    await expect(
+      section.getByRole('heading', { name: 'Подберем медицинский самолет' }),
+    ).toBeVisible()
   })
 })

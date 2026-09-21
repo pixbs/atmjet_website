@@ -98,19 +98,45 @@ const TRANSFER: Record<'en' | 'ru', string> = {
  * The four pages the subpage hero opens (issue #112, `docs/legacy-inventory.md` section 5).
  * The citizens page passed no sentence at all, which is the shape the block has to keep.
  */
-const HERO_PAGES: Record<string, Record<'en' | 'ru', string>> = {
+const HERO_PAGES: Record<string, Record<'en' | 'ru', { title: string; description: string }>> = {
   cargo_charter: {
-    en: 'Freight where a scheduled service will not go.',
-    ru: 'Грузы туда, куда не летают регулярные рейсы.',
+    en: {
+      title: 'Cargo charter',
+      description:
+        'Recognizing the critical need for speed in logistics, place your trust in the seasoned professionals of the airfreight industry. We ensure your cargo is transported safely and securely, maintaining the highest standards of service.',
+    },
+    ru: {
+      title: 'Грузовой чартер',
+      description:
+        'Понимая критическую важность скорости в логистике, доверьтесь опыту профессионалов индустрии воздушных грузоперевозок для безопасной и надежной доставки вашего груза. Мы соблюдаем высочайшие стандарты качества обслуживания, обеспечивая эффективность и безопасность каждой отправки.',
+    },
   },
-  citizens: { en: '', ru: '' },
+  // The legacy passed this one an empty description and drew its words a section lower, in the
+  // card beside the wordmark (section 4).
+  citizens: {
+    en: { title: 'For citizens of the Russian Federation', description: '' },
+    ru: { title: 'Для граждан Российской Федерации', description: '' },
+  },
   group_charters: {
-    en: 'One aircraft for the whole party, at a price agreed once.',
-    ru: 'Один самолёт на всю группу по цене, согласованной один раз.',
+    en: {
+      title: 'Group charters',
+      description: 'One aircraft for the whole party, at a price agreed once.',
+    },
+    ru: {
+      title: 'Групповые перевозки',
+      description: 'Один самолёт на всю группу по цене, согласованной один раз.',
+    },
   },
   medical_aviation: {
-    en: 'An intensive care unit at cruising altitude.',
-    ru: 'Реанимация на высоте крейсерского полёта.',
+    en: {
+      title: 'Medical aviation',
+      description:
+        'We will take care of everything while you take care of the people important to you',
+    },
+    ru: {
+      title: 'Медицинский перелет',
+      description: 'Мы позаботимся обо всем, пока вы заботитесь о важных для вас людях.',
+    },
   },
 }
 
@@ -239,47 +265,91 @@ const WHY_US: {
   ru: [string, string]
 }[] = [
   {
-    figure: '20+',
     withImage: true,
-    en: ['Years in the air', 'Two decades of charters out of the Gulf, Europe and the CIS.'],
-    ru: ['Лет в воздухе', 'Двадцать лет чартеров из Залива, Европы и СНГ.'],
+    en: [
+      'Global coverage',
+      "Our extensive access to cargo aircraft and a global network of trusted partners enables us to offer a wide variety of delivery options to any destination worldwide. Whether it's urgent air freight or specialized cargo, we provide flexible and efficient solutions tailored to meet your specific shipping needs.",
+    ],
+    ru: [
+      'Глобальный охват',
+      'Наш доступ к широкому парку грузовых самолетов и обширная сеть надежных партнеров позволяют предлагать разнообразные варианты доставки в любую точку мира. Независимо от срочности или сложности перевозки, мы обеспечиваем гибкие и эффективные решения, адаптированные под конкретные нужды клиента.',
+    ],
   },
   {
-    figure: '24/7',
     withImage: true,
-    en: ['Answered at any hour', 'A manager who knows the flight, not a call centre.'],
-    ru: ['Отвечаем в любой час', 'Менеджер, который знает рейс, а не колл-центр.'],
+    en: [
+      'Personalized approach',
+      'Our expert logistics team specializes in finding the most efficient solutions for any cargo type or route, no matter how complex. With years of experience and industry knowledge, we ensure that every shipment is handled with precision and care, optimizing both speed and cost-effectiveness.',
+    ],
+    ru: [
+      'Индивидуальный подход',
+      'Команда логистов ATM JET подбирает оптимальные решения для доставки любого груза, обеспечивая баланс между скоростью и стоимостью. Независимо от сложности маршрута, мы гарантируем эффективное выполнение задач благодаря нашему опыту и знаниям в логистике.',
+    ],
   },
   {
     withImage: false,
-    en: ['A price agreed once', 'What is quoted is what is invoiced, fuel and handling in.'],
+    en: [
+      'Security',
+      'We strictly adhere to the highest standards of security and confidentiality throughout the entire cargo transport process. From pickup to final delivery, we ensure that every shipment is protected with comprehensive safety protocols, ensuring both discretion and secure handling.',
+    ],
     ru: [
-      'Цена, согласованная один раз',
-      'Сколько названо, столько и в счёте, с топливом и наземкой.',
+      'Безопасность',
+      'Мы обеспечиваем самые высокие стандарты безопасности и конфиденциальности на всех этапах транспортировки. Контроль каждого этапа доставки гарантирует полную защиту груза и соблюдение всех процедур. Благодаря строгим протоколам безопасности, каждый этап транспортировки находится под постоянным мониторингом, что гарантирует безопасность и конфиденциальность перевозок.',
+    ],
+  },
+  {
+    withImage: false,
+    en: [
+      'Guarantees',
+      'We guarantee strict adherence to all deadlines and terms of cargo transportation, ensuring that every shipment is delivered on time and according to specified conditions. Our commitment to a high level of service means we prioritize reliability and customer satisfaction in every aspect of our operations.',
+    ],
+    ru: [
+      'Гарантии',
+      'Мы гарантируем точное соблюдение всех сроков и условий перевозки, которые закреплены в договоре. Наша команда обеспечивает полное соответствие оговоренным обязательствам, чтобы каждая доставка была выполнена вовремя и в соответствии с договорными требованиями.',
     ],
   },
 ]
 
-/**
- * The features the medical aviation page shows (issue #118, section 5). Four of them, as the
- * legacy page passed.
- */
 const KEY_FEATURES: { en: [string, string]; ru: [string, string] }[] = [
   {
-    en: ['An intensive care cabin', 'A stretcher, a ventilator and the monitoring beside it.'],
-    ru: ['Реанимационная кабина', 'Носилки, аппарат ИВЛ и мониторинг рядом с ними.'],
+    en: [
+      'Find a medical aircraft',
+      'We will provide an aircraft equipped with the necessary medical equipment. Please forward the requirements from the clinic and doctor to us, and we will find an aircraft that meets your specifications.',
+    ],
+    ru: [
+      'Подберем медицинский самолет',
+      'Мы предоставим самолет с необходимым медицинским оборудованием. Пришлите нам требования от клиники и врача и мы подберем самолет укомплектованный под ваш запрос',
+    ],
   },
   {
-    en: ['A doctor on board', 'The crew flies with the team the case needs, not the other way.'],
-    ru: ['Врач на борту', 'Экипаж летит с той бригадой, которой требует случай.'],
+    en: [
+      'Provide doctors on board',
+      'We will organise documents for the accompanying doctor or find doctors with experience in accompanying medical flights.',
+    ],
+    ru: [
+      'Обеспечим врачей на борту',
+      'Оформим документы на сопровождающего врача или подберем врачей с опытом сопровождения медицинских перелетов.',
+    ],
   },
   {
-    en: ['Wheels up in hours', 'Permits, slots and the ambulance at both ends, arranged here.'],
-    ru: ['Вылет за часы', 'Разрешения, слоты и скорая с обеих сторон — на нас.'],
+    en: [
+      'Emergency flight service',
+      'We know that sometimes time is of the essence. We have access to air ambulances around the world. Fast.',
+    ],
+    ru: [
+      'Организация срочных перелетов',
+      'Мы знаем, что иногда время играет решающую роль. У нас есть доступ к воздушным судам скорой помощи по всему миру. Быстро.',
+    ],
   },
   {
-    en: ['Door to door', 'The flight is one leg of a journey that starts and ends at a bed.'],
-    ru: ['От двери до двери', 'Перелёт — одно плечо пути, который начинается и кончается у койки.'],
+    en: [
+      'Transplant delivery',
+      'We are able to deliver organs from any country. Our access to a network of medical aircraft allows us to safely deliver the transplant to the patient in a suitable environment, accompanied by a doctor.',
+    ],
+    ru: [
+      'Доставка трансплантатов',
+      'Мы можем доставить органы из любой страны. Наш доступ к сети медицинских самолетов позволяет безопасно доставить трансплантат пациенту в подходящих условиях, в сопровождении врача.',
+    ],
   },
 ]
 
@@ -727,8 +797,8 @@ const SALES_WHY_US: {
  * read it from the hero's own translation key and drew it a section lower.
  */
 const WORDMARK_NOTE: Record<'en' | 'ru', string> = {
-  en: 'We are aware of the restrictions our clients from Russia face, and we can help you avoid any of them.',
-  ru: 'Мы осведомлены о глобальных вызовах, включая санкции, и гарантируем, что они не станут преградой для ваших путешествий. Наша команда экспертов обеспечивает беспрепятственные чартерные перелеты из Москвы в любую точку мира.',
+  en: 'We are aware of the restrictions faced by our clients from Russia. And we can help you avoid any limitations.',
+  ru: 'Мы осведомлены о глобальных вызовах, включая санкции, и гарантируем, что они не станут преградой для ваших путешествий. Наша команда экспертов обеспечивает беспрепятственные чартерные перелеты из Москвы в любую точку мира, гарантируя высочайший уровень сервиса и комфорта на всех этапах вашего путешествия.',
 }
 
 /**
@@ -739,27 +809,30 @@ const CITIZENS_WHY_US: {
   title: Record<'en' | 'ru', string>
   cards: Record<'en' | 'ru', string>[]
 } = {
-  title: { en: 'How we work with citizens of Russia', ru: 'Как мы работаем с гражданами РФ?' },
+  title: { en: 'Why select us?', ru: 'Как мы работаем с гражданами РФ?' },
+  // The two catalogues do not line up: the Russian carries a card about the paperwork that the
+  // English has not got, and the English one about foreign-registered aircraft that the Russian
+  // has not. Each is what its own catalogue held, card for card.
   cards: [
     {
-      en: 'We take charge of the correspondence around the sanctions lists and follow every change to the international rules.',
-      ru: 'Мы прекрасно понимаем все тонкости взаимодействия с санкционными списками и тщательно следим за всеми изменениями в международных правилах.',
+      en: 'We are in charge of communication on sanctions lists',
+      ru: 'Мы прекрасно понимаем все тонкости взаимодействия с санкционными списками. В ATM JET мы тщательно следим за всеми изменениями в международных правилах и обеспечиваем комфорт ваших перелетов даже в условиях сложных ограничений.',
     },
     {
-      en: 'We prepare every document a Russian passenger needs, and support you at each stage of the paperwork.',
-      ru: 'Мы обеспечиваем оформление всех необходимых документов для русских пассажиров и предоставляем полную поддержку на каждом этапе.',
+      en: 'Organizing technical stops',
+      ru: 'Мы обеспечиваем оформление всех необходимых документов для русских пассажиров, даже в условиях действующих санкций. ATM JET внимательно отслеживает изменения в международных правилах и санкционных списках. Мы знаем, как важно быстро и корректно подготовить документы для бесперебойного пересечения границ, и предоставляем полную поддержку на каждом этапе оформления',
     },
     {
-      en: 'We arrange the technical stops a route needs, planned around your preferences and the rules of each country.',
-      ru: 'Мы организуем оптимальные технические остановки для ваших рейсов, планируя каждую с учётом ваших предпочтений и международных требований.',
+      en: 'Selection of foreign-registered aircraft',
+      ru: 'Мы организуем оптимальные технические остановки для ваших рейсов, гарантируя минимальные задержки и максимальную эффективность маршрута. ATM JET тщательно планирует каждую остановку с учетом ваших предпочтений и международных требований, чтобы обеспечить бесперебойные перелеты даже на самых сложных маршрутах',
     },
     {
-      en: 'We find the lead passenger whose citizenship the flight calls for, so that every border is crossed in order.',
-      ru: 'Мы подберём «основного» пассажира с необходимым гражданством, обеспечивая полное соответствие международным требованиям.',
+      en: 'Coordination of the main passenger',
+      ru: 'Мы подберем ‘основного’ пассажира с необходимым гражданством для вашего рейса, обеспечивая полное соответствие международным требованиям и гарантируя беспрепятственное пересечение границ. ATM JET знает все тонкости организации перелетов в условиях санкций и поможет вам осуществить полет с соблюдением всех необходимых формальностей.',
     },
     {
-      en: 'We accept payment in any form: bank transfer, a company account, or cryptocurrency.',
-      ru: 'Мы принимаем любой вид оплаты, включая банковские переводы, корпоративные счета и криптовалюты.',
+      en: 'Any form of payment',
+      ru: 'Мы принимаем любой вид оплаты, включая банковские переводы, корпоративные счета и криптовалюты. ATM JET предоставляет гибкие финансовые решения, чтобы сделать процесс бронирования максимально удобным для наших клиентов.',
     },
   ],
 }
@@ -867,12 +940,12 @@ const QUOTES: { variant: 'press' | 'founder'; en: [string, string]; ru: [string,
   {
     variant: 'press',
     en: [
-      'The brokers who keep flying when the routes close are the ones who own the relationships, not the aircraft.',
-      'Forbes on the private aviation market',
+      'The 14th package of EU sanctions will include a ban on any private and charter flights carried out in the interests of citizens or companies of the Russian Federation.',
+      'We know what restrictions our clients from Russia face. We have been helping to overcome any borders since 2004.',
     ],
     ru: [
-      'Летают дальше те брокеры, у кого есть связи, а не борта в собственности.',
-      'Forbes о рынке деловой авиации',
+      '14-й пакет санкций ЕС включает в себя запрет на любые частные и чартерные рейсы, осуществляемые в интересах граждан или компаний Российской Федерации.',
+      'Наши клиенты - летают. Помогаем преодолевать любые границы с 2004 года.',
     ],
   },
   {
@@ -1142,13 +1215,15 @@ const OPTIONS: Record<
 /** The sections a seeded page starts with; a page with no entry here starts with none. */
 function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout {
   const sections: Layout = []
-  const description = HERO_PAGES[slug]?.[locale]
+  // The hero's own heading, which the legacy read from the page's `*-hero` namespace rather
+  // than from the navigation label the page is titled with (issue #162).
+  const hero = HERO_PAGES[slug]?.[locale]
 
-  if (description !== undefined)
+  if (hero !== undefined)
     sections.push({
       blockType: 'heroSubpage',
-      title: TITLES[slug][locale],
-      description,
+      title: hero.title,
+      description: hero.description,
       image: fixture.photo,
     })
 
@@ -1438,11 +1513,11 @@ function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout 
   if (slug === 'medical_aviation')
     sections.push({
       blockType: 'keyFeatures',
-      title: locale === 'en' ? 'What is on board' : 'Что на борту',
+      title: locale === 'en' ? 'Exclusive key features' : 'Наши преимущества',
       description:
         locale === 'en'
-          ? 'The aircraft is fitted for the patient, not for the route.'
-          : 'Самолёт оснащается под пациента, а не под маршрут.',
+          ? 'Unlock exceptional benefits with our exclusive key features designed to enhance your travel experience:'
+          : 'Основные преимущества позволившие ATM JET стать лидером в медицинской авиации ',
       cards: KEY_FEATURES.map((card) => ({
         title: card[locale][0],
         description: card[locale][1],
@@ -1454,11 +1529,8 @@ function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout 
     sections.push({
       blockType: 'whyUs',
       variant: 'stacked',
-      title: locale === 'en' ? 'Why us' : 'Почему мы',
-      description:
-        locale === 'en'
-          ? 'What a charter with us comes with, whatever is in the hold.'
-          : 'Что входит в чартер с нами, что бы ни было в трюме.',
+      // The legacy passed this one a heading and no sentence under it (section 4).
+      title: locale === 'en' ? 'Why choose us?' : 'Почему стоит выбрать нас?',
       cards: WHY_US.map((card) => ({
         figure: card.figure,
         title: card[locale][0],
