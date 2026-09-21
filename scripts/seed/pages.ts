@@ -116,8 +116,9 @@ const HERO_PAGES: Record<string, Record<'en' | 'ru', string>> = {
 
 /**
  * The five reasons the home page stacked, which the business agents page stacked as well
- * (issue #147, section 4). The first two carry a figure and the other three do not, which is
- * the shape the legacy cards had; the words are placeholders until the content migration.
+ * (issue #147, section 4), in the words the legacy `home-why-us` namespace held (issue #162).
+ * The first two carry a figure and the other three do not, which is the shape the legacy cards
+ * had.
  */
 const HOME_WHY_US: {
   figure?: string
@@ -126,34 +127,55 @@ const HOME_WHY_US: {
 }[] = [
   {
     figure: '20',
-    en: ['Years of experience', 'Charters out of the Gulf, Europe and the CIS since 2004.'],
-    ru: ['Лет опыта', 'Чартеры из Залива, Европы и СНГ с 2004 года.'],
+    en: [
+      'Years of experience',
+      'Since 2004, ATM JET has been a trusted provider of private aviation services, offering a wide array of tailored solutions, including VIP charters, cargo transportation, and specialized medical flights. With years of expertise, we ensure seamless and secure flights for all needs.',
+    ],
+    ru: [
+      'Лет опыта',
+      'С 2004г. компания ATM JET является лидером в обеспечении комфорта частных перелетов с 2004 года, предлагая расширить представление о путешествиях премиум-класса. Мы создаем уникальные решения для самых взыскательных клиентов.',
+    ],
   },
   {
     figure: '16,000',
-    en: ['Satisfied clients', 'Who came back, and sent the people they fly with.'],
-    ru: ['Довольных клиентов', 'Которые вернулись и привели тех, с кем летают.'],
+    en: [
+      'Satisfied clients',
+      'Over 16,000 clients trust ATM JET as their preferred partner for reliable business aviation services. Our commitment to excellence ensures seamless and personalized private jet solutions for corporate and individual needs.',
+    ],
+    ru: [
+      'Довольных клиентов',
+      'Мы гордимся тем, что заслужили доверие более 16 тыс клиентов, выбравших нас в качестве партнера обеспечивающего новый уровень сервиса в деловой авиации.',
+    ],
   },
   {
-    en: ['Trusted by celebrities', 'Names that do not appear on a passenger list, and never have.'],
-    ru: ['Нам доверяют знаменитости', 'Имена, которых нет в списке пассажиров и не было.'],
+    en: [
+      'Trusted by celebrities',
+      'ATM JET proudly serves a diverse clientele, including high-profile celebrities, business executives, football clubs, public corporations, and government officials. Our clients trust us to deliver unparalleled comfort and privacy, ensuring their business aviation needs are met with the highest standards.',
+    ],
+    ru: [
+      'Нам доверяют знаменитости',
+      'Мы гордимся работать с лидерами, включая знаменитостей, бизнесменов, спортивных звезд, лидеров корпораций и членов правительства. Ценим, как они доверяют нам свой комфорт.',
+    ],
   },
   {
     en: [
       'Same-day departures',
-      'Permits, slots and a crew, arranged between the call and the gate.',
+      "With 24/7 access to a global database of over 25,000 aircraft, ATM JET guarantees private jet availability within just 5 hours of booking. Whether for business or leisure, our extensive fleet ensures flexible and fast travel options to meet any client's needs.",
     ],
     ru: [
       'Вылеты в тот же день',
-      'Разрешения, слоты и экипаж — между звонком и выходом на посадку.',
+      'ATM JET предоставляет доступ к более чем 25 000 воздушных судов по всему миру. Наши клиенты могут выбрать дальнемагистральные лайнеры, джеты среднего класса или турбовинтовые самолеты и вылететь в течение 5 часов после бронирования, благодаря круглосуточной поддержке.',
     ],
   },
   {
     en: [
-      'Commitment to excellence',
-      'The cabin, the catering and the car, to the standard you set.',
+      'Commitment to Excellence',
+      'At ATM JET, we meticulously manage every detail of your private flight, ensuring exceptional service and seamless experiences. Our expertise in luxury aviation allows us to consistently exceed expectations and provide personalized solutions tailored to your needs.',
     ],
-    ru: ['Стремление к совершенству', 'Салон, кейтеринг и машина — по вашему стандарту.'],
+    ru: [
+      'Стремление к совершенству',
+      'Мы уделяем фанатичное внимание каждой детали, чтобы обеспечить высший уровень сервиса. Наш многолетний опыт в частной авиации позволяет нам не только удовлетворить, но и превзойти ваши ожидания при каждом полете.',
+    ],
   },
 ]
 
@@ -263,45 +285,58 @@ const KEY_FEATURES: { en: [string, string]; ru: [string, string] }[] = [
 
 /**
  * What the home page said a flight comes with (issue #134, section 4): the five cards the legacy
- * `key-features` namespace held, in the order its images were listed.
+ * `key-features` namespace held, in its own order (issue #162). The legacy paired them with
+ * pictures named after other cards; the pictures arrive with E5.12 and the pairing is theirs.
  */
 const HOME_KEY_FEATURES: { en: [string, string]; ru: [string, string] }[] = [
   {
     en: [
-      'Tailored to your preferences',
-      'The cabin, the catering and the crew, set once and remembered after.',
+      'Pay any way you want, including crypto',
+      'ATM JET offers flexible payment options, accepting transfers from individual and corporate bank accounts, as well as cryptocurrency. Our diverse payment methods make booking a private jet simple and convenient for all clients.',
     ],
-    ru: ['Под ваши предпочтения', 'Салон, кейтеринг и экипаж — согласованы один раз и запомнены.'],
+    ru: [
+      'Платите любым способом, включая криптовалюту',
+      'ATM JET принимает все доступные формы оплаты, включая платежи с индивидуальных и корпоративных счетов в любой стране. Мы также поддерживаем оплату криптовалютами, такими как USDT, BTC и ETH, обеспечивая максимальную гибкость и удобство для наших клиентов.',
+    ],
   },
   {
     en: [
-      'The aircraft you choose',
-      'Not the one that happens to be free: the type, the cabin and the operator are yours.',
+      'ATM JET CRM',
+      "With ATM JET's personalized CRM system, simply share your preferences once, and we'll ensure every detail is tailored to your liking for all future flights. Experience seamless, custom service every time you board your private jet.",
     ],
     ru: [
-      'Самолёт, который выбираете вы',
-      'Не тот, что оказался свободен: тип, салон и оператор — ваш выбор.',
+      'ATM JET CRM',
+      'С системой ATM JET CRM достаточно один раз сообщить ваши предпочтения, и мы позаботимся о том, чтобы каждый полет был организован в соответствии с вашими пожеланиями. Мы гарантируем индивидуальный подход и максимальный комфорт при каждом бронировании.',
+    ],
+  },
+  {
+    en: [
+      'Customized aircraft and crew',
+      'ATM JET carefully selects the ideal aircraft and experienced crew for each airport, ensuring maximum comfort and safety for every flight. Our commitment to high standards guarantees a seamless, luxurious experience tailored to your travel needs.',
+    ],
+    ru: [
+      'Безопасность полета',
+      'ATM JET предлагает воздушные суда с экипажами, которые прошли все технические проверки и имеют необходимые сертификаты для безопасных полетов. Мы строго соблюдаем стандарты безопасности, чтобы гарантировать вам надежный и комфортный полет. Ваша безопасность — наш главный приоритет.',
     ],
   },
   {
     en: [
       'Payment after the flight',
-      'An account settled on landing, for the clients who fly with us often.',
+      'ATM JET offers flexible post-flight payment options to reward our loyal clients, providing convenience and ease in settling payments.',
     ],
-    ru: ['Оплата после полёта', 'Счёт закрывается по прилёте — для тех, кто летает с нами часто.'],
+    ru: [
+      'Оплата после полета',
+      'Постоянные клиенты ATM JET получают доступ к гибким условиям оплаты, включая возможность оплаты после полета. Мы создаем удобные финансовые решения, чтобы сделать ваш опыт частных авиаперелетов максимально комфортным.',
+    ],
   },
   {
     en: [
-      'Paid any way you like',
-      'Transfer, card or crypto, in the currency the invoice is written in.',
+      'Best flight prices on popular destinations',
+      "ATM JET offers the best prices on charter flights to the most popular resorts in Europe and Dubai. Travel to prestigious summer destinations like Saint-Tropez, Ibiza, and Monaco, or opt for elite winter resorts such as Courchevel, St. Moritz, and Zermatt. Whether it's a summer getaway or a winter retreat, ATM JET guarantees seamless, stylish travel to the world's top destinations.",
     ],
-    ru: ['Любой способ оплаты', 'Перевод, карта или криптовалюта — в валюте счёта.'],
-  },
-  {
-    en: ['Champagne on board', 'The bottle you asked for, cold, from the moment the door closes.'],
     ru: [
-      'Шампанское на борту',
-      'Та бутылка, о которой вы просили, холодная, с момента закрытия двери.',
+      'Лучшие цены по перелетам на популярных направлениях',
+      'ATM JET предлагает лучшие цены на чартерные рейсы к популярным курортам Европы и Дубая. Летайте на престижные летние направления, такие как Сен-Тропе, Ибица и Монако, или выберите элитные зимние курорты — Куршевель, Санкт-Мориц и Церматт. Наслаждайтесь комфортом путешествий круглый год.',
     ],
   },
 ]
@@ -316,8 +351,8 @@ interface Fixture {
 }
 
 /**
- * The privileges the group page stacks (issue #120, section 5), one per icon the legacy drew,
- * and the invitation under them.
+ * The privileges the home page and the group page stack (issue #120, section 5), one per icon
+ * the legacy drew, in the words its `privilege` namespace held (issue #162).
  */
 const PRIVILEGES: {
   icon: 'plane' | 'exchange' | 'diamond'
@@ -327,28 +362,57 @@ const PRIVILEGES: {
   {
     icon: 'plane',
     en: [
-      'A jet within three hours',
-      'An aircraft ready at the nearest airport, whatever the hour.',
+      'Fly at cost',
+      'ATM JET eliminates the standard brokerage commission, which typically ranges from 3-9%, allowing you to fly at the direct cost of hiring an aircraft. We offer the lowest prices in the industry, ensuring cost-effective private jet travel without hidden fees.',
     ],
-    ru: ['Самолёт за три часа', 'Борт готов в ближайшем аэропорту в любое время суток.'],
+    ru: [
+      'Летайте по себестоимости',
+      'Исключите стандартную брокерскую комиссию в 3-9% и летайте по прямым ценам от авиаперевозчиков. ATM JET предлагает лучшие цены в индустрии, обеспечивая экономию без ущерба для качества и комфорта.',
+    ],
   },
   {
     icon: 'exchange',
-    en: ['One price, agreed once', 'What is quoted is what is invoiced, with nothing added later.'],
+    en: [
+      'We provide assistance with payments and transfers.',
+      'We offer a range of multi-currency accounts in various countries, including cryptocurrency accounts, and serve a diverse customer base with varying payment methods. We provide our international customers with assistance with currency exchange and transit.',
+    ],
     ru: [
-      'Одна цена, согласованная один раз',
-      'Сколько названо, столько и в счёте, без добавлений.',
+      'Помощь в оплате и переводе.',
+      'ATM JET предлагает мультивалютные счета в разных странах, включая криптовалютные счета, чтобы удовлетворить любые предпочтения клиентов по оплате. Мы также предоставляем помощь в транзите и обмене валют, обеспечивая максимальное удобство и гибкость в финансовых операциях.',
     ],
   },
   {
     icon: 'diamond',
-    en: ['The cabin as you left it', 'Crew, catering and cabin kept to the standard you set.'],
+    en: [
+      'VIP Flight Management',
+      'ATM JET Privilege members enjoy the most flexible rescheduling and cancellation policies in the private aviation industry. Our exclusive terms offer peace of mind and unmatched convenience, ensuring your travel plans can adapt to any changes effortlessly.',
+    ],
     ru: [
-      'Салон таким, каким вы его оставили',
-      'Экипаж, кейтеринг и салон — по заданному стандарту.',
+      'VIP Flight Management',
+      'Участники программы ATM JET Privilege получают самые гибкие условия переноса и отмены рейсов в индустрии частной авиации. Наши эксклюзивные правила обеспечивают максимальное удобство и душевное спокойствие, позволяя легко адаптировать ваши планы к любым изменениям.',
     ],
   },
 ]
+
+/** The heading over the privileges, which the legacy split so the second half carries the gold. */
+const PRIVILEGE_HEADING: Record<'en' | 'ru', { title: string; gold: string }> = {
+  en: { title: 'Join the ', gold: 'ATM JET Privilege' },
+  ru: { title: 'Присоединяйтесь к ', gold: 'ATM JET Privilege' },
+}
+
+/** The invitation under them, which the legacy drew over a photograph. */
+const PRIVILEGE_CONTACT: Record<'en' | 'ru', { title: string; description: string }> = {
+  en: {
+    title: 'Contact Key Account Manager',
+    description:
+      'Leave your contact details and we will get in touch to tell you all the benefits of ATM JET Privilege',
+  },
+  ru: {
+    title: 'Свяжитесь с менеджером по ключевым клиентам',
+    description:
+      'Оставьте свои контактные данные и мы свяжемся подробно рассказать Вам обо всех преимуществах ATM JET Privilege',
+  },
+}
 
 /** What the yachts promotion offers, in the three columns the legacy card carried. */
 const YACHT_COLUMNS: { en: [string, string]; ru: [string, string] }[] = [
@@ -367,59 +431,81 @@ const YACHT_COLUMNS: { en: [string, string]; ru: [string, string] }[] = [
 ]
 
 /**
- * The two tiles the legacy home page offered its trade visitors (issue #119, section 5). The
- * home page's own composition is E8.1's to settle (#134), so the fixture shows them on the
- * partners page, which has no sections of its own yet.
+ * The two tiles the legacy home page offered its trade visitors (issue #119, section 5), in the
+ * words its `options` namespace held (issue #162): the heading, and the one label both carried.
  */
 const OPTIONS_TILES: { slug: string; dim: boolean; en: [string, string]; ru: [string, string] }[] =
   [
     {
       slug: 'business_agents',
       dim: false,
-      en: ['For personal assistants', 'What we offer'],
-      ru: ['Персональным ассистентам', 'Что мы предлагаем'],
+      en: ['For personal assistants', 'Learn more'],
+      ru: ['Для персональных ассистентов', 'Узнать больше'],
     },
     {
       slug: 'partners',
       dim: true,
-      en: ['For agencies', 'How we work together'],
-      ru: ['Агентствам', 'Как мы работаем вместе'],
+      en: ['For agencies & concierges', 'Learn more'],
+      ru: ['Для агентств и консьерж-сервисов', 'Узнать больше'],
     },
   ]
 
 /**
- * The five questions the legacy home page answered (issue #123, section 5). Placeholder copy an
- * editor replaces; the second answer carries a line break, which the block keeps.
+ * The five questions the legacy home page answered (issue #123, section 5), in its own words
+ * (issue #162). Each answer keeps the line breaks the legacy split it on, which is what the
+ * block draws and what the structured data of #173 carries; the stray zero-width joiners two of
+ * them held are not reproduced, having never drawn anything.
  */
 const FAQ: { en: [string, string]; ru: [string, string] }[] = [
   {
-    en: ['How soon can we fly?', 'Three hours from the call, once the crew and the slot are held.'],
-    ru: ['Как скоро вылет?', 'Через три часа после звонка, когда экипаж и слот забронированы.'],
+    en: [
+      'How do I order a plane and what documents are needed for this?',
+      'Fill out the booking form and then the personal manager will call you to negotiate the cost of the flight.\nThe package of documents corresponds to the standard one for air travel, the only supplement will be a contract for the provision of a private flight.\nWe will send you a commercial offer with available aircraft on the chosen route. Next, you choose the option that takes into account all your wishes and we sign the lease of the aircraft.\nPayment is made in the way that suits you: bank transfer, cash, credit card.',
+    ],
+    ru: [
+      'Как заказать самолет и какие документы для этого необходимы?',
+      'Заполните форму бронирования, после чего вам позвонит персональный менеджер для согласования стоимости перелета.\nПакет документов соответствует стандартному для авиаперелетов, единственным дополнением будет договор на предоставление частного рейса.\nМы вышлем вам коммерческое предложение с доступными опциями по выбранному маршруту. Далее вы выбираете вариант, учитывающий все ваши пожелания, и мы подписываем договор аренды самолета.\nОплата производится удобным для вас способом: банковский перевод, наличные, кредитная карта, криптовалюты',
+    ],
   },
   {
     en: [
-      'What does the price include?',
-      'The aircraft, the crew, fuel and handling.\nCatering and ground transfers are quoted beside it.',
+      'How much does it cost to rent a plane, the price?',
+      'The cost of a private jet is calculated taking into account such factors as:\n- Class, type of aircraft\n- Jet basing\n- Preferable route\n- Features of the airports hosting the flight\n- Other individual wishes of the client, etc.',
     ],
     ru: [
-      'Что входит в стоимость?',
-      'Самолёт, экипаж, топливо и наземное обслуживание.\nКейтеринг и трансферы считаются отдельно.',
+      'Сколько стоит аренда самолета, цена?',
+      'Стоимость частного самолета рассчитывается с учетом таких факторов, как:\n- Класс, тип самолета\n- Базирование самолета\n- Предпочтительный маршрут\n- Особенности аэропортов, принимающих рейс\n- Другие индивидуальные пожелания клиента и т.д.',
     ],
   },
   {
-    en: ['Can we change the route?', 'Up to the moment the flight plan is filed, and often after.'],
-    ru: ['Можно ли изменить маршрут?', 'До подачи плана полёта, а часто и после неё.'],
-  },
-  {
-    en: ['Do you fly with pets?', 'In the cabin, on most of the fleet, with the papers arranged.'],
+    en: [
+      'Can I change the conditions of the booked flight?',
+      'YES, AND YOU CAN RELY ON:\n- Individual approach\n- Provision of an airplane of any class\n- Worthy service on board\n- Operational route adjustment and making changes according to your wishes, full confidentiality.\nOne of the main tasks of business aviation is to provide high-quality services and provide several related services. We focus exclusively on customer requests.\nThe ATM JET business aviation center is ready to fulfill a whole range of tasks to create optimal conditions for the flight.',
+    ],
     ru: [
-      'Летаете ли вы с животными?',
-      'В салоне, на большей части флота, с оформленными документами.',
+      'Могу ли я изменить условия забронированного рейса?',
+      "Для наших клиентов ответ чаще всего 'да':\n- Индивидуальный подход\n- Предоставление самолета любого класса\n- Достойное обслуживание на борту\n- Оперативная корректировка маршрута и внесение изменений в соответствии с вашими пожеланиями, полная конфиденциальность. Одна из главных задач бизнес-авиации\n- Предоставление качественного сервиса и оказание нескольких сопутствующих услуг. Мы ориентируемся исключительно на запросы клиентов.\nЦентр деловой авиации ATM JET готов выполнить весь спектр задач по созданию оптимальных условий для полета.",
     ],
   },
   {
-    en: ['How is payment made?', 'By transfer, by card, or by the arrangement the charter needs.'],
-    ru: ['Как происходит оплата?', 'Переводом, картой или так, как требует конкретный чартер.'],
+    en: [
+      'How safe are individual private flights?',
+      'A private plane and its lease should have personal security and confidentiality. ATM JET fully guarantees their compliance.\nInformation about the flight is available only to the client and a limited circle of our employees who are responsible for not disclosing the data known to them. In addition, renting an airplane excludes the possibility of the presence on board of undesirable people for you.\nYour "neighbors" during the flight will be only passengers invited by you, flight attendants, and the crew of the aircraft.\nThis is especially essential for representatives of show business and dignitaries. For transportation of passengers within the limits of rent of a private airplane our company uses modern and reliable transport. Absolutely all air assets are undergoing technical and service maintenance in a timely manner.',
+    ],
+    ru: [
+      'Насколько безопасны частные полеты?',
+      'Частный самолет и его аренда должны обеспечивать личную безопасность и конфиденциальность. ATM JET полностью гарантирует их соблюдение.\nИнформация о полете доступна только клиенту и ограниченному кругу наших сотрудников, которые несут ответственность за неразглашение известных им данных.\nКроме того, аренда самолета исключает возможность присутствия на борту нежелательных для вас людей. Вашими «соседями» во время полета будут только приглашенные вами пассажиры, стюардессы и экипаж самолета. Это особенно важно для представителей шоу-бизнеса и высокопоставленных лиц.\nДля перевозки пассажиров в рамках аренды частного самолета наша компания использует современный и надежный транспорт. Абсолютно все воздушные средства своевременно проходят техническое и сервисное обслуживание.',
+    ],
+  },
+  {
+    en: [
+      'What are the rules for transporting pets on private planes?',
+      'Please let us know when placing an order and our company will prepare everything you need beforehand.\nAlso for the transportation of pets in a private airplane, a veterinary certificate of Form No. 1 is required.',
+    ],
+    ru: [
+      'Каковы правила перевозки домашних животных на частных самолетах?',
+      'Пожалуйста, сообщите нам об этом при оформлении заказа, и наша компания заранее подготовит все необходимое.\nТакже для перевозки домашних животных в частном самолете необходимо ветеринарное свидетельство формы №1.',
+    ],
   },
 ]
 
@@ -989,7 +1075,7 @@ function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout 
     sections.push({
       blockType: 'whyUs',
       variant: 'stacked',
-      title: locale === 'en' ? 'Why us' : 'Почему мы',
+      title: locale === 'en' ? 'Why select us?' : 'Почему стоит выбрать именно нас?',
       cards: HOME_WHY_US.map((card) => ({
         figure: card.figure,
         title: card[locale][0],
@@ -1017,11 +1103,11 @@ function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout 
     })
     sections.push({
       blockType: 'keyFeatures',
-      title: locale === 'en' ? 'What a flight comes with' : 'Что входит в перелёт',
+      title: locale === 'en' ? 'Exclusive key features' : 'Наши сильные стороны',
       description:
         locale === 'en'
-          ? 'The things arranged before you ask, and the ones you only have to ask for once.'
-          : 'То, что делается до вашей просьбы, и то, о чём достаточно попросить один раз.',
+          ? 'Unlock exceptional benefits with our exclusive key features designed to enhance your travel experience:'
+          : 'Откройте для себя исключительные преимущества призванные улучшить ваши впечатления от путешествий:',
       cards: HOME_KEY_FEATURES.map((card) => ({
         title: card[locale][0],
         description: card[locale][1],
@@ -1048,19 +1134,16 @@ function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout 
     })
     sections.push({
       blockType: 'privilege',
-      title: locale === 'en' ? 'What flying with us' : 'Что даёт полёт',
-      goldTitle: locale === 'en' ? 'comes with' : 'с нами',
+      title: PRIVILEGE_HEADING[locale].title,
+      goldTitle: PRIVILEGE_HEADING[locale].gold,
       cards: PRIVILEGES.map((card) => ({
         icon: card.icon,
         title: card[locale][0],
         description: card[locale][1],
       })),
       contact: {
-        title: locale === 'en' ? 'Tell us where you are going' : 'Расскажите, куда летите',
-        description:
-          locale === 'en'
-            ? 'A manager answers within minutes, at any hour, in either language.'
-            : 'Менеджер отвечает в течение нескольких минут, в любой час, на любом языке.',
+        title: PRIVILEGE_CONTACT[locale].title,
+        description: PRIVILEGE_CONTACT[locale].description,
         telegram: 'Telegram',
         whatsapp: 'WhatsApp',
         background: fixture.surface,
@@ -1100,7 +1183,7 @@ function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout 
     sections.push({ blockType: 'transfer', title: TRANSFER[locale], image: fixture.photo })
     sections.push({
       blockType: 'faq',
-      title: locale === 'en' ? 'Questions we are asked' : 'Что нас спрашивают',
+      title: locale === 'en' ? 'Frequently asked questions' : 'Часто задаваемые вопросы',
       questions: FAQ.map((entry) => ({ question: entry[locale][0], answer: entry[locale][1] })),
     })
   }
@@ -1323,7 +1406,7 @@ function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout 
     sections.push({
       blockType: 'whyUs',
       variant: 'stacked',
-      title: locale === 'en' ? 'Why select us?' : 'Почему выбирают нас?',
+      title: locale === 'en' ? 'Why select us?' : 'Почему стоит выбрать именно нас?',
       cards: HOME_WHY_US.map((card) => ({
         figure: card.figure,
         title: card[locale][0],
@@ -1557,19 +1640,16 @@ function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout 
   if (slug === 'atm_jet_group')
     sections.push({
       blockType: 'privilege',
-      title: locale === 'en' ? 'What flying with us' : 'Что даёт полёт',
-      goldTitle: locale === 'en' ? 'comes with' : 'с нами',
+      title: PRIVILEGE_HEADING[locale].title,
+      goldTitle: PRIVILEGE_HEADING[locale].gold,
       cards: PRIVILEGES.map((card) => ({
         icon: card.icon,
         title: card[locale][0],
         description: card[locale][1],
       })),
       contact: {
-        title: locale === 'en' ? 'Tell us where you are going' : 'Расскажите, куда летите',
-        description:
-          locale === 'en'
-            ? 'A manager answers within minutes, at any hour, in either language.'
-            : 'Менеджер отвечает в течение нескольких минут, в любой час, на любом языке.',
+        title: PRIVILEGE_CONTACT[locale].title,
+        description: PRIVILEGE_CONTACT[locale].description,
         telegram: 'Telegram',
         whatsapp: 'WhatsApp',
         background: fixture.surface,

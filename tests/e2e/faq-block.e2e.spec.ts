@@ -17,46 +17,52 @@ test.describe('the FAQ section', () => {
     const html = await (await request.get(pathFor('/', 'en'))).text()
 
     expect(html).toContain('data-section="faq"')
-    expect(html).toContain('How soon can we fly?')
-    expect(html).toContain('Three hours from the call, once the crew and the slot are held.')
+    expect(html).toContain('How do I order a plane and what documents are needed for this?')
+    expect(html).toContain('Fill out the booking form')
   })
 
   test('opens on its first question, as the legacy list did', async ({ page }) => {
     await page.goto(pathFor('/', 'en'))
     const section = page.locator(SECTION)
 
-    await expect(section.getByRole('button', { name: 'How soon can we fly?' })).toHaveAttribute(
-      'aria-expanded',
-      'true',
-    )
-    await expect(section.getByText('Three hours from the call')).toBeVisible()
+    await expect(
+      section.getByRole('button', {
+        name: 'How do I order a plane and what documents are needed for this?',
+      }),
+    ).toHaveAttribute('aria-expanded', 'true')
+    await expect(section.getByText('Fill out the booking form')).toBeVisible()
   })
 
   test('shows one answer at a time', async ({ page }) => {
     await page.goto(pathFor('/', 'en'))
     const section = page.locator(SECTION)
 
-    await section.getByRole('button', { name: 'Can we change the route?' }).click()
+    await section
+      .getByRole('button', { name: 'Can I change the conditions of the booked flight?' })
+      .click()
 
-    await expect(section.getByText('Up to the moment the flight plan is filed')).toBeVisible()
-    await expect(section.getByText('Three hours from the call')).toHaveCount(0)
+    await expect(section.getByText('YES, AND YOU CAN RELY ON:')).toBeVisible()
+    await expect(section.getByText('Fill out the booking form')).toHaveCount(0)
   })
 
   test('keeps the line breaks an answer was written with', async ({ page }) => {
     await page.goto(pathFor('/', 'en'))
     const section = page.locator(SECTION)
 
-    await section.getByRole('button', { name: 'What does the price include?' }).click()
-    const answer = section.locator('p', { hasText: 'The aircraft, the crew' })
+    await section
+      .getByRole('button', { name: 'How much does it cost to rent a plane, the price?' })
+      .click()
+    const answer = section.locator('p', { hasText: 'The cost of a private jet' })
 
-    // Two lines, so two spans: the legacy split its answers on the newline too.
-    await expect(answer.locator('span')).toHaveCount(2)
+    // The factors on a line each under the sentence that introduces them, which is how the
+    // legacy answer was written and how it split it.
+    await expect(answer.locator('span')).toHaveCount(6)
   })
 
   test('speaks the language of the page it is on', async ({ request }) => {
     const html = await (await request.get(pathFor('/', 'ru'))).text()
 
-    expect(html).toContain('Как скоро вылет?')
-    expect(html).not.toContain('How soon can we fly?')
+    expect(html).toContain('Сколько стоит аренда самолета, цена?')
+    expect(html).not.toContain('How much does it cost to rent a plane')
   })
 })
