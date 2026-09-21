@@ -47,6 +47,23 @@ describe('siteOrigin', () => {
   })
 })
 
+/**
+ * `metadataBase` is `new URL(siteOrigin())` and it runs while a page is prerendered (issue #55),
+ * so a value `new URL` refuses fails the build rather than one page. Whatever an environment
+ * holds, the origin has to be something it accepts.
+ */
+describe('the origin metadataBase is built from', () => {
+  it.each([
+    ['a bare deployment host', 'atmjet.vercel.app'],
+    ['an address with its scheme', 'https://atmjet.com'],
+    ['one with a trailing slash', 'https://atmjet.com/'],
+    ['nothing at all', ''],
+    ['something that is not an address', 'not an address'],
+  ])('is an address for %s', (_case, configured) => {
+    expect(() => new URL(siteOrigin(configured))).not.toThrow()
+  })
+})
+
 describe('localeUrl', () => {
   it('serves the home page at the locale root, not /en/home', () => {
     expect(localeUrl(ORIGIN, 'en', '')).toBe('https://atmjet.com/en')
