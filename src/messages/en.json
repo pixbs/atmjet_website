@@ -104,7 +104,18 @@
       "descending": "Descending",
       "more": "Show more"
     },
-    "request": "Request {registration}"
+    "request": "Request {registration}",
+    "keyStats": "Key stats",
+    "stats": {
+      "maxPax": "max pax",
+      "type": "type",
+      "cabinHeight": "cabin height",
+      "lengthWidth": "length/width",
+      "year": "year",
+      "range": "range"
+    },
+    "metres": "{value}m",
+    "kilometres": "{value}km"
   },
   "yacht": {
     "guests": "Guests:",

@@ -5,8 +5,9 @@ import { hideDevOverlay, hideFloatingHeader, settlePage } from './chrome'
 
 /**
  * One aircraft, whole (issues #138 and #136, `docs/legacy-inventory.md` section 4): the band the
- * page opens on, the gallery beside the card that asks for the aircraft, and the room the card
- * takes when it is pulled up over the band's foot.
+ * page opens on, the gallery beside the card that asks for the aircraft, the room the card takes
+ * when it is pulled up over the band's foot, and below the rule the description card and the
+ * figures beside the stack of photographs.
  *
  * A seeded aircraft, reached by its registration, because the catalogue's own slugs arrive with
  * the import of E5.7.

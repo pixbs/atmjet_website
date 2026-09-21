@@ -20,6 +20,11 @@ interface SeedAircraft {
   cabinHeight?: number
   /** Kilometres, as the legacy `aircraft_type_range_maximum` held them. */
   rangeMaximum?: number
+  /** Metres, the pair the rich layout prints as `length/width` (issue #136). */
+  cabinLength?: number
+  cabinWidth?: number
+  /** What the detail page's card reads, in the paragraphs an editor typed (#136). */
+  description?: string
 }
 
 // The registrations are ones no test writes by hand: the fixture and the integration tier share
@@ -33,6 +38,12 @@ export const SEED_AIRCRAFT: readonly SeedAircraft[] = [
     passengers: 13,
     cabinHeight: 1.88,
     rangeMaximum: 11112,
+    // The one aircraft filled in far enough to draw the rich layout whole (issue #136): the
+    // pair of cabin measurements and a description of more than one paragraph.
+    cabinLength: 13.18,
+    cabinWidth: 2.49,
+    description:
+      'Thirteen seats and a bed, out of Dubai, with the range for a leg nobody wants to break.\nRefurbished in 2021 and flown by the crew who know her, she leaves from the stand she is parked on.',
   },
   {
     registration: 'T7-ATM',
@@ -94,10 +105,13 @@ export async function seedAircraft(payload: Payload): Promise<SeedOutcome[]> {
         availability: 'available',
         offerings: ['charter', 'sale'],
         type: { name: aircraft.model, model: aircraft.model, category: aircraft.category },
+        description: aircraft.description,
         specification: {
           passengers: aircraft.passengers,
           yearOfProduction: aircraft.year,
           cabinHeight: aircraft.cabinHeight,
+          cabinLength: aircraft.cabinLength,
+          cabinWidth: aircraft.cabinWidth,
           rangeMaximum: aircraft.rangeMaximum,
         },
         images: photo === undefined ? [] : [{ type: 'exterior', media: photo }],

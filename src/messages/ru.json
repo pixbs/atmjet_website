@@ -104,7 +104,18 @@
       "descending": "По убыванию",
       "more": "Показать ещё"
     },
-    "request": "Запросить {registration}"
+    "request": "Запросить {registration}",
+    "keyStats": "Основные факты",
+    "stats": {
+      "maxPax": "макс пассажиров",
+      "type": "тип",
+      "cabinHeight": "высота салона",
+      "lengthWidth": "длина/ширина",
+      "year": "год",
+      "range": "дальность"
+    },
+    "metres": "{value}м",
+    "kilometres": "{value}км"
   },
   "yacht": {
     "guests": "Гостей:",

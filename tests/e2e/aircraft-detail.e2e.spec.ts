@@ -99,3 +99,68 @@ test.describe('the request a detail page takes', () => {
     await expect(page).toHaveURL(/2026-10-01/)
   })
 })
+
+/**
+ * The half of the page below the rule (issue #136, `docs/legacy-inventory.md` section 4): the
+ * description card beside a photograph, and the figures beside the rest of them. The legacy drew
+ * it only for an aircraft that has photographs; one without falls back to a plainer page (#137).
+ */
+test.describe('what a detail page says about the aircraft', () => {
+  const SPECS = '[data-section="aircraft-specs"]'
+
+  test('is rendered on the server, not fetched once the page is open', async ({ request }) => {
+    const html = await (await request.get(pathFor('/aircraft/MOUSE', 'en'))).text()
+
+    expect(html).toContain('data-section="aircraft-specs"')
+    expect(html).toContain('Key stats')
+  })
+
+  test('draws the figures the catalogue has, in the legacy order', async ({ page }) => {
+    await page.goto(pathFor('/aircraft/MOUSE', 'en'))
+    // The label under each figure, not the paragraphs of the description card beside them.
+    const labels = page.locator(`${SPECS} h3 + p`)
+
+    await expect(labels).toHaveText([
+      'max pax',
+      'type',
+      'cabin height',
+      'length/width',
+      'year',
+      'range',
+    ])
+  })
+
+  test('prints the measurements with their units and the range grouped', async ({ page }) => {
+    await page.goto(pathFor('/aircraft/MOUSE', 'en'))
+    const figures = page.locator(`${SPECS} h3`)
+
+    await expect(figures).toContainText(['13', 'Ultra long range', '1.88m', '13.18m/2.49m'])
+    // The legacy grouped this with the server's default locale; it follows the page now.
+    await expect(figures.last()).toHaveText('11,112km')
+  })
+
+  test('leaves out a figure the catalogue has not filled in', async ({ page }) => {
+    // The legacy hid one it had no value for rather than printing a zero (section 4). This
+    // aircraft is the one the fixture left unmeasured.
+    await page.goto(pathFor('/aircraft/VPCAT', 'en'))
+
+    await expect(page.locator(`${SPECS} h3 + p`)).toHaveText(['type'])
+  })
+
+  test('keeps the description in the paragraphs an editor typed', async ({ page }) => {
+    await page.goto(pathFor('/aircraft/MOUSE', 'en'))
+    const card = page.locator(`${SPECS} .md\\:sticky`).first()
+
+    await expect(card.getByRole('heading', { level: 2 })).toHaveText(
+      'Bombardier Global 6000 M-OUSE',
+    )
+    await expect(card.locator('p')).toHaveCount(2)
+  })
+
+  test('stacks the photographs beside the figures, the newest first', async ({ page }) => {
+    await page.goto(pathFor('/aircraft/MOUSE', 'en'))
+
+    // The legacy reversed the whole set here, having drawn them the other way round above.
+    await expect(page.locator(`${SPECS} img`)).toHaveCount(2)
+  })
+})

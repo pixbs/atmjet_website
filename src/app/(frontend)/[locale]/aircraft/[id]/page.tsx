@@ -3,6 +3,8 @@ import Image from 'next/image'
 import { notFound, redirect } from 'next/navigation'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 
+import { KeyStatsCard, type KeyStat } from '@/components/cards/key-stats-card'
+import { Guests, Length, Tools } from '@/components/icons'
 import { Line } from '@/components/motion/line'
 import { VehicleRequest } from '@/components/form/vehicle-request'
 import { Gallery } from '@/components/ui/gallery'
@@ -28,6 +30,13 @@ import { siteOrigin } from '@/lib/urls'
  * `redirect('/aircraft')` — unprefixed there, so it answered only through the middleware; here
  * it carries the locale.
  */
+/**
+ * The `size-10` the legacy gave every icon beside a figure, in the near-black the cards are
+ * outlined in (the legacy `text-gray-300`, ADR-0006); the `color-gray` beside it was never a
+ * class at all (`docs/legacy-inventory.md` section 13, entry 17).
+ */
+const STAT_ICON = 'size-10 shrink-0 text-graphite-800'
+
 interface DetailParams {
   locale: string
   id: string
@@ -93,6 +102,72 @@ export default async function AircraftDetailPage({ params }: { params: Promise<D
     slug: `aircraft/${id}`,
     title: name,
   })
+  const printed = (value: number | null | undefined): string =>
+    value === null || value === undefined ? '' : String(value)
+
+  /**
+   * The six figures, in the order the legacy card drew them, and each only where the catalogue
+   * has it: the legacy hid a figure it had no value for rather than printing a zero
+   * (`docs/legacy-inventory.md` section 4).
+   */
+  const specification = aircraft.specification ?? {}
+  const stats: KeyStat[] = [
+    {
+      show: typeof specification.passengers === 'number',
+      icon: <Guests className={STAT_ICON} />,
+      value: printed(specification.passengers),
+      label: t('stats.maxPax'),
+    },
+    {
+      show: Boolean(aircraft.type?.category),
+      icon: <Tools className={STAT_ICON} />,
+      value: aircraft.type?.category ?? '',
+      label: t('stats.type'),
+    },
+    {
+      show: typeof specification.cabinHeight === 'number',
+      icon: <Length className={STAT_ICON} />,
+      value: t('metres', { value: printed(specification.cabinHeight) }),
+      label: t('stats.cabinHeight'),
+    },
+    {
+      // The legacy showed this pair on the length alone, and printed a zero for a width it
+      // did not have; the zero is kept, the pair is what the label promises.
+      show: typeof specification.cabinLength === 'number',
+      icon: <Length className={STAT_ICON} />,
+      value: [specification.cabinLength ?? 0, specification.cabinWidth ?? 0]
+        .map((measure) => t('metres', { value: String(measure) }))
+        .join('/'),
+      label: t('stats.lengthWidth'),
+    },
+    {
+      show: typeof specification.yearOfProduction === 'number',
+      icon: <Tools className={STAT_ICON} />,
+      value: printed(specification.yearOfProduction),
+      label: t('stats.year'),
+    },
+    {
+      show: typeof specification.rangeMaximum === 'number',
+      icon: <Tools className={STAT_ICON} />,
+      // Grouped in the language being read, where the legacy took the server's default.
+      value: t('kilometres', {
+        value: (specification.rangeMaximum ?? 0).toLocaleString(locale),
+      }),
+      label: t('stats.range'),
+    },
+  ].flatMap(({ show, ...stat }) => (show ? [stat] : []))
+
+  /** The description an editor wrote, in the paragraphs they typed it in. */
+  const paragraphs = (aircraft.description ?? '')
+    .split('\n')
+    .map((line) => line.trim())
+    .filter((line) => line !== '')
+
+  /** The legacy opened this row on the second photograph, falling back to the first. */
+  const [beside] = photographs.slice(1).concat(photographs)
+  /** And stacked every one of them beside the figures, newest first. */
+  const stacked = [...photographs].reverse()
+
   // The aircraft itself, catalogued (#173). No price: the page asks for the leg instead of
   // quoting one, exactly as the legacy detail page did.
   const catalogued = product(origin, locale as Locale, {
@@ -144,6 +219,54 @@ export default async function AircraftDetailPage({ params }: { params: Promise<D
       </section>
       {/* Full width, as the legacy drew it between the sections of this page. */}
       <Line />
+      {/* The rich layout, which the legacy drew only for an aircraft that has photographs: the
+          catalogue without them falls back to the `vehicles` row and a plainer page (#137). */}
+      {photographs.length > 0 && (
+        <>
+          <section data-section="aircraft-specs">
+            <div className="container gap-12">
+              <div className="gap-10 md:grid md:grid-cols-2">
+                {beside && (
+                  <Image
+                    alt={beside.alt === '' ? name : beside.alt}
+                    className="rounded-3xl"
+                    height={600}
+                    src={beside.src}
+                    width={600}
+                  />
+                )}
+                <div className="top-hero-band gap-6 rounded-3xl border border-graphite-800 bg-graphite-950 p-6 py-10 pb-16 md:sticky md:gap-10 md:self-start md:p-10">
+                  <h2>{name}</h2>
+                  <div className="flex flex-col gap-4">
+                    {paragraphs.map((paragraph) => (
+                      <p key={paragraph}>{paragraph}</p>
+                    ))}
+                  </div>
+                </div>
+              </div>
+              <div className="gap-10 md:grid md:grid-cols-2">
+                {/* No rule after the last figure here, where the yacht card draws one
+                    (`docs/legacy-inventory.md` section 4). */}
+                <KeyStatsCard stats={stats} title={t('keyStats')} />
+                <div className="gap-10">
+                  {stacked.map((photo) => (
+                    <Image
+                      key={photo.src}
+                      alt={photo.alt === '' ? name : photo.alt}
+                      className="rounded-3xl border border-graphite-800 bg-graphite-950"
+                      height={400}
+                      sizes="(min-width: 768px) 45vw, 90vw"
+                      src={photo.src}
+                      width={600}
+                    />
+                  ))}
+                </div>
+              </div>
+            </div>
+          </section>
+          <Line />
+        </>
+      )}
       <JsonLd data={catalogued} />
       {trail && <JsonLd data={trail} />}
     </>
