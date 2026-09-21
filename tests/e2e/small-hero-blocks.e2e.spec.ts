@@ -18,7 +18,7 @@ test.describe('the small heroes', () => {
     expect(aircraft).toContain('We have access to over ')
     expect(aircraft).toContain('50,000')
     expect(emptyLegs).toContain('75%')
-    expect(emptyLegs).toContain('The aircraft is going anyway')
+    expect(emptyLegs).toContain('Empty legs is when an aircraft flies without passengers')
     expect(partners).toContain('4x')
     expect(group).toContain('since 2004')
   })
@@ -26,7 +26,7 @@ test.describe('the small heroes', () => {
   test('head the page they open, each of them', async ({ page }) => {
     for (const [route, heading] of [
       ['/aircraft', 'We have access to over'],
-      ['/empty_legs', 'off the charter price'],
+      ['/empty_legs', 'We can save you on your flight with Empty legs'],
       ['/partners', 'more often'],
       ['/atm_jet_group', 'ATM JET Group'],
     ] as const) {

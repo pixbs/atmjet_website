@@ -44,7 +44,7 @@ const PAGES: readonly Subpage[] = [
     slug: 'empty_legs',
     sections: ['hero-empty-legs', 'descriptor', 'empty-legs', 'contact-us'],
     titles: { en: 'Empty legs', ru: 'Пустые перелёты' },
-    words: { en: 'The aircraft is going anyway', ru: 'Борт всё равно летит' },
+    words: { en: 'Empty legs', ru: '«Empty Leg»' },
   },
   {
     slug: 'atm_jet_group',
@@ -76,7 +76,7 @@ const PAGES: readonly Subpage[] = [
     slug: 'group_charters',
     sections: ['hero-subpage', 'make-booking', 'why-us', 'contact-us'],
     titles: { en: 'Group charters', ru: 'Групповые перевозки' },
-    words: { en: 'One aircraft, one price', ru: 'Один борт, одна цена' },
+    words: { en: 'For business companies', ru: 'Для деловых перелетов' },
   },
   {
     slug: 'partners',

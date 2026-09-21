@@ -119,12 +119,14 @@ const HERO_PAGES: Record<string, Record<'en' | 'ru', { title: string; descriptio
   },
   group_charters: {
     en: {
-      title: 'Group charters',
-      description: 'One aircraft for the whole party, at a price agreed once.',
+      title: 'Organizing group charters',
+      description:
+        'We know the intricacies of organizing group flights for business companies, music bands and sports teams.',
     },
     ru: {
-      title: 'Групповые перевозки',
-      description: 'Один самолёт на всю группу по цене, согласованной один раз.',
+      title: 'Организация групповых чартерных перевозок',
+      description:
+        'Мы знаем все тонкости организации групповых полетов для бизнес-групп, музыкальных групп и спортивных команд.',
     },
   },
   medical_aviation: {
@@ -237,19 +239,34 @@ const WE_OFFER: { en: [string, string]; ru: [string, string] }[] = [
  */
 const GROUP_CHARTERS: { en: [string, string]; ru: [string, string] }[] = [
   {
-    en: ['One aircraft, one price', 'Agreed once for the whole party, however the seats fill.'],
+    en: [
+      'For business companies',
+      'Interaction with each participant or organiser and office manager. Planes of any size. Organisation of departures from different cities, countries. Organising comfortable working areas to ensure productivity and convenience on the road.',
+    ],
     ru: [
-      'Один борт, одна цена',
-      'Согласована один раз на всю группу, как бы ни распределились места.',
+      'Для деловых перелетов',
+      'Берем всю организацию на себя. Организуем коммуникацию с каждым участником, организатором и офис-менеджером. Подберем оптимальный самолет любого размера. Поможем построить план вылетов из разных городов и стран. На борту подготовим комфортные рабочие зоны для обеспечения продуктивности и удобства в перелете.',
     ],
   },
   {
-    en: ['The schedule is yours', 'You say when it leaves; nothing else is being boarded.'],
-    ru: ['Расписание — ваше', 'Вы называете время вылета; больше никого не сажают.'],
+    en: [
+      'For music bands',
+      'Trepidatiously treating the riders of the artists, taking into account their wishes throughout the tour. We strictly follow the tour schedule and guarantee you on-time flights. We guarantee confidentiality in flight',
+    ],
+    ru: [
+      'Для музыкальных групп',
+      'Трепетно относимся к райдерам артистов, учитываем их пожелания на протяжении всего тура. Мы строго соблюдаем график гастролей и проконтролируем своевременный вылет. Гарантируем конфиденциальность в полете',
+    ],
   },
   {
-    en: ['Handled at both ends', 'Permits, catering and the cars, arranged before you arrive.'],
-    ru: ['Оба конца на нас', 'Разрешения, кейтеринг и машины — до вашего приезда.'],
+    en: [
+      'For sports team',
+      'We select spacious aircraft for comfortable team flights and necessary sports equipment. Menus on board according to all requirements of sports team nutritionists. Comfortable aircraft will keep you toned even after long flights.',
+    ],
+    ru: [
+      'Для спортивных команд',
+      'Мы предлагаем вместительные самолеты для комфортных командных перелетов и необходимого спортивного оборудования. Меню на борту соответствует всем требованиям диетологов спортивных команд. Уровень комфорта в наших самолетах позволит вам оставаться в тонусе, даже после многочасовых перелетов.',
+    ],
   },
 ]
 
@@ -1212,6 +1229,44 @@ const OPTIONS: Record<
   },
 }
 
+/**
+ * The empty legs section the home page and the empty legs page both carry (issue #117,
+ * section 5), in the words the legacy `empty-leg` namespace held (issue #162), and the card
+ * beside it that sends a visitor to the Telegram channel.
+ */
+const EMPTY_LEGS: Record<
+  'en' | 'ru',
+  {
+    title: string
+    description: string
+    button: string
+    channel: { title: string; description: string; button: string }
+  }
+> = {
+  en: {
+    title: 'Upcoming Empty Leg flights',
+    description: 'Charter a private jet with a discount of up to 75%',
+    button: 'Inquire',
+    channel: {
+      title: 'Subscribe to our Telegram channel with all published empty legs.',
+      description:
+        'Our team monitors incoming Empty Leg deals to popular destinations daily and posts them in our channel.',
+      button: 'Subscribe',
+    },
+  },
+  ru: {
+    title: 'Предстоящие «Empty Leg»',
+    description: 'Арендуйте частный самолет со скидкой до 75%',
+    button: 'Запросить',
+    channel: {
+      title: 'Подписывайтесь на наш Telegram-канал и отслеживайте актуальные перелеты «Empty Leg».',
+      description:
+        'Наша команда ежедневно отслеживает поступающие предложения «Empty Leg» по популярным направлениям и публикует их в нашем канале.',
+      button: 'Подписаться',
+    },
+  },
+}
+
 /** The sections a seeded page starts with; a page with no entry here starts with none. */
 function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout {
   const sections: Layout = []
@@ -1255,20 +1310,14 @@ function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout 
     })
     sections.push({
       blockType: 'emptyLegs',
-      title: locale === 'en' ? 'Flights leaving soon' : 'Ближайшие перелёты',
-      description:
-        locale === 'en'
-          ? 'The cabin is going anyway, and the price says so. New ones appear as the schedule changes.'
-          : 'Салон всё равно летит, и цена это отражает. Новые появляются по мере изменения расписания.',
+      title: EMPTY_LEGS[locale].title,
+      description: EMPTY_LEGS[locale].description,
       limit: 12,
-      cta: { label: locale === 'en' ? 'Make a booking' : 'Забронировать', source: 'Empty-legs' },
+      cta: { label: EMPTY_LEGS[locale].button, source: 'Empty-legs' },
       channel: {
-        title: locale === 'en' ? 'Be the first to know' : 'Узнавайте первыми',
-        description:
-          locale === 'en'
-            ? 'Every empty leg is posted to the Telegram channel the hour it is confirmed.'
-            : 'Каждый пустой перелёт публикуется в Telegram-канале в час подтверждения.',
-        label: locale === 'en' ? 'Open the channel' : 'Открыть канал',
+        title: EMPTY_LEGS[locale].channel.title,
+        description: EMPTY_LEGS[locale].channel.description,
+        label: EMPTY_LEGS[locale].channel.button,
       },
     })
     sections.push({
@@ -1394,13 +1443,16 @@ function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout 
     sections.push({
       blockType: 'heroEmptyLegs',
       figure: '75%',
-      title: locale === 'en' ? 'off the charter price' : 'от цены чартера',
+      title:
+        locale === 'en'
+          ? 'We can save you on your flight with Empty legs'
+          : 'Мы можем сэкономить вам на перелете категории «Empty Leg»',
       image: fixture.photo,
-      subtitle: locale === 'en' ? 'The aircraft is going anyway' : 'Борт всё равно летит',
+      subtitle: locale === 'en' ? 'Empty legs' : '«Empty Leg»',
       description:
         locale === 'en'
-          ? 'A repositioning flight sells its cabin at a fraction of what the same route costs chartered.'
-          : 'Перегоночный рейс продаёт салон за долю того, во что обходится тот же маршрут в чартере.',
+          ? 'Empty legs is when an aircraft flies without passengers. This happens when the aircraft returns to where it started or to its initial airport. To make the return flight more profitable, the aircraft owner offers it for hire at a reduced price.'
+          : '«Empty Leg» - это перегон самолета летит без пассажиров. Так происходит, когда самолет летит с домашнего аэропорта в точку вылета клиента или обратно в свой домашний аэропорт. Чтобы сделать полет без пассажира рентабельнее, владелец самолета предлагает его в аренду по сниженной цене.',
     })
 
   if (slug === 'partners')
@@ -1458,33 +1510,27 @@ function layoutFor(slug: string, locale: 'en' | 'ru', fixture: Fixture): Layout 
   if (slug === 'empty_legs')
     sections.push({
       blockType: 'descriptor',
-      title: locale === 'en' ? 'What an empty leg is' : 'Что такое пустой перелёт',
+      title:
+        locale === 'en'
+          ? 'Access 10,000+ aircraft options'
+          : 'Доступ к 10 000+ вариантов самолетов',
       description:
         locale === 'en'
-          ? 'A flight that has to be made anyway, with the cabin going the same way you are.'
-          : 'Рейс, который всё равно состоится, и салон летит в ту же сторону, что и вы.',
+          ? 'Discover a wide range of aircraft through our extensive partner network. From private jets to helicopters, we offer unparalleled choice for your travel needs.'
+          : 'Откройте для себя широкий выбор самолетов благодаря нашей обширной партнерской сети. От частных самолетов до вертолетов - мы предлагаем непревзойденный выбор для ваших путешествий.',
     })
 
   if (slug === 'empty_legs')
     sections.push({
       blockType: 'emptyLegs',
-      title: locale === 'en' ? 'Flights leaving soon' : 'Ближайшие перелёты',
-      description:
-        locale === 'en'
-          ? 'The cabin is going anyway, and the price says so. New ones appear as the schedule changes.'
-          : 'Салон всё равно летит, и цена это отражает. Новые появляются по мере изменения расписания.',
+      title: EMPTY_LEGS[locale].title,
+      description: EMPTY_LEGS[locale].description,
       limit: 12,
-      cta: {
-        label: locale === 'en' ? 'Make a booking' : 'Забронировать',
-        source: 'Empty-legs',
-      },
+      cta: { label: EMPTY_LEGS[locale].button, source: 'Empty-legs' },
       channel: {
-        title: locale === 'en' ? 'Be the first to know' : 'Узнавайте первыми',
-        description:
-          locale === 'en'
-            ? 'Every empty leg is posted to the Telegram channel the hour it is confirmed.'
-            : 'Каждый пустой перелёт публикуется в Telegram-канале в час подтверждения.',
-        label: locale === 'en' ? 'Open the channel' : 'Открыть канал',
+        title: EMPTY_LEGS[locale].channel.title,
+        description: EMPTY_LEGS[locale].channel.description,
+        label: EMPTY_LEGS[locale].channel.button,
       },
     })
 

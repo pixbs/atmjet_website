@@ -12,8 +12,10 @@ test.describe('the descriptors', () => {
     const html = await (await request.get(pathFor('/empty_legs', 'en'))).text()
 
     expect(html).toContain('data-section="descriptor"')
-    expect(html).toContain('What an empty leg is')
-    expect(html).toContain('A flight that has to be made anyway')
+    expect(html).toContain('Access 10,000+ aircraft options')
+    expect(html).toContain(
+      'Discover a wide range of aircraft through our extensive partner network',
+    )
   })
 
   test('frame the yachts line in gold, and draw nothing else in the frame', async ({ page }) => {
@@ -43,7 +45,7 @@ test.describe('the descriptors', () => {
   test('speak the language of the page they are on', async ({ request }) => {
     const html = await (await request.get(pathFor('/empty_legs', 'ru'))).text()
 
-    expect(html).toContain('Что такое пустой перелёт')
-    expect(html).not.toContain('What an empty leg is')
+    expect(html).toContain('Доступ к 10 000+ вариантов самолетов')
+    expect(html).not.toContain('Access 10,000+ aircraft options')
   })
 })
