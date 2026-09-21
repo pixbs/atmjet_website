@@ -207,7 +207,14 @@ export function CarouselDots({ className, label }: { className?: string; label: 
   )
 }
 
-/** The gold line under the "we inspect" carousel, filling as the slides move. */
+/**
+ * The gold line under the "we inspect" carousel, filling as the slides move.
+ *
+ * `md:bg-fixed` pins the gradient to the viewport rather than to the line, so the bar shows
+ * whichever slice of the page-wide gradient it happens to cover instead of compressing the whole
+ * gradient into its own width — the legacy bar did that, and it is the same class the why-us
+ * figure keeps (`docs/legacy-inventory.md` section 13, the `bg-fixed` list).
+ */
 export function CarouselProgress({ className }: { className?: string }) {
   const { progress } = useCarousel()
 
@@ -215,7 +222,7 @@ export function CarouselProgress({ className }: { className?: string }) {
     <div className={cn('h-2 w-full', className)}>
       <div
         aria-hidden
-        className="h-2 rounded-full bg-gold"
+        className="h-2 rounded-full bg-gold md:bg-fixed"
         style={{ width: progressWidth(progress) }}
       />
     </div>
