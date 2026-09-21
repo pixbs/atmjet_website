@@ -27,6 +27,8 @@ test.describe('the hero video', () => {
     await expect(video).toHaveJSProperty('muted', true)
     await expect(video).toHaveJSProperty('loop', true)
     await expect(video).toHaveJSProperty('playsInline', true)
+    // And what it asks for before it is allowed to: the metadata, not the file (issue #175).
+    await expect(video).toHaveJSProperty('preload', 'metadata')
   })
 
   test('leaves the reading of the screen to the heading', async ({ page }) => {
