@@ -5,7 +5,8 @@ import { listPageParams } from '@/lib/data/pages'
 import { createRegistry, uniqueSuffix, type TestRegistry } from '../helpers/payload'
 
 const revalidateTag = vi.hoisted(() => vi.fn())
-vi.mock('next/cache', () => ({ revalidateTag }))
+const revalidatePath = vi.hoisted(() => vi.fn())
+vi.mock('next/cache', () => ({ revalidatePath, revalidateTag }))
 
 /**
  * What `generateStaticParams` prerenders (issue #60). The build is the only place this runs, so

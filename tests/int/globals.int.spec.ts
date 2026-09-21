@@ -10,7 +10,8 @@ import { createRegistry, uniqueSuffix, type TestRegistry } from '../helpers/payl
 // The globals revalidate on write, which needs a Next request scope this suite has not got; the
 // binding swallows that, but mocking keeps the output quiet and lets the tags be asserted.
 const revalidateTag = vi.hoisted(() => vi.fn())
-vi.mock('next/cache', () => ({ revalidateTag }))
+const revalidatePath = vi.hoisted(() => vi.fn())
+vi.mock('next/cache', () => ({ revalidatePath, revalidateTag }))
 
 /**
  * The chrome globals (issue #61): the navigation, the footer and the values every page links to.

@@ -1,7 +1,8 @@
 import { describe, expect, it, vi } from 'vitest'
 
 const revalidateTag = vi.hoisted(() => vi.fn())
-vi.mock('next/cache', () => ({ revalidateTag }))
+const revalidatePath = vi.hoisted(() => vi.fn())
+vi.mock('next/cache', () => ({ revalidatePath, revalidateTag }))
 
 import { revalidateCollection } from '@/hooks/revalidate'
 
@@ -22,12 +23,28 @@ describe('revalidateCollection', () => {
     ])
   })
 
+  it('drops the rendered pages as well, which is what an editor sees change', () => {
+    // The tag reaches nothing a visitor is served: a page reads Payload through the Local API,
+    // so what Next cached carries only its own path tags (issue #178).
+    revalidatePath.mockClear()
+
+    hooks.afterChange({ doc, req: {}, context: {} } as never)
+    hooks.afterDelete({ doc, id: 7, req: {}, context: {} } as never)
+
+    expect(revalidatePath.mock.calls).toEqual([
+      ['/', 'layout'],
+      ['/', 'layout'],
+    ])
+  })
+
   it('stays quiet for a write that opts out, as the importers do', () => {
     revalidateTag.mockClear()
+    revalidatePath.mockClear()
 
     hooks.afterChange({ doc, req: {}, context: { skipRevalidation: true } } as never)
 
     expect(revalidateTag).not.toHaveBeenCalled()
+    expect(revalidatePath).not.toHaveBeenCalled()
   })
 
   it('ignores Next refusing outside a request scope and rethrows anything else', () => {

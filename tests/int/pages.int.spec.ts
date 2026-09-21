@@ -8,7 +8,8 @@ import { createRegistry, uniqueSuffix, type TestRegistry } from '../helpers/payl
 // Media and Pages both revalidate on write, which needs a Next request scope this suite has not
 // got; the binding swallows that, but mocking keeps the output quiet and lets tags be asserted.
 const revalidateTag = vi.hoisted(() => vi.fn())
-vi.mock('next/cache', () => ({ revalidateTag }))
+const revalidatePath = vi.hoisted(() => vi.fn())
+vi.mock('next/cache', () => ({ revalidatePath, revalidateTag }))
 
 /**
  * The Pages collection (issue #60). It is the shell every ported section and page depends on,

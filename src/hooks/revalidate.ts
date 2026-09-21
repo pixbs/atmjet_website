@@ -1,4 +1,4 @@
-import { revalidateTag } from 'next/cache'
+import { revalidatePath, revalidateTag } from 'next/cache'
 import type {
   CollectionAfterChangeHook,
   CollectionAfterDeleteHook,
@@ -18,6 +18,19 @@ function drop(tag: string, context: { skipRevalidation?: boolean } | undefined):
 
   try {
     revalidateTag(tag, 'max')
+    /*
+     * The tag alone reaches nothing a visitor is served (issue #178). A page reads Payload
+     * through the Local API rather than through a cached function, so the rendered entry carries
+     * only the path tags Next writes itself — `x-next-cache-tags` on any `.meta` under
+     * `.next/server/app` — and an editor's published change never appeared on the site. The
+     * whole tree under the root layout goes instead, which is what Next offers a reader that has
+     * not opted into `use cache`; the tag stays for the first reader that does.
+     *
+     * The bluntness is affordable: only the editorial collections install these hooks, a bulk
+     * import opts out above, and `max` serves the stale page while the new one renders, so a
+     * save costs a re-render rather than a visitor's wait.
+     */
+    revalidatePath('/', 'layout')
   } catch (error) {
     const outsideRequest =
       error instanceof Error && /static generation store missing/i.test(error.message)

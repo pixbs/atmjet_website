@@ -16,7 +16,8 @@ import { createRegistry, uniqueSuffix, type TestRegistry } from '../helpers/payl
 // Writing a redirect asks Next to drop a cache tag, which needs a request scope this suite has
 // not got; the binding swallows that, and mocking keeps the output quiet.
 const revalidateTag = vi.hoisted(() => vi.fn())
-vi.mock('next/cache', () => ({ revalidateTag }))
+const revalidatePath = vi.hoisted(() => vi.fn())
+vi.mock('next/cache', () => ({ revalidatePath, revalidateTag }))
 
 /**
  * The seed, and the only suite in this tier that runs any part of it (issues #41, #60, #61,
