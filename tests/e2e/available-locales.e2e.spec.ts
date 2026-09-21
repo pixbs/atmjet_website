@@ -19,9 +19,25 @@ test.describe('a page served in one language', () => {
     // The legacy sent them to `/`, which its middleware then resolved to their own language;
     // this sends them straight there.
     const response = await request.get(pathFor('/citizens', 'en'), { maxRedirects: 0 })
+    // Named in both assertions, so a failing run reports what actually came back (issue #364).
+    const received = JSON.stringify(response.headersArray())
 
-    expect(response.status()).toBe(307)
-    expect(response.headers()['location']).toBe(pathFor('/', 'en'))
+    // A 404 would mean the page was not found rather than not served in this language, and a
+    // 200 that the `availableLocales` check never fired; both are read off the status.
+    expect(response.status(), received).toBe(307)
+
+    // Read off the array rather than the joined map: Next sends `Location` twice on the request
+    // that populates this redirect's cache entry, and `headers()` joins the two into
+    // `"/en, /en"` (issue #364). Where the visitor is sent is what this page owes, and every
+    // copy of the header has to name the same destination.
+    const destinations = new Set(
+      response
+        .headersArray()
+        .filter((header) => header.name.toLowerCase() === 'location')
+        .map((header) => header.value),
+    )
+
+    expect([...destinations], received).toEqual([pathFor('/', 'en')])
   })
 
   test('is offered to a crawler at the URL it answers on, and at no other', async ({ request }) => {
