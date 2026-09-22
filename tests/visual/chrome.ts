@@ -32,8 +32,8 @@ export async function hideDevOverlay(page: Page) {
 }
 
 /**
- * A frame of the hero video is never the same twice, and the file it plays arrives with the
- * assets of E5.12 (issue #111). It is hidden rather than masked because it fills its section:
+ * A frame of the hero video is never the same twice, and since issue #175 there is a file to
+ * draw one from. It is hidden rather than masked because it fills its section:
  * a mask over it would paint over the words drawn on top of it as well.
  */
 export async function hideHeroVideo(page: Page) {
