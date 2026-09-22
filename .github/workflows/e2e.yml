@@ -78,6 +78,11 @@ jobs:
       CI: 'true'
       PLAYWRIGHT_BASE_URL: ${{ needs.gate.outputs.base_url }}
       VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+      # The administrator the tiers sign in as is created through the Payload Local API before the
+      # run (issue #343), in the database the target deployment reads (issue #17). The secret only
+      # has to pass `src/lib/env.ts`: sessions are signed by the deployment, not by this job.
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      PAYLOAD_SECRET: ci-only-not-a-secret-0123456789
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
