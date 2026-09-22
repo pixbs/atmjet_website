@@ -76,6 +76,7 @@ export interface Config {
     yachts: Yacht;
     'empty-legs': EmptyLeg;
     leads: Lead;
+    'migration-runs': MigrationRun;
     redirects: Redirect;
     'payload-kv': PayloadKv;
     'payload-jobs': PayloadJob;
@@ -94,6 +95,7 @@ export interface Config {
     yachts: YachtsSelect<false> | YachtsSelect<true>;
     'empty-legs': EmptyLegsSelect<false> | EmptyLegsSelect<true>;
     leads: LeadsSelect<false> | LeadsSelect<true>;
+    'migration-runs': MigrationRunsSelect<false> | MigrationRunsSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-jobs': PayloadJobsSelect<false> | PayloadJobsSelect<true>;
@@ -1645,6 +1647,33 @@ export interface Lead {
   createdAt: string;
 }
 /**
+ * What the imports have written so far. Written by scripts/migrate, not by hand.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "migration-runs".
+ */
+export interface MigrationRun {
+  id: number;
+  /**
+   * `<table>:<id>`, the pair a resumed run looks the row up by.
+   */
+  sourceKey: string;
+  sourceTable: string;
+  sourceId: string;
+  /**
+   * The collection the row became a document in.
+   */
+  target: string;
+  documentId: string;
+  action: 'created' | 'updated';
+  /**
+   * The run that wrote it, as the document provenance records it.
+   */
+  runId: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * Old URLs that must keep resolving. The final list is decided in E11.3; what is seeded is the legacy next.config.mjs map.
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1834,6 +1863,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'leads';
         value: number | Lead;
+      } | null)
+    | ({
+        relationTo: 'migration-runs';
+        value: number | MigrationRun;
       } | null)
     | ({
         relationTo: 'redirects';
@@ -2893,6 +2926,21 @@ export interface LeadsSelect<T extends boolean = true> {
         lastError?: T;
         id?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "migration-runs_select".
+ */
+export interface MigrationRunsSelect<T extends boolean = true> {
+  sourceKey?: T;
+  sourceTable?: T;
+  sourceId?: T;
+  target?: T;
+  documentId?: T;
+  action?: T;
+  runId?: T;
   updatedAt?: T;
   createdAt?: T;
 }
