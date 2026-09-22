@@ -36,6 +36,16 @@ test.describe('the group cards', () => {
     await expect(page.locator(`${SECTION} hr`)).toHaveCount(1)
   })
 
+  test('fetch the photograph the page opens on with the markup', async ({ page }) => {
+    await page.goto(pathFor('/atm_jet_group', 'en'))
+    const photographs = page.locator(`${SECTION} img`)
+
+    // The page has no hero, so the first card is what it is measured by (issue #176); the one
+    // under it waits to be scrolled to, as every other photograph on the site does.
+    await expect(photographs.first()).not.toHaveAttribute('loading', 'lazy')
+    await expect(photographs.last()).toHaveAttribute('loading', 'lazy')
+  })
+
   test('speak the language of the page they are on', async ({ request }) => {
     const html = await (await request.get(pathFor('/atm_jet_group', 'ru'))).text()
 

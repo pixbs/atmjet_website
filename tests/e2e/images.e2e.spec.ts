@@ -21,10 +21,12 @@ import { pathFor } from './routes'
 const RETINA = 2
 
 /**
- * One section is still served a file far larger than it draws. Giving its image an accurate
- * `sizes` moves the paint of every section below it — the geometry is identical to the fraction
- * of a pixel, but eight clips stop matching — so it is recorded here rather than silently
- * fixed or silently ignored (issue #176, and the comment in `why-us-card.tsx`).
+ * One section is still served a file far larger than it draws, and what holds it there is the
+ * narrower file rather than the `sizes` that would ask for one: sixteen captures move when the
+ * box is declared in a `sizes`, two of the styleguide's move when it is declared as the width —
+ * and not on every run — and none move when the same 1200 is declared in a corrected 16:9. The
+ * measurements are in the comment in `why-us-card.tsx`; it is recorded here rather than
+ * silently fixed or silently ignored (issue #176).
  */
 const KNOWN = ['why-us']
 

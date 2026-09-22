@@ -31,10 +31,19 @@ export interface GroupCardProps {
   image: ImageSource
   /** The wording of the button and the path it opens, without a locale. */
   action: { label: string; href: string }
+  /** The first card of the group page, which is what the page is measured by (issue #176). */
+  priority?: boolean
   className?: string
 }
 
-export function GroupCard({ title, description, image, action, className }: GroupCardProps) {
+export function GroupCard({
+  title,
+  description,
+  image,
+  action,
+  priority,
+  className,
+}: GroupCardProps) {
   return (
     <div className={cn('relative w-full p-8 md:flex-row md:p-10', className)}>
       {/* The card is as wide as the page gutter allows, which the legacy capped at 1280px. */}
@@ -42,6 +51,7 @@ export function GroupCard({ title, description, image, action, className }: Grou
         alt={image.alt}
         className="object-cover object-center"
         fill
+        priority={priority}
         sizes="(min-width: 1280px) 1280px, 100vw"
         src={image.src}
       />

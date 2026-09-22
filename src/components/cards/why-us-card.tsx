@@ -53,14 +53,12 @@ export function WhyUsCard({ num, title, description, image, top, className }: Wh
           alt={image.alt}
           className="aspect-video w-full object-cover object-center lg:w-1/2"
           height={1200}
-          /* No `sizes` yet (issue #176). The box is half the card above lg and all of it
-             below, and saying so makes the browser take a 640-wide file for a 575-pixel box
-             instead of a 1200-wide one — which is the point, except that it also moves every
-             section below this one by a fraction of a pixel, and eight clips of the styleguide
-             and of /group_charters stop matching. The geometry this measures is identical
-             either way (575x336 in a 1336.875 section, the same document height and the same
-             offset for a section 12,000 pixels further down), so what moves is the paint, not
-             the layout. Until that is understood it is left as it was found. */
+          /* Still 1200 wide for a 575-pixel box (issue #176), and what holds it there is the
+             narrower file rather than the `sizes` that would ask for one: declaring the box in
+             `sizes` moves sixteen captures, declaring it as the width moves two of the
+             styleguide's and not always the same way, and declaring 1200 in a corrected 16:9
+             moves none — so the file is what those captures are rasterised around, and a
+             baseline regenerated for a narrower one would not hold. */
           src={image.src}
           width={1200}
         />
