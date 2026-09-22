@@ -11,7 +11,10 @@ import { convertLexicalToPlaintext } from '@payloadcms/richtext-lexical/plaintex
  */
 export type Prose = Parameters<typeof convertLexicalToPlaintext>[0]['data']
 
-export function plainText(prose: Prose): string {
+/** Nothing written is an empty string, so a caller can fall back without checking first. */
+export function plainText(prose: Prose | null | undefined): string {
+  if (!prose) return ''
+
   return convertLexicalToPlaintext({
     data: prose,
     converters: {

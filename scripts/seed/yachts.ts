@@ -1,6 +1,7 @@
 import type { Payload } from 'payload'
 
 import { DEFAULT_LOCALES } from '../../src/i18n/locales'
+import { paragraphs } from './prose'
 import type { SeedOutcome } from './report'
 
 /**
@@ -236,7 +237,7 @@ export async function seedYachts(payload: Payload): Promise<SeedOutcome[]> {
         listingType: 'charter',
         length: yacht.length,
         location: yacht.location,
-        description: yacht.description,
+        description: yacht.description === undefined ? undefined : paragraphs(yacht.description),
         // The two placeholders in turn, so a fixture can carry more photographs than there
         // are files to draw them with (issue #41).
         photos: Array.from({ length: yacht.photos }, (_, index) => ({

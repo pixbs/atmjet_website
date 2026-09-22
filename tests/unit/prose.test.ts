@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
 import { plainText } from '@/lib/text'
-import { prose } from '../../scripts/seed/prose'
+import { paragraphs, prose } from '../../scripts/seed/prose'
 
 /**
  * The legacy strings as the editor holds them (issue #72, E4.13). `messages/*` kept the layout
@@ -51,5 +51,29 @@ describe('prose', () => {
     // the contract: nothing of the legacy answer is lost between the catalogue and the markup.
     expect(plainText(prose(A_LIST))).toBe(A_LIST)
     expect(plainText(prose(ONE_LINE))).toBe(ONE_LINE)
+  })
+})
+
+/** The other convention of section 11.2: a line of the string is a paragraph of the page. */
+const A_DESCRIPTION =
+  'A flybridge with room for twenty on deck and four cabins below.\n' +
+  'Refitted in 2021 and kept in Dubai Marina, she leaves from the pontoon she is moored at.'
+
+describe('paragraphs', () => {
+  it('gives every line of the legacy string a paragraph of its own', () => {
+    const written = paragraphs(A_DESCRIPTION).root.children
+
+    expect(written.map((node) => node.type)).toEqual(['paragraph', 'paragraph'])
+    expect(written.map((node) => ((node.children ?? []) as { text?: string }[])[0]?.text)).toEqual(
+      A_DESCRIPTION.split('\n'),
+    )
+  })
+
+  it('leaves out a line with nothing on it, as the page did before it', () => {
+    expect(paragraphs('One.\n\n  \nTwo.').root.children).toHaveLength(2)
+  })
+
+  it('reads back as one line per paragraph', () => {
+    expect(plainText(paragraphs(A_DESCRIPTION))).toBe(A_DESCRIPTION.split('\n').join('\n\n'))
   })
 })

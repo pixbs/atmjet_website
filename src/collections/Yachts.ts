@@ -1,6 +1,7 @@
 import { ValidationError, type CollectionConfig } from 'payload'
 
 import { anyone, editorOrAdmin } from '@/access'
+import { prose } from '@/fields/prose'
 import { provenanceGroup } from '@/fields/provenance'
 import { revalidateCollection } from '@/hooks/revalidate'
 import { slugify } from '@/lib/slug'
@@ -125,15 +126,11 @@ export const Yachts: CollectionConfig = {
           'Length in feet, as the legacy numeric column holds it. The card renders the metres itself.',
       },
     },
-    {
-      name: 'description',
-      type: 'textarea',
-      localized: true,
-      admin: {
-        description:
-          'From the legacy description and description_ru, which were two columns rather than a locale.',
-      },
-    },
+    prose(
+      'description',
+      'From the legacy description and description_ru, which were two columns rather than a locale.',
+      false,
+    ),
     {
       name: 'photos',
       type: 'array',

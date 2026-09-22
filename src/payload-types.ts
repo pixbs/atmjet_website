@@ -1335,7 +1335,21 @@ export interface Yacht {
   /**
    * From the legacy description and description_ru, which were two columns rather than a locale.
    */
-  description?: string | null;
+  description?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
   /**
    * In the order they are shown; the first is the card cover. From the legacy photos and pictures arrays, whose order was the order of the array.
    */
