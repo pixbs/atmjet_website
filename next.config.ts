@@ -15,6 +15,20 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  /**
+   * The videos are served from `public/` rather than a bucket (the decision on issue #175),
+   * where Next's default `max-age=0` sends the player back to the server on every visit before
+   * it may reuse the sixteen megabytes it already holds; the path names one file for good,
+   * since replacing the video means a new name in the block's `video` field.
+   */
+  async headers() {
+    return [
+      {
+        source: '/video/:path*',
+        headers: [{ key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }],
+      },
+    ]
+  },
   webpack: (webpackConfig) => {
     webpackConfig.resolve.extensionAlias = {
       '.cjs': ['.cts', '.cjs'],

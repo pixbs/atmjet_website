@@ -90,4 +90,12 @@ test.describe('the file the hero plays', () => {
     expect(head.headers()['content-range']).toBe(`bytes 0-1023/${length}`)
     expect((await head.body()).byteLength).toBe(1024)
   })
+
+  test('is kept by the browser rather than asked for again on every visit', async ({ request }) => {
+    const response = await request.get('/video/background_full.mp4')
+
+    // The path names one file for good: replacing the video means a new name in the block's
+    // `video` field, so nothing it says now stops being true (issue #175).
+    expect(response.headers()['cache-control']).toBe('public, max-age=31536000, immutable')
+  })
 })
