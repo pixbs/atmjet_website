@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import { mediaFileUrl, readS3Settings } from '@/lib/storage'
 
@@ -55,25 +55,31 @@ describe('an environment that names one', () => {
 })
 
 describe('an environment that names half of one', () => {
-  it('refuses to start, naming every part that is missing', () => {
-    let message = ''
+  const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined)
 
-    try {
-      readS3Settings({ S3_BUCKET: 'atmjet', S3_REGION: 'eu-north-1' })
-    } catch (error) {
-      message = (error as Error).message
-    }
+  afterEach(() => warn.mockClear())
 
-    expect(message).toContain('S3_ACCESS_KEY_ID is not set')
-    expect(message).toContain('S3_SECRET_ACCESS_KEY is not set')
-    expect(message).not.toContain('S3_BUCKET is not set')
+  it('says which parts are missing rather than leaving it to be noticed', () => {
+    readS3Settings({ S3_BUCKET: 'atmjet', S3_REGION: 'eu-north-1' })
+
+    const [message] = warn.mock.calls[0] ?? []
+
+    expect(message).toContain('S3_ACCESS_KEY_ID')
+    expect(message).toContain('S3_SECRET_ACCESS_KEY')
+    expect(message).not.toContain('S3_BUCKET,')
   })
 
-  it('counts a variable only some deployments need as naming one', () => {
-    // Setting the public URL alone is a mistake, not a deployment that wanted its disk.
-    expect(() => readS3Settings({ S3_PUBLIC_URL: 'https://cdn.example.com' })).toThrow(
-      /S3_BUCKET is not set/,
-    )
+  it('keeps the uploads on disk rather than refusing to render the site', () => {
+    // Only DATABASE_URL and PAYLOAD_SECRET are worth refusing to start over (`src/lib/env.ts`);
+    // a misspelling here costs an editor their uploader, not a visitor the page.
+    expect(readS3Settings({ S3_BUCKET: 'atmjet' })).toBeNull()
+  })
+
+  it('says nothing about a deployment that set only what some deployments need', () => {
+    // An endpoint or a public URL on its own names no bucket, so it is not a half-written group.
+    expect(readS3Settings({ S3_PUBLIC_URL: 'https://cdn.example.com' })).toBeNull()
+    expect(readS3Settings({ S3_ENDPOINT: 'https://ams3.digitaloceanspaces.com' })).toBeNull()
+    expect(warn).not.toHaveBeenCalled()
   })
 })
 

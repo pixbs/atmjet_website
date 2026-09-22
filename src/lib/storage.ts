@@ -3,10 +3,11 @@
  * local development and every test run use; a deployment that carries the `S3_*` group puts
  * them in the bucket instead.
  *
- * Half the group is worse than none of it — one misspelled name would otherwise leave the
- * uploads on a disk the next deployment throws away — so an incomplete group is an error that
- * says which part is missing, as `readEnvironment` does for the two variables the site cannot
- * start without.
+ * Half the group is worse than none of it: one misspelled name would otherwise leave the uploads
+ * on a disk the next deployment throws away, and nothing would say so. It is reported rather
+ * than thrown, because only `DATABASE_URL` and `PAYLOAD_SECRET` are worth refusing to start over
+ * (`src/lib/env.ts`), and a site that will not render is a worse answer to a misspelling than a
+ * site whose editor cannot upload — the same call `src/lib/urls.ts` makes about a bare host.
  */
 
 export interface S3Settings {
@@ -23,27 +24,25 @@ export interface S3Settings {
 /** Without all four there is no bucket to speak of. */
 const REQUIRED = ['S3_BUCKET', 'S3_REGION', 'S3_ACCESS_KEY_ID', 'S3_SECRET_ACCESS_KEY'] as const
 
-const OPTIONAL = ['S3_ENDPOINT', 'S3_PUBLIC_URL'] as const
-
-/** `null` when the environment names no bucket at all, which is what keeps uploads on disk. */
+/** `null` when the environment names no bucket, or names one it has not finished naming. */
 export function readS3Settings(
   source: Record<string, string | undefined> = process.env,
 ): S3Settings | null {
   const read = (name: string): string => (source[name] ?? '').trim()
-
-  if ([...REQUIRED, ...OPTIONAL].every((name) => read(name) === '')) return null
-
   const missing = REQUIRED.filter((name) => read(name) === '')
 
-  if (missing.length > 0)
-    throw new Error(
-      [
-        'The media bucket is half configured:',
-        ...missing.map((name) => `  - ${name} is not set`),
-        `Set them, or none of ${REQUIRED.join(', ')}, which keeps uploads on disk.`,
-        'What each variable is for, and which environments hold it: docs/environment.md.',
-      ].join('\n'),
+  // None of the four: this deployment wants its disk, whatever the other two say. An endpoint
+  // or a public URL on its own names no bucket, so neither is evidence of a half-written group.
+  if (missing.length === REQUIRED.length) return null
+
+  if (missing.length > 0) {
+    console.warn(
+      `[media] the bucket is half configured, so the uploads stay on disk: ${missing.join(', ')} ` +
+        `${missing.length === 1 ? 'is' : 'are'} not set. docs/environment.md says what each one is for.`,
     )
+
+    return null
+  }
 
   const endpoint = read('S3_ENDPOINT')
   const publicUrl = read('S3_PUBLIC_URL')
