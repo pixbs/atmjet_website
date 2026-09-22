@@ -11,6 +11,7 @@ import type {
 import type { Locale } from '@/i18n/locales'
 
 import { instagramHref, telHref, telegramHref } from './links'
+import { plainText, type Prose } from './text'
 import { localeUrl } from './urls'
 
 /**
@@ -116,7 +117,7 @@ export function breadcrumbs(
  * The answers keep the line breaks an editor typed, which is how the section itself draws them.
  */
 export function faqPage(
-  questions: readonly { question: string; answer: string }[],
+  questions: readonly { question: string; answer: Prose }[],
 ): Node<FAQPage> | null {
   if (questions.length === 0) return null
 
@@ -126,7 +127,7 @@ export function faqPage(
     mainEntity: questions.map(({ question, answer }) => ({
       '@type': 'Question',
       name: question,
-      acceptedAnswer: { '@type': 'Answer', text: answer },
+      acceptedAnswer: { '@type': 'Answer', text: plainText(answer) },
     })),
   }
 }

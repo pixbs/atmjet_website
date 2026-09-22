@@ -3,6 +3,7 @@ import type { Payload } from 'payload'
 import { PAGE_LOCALES, PAGE_SLUGS } from '../../src/collections/Pages'
 import { ALL_LOCALES, type Locale } from '../../src/i18n/locales'
 import type { Page } from '../../src/payload-types'
+import { prose } from './prose'
 import type { SeedOutcome } from './report'
 
 /**
@@ -1821,7 +1822,10 @@ function layoutFor(slug: string, locale: Locale, fixture: Fixture): Layout {
     sections.push({
       blockType: 'faq',
       title: say('Frequently asked questions', 'Часто задаваемые вопросы', 'Часті запитання'),
-      questions: FAQ.map((entry) => ({ question: entry[locale][0], answer: entry[locale][1] })),
+      questions: FAQ.map((entry) => ({
+        question: entry[locale][0],
+        answer: prose(entry[locale][1]),
+      })),
     })
   }
 
