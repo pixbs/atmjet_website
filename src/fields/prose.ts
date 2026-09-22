@@ -8,11 +8,11 @@ import type { RichTextField } from 'payload'
  * editor instead, so this is rich text with nothing in its toolbar but the paragraph: what the
  * legacy strings carried, and nothing an editor could reach for that the section cannot draw.
  */
-export function prose(name: string, description: string): RichTextField {
+export function prose(name: string, description: string, required = true): RichTextField {
   return {
     name,
     type: 'richText',
-    required: true,
+    required,
     localized: true,
     editor: lexicalEditor({ features: () => [ParagraphFeature()] }),
     admin: { description },

@@ -1,3 +1,4 @@
+import { RichText } from '@payloadcms/richtext-lexical/react'
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import { notFound, redirect } from 'next/navigation'
@@ -16,6 +17,7 @@ import { getEnabledLocales } from '@/lib/data/site-settings'
 import type { ImageSource } from '@/lib/media'
 import { pageMetadata } from '@/lib/metadata'
 import { breadcrumbs, product } from '@/lib/structured-data'
+import { plainText } from '@/lib/text'
 import { siteOrigin } from '@/lib/urls'
 
 /**
@@ -71,7 +73,7 @@ export async function generateMetadata({
     locales,
     slug: `yachts/${id}`,
     title: nameOf({ manufacturer: yacht.charter?.manufacturer, name: yacht.name }),
-    description: yacht.description || t('siteDescription'),
+    description: plainText(yacht.description) || t('siteDescription'),
     image: photographs[0]?.src,
     siteName: t('siteName'),
     origin: siteOrigin(),
@@ -115,7 +117,7 @@ export default async function YachtDetailPage({ params }: { params: Promise<Deta
   const catalogued = product(origin, locale as Locale, {
     slug: `yachts/${id}`,
     name,
-    description: yacht.description,
+    description: plainText(yacht.description),
     images: photographs.map((photo) => photo.src),
     brand: charter.manufacturer,
     hourlyPrice:
@@ -162,17 +164,6 @@ export default async function YachtDetailPage({ params }: { params: Promise<Deta
       label: t('stats.refit'),
     },
   ]
-
-  /**
-   * One paragraph per line of the description. The legacy split it on full stops and dropped
-   * whatever followed the last one, so a sentence ending in an abbreviation or a decimal broke
-   * in two and the closing words were lost (section 13, entry 50); the field holds the breaks
-   * an editor typed, which is the decision of E4.13.
-   */
-  const paragraphs = (yacht.description ?? '')
-    .split('\n')
-    .map((line) => line.trim())
-    .filter((line) => line !== '')
 
   /** The photograph the lower section opens with, and the ones the legacy stacked under it. */
   const last = photographs[photographs.length - 1]
@@ -249,10 +240,12 @@ export default async function YachtDetailPage({ params }: { params: Promise<Deta
           <div className="relative items-start gap-6 md:grid md:grid-cols-2 md:gap-10">
             <div className="top-hero-band gap-6 rounded-3xl border border-graphite-800 bg-graphite-950 p-6 py-10 pb-16 md:sticky md:gap-10 md:self-start md:p-10">
               <h2>{t('about', { name: yacht.name })}</h2>
+              {/* The paragraphs an editor typed (issue #72). The legacy split the description
+                  on full stops and dropped whatever followed the last one, so a sentence ending
+                  in an abbreviation or a decimal broke in two and the closing words were lost
+                  (section 13, entry 50). */}
               <div className="flex flex-col gap-4">
-                {paragraphs.map((paragraph) => (
-                  <p key={paragraph}>{paragraph}</p>
-                ))}
+                {yacht.description && <RichText data={yacht.description} disableContainer />}
               </div>
             </div>
             {/* The legacy took `photos.slice(2, -1).slice(2)`, which is the fifth photograph to

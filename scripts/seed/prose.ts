@@ -42,31 +42,49 @@ const text = (value: string): ProseNode => ({
 
 const linebreak: ProseNode = { type: 'linebreak', version: 1 }
 
+const paragraph = (children: ProseNode[]): ProseNode => ({
+  type: 'paragraph',
+  children,
+  direction: 'ltr',
+  format: '',
+  indent: 0,
+  textFormat: 0,
+  textStyle: '',
+  version: 1,
+})
+
+const root = (children: ProseNode[]): Prose => ({
+  root: {
+    type: 'root',
+    children,
+    direction: 'ltr',
+    format: '',
+    indent: 0,
+    version: 1,
+  },
+})
+
 /** One paragraph, with every `\n` of the legacy string kept as the break it was drawn as. */
 export function prose(value: string): Prose {
   const lines = value.split('\n')
 
-  return {
-    root: {
-      type: 'root',
-      children: [
-        {
-          type: 'paragraph',
-          children: lines.flatMap((line, index) =>
-            index === 0 ? [text(line)] : [linebreak, text(line)],
-          ),
-          direction: 'ltr',
-          format: '',
-          indent: 0,
-          textFormat: 0,
-          textStyle: '',
-          version: 1,
-        },
-      ],
-      direction: 'ltr',
-      format: '',
-      indent: 0,
-      version: 1,
-    },
-  }
+  return root([
+    paragraph(
+      lines.flatMap((line, index) => (index === 0 ? [text(line)] : [linebreak, text(line)])),
+    ),
+  ])
+}
+
+/**
+ * One paragraph per line, for the strings the legacy split into paragraphs rather than into
+ * lines: the yacht description is the last of them (`docs/legacy-inventory.md` section 11.2).
+ */
+export function paragraphs(value: string): Prose {
+  return root(
+    value
+      .split('\n')
+      .map((line) => line.trim())
+      .filter((line) => line !== '')
+      .map((line) => paragraph([text(line)])),
+  )
 }
