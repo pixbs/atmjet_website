@@ -5,10 +5,10 @@ import { z } from 'zod'
  *
  * Everything else `.env.example` carries is optional by design and says so where it is read: a
  * site without `TELEGRAM_BOT_TOKEN` still takes leads and records the delivery as failed (#161),
- * one without `NEXT_PUBLIC_SITE_URL` describes itself as localhost (`src/lib/urls.ts`), and one
- * without the `S3_*` group keeps its uploads on disk (`src/lib/storage.ts`). These two have no
- * such answer: without them `payload.config.ts` used to hand the adapter an empty string and the
- * failure arrived later, as a connection error or an unsigned cookie, naming neither variable.
+ * one without `NEXT_PUBLIC_SITE_URL` describes itself as localhost (`src/lib/urls.ts`), and the
+ * `S3_*` group waits for the storage adapter of #20. These two have no such answer: without them
+ * `payload.config.ts` used to hand the adapter an empty string and the failure arrived later, as
+ * a connection error or an unsigned cookie, naming neither variable.
  */
 
 /**

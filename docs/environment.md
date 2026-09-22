@@ -26,12 +26,12 @@ name. ● set, ○ optional there, — not set there.
 | `PREVIEW_SECRET`                  | ○   | ○       | ○          | Nothing. **No code reads it yet** — reserved for Payload draft preview.       | nothing                                    |
 | `NEXT_PUBLIC_SITE_URL`            | ○   | ●       | ●          | The site calls itself `http://localhost:3000` in canonicals, sitemap and OG.  | `src/lib/urls.ts`, `src/payload.config.ts` |
 | `NEXT_PUBLIC_GTM_ID`              | ○   | ○       | ●          | No tag manager is loaded, and the cookie banner still records the answer.     | `src/app/(frontend)/[locale]/layout.tsx`   |
-| `S3_BUCKET`                       | ○   | ●       | ●          | Uploads go to Payload's disk storage, which a deployment throws away (#20).   | `src/lib/storage.ts`                       |
-| `S3_REGION`                       | ○   | ●       | ●          | As above. Required with the rest of the group; `eu-north-1` for this bucket.  | `src/lib/storage.ts`                       |
-| `S3_ENDPOINT`                     | ○   | ○       | ○          | AWS builds its own from the region; only an S3-compatible host needs one.     | `src/lib/storage.ts`                       |
-| `S3_ACCESS_KEY_ID`                | ○   | ●       | ●          | As `S3_BUCKET`. Required with the rest of the group.                          | `src/lib/storage.ts`                       |
-| `S3_SECRET_ACCESS_KEY`            | ○   | ●       | ●          | As `S3_BUCKET`. Required with the rest of the group.                          | `src/lib/storage.ts`                       |
-| `S3_PUBLIC_URL`                   | ○   | ○       | ○          | The bucket is addressed directly; set it for a CDN in front of one.           | `src/lib/storage.ts`, `next.config.ts`     |
+| `S3_BUCKET`                       | ○   | ○       | ○          | Nothing yet. **No code reads the `S3_*` group** — it arrives with #20.        | nothing                                    |
+| `S3_REGION`                       | ○   | ○       | ○          | As above.                                                                     | nothing                                    |
+| `S3_ENDPOINT`                     | ○   | ○       | ○          | As above.                                                                     | nothing                                    |
+| `S3_ACCESS_KEY_ID`                | ○   | ○       | ○          | As above.                                                                     | nothing                                    |
+| `S3_SECRET_ACCESS_KEY`            | ○   | ○       | ○          | As above.                                                                     | nothing                                    |
+| `S3_PUBLIC_URL`                   | ○   | ○       | ○          | As above.                                                                     | nothing                                    |
 | `TELEGRAM_BOT_TOKEN`              | ○   | ○       | ●          | A lead is stored and its delivery recorded as failed, not thrown (#161).      | `src/lib/telegram.ts`                      |
 | `TELEGRAM_CHAT_IDS`               | ○   | ○       | ●          | As above. Comma-separated list of chat ids.                                   | `src/lib/telegram.ts`                      |
 | `CRON_SECRET`                     | ○   | ○       | ●          | Vercel cannot drain the lead queue; an admin still can, from the admin panel. | `src/payload.config.ts`                    |
@@ -39,8 +39,6 @@ name. ● set, ○ optional there, — not set there.
 | `VERCEL_AUTOMATION_BYPASS_SECRET` | ○   | —       | —          | The browser tiers cannot reach a protected preview (#248).                    | `playwright.config.ts`, `e2e.yml`          |
 | `SEED_ADMIN_EMAIL`                | ○   | —       | —          | `bun run seed` creates `dev@atmjet.local`.                                    | `scripts/seed/users.ts`                    |
 | `SEED_ADMIN_PASSWORD`             | ○   | —       | —          | `bun run seed` uses `dev-password-change-me`.                                 | `scripts/seed/users.ts`                    |
-
-Four of the `S3_*` group — the bucket, the region and the key pair — are read together: with none of them uploads stay on Payload's own disk storage, which is what local development and every test run use, and with some but not all they stay on disk as well, and a `[media]` warning at startup names the parts that are missing, so a misspelled name costs an editor their uploader rather than a visitor the page (`src/lib/storage.ts`, issue #20).
 
 ## Set by the platform or the tooling, not by us
 

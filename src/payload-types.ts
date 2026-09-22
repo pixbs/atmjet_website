@@ -195,7 +195,6 @@ export interface Media {
    * Set while the file still lives on a legacy host. Components prefer it over the upload.
    */
   externalUrl?: string | null;
-  prefix?: string | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -1945,7 +1944,6 @@ export interface UsersSelect<T extends boolean = true> {
 export interface MediaSelect<T extends boolean = true> {
   alt?: T;
   externalUrl?: T;
-  prefix?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;
