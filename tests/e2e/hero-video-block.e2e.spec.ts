@@ -62,3 +62,40 @@ test.describe('the hero video', () => {
     expect(html).not.toContain('Flying private made simple')
   })
 })
+
+/**
+ * The file behind the source, carried over from `legacy/v1` because the videos are served from
+ * `public/` rather than a bucket (the decision on issue #175; `docs/legacy-inventory.md`
+ * section 12.1, where the other two stay behind as the duplicate and the unreferenced one).
+ */
+test.describe('the file the hero plays', () => {
+  test('is served whole, and in pieces for a player that seeks', async ({ request }) => {
+    const whole = await request.get('/video/background_full.mp4')
+
+    expect(whole.status()).toBe(200)
+    expect(whole.headers()['content-type']).toBe('video/mp4')
+
+    const length = whole.headers()['content-length']
+    expect(length).toBeTruthy()
+
+    // A player asks for the head of the file before anything else, and cannot start until the
+    // answer is a piece rather than the sixteen megabytes again.
+    expect(whole.headers()['accept-ranges']).toBe('bytes')
+
+    const head = await request.get('/video/background_full.mp4', {
+      headers: { Range: 'bytes=0-1023' },
+    })
+
+    expect(head.status()).toBe(206)
+    expect(head.headers()['content-range']).toBe(`bytes 0-1023/${length}`)
+    expect((await head.body()).byteLength).toBe(1024)
+  })
+
+  test('is kept by the browser rather than asked for again on every visit', async ({ request }) => {
+    const response = await request.get('/video/background_full.mp4')
+
+    // The path names one file for good: replacing the video means a new name in the block's
+    // `video` field, so nothing it says now stops being true (issue #175).
+    expect(response.headers()['cache-control']).toBe('public, max-age=31536000, immutable')
+  })
+})
