@@ -40,7 +40,7 @@ name. ● set, ○ optional there, — not set there.
 | `SEED_ADMIN_EMAIL`                | ○   | —       | —          | `bun run seed` creates `dev@atmjet.local`.                                    | `scripts/seed/users.ts`                    |
 | `SEED_ADMIN_PASSWORD`             | ○   | —       | —          | `bun run seed` uses `dev-password-change-me`.                                 | `scripts/seed/users.ts`                    |
 
-Four of the `S3_*` group — the bucket, the region and the key pair — are read together: with none of them uploads stay on Payload's own disk storage, which is what local development and every test run use, and with some but not all the site refuses to start rather than write to a disk the next deployment throws away (`src/lib/storage.ts`, issue #20).
+Four of the `S3_*` group — the bucket, the region and the key pair — are read together: with none of them uploads stay on Payload's own disk storage, which is what local development and every test run use, and with some but not all they stay on disk as well, and a `[media]` warning at startup names the parts that are missing, so a misspelled name costs an editor their uploader rather than a visitor the page (`src/lib/storage.ts`, issue #20).
 
 ## Set by the platform or the tooling, not by us
 
