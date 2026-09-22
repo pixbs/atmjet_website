@@ -1,6 +1,6 @@
 # Access-control matrix
 
-Who may do what, per collection and operation. Every cell has a test: the shared rules and the collections without a spec of their own live in `tests/int/access.int.spec.ts`, which also holds the guard that fails when a collection is added without declaring access at all; a collection with its own spec (`airports`, `aircraft`, `contacts`, `yachts`, `empty-legs`, `leads`, `redirects`) keeps its cells there, next to the rest of its behaviour.
+Who may do what, per collection and operation. Every cell has a test: the shared rules and the collections without a spec of their own live in `tests/int/access.int.spec.ts`, which also holds the guard that fails when a collection is added without declaring access at all; a collection with its own spec (`airports`, `aircraft`, `contacts`, `yachts`, `empty-legs`, `leads`, `redirects`, `migration-runs`) keeps its cells there, next to the rest of its behaviour.
 
 This is written out in full because the legacy admin had none of it: no roles, unauthenticated yacht routes, and passwords stored in plain text (`docs/legacy-inventory.md` section 14).
 
@@ -92,6 +92,19 @@ There is no public projection of a contact: no legacy page showed any part of on
 A lead is created by the server action of E9.4 through the **Local API**, which does not go through access control at all, so closing `create` to everyone but an administrator costs the public forms nothing and means nobody can write a lead by posting to `/api/leads`. Both collections are hidden from an editor's sidebar rather than offered as a screen that would fail.
 
 Retention for both is in `SECURITY.md`.
+
+### `migration-runs`
+
+The ledger the data migration resumes on (issue #76, `docs/adr/0002-database-migration-strategy.md` section 6): one document per legacy row an importer has written, holding the name of the table it came from and the id it had there. Not personal data, but it describes a database this project may only read, and nothing but `scripts/migrate` ever writes it.
+
+| Operation | Anonymous | Editor | Admin |
+| --------- | --------- | ------ | ----- |
+| read      | no        | no     | yes   |
+| create    | no        | no     | yes   |
+| update    | no        | no     | yes   |
+| delete    | no        | no     | yes   |
+
+The importers write through the Local API, which does not go through access control at all, so closing every operation to everyone but an administrator costs them nothing. The cells are tested in `tests/int/migrate.int.spec.ts`.
 
 ## Globals
 

@@ -20,6 +20,7 @@ import { Contacts } from './collections/Contacts'
 import { Yachts } from './collections/Yachts'
 import { EmptyLegs } from './collections/EmptyLegs'
 import { Leads } from './collections/Leads'
+import { MigrationRuns } from './collections/MigrationRuns'
 import { sendTelegramLead } from './jobs/send-telegram-lead'
 import { redirectsOverrides, REDIRECT_TYPES } from './collections/Redirects'
 import { Header } from './globals/Header'
@@ -74,7 +75,18 @@ export default buildConfig({
   i18n: {
     supportedLanguages: { en, ru, uk },
   },
-  collections: [Users, Media, Pages, Airports, Aircraft, Contacts, Yachts, EmptyLegs, Leads],
+  collections: [
+    Users,
+    Media,
+    Pages,
+    Airports,
+    Aircraft,
+    Contacts,
+    Yachts,
+    EmptyLegs,
+    Leads,
+    MigrationRuns,
+  ],
   // The chrome and the values every page links to (issue #61). One document each, so there is
   // nothing to list and nothing to publish.
   globals: [Header, Footer, SiteSettings],
