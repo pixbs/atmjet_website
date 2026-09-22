@@ -49,7 +49,9 @@ export function VehicleCard({ registration, model, image, specs, className }: Ve
           alt={image.alt}
           className="object-cover object-center"
           fill
-          sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+          /* A third of the row, half of it, and the one card the narrow scroller shows with the
+             next one peeking past it — which is four fifths of the screen, not all of it. */
+          sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 85vw"
           src={image.src}
         />
       </div>
