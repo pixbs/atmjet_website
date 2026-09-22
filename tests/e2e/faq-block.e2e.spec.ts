@@ -55,8 +55,9 @@ test.describe('the FAQ section', () => {
     const answer = section.locator('p', { hasText: 'The cost of a private jet' })
 
     // The factors on a line each under the sentence that introduces them, which is how the
-    // legacy answer was written and how it split it.
-    await expect(answer.locator('span')).toHaveCount(6)
+    // legacy answer was written: six lines, so five breaks between them. They are an editor's
+    // paragraph now rather than a string split on `\n` (issue #72).
+    await expect(answer.locator('br')).toHaveCount(5)
   })
 
   test('speaks the language of the page it is on', async ({ request }) => {

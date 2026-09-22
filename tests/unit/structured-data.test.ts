@@ -8,6 +8,7 @@ import {
   webSite,
   type SiteContact,
 } from '@/lib/structured-data'
+import { prose } from '../../scripts/seed/prose'
 
 /**
  * What the site tells a search engine about itself (issue #173). The legacy site emitted no
@@ -85,8 +86,8 @@ describe('breadcrumbs', () => {
 describe('faqPage', () => {
   it('carries every question with the answer under it', () => {
     const answered = faqPage([
-      { question: 'How far ahead do I book?', answer: 'Two hours is enough.' },
-      { question: 'What may I take?', answer: 'What fits the hold.' },
+      { question: 'How far ahead do I book?', answer: prose('Two hours is enough.') },
+      { question: 'What may I take?', answer: prose('What fits the hold.') },
     ])
 
     expect(answered?.mainEntity).toEqual([
@@ -104,7 +105,9 @@ describe('faqPage', () => {
   })
 
   it('keeps the line breaks the answer was written with', () => {
-    const answered = faqPage([{ question: 'Where to?', answer: 'Anywhere.\nAlmost.' }])
+    // The legacy answers are lists, and a search result reads one without its breaks as a
+    // single run-on sentence (issue #72).
+    const answered = faqPage([{ question: 'Where to?', answer: prose('Anywhere.\nAlmost.') }])
 
     expect(answered?.mainEntity).toMatchObject([{ acceptedAnswer: { text: 'Anywhere.\nAlmost.' } }])
   })
