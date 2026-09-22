@@ -17,7 +17,9 @@ export default function Error({ error, reset }: { error: Error; reset: () => voi
   const t = useTranslations('errors.unexpected')
 
   useEffect(() => {
-    // Until error monitoring is chosen (issue #36) the server log is where this is read.
+    // The browser's console and nowhere else: the decision of #36 is Vercel's own logs, which
+    // hold what the server rendered rather than what a visitor's browser threw
+    // (`docs/runbooks/observability.md`).
     console.error(error)
   }, [error])
 

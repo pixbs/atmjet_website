@@ -66,3 +66,9 @@ These are never put in `.env.example`, because something else provides them.
 A value that has been in a build log, a screenshot or a pull request is rotated, not reused. The
 legacy repositories leaked a TinyPNG key and tracked an `.env` with real secrets
 (`docs/legacy-inventory.md` section 13, entry 89, and #28); nothing here repeats that.
+
+## What sets nothing
+
+Error monitoring and logging (#36, E1.8) is Vercel's own, decided on 2026-09-13, so there is no
+key, no DSN and no sampling rate in either table above; `docs/runbooks/observability.md` is where
+each kind of failure is read instead. Adopting a tool later would add its variables to the first.
