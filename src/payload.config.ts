@@ -2,6 +2,7 @@ import { postgresAdapter } from '@payloadcms/db-postgres'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import { redirectsPlugin } from '@payloadcms/plugin-redirects'
 import { seoPlugin } from '@payloadcms/plugin-seo'
+import { s3Storage } from '@payloadcms/storage-s3'
 import { en } from '@payloadcms/translations/languages/en'
 import { ru } from '@payloadcms/translations/languages/ru'
 import { uk } from '@payloadcms/translations/languages/uk'
@@ -27,7 +28,15 @@ import { SiteSettings } from './globals/SiteSettings'
 import { hasRole } from './access'
 import { DEFAULT_LOCALE, LOCALE_DEFINITIONS } from './i18n/locales'
 import { readEnvironment } from './lib/env'
+import { mediaFileUrl, MEDIA_PREFIX, readS3Settings } from './lib/storage'
 import { siteOrigin } from './lib/urls'
+
+/**
+ * The media bucket, or `null` where the environment names none (issue #20). Read once here
+ * rather than per upload, so a half-written group fails when the config loads.
+ */
+const s3 = readS3Settings()
+const publicUrl = s3?.publicUrl
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -114,6 +123,34 @@ export default buildConfig({
   },
   sharp,
   plugins: [
+    // Uploads go to the bucket where the environment names one and to Payload's own disk
+    // storage where it does not, which is local development and every test run (issue #20).
+    // The fields go in either way, so one set of migrations describes both.
+    s3Storage({
+      enabled: s3 !== null,
+      alwaysInsertFields: true,
+      bucket: s3?.bucket ?? '',
+      config: {
+        region: s3?.region ?? '',
+        credentials: {
+          accessKeyId: s3?.accessKeyId ?? '',
+          secretAccessKey: s3?.secretAccessKey ?? '',
+        },
+        // Only an S3-compatible host needs one; AWS builds its own from the region.
+        ...(s3?.endpoint === undefined ? {} : { endpoint: s3.endpoint }),
+      },
+      collections: {
+        media: {
+          prefix: MEDIA_PREFIX,
+          ...(publicUrl === undefined
+            ? {}
+            : {
+                generateFileURL: ({ filename, prefix }) =>
+                  mediaFileUrl(publicUrl, filename, prefix),
+              }),
+        },
+      },
+    }),
     // Localized meta fields per page; E11.1 refines what each route actually emits.
     seoPlugin({
       collections: ['pages'],
