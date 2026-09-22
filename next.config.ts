@@ -7,6 +7,17 @@ import { fileURLToPath } from 'url'
 const __filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(__filename)
 
+/**
+ * The hosts `next/image` may fetch from. `mediaSource` hands `Media.externalUrl` straight to it
+ * (`src/lib/media.ts`), and the legacy config named these same two
+ * (`docs/legacy-inventory.md` section 2.1): the bucket the uploads go to (issue #20) and the
+ * Spaces host that E1.6 has yet to mirror.
+ */
+const REMOTE_IMAGE_HOSTS = [
+  'atmjet.s3.eu-north-1.amazonaws.com',
+  'atmjet.ams3.cdn.digitaloceanspaces.com',
+]
+
 const nextConfig: NextConfig = {
   images: {
     localPatterns: [
@@ -14,6 +25,11 @@ const nextConfig: NextConfig = {
         pathname: '/api/media/file/**',
       },
     ],
+    remotePatterns: REMOTE_IMAGE_HOSTS.map((hostname) => ({
+      protocol: 'https' as const,
+      hostname,
+      pathname: '/**',
+    })),
   },
   /**
    * The videos are served from `public/` rather than a bucket (the decision on issue #175),
