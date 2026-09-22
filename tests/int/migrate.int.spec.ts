@@ -308,4 +308,14 @@ describe('access to the ledger', () => {
       user: owner,
     })
   })
+
+  it("stays out of an editor's sidebar, because they cannot open it", async () => {
+    const config = await payload.config
+    const ledger = config.collections.find((collection) => collection.slug === 'migration-runs')
+    const hidden = ledger?.admin.hidden as (args: unknown) => boolean
+
+    expect(typeof hidden).toBe('function')
+    expect(hidden({ user: { id: 1, roles: ['editor'] } })).toBe(true)
+    expect(hidden({ user: { id: 1, roles: ['admin'] } })).toBe(false)
+  })
 })

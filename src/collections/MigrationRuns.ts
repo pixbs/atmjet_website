@@ -1,6 +1,6 @@
 import type { CollectionConfig } from 'payload'
 
-import { admin } from '@/access'
+import { admin, hasRole } from '@/access'
 
 /**
  * The ledger an import resumes on (issue #76,
@@ -18,6 +18,7 @@ export const MigrationRuns: CollectionConfig = {
     defaultColumns: ['sourceKey', 'target', 'action', 'runId'],
     group: 'Operations',
     description: 'What the imports have written so far. Written by scripts/migrate, not by hand.',
+    hidden: ({ user }) => !hasRole(user, 'admin'),
   },
   access: { read: admin, create: admin, update: admin, delete: admin },
   fields: [
