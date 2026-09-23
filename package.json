@@ -38,6 +38,7 @@
     "seed": "bun run scripts/seed/index.ts"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "3.1138.0",
     "@hookform/resolvers": "^5.9.1",
     "@next/third-parties": "^16.3.5",
     "@payloadcms/db-postgres": "3.89.0",
