@@ -8,7 +8,7 @@ import { migratesOn, pushedByDev } from './deploy-migrations'
 
 const vercelEnv = process.env.VERCEL_ENV
 if (!migratesOn(vercelEnv)) {
-  console.log(`deploy-migrations: skipped on a ${vercelEnv} build (issue #18)`)
+  console.log(`deploy-migrations: skipped on a ${vercelEnv} build, which reads a pushed database`)
   process.exit(0)
 }
 
