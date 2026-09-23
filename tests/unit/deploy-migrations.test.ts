@@ -21,13 +21,14 @@ const failing = (error: Error) =>
   }) as unknown as Pick<Payload, 'count'>
 
 describe('the migration step of the Vercel build (issue #307)', () => {
-  it('migrates a production build and a build outside Vercel', () => {
+  it('migrates a production build, a preview build and a build outside Vercel', () => {
+    // A preview reads a Neon branch of its own, so the tables its code joins are its to add (#18).
     expect(migratesOn('production')).toBe(true)
+    expect(migratesOn('preview')).toBe(true)
     expect(migratesOn(undefined)).toBe(true)
   })
 
-  it('leaves the shared database alone on a preview or development build', () => {
-    expect(migratesOn('preview')).toBe(false)
+  it('leaves a development build alone, whose database bun run dev pushes', () => {
     expect(migratesOn('development')).toBe(false)
   })
 
