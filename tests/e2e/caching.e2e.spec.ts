@@ -18,6 +18,13 @@ const cacheOf = async (request: APIRequestContext, path: string) => {
   return response.headers()
 }
 
+/**
+ * Whether a response came out of the page cache. A local server names it `x-nextjs-cache`;
+ * Vercel keeps that header to itself and answers with `x-vercel-cache` instead (issue #17).
+ */
+const cached = (headers: Record<string, string>) =>
+  headers['x-nextjs-cache'] ?? headers['x-vercel-cache']
+
 /** The REST API as the administrator the run creates, which is how an editor's save arrives. */
 async function asAdmin(request: APIRequestContext): Promise<Record<string, string>> {
   const response = await request.post('/api/users/login', {
@@ -42,12 +49,12 @@ test.describe('what a page type does with a cache', () => {
     const headers = await cacheOf(request, pathFor('/partners', 'en'))
 
     expect(headers['x-nextjs-prerender']).toBeTruthy()
-    expect(headers['x-nextjs-cache']).toBeTruthy()
+    expect(cached(headers)).toBeTruthy()
   })
 
   test('the sitemaps and robots come from a cache entry too', async ({ request }) => {
     for (const path of ['/sitemap.xml', '/aircraft/sitemap.xml', '/yachts/sitemap.xml']) {
-      expect((await cacheOf(request, path))['x-nextjs-cache'], path).toBeTruthy()
+      expect(cached(await cacheOf(request, path)), path).toBeTruthy()
     }
   })
 
@@ -85,11 +92,15 @@ test.describe('an editor saving a page', () => {
 
       expect(saved.status()).toBe(200)
 
-      // No polling: the hooks drop the rendered pages inside the request that saved, so the
-      // next one is already re-rendered. Before #178 this served the old title for ever.
-      const html = await (await request.get(pathFor('/partners', 'en'))).text()
-
-      expect(html).toContain(renamed)
+      // The hooks drop the rendered pages inside the request that saved, so a local server's
+      // next answer is already re-rendered; before #178 it served the old title for ever. A
+      // deployment purges its edge cache too, but the region this runs against hears of it a
+      // moment after the one that saved (issue #17), hence the poll rather than one read.
+      await expect
+        .poll(async () => (await request.get(pathFor('/partners', 'en'))).text(), {
+          timeout: 15_000,
+        })
+        .toContain(renamed)
     } finally {
       await request.patch(`/api/pages/${page.id}`, {
         headers,

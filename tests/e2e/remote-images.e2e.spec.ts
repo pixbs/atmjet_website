@@ -8,7 +8,8 @@ import { expect, test, type APIRequestContext } from '@playwright/test'
  *
  * The legacy site allowed exactly these two (`docs/legacy-inventory.md` section 2.1).
  */
-const REFUSED = '"url" parameter is not allowed'
+/** What a refusal says: Next's own words locally, Vercel's optimiser's on a deployment (#17). */
+const REFUSED = /"url" parameter is not allowed|INVALID_IMAGE_OPTIMIZE_REQUEST/
 
 const optimised = (request: APIRequestContext, url: string) =>
   request.get(`/_next/image?url=${encodeURIComponent(url)}&w=640&q=75`)
@@ -23,7 +24,7 @@ test.describe('the hosts an image may come from', () => {
 
       // What the file at the end of it answers is the bucket's business and differs per
       // environment; what this asserts is that the address was allowed to be asked at all.
-      expect(await response.text()).not.toContain(REFUSED)
+      expect(await response.text()).not.toMatch(REFUSED)
       expect(response.status()).not.toBe(400)
     })
 
@@ -33,6 +34,6 @@ test.describe('the hosts an image may come from', () => {
     const response = await optimised(request, 'https://example.com/a.jpg')
 
     expect(response.status()).toBe(400)
-    expect(await response.text()).toContain(REFUSED)
+    expect(await response.text()).toMatch(REFUSED)
   })
 })
