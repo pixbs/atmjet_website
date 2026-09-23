@@ -22,8 +22,11 @@ permissions:
   pull-requests: read
   deployments: read
 
+# One group per event as well as per commit: the production deployment's `deployment_status`
+# arrives for the same commit the `push` run is testing and used to cancel it, then skip itself
+# as not a preview, so `master` was never tested (issue #17).
 concurrency:
-  group: e2e-${{ github.event.deployment.sha || github.sha }}
+  group: e2e-${{ github.event_name }}-${{ github.event.deployment.sha || github.sha }}
   cancel-in-progress: true
 
 env:
