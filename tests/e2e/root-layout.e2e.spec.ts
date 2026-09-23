@@ -52,13 +52,16 @@ test.describe('the shell every page inherits', () => {
     await page.goto(pathFor('/', 'en'))
     await page.waitForLoadState('networkidle')
 
-    const sources = await page.evaluate(() =>
-      [...document.querySelectorAll('script[src]')].map((script) => script.getAttribute('src')),
+    const sdks = await page.evaluate(() =>
+      [...document.querySelectorAll('script[data-sdkn]')].map((script) =>
+        script.getAttribute('data-sdkn'),
+      ),
     )
 
     // Client components, so they are absent from the server HTML and appear once hydrated.
-    // Outside Vercel the two paths answer nothing, which is why this asks for the elements.
-    expect(sources.some((src) => src?.includes('/_vercel/insights/'))).toBe(true)
-    expect(sources.some((src) => src?.includes('/_vercel/speed-insights/'))).toBe(true)
+    // Each SDK names itself on the script it adds; the path it loads from is `/_vercel/...`
+    // locally and a per-deployment one on Vercel (issue #17), so the name is what is asked for.
+    expect(sdks.some((sdk) => sdk?.startsWith('@vercel/analytics'))).toBe(true)
+    expect(sdks.some((sdk) => sdk?.startsWith('@vercel/speed-insights'))).toBe(true)
   })
 })

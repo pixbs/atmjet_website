@@ -70,6 +70,9 @@ async function advertisedUrls(request: APIRequestContext): Promise<string[]> {
 }
 
 test.describe('every route the site advertises', () => {
+  // Every advertised route in turn, and a deployment answers each from another continent (#17).
+  test.slow()
+
   test('ships a title, a description and a canonical of its own', async ({ request }) => {
     for (const url of await advertisedUrls(request)) {
       const path = new URL(url).pathname
