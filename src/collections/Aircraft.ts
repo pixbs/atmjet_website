@@ -260,7 +260,9 @@ export const Aircraft: CollectionConfig = {
           admin: { description: 'Every legacy row folded into this document.' },
           fields: [
             { name: 'table', type: 'text', required: true },
-            { name: 'id', type: 'number', required: true },
+            // Not `id`, which is the array row's own key: two aircraft merging the same legacy
+            // id would otherwise share one primary key.
+            { name: 'legacyId', type: 'number', required: true },
           ],
         },
       ],

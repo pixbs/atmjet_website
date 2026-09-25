@@ -87,7 +87,7 @@ describe('provenance', () => {
           legacyVehicleId: 88,
           legacyTailNumber: 'RA-73025',
           legacySlug: 'gulfstream-g650-ra-73025',
-          mergedFrom: [{ table: 'vehicles', id: 88 }],
+          mergedFrom: [{ table: 'vehicles', legacyId: 88 }],
           importRunId: 'run-2026-09-13',
         },
       }),
@@ -95,7 +95,7 @@ describe('provenance', () => {
 
     expect(created.provenance?.origin).toBe('aircrafts-catalog')
     expect(created.provenance?.legacyAircraftId).toBe(412)
-    expect(created.provenance?.mergedFrom?.[0]).toMatchObject({ table: 'vehicles', id: 88 })
+    expect(created.provenance?.mergedFrom?.[0]).toMatchObject({ table: 'vehicles', legacyId: 88 })
   })
 })
 
