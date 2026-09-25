@@ -44,14 +44,23 @@ jobs:
       - run: bun install --frozen-lockfile
       - name: The pages of issue #43
         id: pages
-        # The detail page is the first card of the listing, which is what a visitor opens.
+        # The first card of the listing, which links without a locale (inventory §4), or else the
+        # first plane of the aircraft sitemap, whose list the legacy listing renders in the browser.
         run: |
-          detail="$(curl -sL "$BASE_URL/en/aircraft" | grep -o 'href="/en/aircraft/[^"]*"' | head -1 | cut -d'"' -f2)"
-          echo "detail=${detail:-/en/aircraft}" >> "$GITHUB_OUTPUT"
-          echo "aircraft detail page: ${detail:-none found}"
+          detail="$(curl -sL "$BASE_URL/en/aircraft" | grep -o 'href="\(/en\)\?/aircraft/[^"]*"' \
+            | grep -v sitemap | head -1 | cut -d'"' -f2)"
+          if [ -z "$detail" ]; then
+            detail="$(curl -sL "$BASE_URL/aircraft/sitemap.xml" | grep -o '<loc>[^<]*</loc>' | head -1 \
+              | sed -E 's#</?loc>##g; s#^https?://[^/]+##')"
+          fi
+          if [ -z "$detail" ]; then echo "::error::no aircraft detail page found"; exit 1; fi
+          echo "detail=/en${detail#/en}" >> "$GITHUB_OUTPUT"
+          echo "aircraft detail page: /en${detail#/en}"
+      # `lighthouserc.cjs` sets the desktop preset, so the mobile run names its own: `perf` is
+      # Lighthouse's default mobile emulation, scoring performance only.
       - name: Mobile
         run: >-
-          bunx lhci collect --numberOfRuns=3
+          bunx lhci collect --numberOfRuns=3 --settings.preset=perf
           --settings.chromeFlags="--no-sandbox --headless=new"
           --url="$BASE_URL/en" --url="$BASE_URL/en/aircraft"
           --url="$BASE_URL${{ steps.pages.outputs.detail }}" --url="$BASE_URL/en/yachts"
