@@ -4,6 +4,7 @@
  *
  *   bun run import:legacy airports [--schema legacy] [--dry-run]
  *   bun run import:legacy aircraft [--schema legacy] [--dry-run]   (after airports)
+ *   bun run import:legacy vehicles [--schema legacy] [--dry-run]   (after aircraft)
  *   bun run import:legacy reconcile [--schema legacy]
  *
  * An import can be run again at any point: rows the ledger already holds are skipped, and the
@@ -14,8 +15,9 @@ import { getPayload } from 'payload'
 import config from '../../src/payload.config'
 import { importCatalogue } from './aircraft'
 import { importAirports } from './airports'
-import { aircraftChecks, airportChecks, failures, reconcile } from './reconcile'
+import { aircraftChecks, airportChecks, failures, reconcile, vehicleChecks } from './reconcile'
 import type { ImportReport } from './runner'
+import { importVehicles } from './vehicles'
 
 function flag(name: string): string | undefined {
   const index = process.argv.indexOf(`--${name}`)
@@ -27,7 +29,7 @@ const command = process.argv[2]
 const schema = flag('schema') ?? 'legacy'
 const dryRun = process.argv.includes('--dry-run')
 
-const COMMANDS = ['airports', 'aircraft', 'reconcile']
+const COMMANDS = ['airports', 'aircraft', 'vehicles', 'reconcile']
 
 if (command === undefined || !COMMANDS.includes(command)) {
   console.error(`Usage: bun run import:legacy ${COMMANDS.join('|')} [--schema legacy] [--dry-run]`)
@@ -50,8 +52,10 @@ if (command === 'airports') {
   console.log(`${differences.length} values differ between the two airport tables`)
 } else if (command === 'aircraft') {
   report(await importCatalogue(payload, { schema, dryRun }))
+} else if (command === 'vehicles') {
+  report(await importVehicles(payload, { schema, dryRun }))
 } else {
-  const checks = [...airportChecks(schema), ...aircraftChecks(schema)]
+  const checks = [...airportChecks(schema), ...aircraftChecks(schema), ...vehicleChecks(schema)]
   const failed = failures(await reconcile(payload, checks))
 
   for (const line of failed) console.error(line)

@@ -51,16 +51,21 @@ export function failures(results: CheckResult[]): string[] {
 /** A code as `normaliseCode` stores it: no whitespace, upper case, empty when absent. */
 const code = (column: string) => `upper(regexp_replace(coalesce(${column}, ''), '\\s', '', 'g'))`
 
-/** Every row of a legacy table has a ledger row whose document still exists. */
-function everyRowImported(schema: string, table: string, collection: string): Check {
+/** Every row of a legacy table, or of the part `rows` names, has a ledger row whose document still exists. */
+function everyRowImported(
+  schema: string,
+  table: string,
+  collection: string,
+  rows?: { name: string; where: string },
+): Check {
   const qualified = `${quoteIdentifier(schema)}.${quoteIdentifier(table)}`
 
   return {
-    name: `${schema}.${table}: every row is a document in ${collection}`,
+    name: `${schema}.${table}: every ${rows?.name ?? 'row'} is a document in ${collection}`,
     sql: `SELECT l.id AS legacy_id FROM ${qualified} l
       LEFT JOIN migration_runs m ON m.source_key = '${schema}.${table}:' || l.id
       LEFT JOIN ${quoteIdentifier(collection)} d ON d.id::text = m.document_id
-      WHERE d.id IS NULL ORDER BY l.id`,
+      WHERE d.id IS NULL ${rows === undefined ? '' : `AND ${rows.where}`} ORDER BY l.id`,
   }
 }
 
@@ -129,6 +134,56 @@ export function aircraftChecks(schema: string): Check[] {
       sql: `(SELECT 'missing' AS found, * FROM (${legacyImages} EXCEPT ${importedImages}) a)
         UNION ALL (SELECT 'unexpected', * FROM (${importedImages} EXCEPT ${legacyImages}) b)
         ORDER BY legacy_id, position`,
+    },
+  ]
+}
+
+/** A registration as `canonicalRegistration` stores it. */
+const registration = (column: string) => `upper(regexp_replace(${column}, '[\\s-]', '', 'g'))`
+
+export function vehicleChecks(schema: string): Check[] {
+  const legacy = quoteIdentifier(schema)
+  const plane = `trim(coalesce(l.tail_number, '')) <> ''`
+  const planes = `SELECT DISTINCT ${registration('l.tail_number')} AS reg FROM ${legacy}.vehicles l WHERE ${plane}`
+  const catalogue = `SELECT DISTINCT ${registration(`coalesce(nullif(trim(registration_number), ''), slug)`)} AS reg
+    FROM ${legacy}.aircrafts`
+  const documents = (table: string, origin: string) => `SELECT count(DISTINCT a.id) FROM aircraft a
+    JOIN migration_runs m ON m.document_id = a.id::text AND m.source_table = '${schema}.${table}'
+    WHERE a.provenance_origin = '${origin}'`
+
+  return [
+    everyRowImported(schema, 'vehicles', 'aircraft', { name: 'plane row', where: plane }),
+    {
+      name: 'every registration is one aircraft',
+      sql: `SELECT registration, count(*)::int AS aircraft FROM aircraft
+        WHERE registration IS NOT NULL GROUP BY registration HAVING count(*) > 1`,
+    },
+    {
+      name: `${schema}.vehicles: every URL the legacy aircraft sitemap listed names an aircraft`,
+      sql: `SELECT l.id AS legacy_id, l.tail_number FROM ${legacy}.vehicles l WHERE ${plane}
+        AND NOT EXISTS (SELECT 1 FROM aircraft a
+          WHERE a.registration = ${registration('l.tail_number')} OR a.slug = trim(l.tail_number))
+        ORDER BY l.id`,
+    },
+    {
+      name: `${schema}.vehicles: every plane merged into another row's aircraft is in its mergedFrom`,
+      sql: `SELECT l.id AS legacy_id, a.id AS aircraft FROM ${legacy}.vehicles l
+        JOIN migration_runs m ON m.source_key = '${schema}.vehicles:' || l.id
+        JOIN aircraft a ON a.id::text = m.document_id
+        WHERE a.provenance_legacy_vehicle_id IS DISTINCT FROM l.id
+          AND NOT EXISTS (SELECT 1 FROM aircraft_provenance_merged_from f
+            WHERE f._parent_id = a.id AND f."table" = 'vehicles' AND f.legacy_id = l.id)
+        ORDER BY l.id`,
+    },
+    {
+      name: `${schema}: as many aircraft of each origin as the two tables have registrations`,
+      sql: `SELECT origin, expected::int, aircraft::int FROM (
+          SELECT 'aircrafts-catalog' AS origin, (SELECT count(*) FROM (${catalogue}) c) AS expected,
+            (${documents('aircrafts', 'aircrafts-catalog')}) AS aircraft
+          UNION ALL SELECT 'vehicles-legacy',
+            (SELECT count(*) FROM (${planes}) p WHERE p.reg NOT IN (SELECT reg FROM (${catalogue}) c)),
+            (${documents('vehicles', 'vehicles-legacy')})
+        ) o WHERE expected <> aircraft`,
     },
   ]
 }
