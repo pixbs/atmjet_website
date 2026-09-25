@@ -64,7 +64,7 @@ function everyRowImported(
     name: `${schema}.${table}: every ${rows?.name ?? 'row'} is a document in ${collection}`,
     sql: `SELECT l.id AS legacy_id FROM ${qualified} l
       LEFT JOIN migration_runs m ON m.source_key = '${schema}.${table}:' || l.id
-      LEFT JOIN ${quoteIdentifier(collection)} d ON d.id::text = m.document_id
+      LEFT JOIN ${quoteIdentifier(collection.replaceAll('-', '_'))} d ON d.id::text = m.document_id
       WHERE d.id IS NULL ${rows === undefined ? '' : `AND ${rows.where}`} ORDER BY l.id`,
   }
 }
@@ -236,4 +236,38 @@ export function charterChecks(schema: string): Check[] {
 
 export function saleChecks(schema: string): Check[] {
   return [everyRowImported(schema, 'yachts', 'yachts'), photosInPlace(schema, 'yachts', 'pictures')]
+}
+
+export function emptyLegChecks(schema: string): Check[] {
+  const legacy = quoteIdentifier(schema)
+  const instant = (column: string) =>
+    `to_char(${column} AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.MS')`
+  const legacyLegs = `SELECT l.id AS legacy_id, ${instant('l."start"')} AS departure, ${instant('l."end"')} AS arrival,
+      ${code('l."from"')} AS from_icao, ${code('l."to"')} AS to_icao, l.price, l."order"
+    FROM ${legacy}.atmjet_admin__empty_legs l`
+  const importedLegs = `SELECT l.id AS legacy_id, ${instant('e.departure_at')}, ${instant('e.arrival_at')},
+      e.departure_icao, e.arrival_icao, e.price::int, e."order"::int
+    FROM ${legacy}.atmjet_admin__empty_legs l
+    JOIN migration_runs m ON m.source_key = '${schema}.atmjet_admin__empty_legs:' || l.id
+    JOIN empty_legs e ON e.id::text = m.document_id`
+
+  return [
+    everyRowImported(schema, 'atmjet_admin__empty_legs', 'empty-legs'),
+    {
+      name: `${schema}.atmjet_admin__empty_legs: every leg keeps its UTC times, route, price and order`,
+      sql: `(SELECT 'missing' AS found, * FROM (${legacyLegs} EXCEPT ${importedLegs}) a)
+        UNION ALL (SELECT 'unexpected', * FROM (${importedLegs} EXCEPT ${legacyLegs}) b)
+        ORDER BY legacy_id`,
+    },
+    {
+      name: `${schema}.atmjet_admin__empty_legs: every leg whose code names an airport is linked to it`,
+      sql: `SELECT l.id AS legacy_id, e.departure_icao, e.arrival_icao
+        FROM ${legacy}.atmjet_admin__empty_legs l
+        JOIN migration_runs m ON m.source_key = '${schema}.atmjet_admin__empty_legs:' || l.id
+        JOIN empty_legs e ON e.id::text = m.document_id
+        WHERE (e.departure_airport_id IS NULL AND EXISTS (SELECT 1 FROM airports a WHERE a.icao = e.departure_icao))
+           OR (e.arrival_airport_id IS NULL AND EXISTS (SELECT 1 FROM airports a WHERE a.icao = e.arrival_icao))
+        ORDER BY l.id`,
+    },
+  ]
 }
