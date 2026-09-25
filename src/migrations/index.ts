@@ -36,6 +36,7 @@ import * as migration_20260922_023431_faq_answer_prose from './20260922_023431_f
 import * as migration_20260922_030334_yacht_description_prose from './20260922_030334_yacht_description_prose';
 import * as migration_20260922_160200_migration_runs from './20260922_160200_migration_runs';
 import * as migration_20260922_165032_s3_media_prefix from './20260922_165032_s3_media_prefix';
+import * as migration_20260925_120259_aircraft_merged_from_legacy_id from './20260925_120259_aircraft_merged_from_legacy_id';
 
 export const migrations = [
   {
@@ -221,11 +222,16 @@ export const migrations = [
   {
     up: migration_20260922_160200_migration_runs.up,
     down: migration_20260922_160200_migration_runs.down,
-    name: '20260922_160200_migration_runs'
+    name: '20260922_160200_migration_runs',
   },
   {
     up: migration_20260922_165032_s3_media_prefix.up,
     down: migration_20260922_165032_s3_media_prefix.down,
-    name: '20260922_165032_s3_media_prefix'
+    name: '20260922_165032_s3_media_prefix',
+  },
+  {
+    up: migration_20260925_120259_aircraft_merged_from_legacy_id.up,
+    down: migration_20260925_120259_aircraft_merged_from_legacy_id.down,
+    name: '20260925_120259_aircraft_merged_from_legacy_id'
   },
 ];

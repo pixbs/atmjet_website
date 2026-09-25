@@ -1259,7 +1259,8 @@ export interface Aircraft {
     mergedFrom?:
       | {
           table: string;
-          id: number;
+          legacyId: number;
+          id?: string | null;
         }[]
       | null;
     importRunId?: string | null;
@@ -2743,6 +2744,7 @@ export interface AircraftSelect<T extends boolean = true> {
           | T
           | {
               table?: T;
+              legacyId?: T;
               id?: T;
             };
         importRunId?: T;
