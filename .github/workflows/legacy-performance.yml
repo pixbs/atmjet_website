@@ -1,0 +1,77 @@
+# Measures the legacy production site with Lighthouse, the numbers the budgets of
+# lighthouserc.cjs are held to (issue #43). Agent sessions cannot reach the production host, so
+# the audit runs on a runner and prints its medians to the log and the run summary. Run it only
+# while production still serves the legacy site.
+name: legacy performance
+
+on:
+  workflow_dispatch:
+    inputs:
+      base_url:
+        description: Legacy production URL
+        type: string
+        default: https://atmjet.com
+  pull_request:
+    paths:
+      - .github/workflows/legacy-performance.yml
+      - scripts/ci/lighthouse-summary.ts
+
+permissions:
+  contents: read
+
+concurrency:
+  group: legacy-performance-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  LEFTHOOK: '0'
+
+jobs:
+  measure:
+    name: measure
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      BASE_URL: ${{ inputs.base_url || 'https://atmjet.com' }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: .node-version
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with:
+          bun-version-file: .bun-version
+      - run: bun install --frozen-lockfile
+      - name: Pages to audit
+        id: pages
+        # The first card of the listing, which links without a locale (inventory §4), or else the
+        # first plane of the aircraft sitemap, whose list the legacy listing renders in the browser.
+        run: |
+          detail="$(curl -sL "$BASE_URL/en/aircraft" | grep -o 'href="\(/en\)\?/aircraft/[^"]*"' \
+            | grep -v sitemap | head -1 | cut -d'"' -f2)"
+          if [ -z "$detail" ]; then
+            detail="$(curl -sL "$BASE_URL/aircraft/sitemap.xml" | grep -o '<loc>[^<]*</loc>' | head -1 \
+              | sed -E 's#</?loc>##g; s#^https?://[^/]+##')"
+          fi
+          if [ -z "$detail" ]; then echo "::error::no aircraft detail page found"; exit 1; fi
+          echo "detail=/en${detail#/en}" >> "$GITHUB_OUTPUT"
+          echo "aircraft detail page: /en${detail#/en}"
+      # `lighthouserc.cjs` sets the desktop preset, so the mobile run names its own: `perf` is
+      # Lighthouse's default mobile emulation, scoring performance only.
+      - name: Mobile
+        run: >-
+          bunx lhci collect --numberOfRuns=3 --settings.preset=perf
+          --settings.chromeFlags="--no-sandbox --headless=new"
+          --url="$BASE_URL/en" --url="$BASE_URL/en/aircraft"
+          --url="$BASE_URL${{ steps.pages.outputs.detail }}" --url="$BASE_URL/en/yachts"
+      # Each collect starts from an empty folder, so the reports are moved out after each.
+      - run: mkdir -p reports && mv .lighthouseci/lhr-*.json reports/
+      - name: Desktop
+        run: >-
+          bunx lhci collect --numberOfRuns=3 --settings.preset=desktop
+          --settings.chromeFlags="--no-sandbox --headless=new"
+          --url="$BASE_URL/en" --url="$BASE_URL/en/aircraft"
+          --url="$BASE_URL${{ steps.pages.outputs.detail }}" --url="$BASE_URL/en/yachts"
+      - run: mv .lighthouseci/lhr-*.json reports/
+      - name: Medians
+        run: bun run scripts/ci/lighthouse-summary.ts reports | tee -a "$GITHUB_STEP_SUMMARY"
