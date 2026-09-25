@@ -41,7 +41,7 @@ On a Neon branch created from `legacy-snapshot`, never on the main branch:
 ```bash
 export DATABASE_URL='postgres://owner@<dry-run-branch-direct-endpoint>/<db>?sslmode=require'
 bun run migrate
-for step in airports aircraft vehicles yachts empty-legs; do
+for step in airports aircraft vehicles redirects yachts empty-legs; do
   bun run import:legacy "$step" | tee -a dry-run.log
 done
 bun run import:legacy reconcile | tee -a dry-run.log   # exits non-zero on any discrepancy
@@ -94,7 +94,7 @@ diff <(cut -f2- freeze-start.tsv) <(cut -f2- cutover-restored.tsv) && echo "cuto
 ```bash
 export DATABASE_URL="$NEW_URL"
 bun run scripts/media/mirror-spaces.ts --schema legacy_cutover   # objects added since #21 ran
-for step in airports aircraft vehicles yachts empty-legs; do
+for step in airports aircraft vehicles redirects yachts empty-legs; do
   bun run import:legacy "$step" --schema legacy_cutover | tee -a cutover.log
 done
 ```
