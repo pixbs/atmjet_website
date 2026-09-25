@@ -9,6 +9,7 @@
  *   bun run import:legacy yachts [--schema legacy] [--dry-run]     (contacts, charter, then sale)
  *   bun run import:legacy empty-legs [--schema legacy] [--dry-run] (after airports)
  *   bun run import:legacy reconcile [--schema legacy]
+ *   bun run import:legacy urls --base-url https://staging.example [--schema legacy]
  *
  * An import can be run again at any point: rows the ledger already holds are skipped, and the
  * reconciliation exits non-zero while anything is missing.
@@ -31,6 +32,7 @@ import {
   vehicleChecks,
 } from './reconcile'
 import type { ImportReport } from './runner'
+import { legacyPaths, legacyReferences, unanswered } from './urls'
 import { importVehicles } from './vehicles'
 import { importCharterYachts, importSaleYachts } from './yachts'
 
@@ -52,6 +54,7 @@ const COMMANDS = [
   'yachts',
   'empty-legs',
   'reconcile',
+  'urls',
 ]
 
 if (command === undefined || !COMMANDS.includes(command)) {
@@ -85,6 +88,21 @@ if (command === 'airports') {
   for (const { yacht, column, contact } of orphans)
     console.log(`orphan new_yachts ${yacht} ${column} ${contact}: no such contact, left empty`)
   console.log(`${orphans.length} contact references name no contact`)
+} else if (command === 'urls') {
+  const baseUrl = flag('base-url')
+  if (baseUrl === undefined) {
+    console.error('import:legacy urls needs --base-url, the deployment to ask')
+    process.exit(1)
+  }
+  const paths = legacyPaths(await legacyReferences(payload, schema))
+  const failed = await unanswered(baseUrl, paths, {
+    bypass: process.env.VERCEL_AUTOMATION_BYPASS_SECRET,
+  })
+
+  for (const { path, status, location } of failed)
+    console.error(`${status} ${path}${location ? ` → ${location}` : ''}`)
+  console.log(`${paths.length - failed.length} of ${paths.length} legacy URLs answer`)
+  process.exit(failed.length === 0 ? 0 : 1)
 } else if (command === 'redirects') {
   const outcomes = await writeAircraftRedirects(payload)
 
