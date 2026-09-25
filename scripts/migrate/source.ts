@@ -26,6 +26,11 @@ export interface TableSource {
   orderBy: string
   /** Rows per statement. Not the runner's batch size: this is how much comes back at once. */
   pageSize?: number
+  /**
+   * Columns also read as the text Postgres prints, each as `<column>_text`: a `real` read as a
+   * float gains digits the legacy site never rendered (ADR-0002 item 5).
+   */
+  textColumns?: string[]
 }
 
 /**
@@ -51,9 +56,12 @@ const drizzleOf = (payload: Payload): Drizzle =>
  * are the largest things this project reads, and a run that resumes reads them all again.
  */
 export function tableRows<Row>(payload: Payload, source: TableSource): ImportSource<Row> {
-  const { schema, table, orderBy, pageSize = 500 } = source
+  const { schema, table, orderBy, pageSize = 500, textColumns = [] } = source
   const from = `${quoteIdentifier(schema)}.${quoteIdentifier(table)}`
   const order = quoteIdentifier(orderBy)
+  const columns = textColumns
+    .map((column) => `, ${quoteIdentifier(column)}::text AS ${quoteIdentifier(`${column}_text`)}`)
+    .join('')
 
   return {
     // Qualified, so a fixture schema in a test never shares ledger keys with `legacy` itself.
@@ -61,7 +69,9 @@ export function tableRows<Row>(payload: Payload, source: TableSource): ImportSou
     async *rows() {
       for (let offset = 0; ; offset += pageSize) {
         const result = await drizzleOf(payload).execute(
-          sql.raw(`SELECT * FROM ${from} ORDER BY ${order} LIMIT ${pageSize} OFFSET ${offset}`),
+          sql.raw(
+            `SELECT *${columns} FROM ${from} ORDER BY ${order} LIMIT ${pageSize} OFFSET ${offset}`,
+          ),
         )
         const page = (result.rows ?? []) as Row[]
 
