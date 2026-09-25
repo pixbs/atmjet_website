@@ -42,7 +42,7 @@ jobs:
         with:
           bun-version-file: .bun-version
       - run: bun install --frozen-lockfile
-      - name: The pages of issue #43
+      - name: Pages to audit
         id: pages
         # The first card of the listing, which links without a locale (inventory §4), or else the
         # first plane of the aircraft sitemap, whose list the legacy listing renders in the browser.
