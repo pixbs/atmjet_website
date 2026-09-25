@@ -12,7 +12,7 @@
 export const BATCH_SIZE = 500
 
 export interface ImportSource<Row> {
-  /** How the ledger names these rows: `airports`, `new_yachts`. */
+  /** How the ledger names these rows: `legacy.airports`, `legacy.new_yachts`. */
   readonly table: string
   /** Every row, in an order stable enough that a resumed run reads them the same way. */
   rows(): AsyncIterable<Row>

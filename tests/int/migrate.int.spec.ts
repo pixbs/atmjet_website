@@ -50,12 +50,14 @@ const importSpec = (source: Row[], passengers = 1000) => ({
   source: rowsFrom(SOURCE_TABLE, source),
   sourceId: (row: Row) => String(row.id),
   transform: (row: Row, run: RunContext) => ({
-    icao: row.code,
-    city: row.city,
-    passengersPerYear: passengers,
-    // What the aircraft provenance group holds for real (ADR-0002 section 8); an airport has
-    // no such group, so the run id is only carried by the ledger here.
-    wikidata: run.runId,
+    data: {
+      icao: row.code,
+      city: row.city,
+      passengersPerYear: passengers,
+      // What the aircraft provenance group holds for real (ADR-0002 section 8); an airport has
+      // no such group, so the run id is only carried by the ledger here.
+      wikidata: run.runId,
+    },
   }),
 })
 
