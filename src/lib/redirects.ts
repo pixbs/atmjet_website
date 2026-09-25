@@ -58,6 +58,24 @@ export function normaliseRedirectPath(value: unknown): string {
   return trimmed === '' ? '/' : trimmed
 }
 
+/**
+ * Every `from` a rule could have and still catch this path: the path itself, and each path above
+ * it for a rule that catches its sub-paths. The resolver asks the database for these rows only,
+ * rather than reading a map that holds a rule per aircraft (issue #172).
+ */
+export function redirectCandidates(pathname: string): string[] {
+  const path = normaliseRedirectPath(pathname)
+  const parts = path.split('/').filter((part) => part !== '')
+
+  return [
+    path,
+    ...parts
+      .slice(0, -1)
+      .map((_, index) => `/${parts.slice(0, index + 1).join('/')}`)
+      .reverse(),
+  ]
+}
+
 /** Whether a target is somewhere else entirely, in which case the locale is none of our business. */
 function isAbsolute(destination: string): boolean {
   return /^[a-z][a-z0-9+.-]*:/i.test(destination) || destination.startsWith('//')

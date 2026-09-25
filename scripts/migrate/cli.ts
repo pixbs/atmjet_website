@@ -5,6 +5,7 @@
  *   bun run import:legacy airports [--schema legacy] [--dry-run]
  *   bun run import:legacy aircraft [--schema legacy] [--dry-run]   (after airports)
  *   bun run import:legacy vehicles [--schema legacy] [--dry-run]   (after aircraft)
+ *   bun run import:legacy redirects                                 (after the aircraft imports)
  *   bun run import:legacy yachts [--schema legacy] [--dry-run]     (contacts, charter, then sale)
  *   bun run import:legacy empty-legs [--schema legacy] [--dry-run] (after airports)
  *   bun run import:legacy reconcile [--schema legacy]
@@ -18,6 +19,7 @@ import config from '../../src/payload.config'
 import { importCatalogue } from './aircraft'
 import { importEmptyLegs } from './empty-legs'
 import { importAirports } from './airports'
+import { writeAircraftRedirects } from './redirects'
 import {
   aircraftChecks,
   airportChecks,
@@ -42,7 +44,15 @@ const command = process.argv[2]
 const schema = flag('schema') ?? 'legacy'
 const dryRun = process.argv.includes('--dry-run')
 
-const COMMANDS = ['airports', 'aircraft', 'vehicles', 'yachts', 'empty-legs', 'reconcile']
+const COMMANDS = [
+  'airports',
+  'aircraft',
+  'vehicles',
+  'redirects',
+  'yachts',
+  'empty-legs',
+  'reconcile',
+]
 
 if (command === undefined || !COMMANDS.includes(command)) {
   console.error(`Usage: bun run import:legacy ${COMMANDS.join('|')} [--schema legacy] [--dry-run]`)
@@ -75,6 +85,11 @@ if (command === 'airports') {
   for (const { yacht, column, contact } of orphans)
     console.log(`orphan new_yachts ${yacht} ${column} ${contact}: no such contact, left empty`)
   console.log(`${orphans.length} contact references name no contact`)
+} else if (command === 'redirects') {
+  const outcomes = await writeAircraftRedirects(payload)
+
+  for (const action of ['created', 'updated', 'unchanged'] as const)
+    console.log(`${outcomes.filter((one) => one.action === action).length} redirects ${action}`)
 } else if (command === 'empty-legs') {
   const { report: legs, unresolved } = await importEmptyLegs(payload, { schema, dryRun })
 
