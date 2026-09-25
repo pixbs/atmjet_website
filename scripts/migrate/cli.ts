@@ -5,7 +5,7 @@
  *   bun run import:legacy airports [--schema legacy] [--dry-run]
  *   bun run import:legacy aircraft [--schema legacy] [--dry-run]   (after airports)
  *   bun run import:legacy vehicles [--schema legacy] [--dry-run]   (after aircraft)
- *   bun run import:legacy yachts [--schema legacy] [--dry-run]     (contacts, then charter yachts)
+ *   bun run import:legacy yachts [--schema legacy] [--dry-run]     (contacts, charter, then sale)
  *   bun run import:legacy reconcile [--schema legacy]
  *
  * An import can be run again at any point: rows the ledger already holds are skipped, and the
@@ -22,11 +22,12 @@ import {
   charterChecks,
   failures,
   reconcile,
+  saleChecks,
   vehicleChecks,
 } from './reconcile'
 import type { ImportReport } from './runner'
 import { importVehicles } from './vehicles'
-import { importCharterYachts } from './yachts'
+import { importCharterYachts, importSaleYachts } from './yachts'
 
 function flag(name: string): string | undefined {
   const index = process.argv.indexOf(`--${name}`)
@@ -67,6 +68,7 @@ if (command === 'airports') {
   const { reports, orphans } = await importCharterYachts(payload, { schema, dryRun })
 
   reports.forEach(report)
+  report(await importSaleYachts(payload, { schema, dryRun }))
   for (const { yacht, column, contact } of orphans)
     console.log(`orphan new_yachts ${yacht} ${column} ${contact}: no such contact, left empty`)
   console.log(`${orphans.length} contact references name no contact`)
@@ -76,6 +78,7 @@ if (command === 'airports') {
     ...aircraftChecks(schema),
     ...vehicleChecks(schema),
     ...charterChecks(schema),
+    ...saleChecks(schema),
   ]
   const failed = failures(await reconcile(payload, checks))
 

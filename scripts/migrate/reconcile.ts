@@ -188,19 +188,34 @@ export function vehicleChecks(schema: string): Check[] {
   ]
 }
 
+/** Every photo of a yacht table's array column is in the place it had, in both directions. */
+function photosInPlace(schema: string, table: string, column: string): Check {
+  const legacy = `${quoteIdentifier(schema)}.${quoteIdentifier(table)}`
+  const photos = quoteIdentifier(column)
+  const legacyPhotos = `SELECT l.id AS legacy_id,
+      row_number() OVER (PARTITION BY l.id ORDER BY p.position)::int AS position, trim(p.url) AS url
+    FROM ${legacy} l, unnest(l.${photos}) WITH ORDINALITY AS p(url, position)
+    WHERE trim(p.url) <> ''`
+  const importedPhotos = `SELECT l.id AS legacy_id,
+      row_number() OVER (PARTITION BY l.id ORDER BY p._order)::int AS position, p.external_url AS url
+    FROM ${legacy} l
+    JOIN migration_runs m ON m.source_key = '${schema}.${table}:' || l.id
+    JOIN yachts_photos p ON p._parent_id::text = m.document_id`
+
+  return {
+    name: `${schema}.${table}: every photo is in the place the ${column} array gave it`,
+    sql: `(SELECT 'missing' AS found, * FROM (${legacyPhotos} EXCEPT ${importedPhotos}) a)
+      UNION ALL (SELECT 'unexpected', * FROM (${importedPhotos} EXCEPT ${legacyPhotos}) b)
+      ORDER BY legacy_id, position`,
+  }
+}
+
 export function charterChecks(schema: string): Check[] {
   const legacy = quoteIdentifier(schema)
   const imported = `SELECT l.*, y.id AS yacht, y.contact_id AS contact_doc, y.captain_id AS captain_doc
     FROM ${legacy}.new_yachts l
     JOIN migration_runs m ON m.source_key = '${schema}.new_yachts:' || l.id
     JOIN yachts y ON y.id::text = m.document_id`
-  const legacyPhotos = `SELECT l.id AS legacy_id,
-      row_number() OVER (PARTITION BY l.id ORDER BY p.position)::int AS position, trim(p.url) AS url
-    FROM ${legacy}.new_yachts l, unnest(l.photos) WITH ORDINALITY AS p(url, position)
-    WHERE trim(p.url) <> ''`
-  const importedPhotos = `SELECT i.id AS legacy_id,
-      row_number() OVER (PARTITION BY i.id ORDER BY p._order)::int AS position, p.external_url AS url
-    FROM (${imported}) i JOIN yachts_photos p ON p._parent_id = i.yacht`
   const person = (column: string, field: string) => `SELECT i.id AS legacy_id, '${field}' AS field,
       i.${column} AS legacy_contact, c.provenance_legacy_contact_id::int AS contact
     FROM (${imported}) i LEFT JOIN contacts c ON c.id = i.${field}_doc
@@ -210,16 +225,15 @@ export function charterChecks(schema: string): Check[] {
   return [
     everyRowImported(schema, 'contact', 'contacts'),
     everyRowImported(schema, 'new_yachts', 'yachts'),
-    {
-      name: `${schema}.new_yachts: every photo is in the place the photos array gave it`,
-      sql: `(SELECT 'missing' AS found, * FROM (${legacyPhotos} EXCEPT ${importedPhotos}) a)
-        UNION ALL (SELECT 'unexpected', * FROM (${importedPhotos} EXCEPT ${legacyPhotos}) b)
-        ORDER BY legacy_id, position`,
-    },
+    photosInPlace(schema, 'new_yachts', 'photos'),
     {
       name: `${schema}.new_yachts: every contact and captain that exists is the one the row named`,
       sql: `${person('contact_id', 'contact')} UNION ALL ${person('captain_id', 'captain')}
         ORDER BY legacy_id, field`,
     },
   ]
+}
+
+export function saleChecks(schema: string): Check[] {
+  return [everyRowImported(schema, 'yachts', 'yachts'), photosInPlace(schema, 'yachts', 'pictures')]
 }
