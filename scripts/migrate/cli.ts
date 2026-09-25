@@ -5,8 +5,9 @@
  *   bun run import:legacy airports [--schema legacy] [--dry-run]
  *   bun run import:legacy aircraft [--schema legacy] [--dry-run]   (after airports)
  *   bun run import:legacy vehicles [--schema legacy] [--dry-run]   (after aircraft)
- *   bun run import:legacy yachts [--schema legacy] [--dry-run]     (contacts, charter, then sale)
  *   bun run import:legacy redirects                                 (after the aircraft imports)
+ *   bun run import:legacy yachts [--schema legacy] [--dry-run]     (contacts, charter, then sale)
+ *   bun run import:legacy empty-legs [--schema legacy] [--dry-run] (after airports)
  *   bun run import:legacy reconcile [--schema legacy]
  *
  * An import can be run again at any point: rows the ledger already holds are skipped, and the
@@ -16,12 +17,14 @@ import { getPayload } from 'payload'
 
 import config from '../../src/payload.config'
 import { importCatalogue } from './aircraft'
+import { importEmptyLegs } from './empty-legs'
 import { importAirports } from './airports'
 import { writeAircraftRedirects } from './redirects'
 import {
   aircraftChecks,
   airportChecks,
   charterChecks,
+  emptyLegChecks,
   failures,
   reconcile,
   saleChecks,
@@ -41,7 +44,15 @@ const command = process.argv[2]
 const schema = flag('schema') ?? 'legacy'
 const dryRun = process.argv.includes('--dry-run')
 
-const COMMANDS = ['airports', 'aircraft', 'vehicles', 'yachts', 'redirects', 'reconcile']
+const COMMANDS = [
+  'airports',
+  'aircraft',
+  'vehicles',
+  'redirects',
+  'yachts',
+  'empty-legs',
+  'reconcile',
+]
 
 if (command === undefined || !COMMANDS.includes(command)) {
   console.error(`Usage: bun run import:legacy ${COMMANDS.join('|')} [--schema legacy] [--dry-run]`)
@@ -79,6 +90,13 @@ if (command === 'airports') {
 
   for (const action of ['created', 'updated', 'unchanged'] as const)
     console.log(`${outcomes.filter((one) => one.action === action).length} redirects ${action}`)
+} else if (command === 'empty-legs') {
+  const { report: legs, unresolved } = await importEmptyLegs(payload, { schema, dryRun })
+
+  report(legs)
+  for (const { leg, column, icao } of unresolved)
+    console.log(`unresolved empty leg ${leg} ${column} ${icao}: no such airport, kept as text`)
+  console.log(`${unresolved.length} empty leg codes name no airport`)
 } else {
   const checks = [
     ...airportChecks(schema),
@@ -86,6 +104,7 @@ if (command === 'airports') {
     ...vehicleChecks(schema),
     ...charterChecks(schema),
     ...saleChecks(schema),
+    ...emptyLegChecks(schema),
   ]
   const failed = failures(await reconcile(payload, checks))
 
