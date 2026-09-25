@@ -37,6 +37,7 @@ import * as migration_20260922_030334_yacht_description_prose from './20260922_0
 import * as migration_20260922_160200_migration_runs from './20260922_160200_migration_runs';
 import * as migration_20260922_165032_s3_media_prefix from './20260922_165032_s3_media_prefix';
 import * as migration_20260925_120259_aircraft_merged_from_legacy_id from './20260925_120259_aircraft_merged_from_legacy_id';
+import * as migration_20260925_121001_contacts_legacy_attributes from './20260925_121001_contacts_legacy_attributes';
 
 export const migrations = [
   {
@@ -232,6 +233,11 @@ export const migrations = [
   {
     up: migration_20260925_120259_aircraft_merged_from_legacy_id.up,
     down: migration_20260925_120259_aircraft_merged_from_legacy_id.down,
-    name: '20260925_120259_aircraft_merged_from_legacy_id'
+    name: '20260925_120259_aircraft_merged_from_legacy_id',
+  },
+  {
+    up: migration_20260925_121001_contacts_legacy_attributes.up,
+    down: migration_20260925_121001_contacts_legacy_attributes.down,
+    name: '20260925_121001_contacts_legacy_attributes'
   },
 ];

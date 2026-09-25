@@ -113,6 +113,14 @@ export const Contacts: CollectionConfig = {
           'No legacy column, so the import leaves it empty. Media is public: do not upload anything here that the person would not want served from a URL.',
       },
     },
+    {
+      name: 'legacyAttributes',
+      type: 'json',
+      admin: {
+        description:
+          'A legacy value no field above accepts, such as an email that is not one, kept verbatim.',
+      },
+    },
     provenanceGroup({
       origins: CONTACT_ORIGINS,
       legacyFields: [{ name: 'legacyContactId', type: 'number', index: true }],

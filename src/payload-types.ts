@@ -1299,6 +1299,18 @@ export interface Contact {
    */
   photo?: (number | null) | Media;
   /**
+   * A legacy value no field above accepts, such as an email that is not one, kept verbatim.
+   */
+  legacyAttributes?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  /**
    * Where this document came from (ADR-0002 section 8).
    */
   provenance: {
@@ -2764,6 +2776,7 @@ export interface ContactsSelect<T extends boolean = true> {
   phone?: T;
   email?: T;
   photo?: T;
+  legacyAttributes?: T;
   provenance?:
     | T
     | {
