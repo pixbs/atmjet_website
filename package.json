@@ -25,17 +25,19 @@
     "payload": "cross-env NODE_OPTIONS=--no-deprecation payload",
     "prepare": "lefthook install",
     "start": "cross-env NODE_OPTIONS=--no-deprecation next start",
-    "test": "bun run test:int && bun run test:e2e && bun run test:visual && bun run test:a11y",
+    "test": "bun run test:int && bun run test:reconcile && bun run test:e2e && bun run test:visual && bun run test:a11y",
     "test:a11y": "cross-env NODE_OPTIONS=--no-deprecation playwright test --project=a11y",
     "test:e2e": "cross-env NODE_OPTIONS=--no-deprecation playwright test --project=e2e",
     "test:int": "cross-env NODE_OPTIONS=--no-deprecation vitest run --config ./vitest.config.mts --coverage",
+    "test:reconcile": "cross-env NODE_OPTIONS=--no-deprecation vitest run --config ./vitest.reconcile.config.mts",
     "test:lighthouse": "lhci autorun --config=lighthouserc.cjs",
     "test:visual": "cross-env NODE_OPTIONS=--no-deprecation playwright test --project=visual",
     "test:visual:update": "bash scripts/ci/visual-update.sh",
     "typecheck": "next typegen && tsc --noEmit",
     "baselines:legacy": "bun run scripts/baselines/capture-legacy.ts",
     "visual:bundle": "bash scripts/baselines/download-legacy-bundle.sh",
-    "seed": "bun run scripts/seed/index.ts"
+    "seed": "bun run scripts/seed/index.ts",
+    "import:legacy": "bun run scripts/migrate/cli.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "3.1138.0",

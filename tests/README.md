@@ -1,14 +1,15 @@
 # Tests
 
-Five tiers (ADR-0004), all run by `bun run test`; every change ships the tiers it touches.
+Six tiers (ADR-0004), all run by `bun run test`; every change ships the tiers it touches.
 
-| Directory      | Runner     | Command               | What belongs here                                                            |
-| -------------- | ---------- | --------------------- | ---------------------------------------------------------------------------- |
-| `tests/unit`   | Vitest     | `bun run test:int`    | pure logic: transforms, validation, formatting, i18n helpers, access helpers |
-| `tests/int`    | Vitest     | `bun run test:int`    | collections, hooks and access control through the Payload Local API          |
-| `tests/e2e`    | Playwright | `bun run test:e2e`    | user flows in a browser                                                      |
-| `tests/visual` | Playwright | `bun run test:visual` | pixel parity against the legacy baselines (`tests/visual/README.md`)         |
-| `tests/a11y`   | Playwright | `bun run test:a11y`   | axe checks per page                                                          |
+| Directory         | Runner     | Command                  | What belongs here                                                                 |
+| ----------------- | ---------- | ------------------------ | --------------------------------------------------------------------------------- |
+| `tests/unit`      | Vitest     | `bun run test:int`       | pure logic: transforms, validation, formatting, i18n helpers, access helpers      |
+| `tests/int`       | Vitest     | `bun run test:int`       | collections, hooks and access control through the Payload Local API               |
+| `tests/reconcile` | Vitest     | `bun run test:reconcile` | legacy imports run on a fixture schema and reconciled (`tests/reconcile/fixture`) |
+| `tests/e2e`       | Playwright | `bun run test:e2e`       | user flows in a browser                                                           |
+| `tests/visual`    | Playwright | `bun run test:visual`    | pixel parity against the legacy baselines (`tests/visual/README.md`)              |
+| `tests/a11y`      | Playwright | `bun run test:a11y`      | axe checks per page                                                               |
 
 ## Unit tests
 
@@ -33,6 +34,10 @@ The design tokens are unit tested too: `tests/helpers/tailwind.ts` compiles `src
 - **Access checks** pass `overrideAccess: false` and, when needed, `user`; the harness creates documents with `overrideAccess: true`.
 
 `tests/int/harness.int.spec.ts` is the self-test of these rules.
+
+## Reconciliation tier
+
+`tests/reconcile/**/*.reconcile.spec.ts` load the legacy tables an importer reads, with a handful of anonymised rows, into the schema `legacy_fixture` (`tests/reconcile/fixture`, issue #44), run the importer of `scripts/migrate` against it and pass it through the same checks `bun run import:legacy reconcile` runs on the real data (`scripts/migrate/reconcile.ts`). One file at a time, and each removes the fixture, the documents it imported and their ledger rows when it ends. Fixture codes are fictional so they never meet a seeded document.
 
 ## Coverage
 
