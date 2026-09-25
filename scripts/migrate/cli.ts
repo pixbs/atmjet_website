@@ -10,6 +10,7 @@
  *   bun run import:legacy empty-legs [--schema legacy] [--dry-run] (after airports)
  *   bun run import:legacy reconcile [--schema legacy]
  *   bun run import:legacy urls --base-url https://staging.example [--schema legacy]
+ *   bun run import:legacy assets [--ref legacy/v1] [--dry-run]     (prints the manifest)
  *
  * An import can be run again at any point: rows the ledger already holds are skipped, and the
  * reconciliation exits non-zero while anything is missing.
@@ -17,6 +18,7 @@
 import { getPayload } from 'payload'
 
 import config from '../../src/payload.config'
+import { gitReader, importLegacyAssets, manifestTsv } from './assets'
 import { importCatalogue } from './aircraft'
 import { importEmptyLegs } from './empty-legs'
 import { importAirports } from './airports'
@@ -55,6 +57,7 @@ const COMMANDS = [
   'empty-legs',
   'reconcile',
   'urls',
+  'assets',
 ]
 
 if (command === undefined || !COMMANDS.includes(command)) {
@@ -108,6 +111,15 @@ if (command === 'airports') {
 
   for (const action of ['created', 'updated', 'unchanged'] as const)
     console.log(`${outcomes.filter((one) => one.action === action).length} redirects ${action}`)
+} else if (command === 'assets') {
+  const outcomes = await importLegacyAssets(payload, {
+    read: gitReader(flag('ref') ?? 'legacy/v1'),
+    dryRun,
+  })
+
+  console.log(manifestTsv(outcomes))
+  for (const action of ['created', 'unchanged'] as const)
+    console.error(`${outcomes.filter((one) => one.action === action).length} pictures ${action}`)
 } else if (command === 'empty-legs') {
   const { report: legs, unresolved } = await importEmptyLegs(payload, { schema, dryRun })
 

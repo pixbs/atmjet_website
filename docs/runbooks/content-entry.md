@@ -21,7 +21,15 @@ Sign with a date and initials, for example `2026-10-02 DK`.
       page name that host.
 - [ ] Images load from the bucket: the bucket allows public reads under `media/` and `legacy/`
       (#17).
-- [ ] The media import has run (#84), so the legacy pictures and PDFs are in Media.
+- [ ] The media import has run (#84), so the legacy pictures and PDFs are in Media. The pictures
+      of the pages come from `legacy/v1`, once, and their manifest names the Media file each legacy
+      address became; a section takes the one `docs/legacy-inventory.md` section 12.2 lists for it:
+
+      ```bash
+      git fetch origin tag legacy/v1
+      bun run import:legacy assets | tee assets-manifest.tsv   # attach to #84
+      ```
+
 - [ ] The editors who will enter content have their own accounts (Users), and the seeded
       administrator `dev@atmjet.local` has been removed or given a new password.
 
