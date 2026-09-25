@@ -3,7 +3,7 @@ import type { Payload, Where } from 'payload'
 import { normaliseCode, normaliseText } from '../../src/lib/airports'
 import { runImport, type ImportReport } from './runner'
 import { tableRows } from './source'
-import { payloadTarget, type TargetDocument } from './target'
+import { payloadTarget, present, type TargetDocument } from './target'
 
 /**
  * Airports (issue #77, `docs/adr/0002-database-migration-strategy.md` item 7): `airports` and
@@ -52,11 +52,6 @@ export interface NewAirportsRow {
 }
 
 type Airport = TargetDocument<'airports'>
-
-/** Drops what a row left empty, so an update keeps the value the other table wrote. */
-function present<T extends object>(fields: T): T {
-  return Object.fromEntries(Object.entries(fields).filter(([, value]) => value !== undefined)) as T
-}
 
 /** `49 837 000`, `49,837,000` or `49837000` as a count; anything else is no count at all. */
 function passengers(value: string | null): number | undefined {

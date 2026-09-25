@@ -37,6 +37,16 @@ export interface TargetDocument<TSlug extends CollectionSlug> {
   translations?: Partial<Record<Locale, Partial<RequiredDataFromCollectionSlug<TSlug>>>>
 }
 
+/**
+ * The fields a source row actually holds: an empty value is left out rather than written, so an
+ * update keeps what another source, or an editor, already put there.
+ */
+export function present<T extends object>(fields: T): T {
+  return Object.fromEntries(
+    Object.entries(fields).filter(([, value]) => value !== undefined && value !== null),
+  ) as T
+}
+
 /** The hooks a bulk run does not want: one revalidation per row would drop the cache per row. */
 const QUIET = { skipRevalidation: true }
 

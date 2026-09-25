@@ -94,3 +94,41 @@ export function airportChecks(schema: string): Check[] {
     },
   ]
 }
+
+export function aircraftChecks(schema: string): Check[] {
+  const legacy = quoteIdentifier(schema)
+  const imported = `SELECT l.id AS legacy_id, m.document_id FROM ${legacy}.aircrafts l
+    JOIN migration_runs m ON m.source_key = '${schema}.aircrafts:' || l.id`
+  const legacyImages = `SELECT aircraft_id AS legacy_id,
+      row_number() OVER (PARTITION BY aircraft_id ORDER BY id)::int AS position,
+      type::text AS type, trim(url) AS url
+    FROM ${legacy}.aircraft_images`
+  const importedImages = `SELECT i.legacy_id,
+      row_number() OVER (PARTITION BY i.legacy_id ORDER BY p._order)::int AS position,
+      p.type::text AS type, p.external_url AS url
+    FROM (${imported}) i JOIN aircraft_images p ON p._parent_id::text = i.document_id`
+
+  return [
+    everyRowImported(schema, 'aircrafts', 'aircraft'),
+    {
+      name: `${schema}.aircrafts: every catalogue slug is an aircraft's slug`,
+      sql: `SELECT l.id AS legacy_id, l.slug FROM ${legacy}.aircrafts l
+        WHERE NOT EXISTS (SELECT 1 FROM aircraft a WHERE a.slug = l.slug) ORDER BY l.id`,
+    },
+    {
+      name: `${schema}.aircraft_images: every aircraft has as many images as the catalogue gave it`,
+      sql: `SELECT i.legacy_id, coalesce(l.images, 0)::int AS legacy_images, count(p.id)::int AS images
+        FROM (${imported}) i
+        LEFT JOIN (SELECT aircraft_id, count(*) AS images FROM ${legacy}.aircraft_images GROUP BY aircraft_id) l
+          ON l.aircraft_id = i.legacy_id
+        LEFT JOIN aircraft_images p ON p._parent_id::text = i.document_id
+        GROUP BY i.legacy_id, l.images HAVING count(p.id) <> coalesce(l.images, 0) ORDER BY i.legacy_id`,
+    },
+    {
+      name: `${schema}.aircraft_images: every image is in the place and role the catalogue gave it`,
+      sql: `(SELECT 'missing' AS found, * FROM (${legacyImages} EXCEPT ${importedImages}) a)
+        UNION ALL (SELECT 'unexpected', * FROM (${importedImages} EXCEPT ${legacyImages}) b)
+        ORDER BY legacy_id, position`,
+    },
+  ]
+}
