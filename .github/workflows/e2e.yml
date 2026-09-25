@@ -22,12 +22,14 @@ permissions:
   pull-requests: read
   deployments: read
 
-# One group per event as well as per commit: the production deployment's `deployment_status`
-# arrives for the same commit the `push` run is testing and used to cancel it, then skip itself
-# as not a preview, so `master` was never tested (issue #17).
+# Every run against staging takes its turn: two at once share one database, one administrator
+# and one set of pages, and each undid the other's setup (issue #17). A newer commit's run waits
+# rather than cancelling one that is halfway through. A deployment has a group of its own: the
+# production deployment's `deployment_status` arrives for the commit the `push` run is testing,
+# and used to cancel it before skipping itself as not a preview.
 concurrency:
-  group: e2e-${{ github.event_name }}-${{ github.event.deployment.sha || github.sha }}
-  cancel-in-progress: true
+  group: e2e-${{ github.event_name == 'deployment_status' && format('deployment-{0}', github.event.deployment.sha) || 'staging' }}
+  cancel-in-progress: false
 
 env:
   NEXT_TELEMETRY_DISABLED: '1'
