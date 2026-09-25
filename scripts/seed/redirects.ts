@@ -3,18 +3,18 @@ import type { Payload } from 'payload'
 import { ALL_LOCALES } from '../../src/i18n/locales'
 import { redirectRulesFrom, type StoredRedirect } from '../../src/lib/data/redirects'
 import { findRedirectLoop, shadowedPaths } from '../../src/lib/redirects'
+import { writeAircraftRedirects } from '../migrate/redirects'
+import { SEED_AIRCRAFT } from './aircraft'
 import type { SeedOutcome } from './report'
 
 /**
- * The legacy redirect map (issue #69, E2.5).
+ * The legacy redirect map (issues #69 and #172).
  *
- * `next.config.mjs` shipped exactly these five, all `permanent: true`, all written with the
- * locale as a `:slug` parameter (`docs/legacy-inventory.md` section 1.3). Here the locale is not
- * stored at all — the resolver puts the visitor's own back on — and the two rules that carried a
- * dynamic segment become `matchSubPaths`.
- *
- * This is the legacy map, not the final list: E11.3 decides what the site ships with, and the
- * sitemap URLs of section 2.3 are its other input.
+ * `next.config.mjs` shipped five, all `permanent: true`, all written with the locale as a
+ * `:slug` parameter (`docs/legacy-inventory.md` section 1.3). Here the locale is not stored at
+ * all — the resolver puts the visitor's own back on. The two rules that carried a dynamic
+ * `:id` are not patterns any more: the decision of 2026-09-13 replaces them with one rule per
+ * real aircraft (`scripts/migrate/redirects.ts`), so an old URL naming nothing is a 404.
  */
 export interface LegacyRedirect {
   from: string
@@ -33,14 +33,14 @@ export const LEGACY_REDIRECTS: readonly LegacyRedirect[] = [
   {
     from: '/planes',
     to: '/aircraft',
-    matchSubPaths: true,
-    note: 'Legacy next.config.mjs: /:locale/planes and /:locale/planes/:id',
+    matchSubPaths: false,
+    note: 'Legacy next.config.mjs: /:locale/planes. Each /planes/:id is a rule of its own (#172).',
   },
   {
     from: '/aircrafts',
     to: '/aircraft',
-    matchSubPaths: true,
-    note: 'Legacy next.config.mjs: /:locale/aircrafts and /:locale/aircrafts/:id',
+    matchSubPaths: false,
+    note: 'Legacy next.config.mjs: /:locale/aircrafts. Each /aircrafts/:id is a rule of its own (#172).',
   },
 ]
 
@@ -107,12 +107,30 @@ export async function seedRedirects(payload: Payload): Promise<SeedOutcome[]> {
       overrideAccess: true,
     })
 
-    if (existing.totalDocs > 0) {
+    const rule = existing.docs[0]
+
+    if (rule !== undefined) {
+      // Reconciled, not only idempotent: a database seeded while these were patterns loses them.
+      const current = rule.matchSubPaths === redirect.matchSubPaths && rule.to?.url === redirect.to
+
+      if (!current)
+        await payload.update({
+          collection: 'redirects',
+          id: rule.id,
+          data: {
+            to: { type: 'custom', url: redirect.to },
+            matchSubPaths: redirect.matchSubPaths,
+            note: redirect.note,
+          },
+          overrideAccess: true,
+          context: { skipRevalidation: true },
+        })
+
       outcomes.push({
         collection: 'redirects',
         key: redirect.from,
-        action: 'unchanged',
-        id: existing.docs[0].id,
+        action: current ? 'unchanged' : 'updated',
+        id: rule.id,
       })
       continue
     }
@@ -138,6 +156,12 @@ export async function seedRedirects(payload: Payload): Promise<SeedOutcome[]> {
       id: created.id,
     })
   }
+
+  // The aircraft are seeded before the redirects, so each one has its old addresses.
+  // Only the seeded aircraft's: the integration tier writes aircraft of its own beside them.
+  const seeded = { registrationDisplay: { in: SEED_AIRCRAFT.map((one) => one.registration) } }
+  for (const { from, action, id } of await writeAircraftRedirects(payload, seeded))
+    outcomes.push({ collection: 'redirects', key: from, action, id })
 
   // The pages are seeded before the redirects, so this sees the whole map against the whole site.
   await assertSound(payload)
