@@ -88,6 +88,14 @@ function decimal(value: string | number | null): number | undefined {
   return Number.isFinite(number) ? number : undefined
 }
 
+/** A legacy photo array as the photos field holds it: in array order, blanks dropped. */
+function photosOf(urls: string[] | null): { externalUrl: string }[] {
+  return (urls ?? [])
+    .map((url) => url.trim())
+    .filter((url) => url !== '')
+    .map((externalUrl) => ({ externalUrl }))
+}
+
 type Currency = (typeof YACHT_CURRENCIES)[number]
 
 const SPELLINGS: Record<string, Currency> = {
@@ -131,10 +139,15 @@ export interface Orphan {
 
 /**
  * The slug the legacy row had, unless it is empty or taken: the legacy admin wrote `''` for a
- * Cyrillic name and never refused a duplicate (inventory section 8.2). Then the name, with the
- * legacy id where even that is taken, so every yacht still has a URL of its own.
+ * Cyrillic name and never refused a duplicate (inventory section 8.2), and the sale table had
+ * no slug at all. Then the name, with the legacy id where even that is taken, so every yacht
+ * still has a URL of its own; a row keeps the slug an earlier run gave it.
  */
-function slugFor(row: NewYachtsRow, taken: Set<string>, imported?: string): string {
+function slugFor(
+  row: { id: number; name: string | null; slug?: string | null },
+  taken: Set<string>,
+  imported?: string,
+): string {
   if (imported !== undefined) return imported
 
   const legacy = (row.slug ?? '').trim()
@@ -184,10 +197,7 @@ export function fromNewYacht(
         location: normaliseText(row.location),
         length: decimal(row.length),
         description: row.description?.trim() ? paragraphs(row.description) : undefined,
-        photos: (row.photos ?? [])
-          .map((url) => url.trim())
-          .filter((url) => url !== '')
-          .map((externalUrl) => ({ externalUrl })),
+        photos: photosOf(row.photos),
         charter: present({
           manufacturer: normaliseText(row.manufacturer),
           owner: normaliseText(row.owner),
@@ -223,6 +233,59 @@ export function fromNewYacht(
   }
 }
 
+/** `yachts`, the sale catalogue: no slug, no price, integers where the charter table has text. */
+export interface SaleYachtsRow {
+  id: number
+  name: string | null
+  shipyard: string | null
+  year: number | null
+  length: string | null
+  beam: string | null
+  draft: string | null
+  cabins: number | null
+  guests: number | null
+  crew: number | null
+  cruising_speed: number | null
+  max_speed: number | null
+  location: string | null
+  pictures: string[] | null
+}
+
+export type SaleContext = Omit<CharterContext, 'contacts'>
+
+/** Every column of the sale table has a field, so nothing goes to `legacyAttributes`. */
+export function fromSaleYacht(row: SaleYachtsRow, context: SaleContext): TargetDocument<'yachts'> {
+  const slug = slugFor(row, context.slugs, context.imported.get(row.id))
+
+  return {
+    data: present({
+      name: normaliseText(row.name) ?? slug,
+      listingType: 'sale' as const,
+      slug,
+      location: normaliseText(row.location),
+      length: decimal(row.length),
+      photos: photosOf(row.pictures),
+      sale: present({
+        shipyard: normaliseText(row.shipyard),
+        year: row.year,
+        beam: decimal(row.beam),
+        draft: decimal(row.draft),
+        cabins: row.cabins,
+        guests: row.guests,
+        crew: row.crew,
+        cruisingSpeed: row.cruising_speed,
+        maxSpeed: row.max_speed,
+      }),
+      provenance: {
+        origin: 'yachts-sale' as const,
+        legacyId: row.id,
+        importRunId: context.runId,
+        importedAt: context.importedAt,
+      },
+    }),
+  }
+}
+
 /** A yacht is the row of its own table: the two tables number their rows independently. */
 const yachtKey = (data: TargetDocument<'yachts'>['data']): Where => ({
   and: [
@@ -230,6 +293,29 @@ const yachtKey = (data: TargetDocument<'yachts'>['data']): Where => ({
     { 'provenance.legacyId': { equals: data.provenance.legacyId } },
   ],
 })
+
+/** Every slug a yacht already has, and the ones an earlier run gave rows of this origin. */
+async function slugsTaken(
+  payload: Payload,
+  origin: 'new-yachts-charter' | 'yachts-sale',
+): Promise<Pick<CharterContext, 'slugs' | 'imported'>> {
+  const { docs } = await payload.find({
+    collection: 'yachts',
+    select: { slug: true, provenance: true },
+    pagination: false,
+    depth: 0,
+    overrideAccess: true,
+  })
+
+  return {
+    slugs: new Set(docs.map((one) => one.slug).filter((slug): slug is string => Boolean(slug))),
+    imported: new Map(
+      docs
+        .filter((one) => one.provenance?.origin === origin && one.slug)
+        .map((one) => [one.provenance?.legacyId as number, one.slug as string] as const),
+    ),
+  }
+}
 
 export interface CharterImport {
   reports: ImportReport[]
@@ -261,25 +347,13 @@ export async function importCharterYachts(
     depth: 0,
     overrideAccess: true,
   })
-  const { docs: yachts } = await payload.find({
-    collection: 'yachts',
-    select: { slug: true, provenance: true },
-    pagination: false,
-    depth: 0,
-    overrideAccess: true,
-  })
   const context: CharterContext = {
     runId,
     importedAt,
     contacts: new Map(
       contacts.map((one) => [one.provenance?.legacyContactId as number, one.id] as const),
     ),
-    slugs: new Set(yachts.map((one) => one.slug).filter((slug): slug is string => Boolean(slug))),
-    imported: new Map(
-      yachts
-        .filter((one) => one.provenance?.origin === 'new-yachts-charter' && one.slug)
-        .map((one) => [one.provenance?.legacyId as number, one.slug as string] as const),
-    ),
+    ...(await slugsTaken(payload, 'new-yachts-charter')),
   }
   const orphans: Orphan[] = []
   const source = tableRows<NewYachtsRow>(payload, { schema, table: 'new_yachts', orderBy: 'id' })
@@ -299,4 +373,23 @@ export async function importCharterYachts(
   )
 
   return { reports: [contactsReport, yachtsReport], orphans }
+}
+
+export async function importSaleYachts(
+  payload: Payload,
+  options: { schema?: string; dryRun?: boolean; runId?: string } = {},
+): Promise<ImportReport> {
+  const { schema = 'legacy', dryRun = false, runId = crypto.randomUUID() } = options
+  const context: SaleContext = {
+    runId,
+    importedAt: new Date().toISOString(),
+    ...(await slugsTaken(payload, 'yachts-sale')),
+  }
+  const source = tableRows<SaleYachtsRow>(payload, { schema, table: 'yachts', orderBy: 'id' })
+
+  return runImport(
+    { source, sourceId: (row) => String(row.id), transform: (row) => fromSaleYacht(row, context) },
+    payloadTarget(payload, { collection: 'yachts', table: source.table, naturalKey: yachtKey }),
+    { dryRun, runId },
+  )
 }

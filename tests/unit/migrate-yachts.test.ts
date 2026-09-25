@@ -4,8 +4,10 @@ import {
   currencyOf,
   fromContact,
   fromNewYacht,
+  fromSaleYacht,
   type CharterContext,
   type NewYachtsRow,
+  type SaleYachtsRow,
 } from '../../scripts/migrate/yachts'
 
 /**
@@ -162,5 +164,63 @@ describe('a charter row', () => {
         context({ slugs: new Set(['sea_breeze_5']), imported: new Map([[5, 'sea_breeze_5']]) }),
       ).doc.data.slug,
     ).toBe('sea_breeze_5')
+  })
+})
+
+describe('a sale row', () => {
+  const sale = (fields: Partial<SaleYachtsRow> = {}): SaleYachtsRow => ({
+    id: 8,
+    name: 'Aurora',
+    shipyard: 'Benetti',
+    year: 2019,
+    length: '120',
+    beam: '25.5',
+    draft: '8',
+    cabins: 6,
+    guests: 12,
+    crew: 9,
+    cruising_speed: 12,
+    max_speed: 16,
+    location: 'Monaco',
+    pictures: ['https://images.example.test/a.jpg'],
+    ...fields,
+  })
+
+  it('becomes a sale listing with every column in the sale group', () => {
+    expect(fromSaleYacht(sale(), context()).data).toEqual({
+      name: 'Aurora',
+      listingType: 'sale',
+      slug: 'aurora',
+      location: 'Monaco',
+      length: 120,
+      photos: [{ externalUrl: 'https://images.example.test/a.jpg' }],
+      sale: {
+        shipyard: 'Benetti',
+        year: 2019,
+        beam: 25.5,
+        draft: 8,
+        cabins: 6,
+        guests: 12,
+        crew: 9,
+        cruisingSpeed: 12,
+        maxSpeed: 16,
+      },
+      provenance: {
+        origin: 'yachts-sale',
+        legacyId: 8,
+        importRunId: 'run-3',
+        importedAt: '2026-09-25T00:00:00.000Z',
+      },
+    })
+  })
+
+  it('takes its slug from the name, since the sale table had none', () => {
+    expect(
+      fromSaleYacht(sale({ name: 'Aurora' }), context({ slugs: new Set(['aurora']) })).data.slug,
+    ).toBe('aurora_8')
+    expect(fromSaleYacht(sale({ name: null }), context()).data).toMatchObject({
+      name: 'yacht',
+      slug: 'yacht',
+    })
   })
 })
