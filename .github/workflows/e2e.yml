@@ -130,18 +130,69 @@ jobs:
     needs: gate
     if: needs.gate.outputs.run == 'true'
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 30
+    # The budgets gate `master` and the nightly run; a preview is told, not stopped (issue #177).
+    continue-on-error: ${{ github.event_name == 'deployment_status' }}
+    env:
+      BASE_URL: ${{ needs.gate.outputs.base_url }}
+      # Without it Lighthouse is redirected to the Vercel login and scores that (issue #246).
+      VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ needs.gate.outputs.sha }}
+      - name: Pages to audit
+        id: pages
+        # The detail page is the listing's first card, so it is one the deployment really has.
+        run: |
+          detail="$(curl -sL ${VERCEL_AUTOMATION_BYPASS_SECRET:+-H "x-vercel-protection-bypass: $VERCEL_AUTOMATION_BYPASS_SECRET"} \
+            "$BASE_URL/en/aircraft" | grep -o 'href="/en/aircraft/[^"]*"' | head -1 | cut -d'"' -f2)"
+          if [ -z "$detail" ]; then echo "::error::the aircraft listing links to no aircraft"; exit 1; fi
+          echo "detail=$detail" >> "$GITHUB_OUTPUT"
       - uses: treosh/lighthouse-ci-action@3e7e23fb74242897f95c0ba9cabad3d0227b9b18 # 12.6.2
-        env:
-          # Without it Lighthouse is redirected to the Vercel login and scores that (issue #246).
-          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
         with:
           urls: |
-            ${{ needs.gate.outputs.base_url }}/
+            ${{ env.BASE_URL }}/en
+            ${{ env.BASE_URL }}/en/aircraft
+            ${{ env.BASE_URL }}${{ steps.pages.outputs.detail }}
+            ${{ env.BASE_URL }}/en/yachts
+          runs: 3
           configPath: ./lighthouserc.cjs
           uploadArtifacts: true
           temporaryPublicStorage: false
+
+  budget-issue:
+    name: budget issue
+    needs: lighthouse
+    # `needs.lighthouse.result` rather than `failure()`: the job may not fail the workflow on a
+    # preview, and only `master` and the nightly run open an issue.
+    if: always() && needs.lighthouse.result == 'failure' && (github.event_name == 'push' || github.event_name == 'schedule')
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      issues: write
+    steps:
+      - uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        with:
+          script: |
+            const title = 'Lighthouse budgets exceeded on staging'
+            const run = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`
+            const line = `The \`lighthouse\` job of the ${context.eventName === 'schedule' ? 'nightly run' : `push of ${context.sha.slice(0, 7)}`} failed its budgets: ${run} (the assertions are in its log, the reports in its artifact).`
+            // One open issue collects every failure, so a regression that lasts a week is one thread.
+            const { data: open } = await github.rest.issues.listForRepo({
+              ...context.repo,
+              state: 'open',
+              labels: 'area:seo',
+              per_page: 100,
+            })
+            const existing = open.find((issue) => issue.title === title)
+            if (existing) {
+              await github.rest.issues.createComment({ ...context.repo, issue_number: existing.number, body: line })
+            } else {
+              await github.rest.issues.create({
+                ...context.repo,
+                title,
+                labels: ['type:bug', 'area:seo', 'priority:p1'],
+                body: `${line}\n\nThe budgets and the legacy numbers they come from: \`lighthouserc.cjs\`, \`docs/performance-baseline.md\` (issue #177).`,
+              })
+            }
