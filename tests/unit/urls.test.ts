@@ -56,6 +56,21 @@ describe('siteOrigin', () => {
       warn.mockRestore()
     }
   })
+
+  it('passes over a value with no host a browser can reach, to the next one it has', () => {
+    // Staging held `-`, and Payload refused every admin save from any other origin (#17).
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined)
+
+    try {
+      expect(siteOrigin('-', 'atmjetwebsiterefactor.vercel.app')).toBe(
+        'https://atmjetwebsiterefactor.vercel.app',
+      )
+      expect(siteOrigin('-', '')).toBe('http://localhost:3000')
+      expect(warn).toHaveBeenCalledTimes(2)
+    } finally {
+      warn.mockRestore()
+    }
+  })
 })
 
 /**

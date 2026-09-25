@@ -132,7 +132,12 @@ test.describe('a page that shows one of something', () => {
 
     expect(images.length).toBeGreaterThan(0)
     for (const image of images) {
-      const response = await request.get(new URL(image).pathname)
+      // An upload Payload serves itself is asked of the deployment under test, whatever origin
+      // the page names; one in the bucket is asked of the bucket (#20).
+      const url = new URL(image)
+      const response = await request.get(
+        url.pathname.startsWith('/api/media/') ? url.pathname : image,
+      )
 
       expect(response.status(), image).toBe(200)
     }

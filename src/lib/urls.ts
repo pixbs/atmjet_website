@@ -25,21 +25,32 @@ export function siteOrigin(
   configured = process.env.NEXT_PUBLIC_SITE_URL,
   production = process.env.VERCEL_PROJECT_PRODUCTION_URL,
 ): string {
-  const named = (configured ?? '').trim() || (production ?? '').trim()
-  if (named === '') return DEVELOPMENT_ORIGIN
+  // A value that is not an address falls through to the next one: Payload pins its CSRF check to
+  // this origin, so `-` in the variable refused every save in the admin (#17).
+  for (const named of [configured, production].map((value) => (value ?? '').trim())) {
+    if (named === '') continue
+    const origin = originOf(named)
+    if (origin !== null) return origin
 
+    console.warn(`[urls] the site origin is not an address (${named}), so it is ignored.`)
+  }
+
+  return DEVELOPMENT_ORIGIN
+}
+
+function originOf(named: string): string | null {
   // The scheme goes on before the trailing slash comes off, or `https://` loses its own slashes.
   const absolute = /^[a-z][a-z\d+.-]*:\/\//i.test(named) ? named : `https://${named}`
   const origin = absolute.replace(/\/+$/, '')
 
   try {
-    new URL(origin)
-    return origin
+    const { hostname } = new URL(origin)
+    // `new URL` takes `https://-`; a host a browser can reach has a dot, or is this machine.
+    const reachable = hostname === 'localhost' || hostname.includes('.') || hostname.startsWith('[')
+
+    return reachable ? origin : null
   } catch {
-    console.warn(
-      `[urls] the site origin is not an address (${named}); the site describes itself as ${DEVELOPMENT_ORIGIN}.`,
-    )
-    return DEVELOPMENT_ORIGIN
+    return null
   }
 }
 
