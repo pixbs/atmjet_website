@@ -6,6 +6,7 @@ import type {
   Where,
 } from 'payload'
 
+import { DEFAULT_LOCALE, type Locale } from '../../src/i18n/locales'
 import type { ImportTarget, PendingWrite, RunContext, WriteOutcome } from './runner'
 
 /**
@@ -26,6 +27,16 @@ export interface PayloadTargetSpec<TSlug extends CollectionSlug> {
   naturalKey(doc: RequiredDataFromCollectionSlug<TSlug>): Where
 }
 
+/**
+ * What a transform hands the target: the document in the default locale, and the localized
+ * fields in every other one. Payload writes one locale per call (`locale: 'all'` stores nothing),
+ * so the translations follow the document in the same transaction.
+ */
+export interface TargetDocument<TSlug extends CollectionSlug> {
+  data: RequiredDataFromCollectionSlug<TSlug>
+  translations?: Partial<Record<Locale, Partial<RequiredDataFromCollectionSlug<TSlug>>>>
+}
+
 /** The hooks a bulk run does not want: one revalidation per row would drop the cache per row. */
 const QUIET = { skipRevalidation: true }
 
@@ -42,6 +53,7 @@ interface CollectionWriter {
     depth: number
     overrideAccess: boolean
     context: object
+    locale?: Locale
     req?: Partial<PayloadRequest>
   }): Promise<{ id: number | string }>
   update(options: {
@@ -51,6 +63,7 @@ interface CollectionWriter {
     depth: number
     overrideAccess: boolean
     context: object
+    locale?: Locale
     req?: Partial<PayloadRequest>
   }): Promise<{ id: number | string }>
 }
@@ -58,7 +71,7 @@ interface CollectionWriter {
 export function payloadTarget<TSlug extends CollectionSlug>(
   payload: Payload,
   spec: PayloadTargetSpec<TSlug>,
-): ImportTarget<RequiredDataFromCollectionSlug<TSlug>> {
+): ImportTarget<TargetDocument<TSlug>> {
   type Doc = RequiredDataFromCollectionSlug<TSlug>
 
   const writer = payload as unknown as CollectionWriter
@@ -79,22 +92,29 @@ export function payloadTarget<TSlug extends CollectionSlug>(
   }
 
   const write = async (
-    { sourceId, doc }: PendingWrite<Doc>,
+    { sourceId, doc }: PendingWrite<TargetDocument<TSlug>>,
     run: RunContext,
     req: Partial<PayloadRequest>,
   ): Promise<WriteOutcome> => {
-    const id = await existingId(doc, req)
+    const id = await existingId(doc.data, req)
     const common = {
       collection: spec.collection,
-      data: doc as object,
+      data: doc.data as object,
       depth: 0,
       overrideAccess: true,
       context: QUIET,
+      // Said every time: Payload keeps the last call's locale on the shared request, so a
+      // document after a translation would otherwise be written in that translation's language.
+      locale: DEFAULT_LOCALE,
       req,
     }
     const written =
       id === undefined ? await writer.create(common) : await writer.update({ ...common, id })
     const action = id === undefined ? 'created' : 'updated'
+
+    for (const [locale, data] of Object.entries(doc.translations ?? {}) as [Locale, object][])
+      if (Object.keys(data).length > 0)
+        await writer.update({ ...common, id: written.id, data, locale })
 
     await payload.create({
       collection: 'migration-runs',
@@ -140,7 +160,7 @@ export function payloadTarget<TSlug extends CollectionSlug>(
         for (const pending of writes)
           outcomes.push({
             sourceId: pending.sourceId,
-            action: (await existingId(pending.doc)) ? 'updated' : 'created',
+            action: (await existingId(pending.doc.data)) ? 'updated' : 'created',
           })
 
         return outcomes

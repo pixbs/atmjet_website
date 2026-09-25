@@ -53,6 +53,8 @@ scripts/ci           convention checks shared by git hooks and CI
 | `bun run db:reset`                                                   | drop, migrate, clear the uploads and seed; refuses production    |
 | `bun run migrate`, `bun run migrate:create <name>`, `migrate:status` | Payload migrations                                               |
 | `bun run test:int`                                                   | unit and integration tests with coverage thresholds              |
+| `bun run test:reconcile`                                             | legacy importers run and reconciled on the fixture schema        |
+| `bun run import:legacy <airports\|reconcile> [--dry-run]`            | import from the `legacy` schema, or reconcile what was imported  |
 | `bun run test:e2e`, `bun run test:visual`, `bun run test:a11y`       | Playwright tiers against the dev server or `PLAYWRIGHT_BASE_URL` |
 | `bun run test:visual:update`                                         | regenerate visual baselines (Linux only)                         |
 | `bun run test:lighthouse`                                            | Lighthouse budgets                                               |

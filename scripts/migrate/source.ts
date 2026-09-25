@@ -56,7 +56,8 @@ export function tableRows<Row>(payload: Payload, source: TableSource): ImportSou
   const order = quoteIdentifier(orderBy)
 
   return {
-    table,
+    // Qualified, so a fixture schema in a test never shares ledger keys with `legacy` itself.
+    table: `${schema}.${table}`,
     async *rows() {
       for (let offset = 0; ; offset += pageSize) {
         const result = await drizzleOf(payload).execute(
