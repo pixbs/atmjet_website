@@ -13,6 +13,13 @@ const KIB = 1024
  * which a lab run cannot measure. CLS is not here: the legacy shifted by 0.93 and more, and the
  * 0.1 below was already enforced and already held.
  */
+/**
+ * Lighthouse's own "good" on desktop. A timing is an error past the slower of this and the legacy
+ * number and a warning past the faster: under this line two runs of one site differ by more than
+ * the gap it would hold (the legacy yachts page measured 672 and 911 ms on the same day).
+ */
+const GOOD = { lcp: 1200, tbt: 150 }
+
 const LEGACY = [
   { page: '/en/?$', lcp: 944, tbt: 33, bytes: 14297, images: 338 },
   { page: '/en/aircraft/?$', lcp: 1681, tbt: 32, bytes: 19771, images: 18843 },
@@ -41,27 +48,35 @@ module.exports = {
     assert: {
       assertMatrix: [
         {
-          // Every page. The warnings are the target, Lighthouse's own "good" on desktop.
+          // Every page. The warnings are the target: a score and a weight Lighthouse calls good.
           assertions: {
             'categories:performance': ['warn', { minScore: 0.9 }],
             'categories:accessibility': ['error', { minScore: 0.9 }],
             'categories:best-practices': ['warn', { minScore: 0.9 }],
             'categories:seo': ['error', { minScore: 0.9 }],
             'cumulative-layout-shift': ['error', { maxNumericValue: 0.1 }],
-            'largest-contentful-paint': ['warn', { maxNumericValue: 1200 }],
-            'total-blocking-time': ['warn', { maxNumericValue: 150 }],
             'total-byte-weight': ['warn', { maxNumericValue: 2667 * KIB }],
           },
         },
-        ...LEGACY.map(({ page, lcp, tbt, bytes, images }) => ({
-          matchingUrlPattern: page,
-          assertions: {
-            'largest-contentful-paint': ['error', { maxNumericValue: lcp }],
-            'total-blocking-time': ['error', { maxNumericValue: tbt }],
-            'total-byte-weight': ['error', { maxNumericValue: bytes * KIB }],
-            'resource-summary:image:size': ['error', { maxNumericValue: images * KIB }],
+        ...LEGACY.flatMap(({ page, lcp, tbt, bytes, images }) => [
+          {
+            matchingUrlPattern: page,
+            assertions: {
+              'largest-contentful-paint': ['error', { maxNumericValue: Math.max(lcp, GOOD.lcp) }],
+              'total-blocking-time': ['error', { maxNumericValue: Math.max(tbt, GOOD.tbt) }],
+              'total-byte-weight': ['error', { maxNumericValue: bytes * KIB }],
+              'resource-summary:image:size': ['error', { maxNumericValue: images * KIB }],
+            },
           },
-        })),
+          {
+            // The target: the faster of the legacy and "good", reported rather than blocking.
+            matchingUrlPattern: page,
+            assertions: {
+              'largest-contentful-paint': ['warn', { maxNumericValue: Math.min(lcp, GOOD.lcp) }],
+              'total-blocking-time': ['warn', { maxNumericValue: Math.min(tbt, GOOD.tbt) }],
+            },
+          },
+        ]),
       ],
     },
     upload: {
