@@ -4,9 +4,9 @@ Implements E12.2 (#180). It moves one thing — which Vercel project answers for
 host — and it is written so that the move can be undone in the time a DNS record takes to
 expire.
 
-The data half of the cutover (content freeze, delta import, reconciliation) is E5.14 and comes
-with the import; this runbook assumes it has already run and that the new site is serving the
-real content on its staging domain.
+The data half of the cutover (content freeze, delta import, reconciliation) is
+`docs/runbooks/cutover.md` (E5.14); this runbook assumes it has already run and that the new site
+is serving the real content on its staging domain.
 
 ## What moves, and what does not
 
