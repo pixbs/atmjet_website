@@ -1,0 +1,12 @@
+measure	value
+aircrafts rows	8842
+aircrafts without a registration	2
+aircrafts registrations with whitespace	3
+aircrafts registrations with a character outside A-Z, 0-9, space and the ASCII hyphen	4
+aircrafts canonical registrations held by more than one row	0
+aircrafts rows where the issue form differs from the canonical one	3
+vehicles planes (a tail number that is not blank)	3422
+vehicles canonical registrations held by more than one plane	22
+vehicles planes whose registration aircrafts also has	1917
+vehicles planes aircrafts does not have	1505
+distinct planes across both tables	10336
