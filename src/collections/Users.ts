@@ -32,6 +32,19 @@ export const Users: CollectionConfig = {
     // Who may reach the admin panel at all.
     admin: ({ req: { user } }) => Boolean(user),
   },
+  hooks: {
+    // An MCP key acts as the person who issued it, so it goes with them rather than failing the
+    // delete on its required owner column (issue #71).
+    beforeDelete: [
+      async ({ id, req }) => {
+        await req.payload.delete({
+          collection: 'payload-mcp-api-keys',
+          where: { user: { equals: id } },
+          req,
+        })
+      },
+    ],
+  },
   fields: [
     {
       name: 'roles',

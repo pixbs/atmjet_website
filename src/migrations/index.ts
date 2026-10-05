@@ -39,6 +39,7 @@ import * as migration_20260922_165032_s3_media_prefix from './20260922_165032_s3
 import * as migration_20260925_120259_aircraft_merged_from_legacy_id from './20260925_120259_aircraft_merged_from_legacy_id';
 import * as migration_20260925_121001_contacts_legacy_attributes from './20260925_121001_contacts_legacy_attributes';
 import * as migration_20260925_123625_legacy_redirects_per_aircraft from './20260925_123625_legacy_redirects_per_aircraft';
+import * as migration_20261005_094335_mcp_plugin from './20261005_094335_mcp_plugin';
 
 export const migrations = [
   {
@@ -244,6 +245,11 @@ export const migrations = [
   {
     up: migration_20260925_123625_legacy_redirects_per_aircraft.up,
     down: migration_20260925_123625_legacy_redirects_per_aircraft.down,
-    name: '20260925_123625_legacy_redirects_per_aircraft'
+    name: '20260925_123625_legacy_redirects_per_aircraft',
+  },
+  {
+    up: migration_20261005_094335_mcp_plugin.up,
+    down: migration_20261005_094335_mcp_plugin.down,
+    name: '20261005_094335_mcp_plugin'
   },
 ];

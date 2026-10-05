@@ -1,7 +1,19 @@
+import { randomUUID } from 'crypto'
+import { handleEndpoints, type SanitizedConfig } from 'payload'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 
 import { ROLES } from '@/access'
-import { createAdmin, createMedia, createUser, mediaData, pngFile, userData } from '../factories'
+import {
+  createAdmin,
+  createMcpApiKey,
+  createMedia,
+  createUser,
+  mcpApiKeyData,
+  mediaData,
+  pngFile,
+  userData,
+  type McpApiKeyData,
+} from '../factories'
 import { createRegistry, type TestRegistry } from '../helpers/payload'
 
 /**
@@ -289,6 +301,212 @@ describe('privilege escalation', () => {
   })
 })
 
+describe('MCP API keys access', () => {
+  it('cannot be read or issued anonymously or by an editor', async () => {
+    const owner = await createAdmin(registry)
+    await createMcpApiKey(registry, owner)
+    const editor = await createUser(registry)
+
+    // A key reads back in clear and acts as an administrator, so reading one is taking over.
+    for (const user of [undefined, editor]) {
+      await expect(
+        registry.payload.find({ collection: 'payload-mcp-api-keys', overrideAccess: false, user }),
+      ).rejects.toThrow()
+
+      await expect(
+        registry.payload.create({
+          collection: 'payload-mcp-api-keys',
+          data: mcpApiKeyData(owner),
+          overrideAccess: false,
+          user,
+        }),
+      ).rejects.toThrow()
+    }
+  })
+
+  it('cannot be changed or revoked by an editor', async () => {
+    const key = await createMcpApiKey(registry, await createAdmin(registry))
+    const editor = await createUser(registry)
+
+    await expect(
+      registry.payload.update({
+        collection: 'payload-mcp-api-keys',
+        id: key.id,
+        data: { pages: { update: true } },
+        overrideAccess: false,
+        user: editor,
+      }),
+    ).rejects.toThrow()
+
+    await expect(
+      registry.payload.delete({
+        collection: 'payload-mcp-api-keys',
+        id: key.id,
+        overrideAccess: false,
+        user: editor,
+      }),
+    ).rejects.toThrow()
+  })
+
+  it('is issued by an admin, acts as them, and can be read, changed and revoked by any admin', async () => {
+    const owner = await createAdmin(registry)
+    const colleague = await createAdmin(registry)
+    const editor = await createUser(registry)
+
+    // Naming somebody else does not work: the key is bound to whoever issued it.
+    const created = await registry.payload.create({
+      collection: 'payload-mcp-api-keys',
+      data: mcpApiKeyData(editor),
+      depth: 0,
+      overrideAccess: false,
+      user: owner,
+    })
+    registry.track('payload-mcp-api-keys', created.id)
+    expect(created.user).toBe(owner.id)
+
+    // Not only its owner: a leaked key must not wait for the one person who issued it.
+    const listed = await registry.payload.find({
+      collection: 'payload-mcp-api-keys',
+      where: { id: { equals: created.id } },
+      overrideAccess: false,
+      user: colleague,
+    })
+    expect(listed.totalDocs).toBe(1)
+
+    const updated = await registry.payload.update({
+      collection: 'payload-mcp-api-keys',
+      id: created.id,
+      data: { pages: { find: true } },
+      overrideAccess: false,
+      user: colleague,
+    })
+    expect(updated.pages?.find).toBe(true)
+
+    await expect(
+      registry.payload.delete({
+        collection: 'payload-mcp-api-keys',
+        id: created.id,
+        overrideAccess: false,
+        user: colleague,
+      }),
+    ).resolves.toBeTruthy()
+  })
+})
+
+/** What a key holds with every box on its admin screen ticked. */
+function everyCapability(config: SanitizedConfig): Partial<McpApiKeyData> {
+  const keys = config.collections.find((collection) => collection.slug === 'payload-mcp-api-keys')
+  const groups = (keys?.flattenedFields ?? []).flatMap((field) =>
+    field.type === 'group' ? [field] : [],
+  )
+
+  return Object.fromEntries(
+    groups.map((group) => [
+      group.name,
+      Object.fromEntries(
+        group.flattenedFields
+          .filter((field) => field.type === 'checkbox')
+          .map((field) => [field.name, true]),
+      ),
+    ]),
+  )
+}
+
+/** Asks `/api/mcp` which tools a caller may use, the way an MCP client does over HTTP. */
+async function listTools(authorization?: string): Promise<{ status: number; tools: string[] }> {
+  const response = await handleEndpoints({
+    config: registry.payload.config,
+    request: new Request('http://localhost/api/mcp', {
+      method: 'POST',
+      headers: {
+        accept: 'application/json, text/event-stream',
+        'content-type': 'application/json',
+        ...(authorization === undefined ? {} : { authorization }),
+      },
+      body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'tools/list', params: {} }),
+    }),
+  })
+
+  // The reply is a server-sent event; a key offered no tools has no `tools/list` method at all.
+  const event = (await response.text()).split('\n').find((line) => line.startsWith('data: '))
+  const reply = event ? JSON.parse(event.slice('data: '.length)) : {}
+  const tools: { name: string }[] = reply.result?.tools ?? []
+
+  return { status: response.status, tools: tools.map((tool) => tool.name) }
+}
+
+describe('the MCP endpoint', () => {
+  it('refuses a request without a valid key', async () => {
+    const key = await createMcpApiKey(registry, await createAdmin(registry), {
+      pages: { find: true },
+    })
+    await registry.payload.update({
+      collection: 'payload-mcp-api-keys',
+      id: key.id,
+      data: { enableAPIKey: false },
+      overrideAccess: true,
+    })
+
+    expect((await listTools()).status).toBe(401)
+    expect((await listTools(`Bearer ${randomUUID()}`)).status).toBe(401)
+    // Switching a key off in the admin revokes it without deleting it.
+    expect((await listTools(`Bearer ${key.apiKey}`)).status).toBe(401)
+  })
+
+  it('gives a new key nothing until an admin ticks what it may do', async () => {
+    const key = await createMcpApiKey(registry, await createAdmin(registry))
+
+    expect(await listTools(`Bearer ${key.apiKey}`)).toEqual({ status: 200, tools: [] })
+  })
+
+  it('lets a key enter content but never reach people, leads or the ledger, or delete', async () => {
+    const key = await createMcpApiKey(
+      registry,
+      await createAdmin(registry),
+      everyCapability(registry.payload.config),
+    )
+
+    const { tools } = await listTools(`Bearer ${key.apiKey}`)
+
+    expect(tools).toEqual(expect.arrayContaining(['findPages', 'updatePages']))
+    expect(tools.filter((name) => /users|contacts|leads|migration|keys/i.test(name))).toEqual([])
+    expect(tools.filter((name) => name.startsWith('delete'))).toEqual([])
+  })
+
+  it('is the only place a key is accepted: the REST API treats it as nobody', async () => {
+    const key = await createMcpApiKey(registry, await createAdmin(registry), {
+      pages: { find: true },
+    })
+
+    for (const authorization of [
+      `Bearer ${key.apiKey}`,
+      `payload-mcp-api-keys API-Key ${key.apiKey}`,
+    ]) {
+      const response = await handleEndpoints({
+        config: registry.payload.config,
+        request: new Request('http://localhost/api/users', { headers: { authorization } }),
+      })
+
+      expect(response.status).toBe(403)
+    }
+  })
+
+  it('stops answering a key once the admin who issued it is deleted', async () => {
+    const owner = await createAdmin(registry)
+    const key = await createMcpApiKey(registry, owner, { pages: { find: true } })
+    expect((await listTools(`Bearer ${key.apiKey}`)).status).toBe(200)
+
+    await registry.payload.delete({
+      collection: 'users',
+      id: owner.id,
+      overrideAccess: false,
+      user: await createAdmin(registry),
+    })
+
+    expect((await listTools(`Bearer ${key.apiKey}`)).status).toBe(401)
+  })
+})
+
 describe('hardening', () => {
   it('pins CORS and CSRF to this deployment instead of allowing any origin', async () => {
     const config = await registry.payload.config
@@ -317,7 +535,7 @@ describe('hardening', () => {
     expect(await canUseAdminPanel!({ req: { user: null } } as never)).toBe(false)
   })
 
-  it('slows password guessing down and issues no API keys', async () => {
+  it('slows password guessing down and gives an account no API key', async () => {
     const config = await registry.payload.config
     const users = config.collections.find((collection) => collection.slug === 'users')
 

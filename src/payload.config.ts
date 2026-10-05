@@ -1,5 +1,6 @@
 import { postgresAdapter } from '@payloadcms/db-postgres'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
+import { mcpPlugin } from '@payloadcms/plugin-mcp'
 import { redirectsPlugin } from '@payloadcms/plugin-redirects'
 import { seoPlugin } from '@payloadcms/plugin-seo'
 import { s3Storage } from '@payloadcms/storage-s3'
@@ -26,7 +27,7 @@ import { redirectsOverrides, REDIRECT_TYPES } from './collections/Redirects'
 import { Header } from './globals/Header'
 import { Footer } from './globals/Footer'
 import { SiteSettings } from './globals/SiteSettings'
-import { hasRole } from './access'
+import { admin, hasRole } from './access'
 import { DEFAULT_LOCALE, LOCALE_DEFINITIONS } from './i18n/locales'
 import { readEnvironment } from './lib/env'
 import { mediaFileUrl, MEDIA_PREFIX, readS3Settings } from './lib/storage'
@@ -184,6 +185,22 @@ export default buildConfig({
         },
       },
       overrides: redirectsOverrides,
+    }),
+    // Agents enter the E10 content at /api/mcp with keys only an admin can issue (issue #71); no
+    // key can reach a person, a lead or the import ledger, or delete anything.
+    mcpPlugin({
+      collections: {
+        pages: { enabled: { find: true, create: true, update: true } },
+        media: { enabled: { find: true, update: true } },
+      },
+      globals: {
+        header: { enabled: true },
+        footer: { enabled: true },
+      },
+      overrideApiKeyCollection: (collection) => ({
+        ...collection,
+        access: { read: admin, create: admin, update: admin, delete: admin, unlock: admin },
+      }),
     }),
   ],
 })
