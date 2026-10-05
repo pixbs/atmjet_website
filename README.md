@@ -50,6 +50,28 @@ docs/                ADRs, legacy inventory, backlog, runbooks, GitHub settings 
 scripts/ci           convention checks (hooks + CI) scripts/db     database runbook helpers
 ```
 
+## Content entry over MCP
+
+`@payloadcms/plugin-mcp` serves a [Model Context Protocol](https://modelcontextprotocol.io) endpoint at `/api/mcp`, so an agent can enter content through Payload (issue #71). It can find, create and update `pages`, and find and update `media` (alt texts; files are still uploaded in the admin) and the `header` and `footer` globals. It cannot reach users, contacts, leads, the import ledger or the site settings, and it cannot delete anything.
+
+1. An administrator opens **MCP → API Keys** in `/admin`, creates a key, ticks **Enable API Key** and copies the key.
+2. On the same screen they tick what this agent may do; a new key may do nothing.
+3. The agent's MCP client calls the endpoint over HTTP with the key as a bearer token:
+
+```json
+{
+  "mcpServers": {
+    "atmjet": {
+      "type": "http",
+      "url": "https://<deployment>/api/mcp",
+      "headers": { "Authorization": "Bearer <key>" }
+    }
+  }
+}
+```
+
+Keys are admin-only: nobody else can create, see, change or delete one (`docs/access-matrix.md`). A key acts as the administrator who created it, through the same access control as their session, and is accepted nowhere but `/api/mcp`. To revoke one, delete it or untick **Enable API Key**; deleting an administrator deletes the keys they issued.
+
 ## Working on the project
 
 - Read [`AGENTS.md`](AGENTS.md) (rules for humans and AI agents) and [`CONTRIBUTING.md`](CONTRIBUTING.md) (workflow, stacked pull requests, definition of done).

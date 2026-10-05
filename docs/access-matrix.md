@@ -106,6 +106,24 @@ The ledger the data migration resumes on (issue #76, `docs/adr/0002-database-mig
 
 The importers write through the Local API, which does not go through access control at all, so closing every operation to everyone but an administrator costs them nothing. The cells are tested in `tests/int/migrate.int.spec.ts`.
 
+### `payload-mcp-api-keys`
+
+The keys an agent calls `/api/mcp` with (`@payloadcms/plugin-mcp`, issue #71, `README.md`). A key reads back in clear to whoever may read it and acts as the administrator who issued it, so reading one is as good as being that administrator. Administrators only, on every operation, `unlock` included.
+
+| Operation | Anonymous | Editor | Admin |
+| --------- | --------- | ------ | ----- |
+| read      | no        | no     | yes   |
+| create    | no        | no     | yes   |
+| update    | no        | no     | yes   |
+| delete    | no        | no     | yes   |
+
+- A key is bound to the administrator who creates it: its `user` field cannot be written, so nobody can issue a key that acts as someone else. Any administrator can read, change or delete any key, so revoking a leaked one does not wait for its owner.
+- A new key may do nothing: each capability is a box that starts unticked. On offer are `find`, `create` and `update` on `pages`, and `find` and `update` on `media`, `header` and `footer`; there is none for people, leads, the import ledger or the site settings, and none that deletes. Whatever a key does then goes through the rules above as its administrator.
+- A key is accepted at `/api/mcp` only: the REST and GraphQL APIs treat a request carrying one as anonymous.
+- Deleting a user deletes the keys they issued.
+
+The cells and the endpoint's answers are tested in `tests/int/access.int.spec.ts`.
+
 ## Globals
 
 One document each, so there is no create and no delete: a global is only ever read or written. The cells are tested in `tests/int/globals.int.spec.ts`; the guard that fails when a global is added without declaring access sits next to the collection one in `tests/int/access.int.spec.ts`.
@@ -139,7 +157,7 @@ Rules come from `src/access` and nowhere else, so a collection cannot invent its
 - **CORS and CSRF** are pinned to `NEXT_PUBLIC_SITE_URL`, so no other origin can call the API from a browser or ride a signed-in editor's cookie. Payload appends `serverURL` to the CORS list itself, so the effective set is this deployment alone.
 - **`serverURL`** comes from the environment, never a hard-coded host, unlike the legacy `robots.ts` (`docs/legacy-inventory.md` section 13 item 4).
 - **Login** locks an account for ten minutes after five failed attempts, so a stolen password is worth less.
-- **API keys are off.** Nothing needs one yet, and an unused key is only ever a liability. Turning them on for a collection is a deliberate change with its own tests.
+- **Accounts have no API keys.** The only keys are the MCP keys above, which are admin-only, grant nothing until a box is ticked and work at `/api/mcp` alone. Turning API keys on for another collection is a deliberate change with its own tests.
 
 ## Adding a collection or a global
 
