@@ -1,0 +1,10 @@
+measure	value
+rows	85
+slug blank, or only underscores	0
+slug held by more than one row	0
+slug the admin rule does not give for the name	3
+name with a character outside printable ASCII	0
+slug found inside another slug (the legacy page matched ILIKE '%slug%')	6
+customer_price null or zero	0
+customer_price with decimals	0
+photos missing or empty	1

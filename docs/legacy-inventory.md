@@ -1673,3 +1673,7 @@ Facts (all from `/home/user/atmjet-admin`, Next 14.2.5 + next-auth 4 + Drizzle 0
 ### 15.1 Facts marked UNVERIFIED in this document
 
 Exact resolved dependency versions (no lockfile); whether sitemaps are static at build on the deployed project; runtime effect of the never-returned layout metadata (empty `<title>` assumed); which host serves `vehicles.image`, `yachts.pictures`, `aircraft_images.url`; production column types/constraints of tables without DDL; the shape of real `aircrafts.slug` values (`<REG>-<NUM>-…`); meaning of `vehicles.source`; contents of `city_list`; whether the module-level Telegram env throw fails the build or the first action call; the rendered size of the unstyled `<Logo classname>` on `/citizens` and of the unsized gradient icons in the sale `YachtCard`; which face renders for the explicit `font-sans` class; the exact console behaviour of the async client `EmptyLegCard`; whether `public/en/video` is ever requested in production (depends on trailing-slash URLs).
+
+The data items among them (the image hosts, the column types of the tables without DDL, the
+shape of `aircrafts.slug`, the meaning of `vehicles.source`, the contents of `city_list`) are
+answered from the real rows in `docs/legacy-schema.md` (issue #75).

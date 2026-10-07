@@ -18,3 +18,4 @@ src/migrations/*.json linguist-generated
 src/payload-types.ts linguist-generated
 src/app/(payload)/admin/importMap.js linguist-generated
 tests/visual/legacy/manifest.json linguist-generated
+docs/legacy-schema/*.tsv linguist-generated
