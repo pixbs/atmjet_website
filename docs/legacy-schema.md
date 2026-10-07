@@ -15,8 +15,9 @@ The committed snapshot was taken on 2026-10-05 from the legacy Neon database its
 read-only, `search_path` and UTC settings the script sets. The environment that took it could
 not open a Postgres connection, so the statements went through Neon's SQL-over-HTTPS endpoint;
 the script is what to run anywhere else. After the restore, `scripts/db/profile.sh legacy`
-against the new project must reproduce these files byte for byte: any difference is something
-the restore changed.
+against the new project must reproduce these files byte for byte, except the two that list what
+the restore (#74) leaves out by design: `05` has no `pg_trgm` row and `18` only its header. Any
+other difference is something the restore changed.
 
 The database is the production one: its 85 charter yachts are the 85 the live `/en/yachts`
 links to, and the live site shows no empty leg, which matches the empty table (both checked on
@@ -44,8 +45,8 @@ its columns explicitly (`07`, `08`, `11`), none of them personal.
 | `yachts`                   |      2 | none                                          |
 
 Beside `public`, the database has a `drizzle` schema with the legacy admin's migration journal
-(`18-admin-migrations.sql`), which the dump carries and the restore must keep: eleven entries,
-dated 2024-07-20 to 2025-02-25. Four carry the dates of the four files in
+(`18-admin-migrations.sql`), which the dump carries and the restore (#74) leaves in the encrypted
+dump: eleven entries, dated 2024-07-20 to 2025-02-25. Four carry the dates of the four files in
 `atmjet-admin/drizzle` (2024-08-11, 2024-08-12 twice, 2025-02-25), so the migration section
 8.8 calls corrupt is recorded as applied in production; the other seven match no file the
 inventory lists.
@@ -67,8 +68,8 @@ fixture (`tests/reconcile/fixture/`) declares. What differs from that fixture:
 - The only foreign key is `aircraft_images.aircraft_id → aircrafts(id) ON DELETE CASCADE`;
   `new_yachts.contact_id` and `captain_id` reference `contact` by convention only.
 - Every index is btree; the ten `new_airports` and eight `vehicles` indexes are the ones
-  section 8 lists. `pg_trgm` 1.6 is installed **in `public`** and indexes nothing: the
-  restore's `ALTER SCHEMA public RENAME TO legacy` takes it along (`05-extensions.sql`).
+  section 8 lists. `pg_trgm` 1.6 is installed **in `public`** and indexes nothing, so the
+  restore (#74) did not create it in the new project (`05-extensions.sql`).
 
 ## Answers to the inventory's unverified data questions
 

@@ -2,7 +2,8 @@
 # Runs every profiling query of scripts/db/profile/ against one schema of a database and writes
 # each result as TSV under docs/legacy-schema/, the snapshot docs/legacy-schema.md is read from
 # (issue #75). Read-only: every statement runs in a read-only transaction. Against the legacy
-# database (`public`) and against its restored copy (`legacy`) the output must be identical.
+# database (`public`) and against its restored copy (`legacy`) the output must be identical but
+# for 05 and 18, which list what the restore leaves out (docs/legacy-schema.md).
 # Usage: DATABASE_URL=postgres://... scripts/db/profile.sh [schema] [out-dir]
 set -euo pipefail
 
