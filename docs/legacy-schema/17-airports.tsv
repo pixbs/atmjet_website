@@ -1,0 +1,12 @@
+measure	value
+airports rows	9375
+airports with a blank ICAO code	1424
+airports ICAO codes held by more than one row	298
+new_airports rows	27087
+new_airports with neither ICAO nor IATA	13192
+new_airports ICAO codes held by more than one row	1599
+new_airports Wikidata items held by more than one row	1713
+new_airports ICAO values that are not four letters or digits	19
+new_airports ICAO values that are Wikidata blank-node URLs	11
+new_airports passengers_per_year present	6176
+new_airports passengers_per_year the importer cannot read as a count	0

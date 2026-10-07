@@ -1,0 +1,5 @@
+column_name	non_null	distinct_values	min_value	max_value	gains_digits_as_double	example_as_text	example_as_double
+aircraft_type_cabin_height	6595	62	1.1	2.54	5819	1.1	1.100000023841858
+aircraft_type_cabin_length	6584	144	1.78	54	5999	1.78	1.7799999713897705
+aircraft_type_cabin_width	6642	80	1.07	6.54	6328	1.07	1.0700000524520874
+aircraft_type_speed_typical	7151	143	185.2	1574.2	4019	1574.2	1574.199951171875

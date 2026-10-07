@@ -1,0 +1,45 @@
+table_name	column_name	value	row_count
+aircraft_images	type	"cabin"	9929
+aircraft_images	type	"exterior"	7919
+aircraft_images	type	"cockpit"	477
+aircraft_images	type	"notail"	124
+aircraft_images	type	"plan"	112
+aircraft_images	type	"other"	9
+aircrafts	aircraft_type_aircraft_class_name	"Light"	4025
+aircrafts	aircraft_type_aircraft_class_name	"Midsize"	964
+aircrafts	aircraft_type_aircraft_class_name	"Airliner"	902
+aircrafts	aircraft_type_aircraft_class_name	"Super midsize"	815
+aircrafts	aircraft_type_aircraft_class_name	"Heavy"	806
+aircrafts	aircraft_type_aircraft_class_name	"Ultra long range"	802
+aircrafts	aircraft_type_aircraft_class_name	"Cargo"	451
+aircrafts	aircraft_type_aircraft_class_name	"VIP airliner"	77
+new_airports	type_en	"airport"	25240
+new_airports	type_en	"international airport"	1471
+new_airports	type_en	"domestic airport"	149
+new_airports	type_en	"federal aeroport"	91
+new_airports	type_en	"commercial airport"	48
+new_airports	type_en	"greenfield airport"	25
+new_airports	type_en	"abandoned airport"	16
+new_airports	type_en	"artificial island airport"	14
+new_airports	type_en	"airport straddling borders"	12
+new_airports	type_en	"airport of entry"	6
+new_airports	type_en	"general aviation airport"	5
+new_airports	type_en	"unfinished airport"	4
+new_airports	type_en	"regional airport"	2
+new_airports	type_en	"special airport"	2
+new_airports	type_en	"customs airport"	1
+new_airports	type_en	"greenfield international airport"	1
+new_yachts	currency	"AED"	84
+new_yachts	currency	null	1
+new_yachts	location	"Dubai Harbour"	83
+new_yachts	location	"Dubai Marina"	2
+vehicles	favorite	0	10016
+vehicles	new	0	10016
+vehicles	old_price	0.00	10016
+vehicles	popular	0	10016
+vehicles	price	0.00	10016
+vehicles	source	2	10016
+vehicles	vendor	0	10016
+vehicles	weight	0.000	10016
+yachts	location	"Dubai"	1
+yachts	location	"Greece"	1

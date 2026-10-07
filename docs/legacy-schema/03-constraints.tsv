@@ -1,0 +1,15 @@
+table_name	kind	constraint_name	definition
+aircraft_images	f	aircraft_images_aircraft_id_aircrafts_id_fk	FOREIGN KEY (aircraft_id) REFERENCES aircrafts(id) ON DELETE CASCADE
+aircraft_images	p	aircraft_images_pkey	PRIMARY KEY (id)
+aircrafts	p	aircrafts_id_unique	PRIMARY KEY (id)
+aircrafts	u	aircrafts_slug_unique	UNIQUE (slug)
+airports	p	airports_pkey	PRIMARY KEY (id)
+atmjet_admin__empty_legs	p	atmjet_admin__empty_legs_pkey	PRIMARY KEY (id)
+atmjet_admin__users	p	atmjet_admin__users_pkey	PRIMARY KEY (id)
+city_list	p	city_list_pkey	PRIMARY KEY (id)
+contact	p	contact_pkey	PRIMARY KEY (id)
+migration_status	p	migration_status_pkey	PRIMARY KEY (id)
+new_airports	p	new_airports_pkey	PRIMARY KEY (id)
+new_yachts	p	localYachts_pkey	PRIMARY KEY (id)
+vehicles	p	vehicles_pkey	PRIMARY KEY (id)
+yachts	p	yachts_pkey	PRIMARY KEY (id)
