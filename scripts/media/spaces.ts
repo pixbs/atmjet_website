@@ -181,7 +181,7 @@ export function referencesQuery(schema: string): string {
   const from = (table: string) => `"${schema}"."${table}"`
 
   return [
-    `SELECT 'vehicles' AS "table", id::text AS row_id, 'image' AS "column", image AS value FROM ${from('vehicles')}`,
+    `SELECT 'vehicles' AS "table", id::text AS "rowId", 'image' AS "column", image AS value FROM ${from('vehicles')}`,
     `SELECT 'vehicles', id::text, 'thumb', thumb FROM ${from('vehicles')}`,
     `SELECT 'yachts', id::text, 'pictures', unnest(pictures) FROM ${from('yachts')}`,
     `SELECT 'new_yachts', id::text, 'photos', unnest(photos) FROM ${from('new_yachts')}`,
