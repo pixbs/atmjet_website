@@ -9,11 +9,12 @@ const dirname = path.dirname(__filename)
 
 /**
  * The hosts `next/image` may fetch from. `mediaSource` hands `Media.externalUrl` straight to it
- * (`src/lib/media.ts`), and the legacy config named these same two
- * (`docs/legacy-inventory.md` section 2.1): the bucket the uploads go to (issue #20) and the
- * Spaces host that E1.6 has yet to mirror.
+ * (`src/lib/media.ts`): the bucket the uploads go to (issue #20, `S3_PUBLIC_URL`), and the two
+ * the legacy config named (`docs/legacy-inventory.md` section 2.1), the old bucket the legacy
+ * rows still point at and the Spaces host E1.6 mirrors.
  */
 const REMOTE_IMAGE_HOSTS = [
+  'atmjet-payload.s3.eu-north-1.amazonaws.com',
   'atmjet.s3.eu-north-1.amazonaws.com',
   'atmjet.ams3.cdn.digitaloceanspaces.com',
 ]
