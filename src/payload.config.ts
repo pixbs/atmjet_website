@@ -1,5 +1,6 @@
 import { postgresAdapter } from '@payloadcms/db-postgres'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
+import { mcpPlugin } from '@payloadcms/plugin-mcp'
 import { redirectsPlugin } from '@payloadcms/plugin-redirects'
 import { seoPlugin } from '@payloadcms/plugin-seo'
 import { s3Storage } from '@payloadcms/storage-s3'
@@ -23,6 +24,7 @@ import { Leads } from './collections/Leads'
 import { MigrationRuns } from './collections/MigrationRuns'
 import { sendTelegramLead } from './jobs/send-telegram-lead'
 import { redirectsOverrides, REDIRECT_TYPES } from './collections/Redirects'
+import { adminKeysOnly, mcpApiKeysOverride } from './collections/McpApiKeys'
 import { Header } from './globals/Header'
 import { Footer } from './globals/Footer'
 import { SiteSettings } from './globals/SiteSettings'
@@ -184,6 +186,25 @@ export default buildConfig({
         },
       },
       overrides: redirectsOverrides,
+    }),
+    // Agents enter the E10 content through /api/mcp with a key only an admin holds (issue #71);
+    // people and leads stay out, and nothing is deleted through it.
+    mcpPlugin({
+      collections: {
+        pages: { enabled: { find: true, create: true, update: true } },
+        media: { enabled: { find: true, update: true } },
+        airports: { enabled: { find: true, create: true, update: true } },
+        aircraft: { enabled: { find: true, create: true, update: true } },
+        yachts: { enabled: { find: true, create: true, update: true } },
+        'empty-legs': { enabled: { find: true, create: true, update: true } },
+      },
+      globals: {
+        header: { enabled: true },
+        footer: { enabled: true },
+        'site-settings': { enabled: true },
+      },
+      overrideApiKeyCollection: mcpApiKeysOverride,
+      overrideAuth: adminKeysOnly,
     }),
   ],
 })
