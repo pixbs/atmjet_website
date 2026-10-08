@@ -1,17 +1,10 @@
+import { LEGACY_PREFIX, SPACES_HOSTS } from '../../src/lib/media'
+
 /**
  * The DigitalOcean Spaces objects the legacy data still points at (issue #21, ADR-0002 item 9):
  * what counts as one, the key it is mirrored under, and whether a run copied everything the
  * manifest lists. Pure, so `tests/unit/spaces.test.ts` pins it away from a bucket.
  */
-
-/** The two spellings the legacy rows use for the one Space: with the CDN in front and without. */
-export const SPACES_HOSTS = [
-  'atmjet.ams3.digitaloceanspaces.com',
-  'atmjet.ams3.cdn.digitaloceanspaces.com',
-] as const
-
-/** Where every mirrored object goes in the bucket, so it never collides with an upload. */
-export const LEGACY_PREFIX = 'legacy'
 
 /**
  * The four documents the business-agents page linked by URL rather than through a table

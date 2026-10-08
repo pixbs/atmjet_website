@@ -1,6 +1,12 @@
 import { describe, expect, it } from 'vitest'
 
-import { imageIndex, mediaSource } from '@/lib/media'
+import {
+  imageIndex,
+  legacyMirror,
+  legacyPictureAddress,
+  mediaSource,
+  rowImageSource,
+} from '@/lib/media'
 
 /**
  * The two decisions behind drawing a Media document (issue #101): which address resolves, and
@@ -47,6 +53,40 @@ describe('mediaSource', () => {
     expect(mediaSource(migrating)?.src).toBe('https://legacy.example/aircraft/1.jpg')
   })
 
+  it('draws a picture of the Space from its mirrored copy, under the path the Space gave it', () => {
+    // The mirror of #21 holds every object at `legacy/<its decoded path>`, whichever host the
+    // row spelt the Space with; the path keeps the encoding a browser needs.
+    const mirror = 'https://bucket.example'
+    const cdn = {
+      ...upload,
+      externalUrl: 'https://atmjet.ams3.cdn.digitaloceanspaces.com/Yachts%20ATM%20JET/a.jpg',
+    }
+    const bare = {
+      ...upload,
+      externalUrl: 'https://atmjet.ams3.digitaloceanspaces.com/image_1.jpg',
+    }
+
+    expect(mediaSource(cdn, 'https://atmjet.com', mirror)?.src).toBe(
+      'https://bucket.example/legacy/Yachts%20ATM%20JET/a.jpg',
+    )
+    expect(mediaSource(bare, 'https://atmjet.com', mirror)?.src).toBe(
+      'https://bucket.example/legacy/image_1.jpg',
+    )
+  })
+
+  it('asks the Space itself, through its CDN, where there is no bucket to mirror into', () => {
+    // A workstation without the S3 group has no mirror; the CDN host is the one
+    // `next.config.ts` allows, the bare one is not.
+    const bare = {
+      ...upload,
+      externalUrl: 'https://atmjet.ams3.digitaloceanspaces.com/image_1.jpg',
+    }
+
+    expect(mediaSource(bare, 'https://atmjet.com', null)?.src).toBe(
+      'https://atmjet.ams3.cdn.digitaloceanspaces.com/image_1.jpg',
+    )
+  })
+
   it('ignores an external URL that holds nothing but spaces', () => {
     expect(mediaSource({ ...upload, externalUrl: '   ' })?.src).toBe(upload.url)
   })
@@ -84,5 +124,54 @@ describe('imageIndex', () => {
 
   it('has an answer for a gallery with no photos at all', () => {
     expect(imageIndex(1, 0)).toBe(0)
+  })
+})
+
+describe('legacyPictureAddress', () => {
+  it('leaves an address off the Space alone, over https', () => {
+    expect(
+      legacyPictureAddress(
+        'https://atmjet.s3.eu-north-1.amazonaws.com/aircrafts/a/images/cabin-0.jpeg',
+        'https://m.example',
+      ),
+    ).toBe('https://atmjet.s3.eu-north-1.amazonaws.com/aircrafts/a/images/cabin-0.jpeg')
+    // The legacy detail page asked for vehicle pictures over `http://` (section 13, entry 35).
+    expect(legacyPictureAddress('http://cdn.example/a.jpg', null)).toBe('https://cdn.example/a.jpg')
+  })
+
+  it('is the row itself when the row is not an address', () => {
+    expect(legacyPictureAddress('not an address', 'https://m.example')).toBe('not an address')
+  })
+})
+
+describe('legacyMirror', () => {
+  it('is the public address of the bucket, or the bucket itself, or nothing', () => {
+    const bucket = { bucket: 'b', region: 'r', accessKeyId: 'k', secretAccessKey: 's' }
+
+    expect(legacyMirror({ ...bucket, publicUrl: 'https://cdn.example' })).toBe(
+      'https://cdn.example',
+    )
+    expect(legacyMirror(bucket)).toBe('https://b.s3.r.amazonaws.com')
+    expect(legacyMirror(null)).toBeNull()
+  })
+})
+
+describe('rowImageSource', () => {
+  const upload = { url: '/api/media/file/a.png', alt: 'From the upload', width: 10, height: 5 }
+
+  it('lets what the row says win over the upload it points at', () => {
+    expect(
+      rowImageSource(
+        { media: upload, externalUrl: 'https://cdn.example/row.jpg', alt: 'From the row' },
+        'https://atmjet.com',
+        null,
+      ),
+    ).toEqual({ src: 'https://cdn.example/row.jpg', alt: 'From the row', width: 10, height: 5 })
+  })
+
+  it('draws the upload when the row adds nothing, and nothing when there is no row', () => {
+    expect(rowImageSource({ media: upload }, 'https://atmjet.com', null)?.src).toBe(upload.url)
+    expect(rowImageSource({ media: 7 }, 'https://atmjet.com', null)).toBeNull()
+    expect(rowImageSource(undefined)).toBeNull()
   })
 })

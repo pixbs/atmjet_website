@@ -15,7 +15,7 @@ import { JsonLd } from '@/components/ui/json-ld'
 import type { Locale } from '@/i18n/locales'
 import { resolveAircraft } from '@/lib/data/aircraft'
 import { getEnabledLocales } from '@/lib/data/site-settings'
-import { mediaSource } from '@/lib/media'
+import { rowImageSource } from '@/lib/media'
 import { pageMetadata } from '@/lib/metadata'
 import { breadcrumbs, product } from '@/lib/structured-data'
 import { siteOrigin } from '@/lib/urls'
@@ -65,9 +65,7 @@ export async function generateMetadata({
   if (!aircraft) return {}
 
   const name = [aircraft.type?.name, aircraft.registrationDisplay].filter(Boolean).join(' ')
-  const cover = mediaSource(
-    typeof aircraft.images?.[0]?.media === 'object' ? aircraft.images[0].media : null,
-  )
+  const cover = rowImageSource(aircraft.images?.[0])
 
   return pageMetadata({
     locale: locale as Locale,
@@ -99,7 +97,7 @@ export default async function AircraftDetailPage({ params }: { params: Promise<D
   const common = await getTranslations({ locale, namespace: 'common' })
 
   const photographs = (aircraft.images ?? []).flatMap((entry) => {
-    const image = mediaSource(typeof entry.media === 'object' ? entry.media : null)
+    const image = rowImageSource(entry)
 
     return image === null ? [] : [image]
   })
