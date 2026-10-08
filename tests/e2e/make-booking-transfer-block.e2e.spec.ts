@@ -67,6 +67,8 @@ test.describe('the transfer', () => {
     const photo = page.locator(TRANSFER).locator('img')
 
     await expect(photo).toHaveCount(1)
+    // `next/image` loads lazily, so the photograph has to be looked at before it is there.
+    await photo.scrollIntoViewIfNeeded()
     await expect(photo).toHaveJSProperty('complete', true)
   })
 
