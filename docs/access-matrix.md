@@ -1,6 +1,6 @@
 # Access-control matrix
 
-Who may do what, per collection and operation. Every cell has a test: the shared rules and the collections without a spec of their own live in `tests/int/access.int.spec.ts`, which also holds the guard that fails when a collection is added without declaring access at all; a collection with its own spec (`airports`, `aircraft`, `contacts`, `yachts`, `empty-legs`, `leads`, `redirects`, `migration-runs`) keeps its cells there, next to the rest of its behaviour.
+Who may do what, per collection and operation. Every cell has a test: the shared rules and the collections without a spec of their own live in `tests/int/access.int.spec.ts`, which also holds the guard that fails when a collection is added without declaring access at all; a collection with its own spec (`airports`, `aircraft`, `contacts`, `yachts`, `empty-legs`, `leads`, `redirects`, `migration-runs`, `payload-mcp-api-keys`) keeps its cells there, next to the rest of its behaviour.
 
 This is written out in full because the legacy admin had none of it: no roles, unauthenticated yacht routes, and passwords stored in plain text (`docs/legacy-inventory.md` section 14).
 
@@ -106,6 +106,19 @@ The ledger the data migration resumes on (issue #76, `docs/adr/0002-database-mig
 
 The importers write through the Local API, which does not go through access control at all, so closing every operation to everyone but an administrator costs them nothing. The cells are tested in `tests/int/migrate.int.spec.ts`.
 
+### `payload-mcp-api-keys`
+
+The keys of the MCP endpoint at `/api/mcp` (issue #71), from `@payloadcms/plugin-mcp`. The plugin lets any signed-in user issue keys for themselves; `mcpApiKeysOverride` in `src/collections/McpApiKeys.ts` closes every operation to everyone but an administrator.
+
+| Operation | Anonymous | Editor | Admin |
+| --------- | --------- | ------ | ----- |
+| read      | no        | no     | yes   |
+| create    | no        | no     | yes   |
+| update    | no        | no     | yes   |
+| delete    | no        | no     | yes   |
+
+A key is bound to the admin who created it and acts as them, so everything it reaches still goes through the rules above. It offers only the operations ticked on it, none by default, and the endpoint refuses it once its owner is no longer an admin (`adminKeysOnly`). The stored key is never read back, and Payload accepts it on `/api/mcp` only, not on the REST or GraphQL API. The cells are tested in `tests/int/mcp.int.spec.ts`.
+
 ## Globals
 
 One document each, so there is no create and no delete: a global is only ever read or written. The cells are tested in `tests/int/globals.int.spec.ts`; the guard that fails when a global is added without declaring access sits next to the collection one in `tests/int/access.int.spec.ts`.
@@ -139,7 +152,7 @@ Rules come from `src/access` and nowhere else, so a collection cannot invent its
 - **CORS and CSRF** are pinned to `NEXT_PUBLIC_SITE_URL`, so no other origin can call the API from a browser or ride a signed-in editor's cookie. Payload appends `serverURL` to the CORS list itself, so the effective set is this deployment alone.
 - **`serverURL`** comes from the environment, never a hard-coded host, unlike the legacy `robots.ts` (`docs/legacy-inventory.md` section 13 item 4).
 - **Login** locks an account for ten minutes after five failed attempts, so a stolen password is worth less.
-- **API keys are off.** Nothing needs one yet, and an unused key is only ever a liability. Turning them on for a collection is a deliberate change with its own tests.
+- **People have no API keys.** `users` issues none; the only keys are the MCP endpoint's, admin-only and tested (`payload-mcp-api-keys` above).
 
 ## Adding a collection or a global
 
