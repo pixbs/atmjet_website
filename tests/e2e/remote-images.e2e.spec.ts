@@ -6,7 +6,9 @@ import { expect, test, type APIRequestContext } from '@playwright/test'
  * `mediaSource` hands that address straight to `next/image` (`src/lib/media.ts`, E5.12) — which
  * refuses a host `remotePatterns` does not carry, whatever the file at the end of it.
  *
- * The legacy site allowed exactly these two (`docs/legacy-inventory.md` section 2.1).
+ * The legacy site allowed the last two (`docs/legacy-inventory.md` section 2.1); the first is
+ * the bucket this site's own uploads are served from (issue #17: the seed's photographs are
+ * there, and a host the optimiser refuses draws nothing however the file answers).
  */
 /** What a refusal says: Next's own words locally, Vercel's optimiser's on a deployment (#17). */
 const REFUSED = /"url" parameter is not allowed|INVALID_IMAGE_OPTIMIZE_REQUEST/
@@ -16,6 +18,7 @@ const optimised = (request: APIRequestContext, url: string) =>
 
 test.describe('the hosts an image may come from', () => {
   for (const host of [
+    'atmjet-payload.s3.eu-north-1.amazonaws.com',
     'atmjet.s3.eu-north-1.amazonaws.com',
     'atmjet.ams3.cdn.digitaloceanspaces.com',
   ])
