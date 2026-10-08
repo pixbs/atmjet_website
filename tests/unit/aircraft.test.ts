@@ -1,6 +1,11 @@
 import { describe, expect, it } from 'vitest'
 
-import { aircraftSlug, canonicalRegistration, registrationsInSlug } from '@/lib/aircraft'
+import {
+  aircraftSlug,
+  canonicalRegistration,
+  legacyBandPicture,
+  registrationsInSlug,
+} from '@/lib/aircraft'
 
 /**
  * Aircraft value handling (issue #63). The registration rule decides which legacy rows E5.7
@@ -84,5 +89,40 @@ describe('aircraftSlug', () => {
 
   it('keeps the registration as painted when there is nothing to canonicalise', () => {
     expect(aircraftSlug({ slug: '', registrationDisplay: 'M-OUSE' })).toBe('MOUSE')
+  })
+})
+
+describe('legacyBandPicture', () => {
+  const image = 'atmjet.ams3.digitaloceanspaces.com/image_12.jpg'
+
+  it("is the picture of the document's own row, with the scheme the import gave it", () => {
+    expect(
+      legacyBandPicture({
+        legacyAttributes: {
+          vehicles: {
+            12: { image: `https://${image}` },
+            15: { image: 'https://elsewhere.example/a.jpg' },
+          },
+        },
+        provenance: { legacyVehicleId: 12 },
+      }),
+    ).toBe(`https://${image}`)
+  })
+
+  it('is the one row there is when the document does not say which is its own', () => {
+    expect(
+      legacyBandPicture({ legacyAttributes: { vehicles: { 7: { image: `https://${image}` } } } }),
+    ).toBe(`https://${image}`)
+  })
+
+  it('is nothing for a catalogue document, or for a row that had no picture', () => {
+    expect(legacyBandPicture({})).toBeUndefined()
+    expect(legacyBandPicture({ legacyAttributes: null })).toBeUndefined()
+    expect(
+      legacyBandPicture({ legacyAttributes: { vehicles: { 7: { image: '  ' } } } }),
+    ).toBeUndefined()
+    expect(
+      legacyBandPicture({ legacyAttributes: { vehicles: { 7: { price: '0.00' } } } }),
+    ).toBeUndefined()
   })
 })

@@ -9,6 +9,7 @@ import { KeyStatsCard, type KeyStat } from '@/components/cards/key-stats-card'
 import { Guests, Length, Tools } from '@/components/icons'
 import { Line } from '@/components/motion/line'
 import { VehicleRequest } from '@/components/form/vehicle-request'
+import { legacyBandPicture } from '@/lib/aircraft'
 import { detailSource } from '@/lib/flight-request'
 import { Gallery } from '@/components/ui/gallery'
 import { JsonLd } from '@/components/ui/json-ld'
@@ -155,6 +156,7 @@ export default async function AircraftDetailPage({ params }: { params: Promise<D
    */
   if (photographs.length === 0) {
     const model = aircraft.type?.model ?? aircraft.type?.name ?? aircraft.registrationDisplay
+    const band = rowImageSource({ externalUrl: legacyBandPicture(aircraft) })
     const rows = [
       { label: t('details.registration'), value: aircraft.registrationDisplay },
       { label: t('details.operator'), value: aircraft.operator?.companyName },
@@ -170,11 +172,21 @@ export default async function AircraftDetailPage({ params }: { params: Promise<D
 
     return (
       <>
-        {/* The band the page opens on, which is the darkening alone: the legacy laid it over
-            the `vehicles.image` column, and this collection folds that column into `images`
-            (`src/collections/Aircraft.ts`), so an aircraft that reaches this layout has no
-            photograph anywhere to lay it over. */}
-        <section className="relative h-hero-basic w-full">
+        {/* The band the page opens on: the legacy laid it over the `vehicles.image` column,
+            which the import keeps in `legacyAttributes` rather than `images` so the plane stays
+            out of the catalogue listing (`scripts/migrate/vehicles.ts`); the darkening alone
+            where the row had no picture. */}
+        <section className="relative h-hero-basic w-full overflow-hidden">
+          {band && (
+            <Image
+              alt=""
+              className="object-cover object-center"
+              fill
+              priority
+              sizes="100vw"
+              src={band.src}
+            />
+          )}
           <div className="hero-darkening absolute inset-0 z-10" />
         </section>
         <section data-section="aircraft-basic">
