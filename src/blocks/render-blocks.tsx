@@ -34,6 +34,7 @@ import { PhotoDescriptor } from './PhotoDescriptor/Component'
 import { Privilege } from './Privilege/Component'
 import { Quote } from './Quote/Component'
 import { RecentYachts } from './RecentYachts/Component'
+import { RichText } from './RichText/Component'
 import { Tiles } from './Tiles/Component'
 import { Transfer } from './Transfer/Component'
 import { WeInspect } from './WeInspect/Component'
@@ -409,6 +410,8 @@ function blockFor(block: LayoutBlock, key: string, locale: Locale, search: Searc
       return <CatalogueAircraft key={key} limit={block.limit} title={block.title} />
     case 'recentYachts':
       return <RecentYachts key={key} limit={block.limit} title={block.title} />
+    case 'richText':
+      return <RichText key={key} content={block.content} title={block.title} />
     case 'yachtsListing':
       return <YachtsListing key={key} heading={block.heading} search={search} title={block.title} />
     case 'yachtsPromo': {

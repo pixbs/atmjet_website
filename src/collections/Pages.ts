@@ -32,6 +32,7 @@ import { photoDescriptor } from '@/blocks/PhotoDescriptor/config'
 import { privilege } from '@/blocks/Privilege/config'
 import { quote } from '@/blocks/Quote/config'
 import { recentYachts } from '@/blocks/RecentYachts/config'
+import { richText } from '@/blocks/RichText/config'
 import { tiles } from '@/blocks/Tiles/config'
 import { transfer } from '@/blocks/Transfer/config'
 import { weInspect } from '@/blocks/WeInspect/config'
@@ -188,6 +189,7 @@ export const Pages: CollectionConfig = {
         privilege,
         quote,
         recentYachts,
+        richText,
         tiles,
         transfer,
         weInspect,

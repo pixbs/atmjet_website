@@ -2497,6 +2497,8 @@ function translated(
         return { ...block, id }
       case 'recentYachts':
         return { ...block, id }
+      case 'richText':
+        return { ...block, id }
       case 'tiles':
         return {
           ...block,
