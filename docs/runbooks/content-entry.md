@@ -22,8 +22,9 @@ Sign with a date and initials, for example `2026-10-02 DK`.
 - [ ] Images load from the bucket: the bucket allows public reads under `media/` and `legacy/`
       (#17).
 - [ ] The media import has run (#84), so the legacy pictures and PDFs are in Media. The pictures
-      of the pages come from `legacy/v1`, once, and their manifest names the Media file each legacy
-      address became; a section takes the one `docs/legacy-inventory.md` section 12.2 lists for it:
+      of the pages come from `legacy/v1`, once, the four documents of the business-agents page
+      from the mirror of #21, and their manifest names the Media file each legacy address became;
+      a section takes the one `docs/legacy-inventory.md` section 12.2 lists for it:
 
       ```bash
       git fetch origin tag legacy/v1
@@ -31,9 +32,13 @@ Sign with a date and initials, for example `2026-10-02 DK`.
       bun run import:legacy pictures                           # into the seeded sections
       ```
 
-      `pictures` puts each legacy picture where the seed drew a placeholder, and leaves any
-      section an editor has already given a picture. It writes outside the site, so the pages
-      show the change after the next save in the admin, which drops every cached page.
+      `pictures` puts each legacy picture where the seed drew a placeholder, points each document
+      row at its file in each language (English where the legacy had no Ukrainian one), and
+      leaves any section an editor has already given a picture or a file. It writes outside the
+      site, so the pages show the change after the next save in the admin, which drops every
+      cached page. The pictures the legacy rows point at (aircraft, yachts, the planes of
+      `vehicles`) need no import: the rows keep the legacy address and the site draws the
+      mirrored copy from it (`src/lib/media.ts`).
 
 - [ ] The editors who will enter content have their own accounts (Users), and the seeded
       administrator `dev@atmjet.local` has been removed or given a new password.
