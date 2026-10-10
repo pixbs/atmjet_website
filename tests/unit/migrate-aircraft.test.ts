@@ -131,6 +131,18 @@ describe('a catalogue row', () => {
     })
   })
 
+  it('takes every kind the catalogue files a picture under, not only the first three', () => {
+    // The rows the legacy admin added last file pictures as `notail`, `plan` and `other` too
+    // (342 aircraft of the real catalogue); a kind the collection refused rolled their chunk back.
+    const images = fromCatalogue(
+      row(),
+      [image(1, 'exterior'), image(2, 'notail'), image(3, 'plan'), image(4, 'other')],
+      context,
+    ).data.images
+
+    expect(images?.map((one) => one.type)).toEqual(['exterior', 'notail', 'plan', 'other'])
+  })
+
   it('bases it at the airport of its ICAO code, and keeps a code no airport answers to', () => {
     expect(fromCatalogue(row({ airport_icao: 'omdb' }), [], context).data).toMatchObject({
       baseAirport: 42,
