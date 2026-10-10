@@ -64,6 +64,7 @@ listed, in this order, with the legacy copy and pictures rather than the placeho
 | `/group_charters`   | hero, make booking, why us, contact us                                                                                    |      |      |        |
 | `/medical_aviation` | hero, key features, contact us                                                                                            |      |      |        |
 | `/partners`         | hero, why us, why us, personal manager, contact us                                                                        |      |      |        |
+| `/privacy`          | rich text: the privacy policy, with the legal name, licence number and address the owner supplies on #57                  |      |      |        |
 | `/sales_dept`       | hero, personal manager, catalogue aircraft, options selection, advantages, why us, contact us                             |      |      |        |
 | `/sales_yachts`     | hero, key features, framed descriptor, recent yachts, we inspect, options selection, photo descriptor, why us, contact us |      |      |        |
 | `/yachts`           | hero, yachts listing, contact us                                                                                          |      |      |        |
