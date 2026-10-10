@@ -19,8 +19,8 @@
 import { getPayload } from 'payload'
 
 import config from '../../src/payload.config'
-import { gitReader, importLegacyAssets, manifestTsv } from './assets'
-import { placePictures } from './pictures'
+import { gitReader, importLegacyAssets, importLegacyDocuments, manifestTsv } from './assets'
+import { placeDocuments, placePictures } from './pictures'
 import { importCatalogue } from './aircraft'
 import { importEmptyLegs } from './empty-legs'
 import { importAirports } from './airports'
@@ -115,16 +115,19 @@ if (command === 'airports') {
   for (const action of ['created', 'updated', 'unchanged'] as const)
     console.log(`${outcomes.filter((one) => one.action === action).length} redirects ${action}`)
 } else if (command === 'assets') {
-  const outcomes = await importLegacyAssets(payload, {
-    read: gitReader(flag('ref') ?? 'legacy/v1'),
-    dryRun,
-  })
+  const outcomes = [
+    ...(await importLegacyAssets(payload, { read: gitReader(flag('ref') ?? 'legacy/v1'), dryRun })),
+    ...(await importLegacyDocuments(payload, { dryRun })),
+  ]
 
   console.log(manifestTsv(outcomes))
   for (const action of ['created', 'unchanged'] as const)
-    console.error(`${outcomes.filter((one) => one.action === action).length} pictures ${action}`)
+    console.error(`${outcomes.filter((one) => one.action === action).length} files ${action}`)
 } else if (command === 'pictures') {
-  const outcomes = await placePictures(payload, { dryRun })
+  const outcomes = [
+    ...(await placePictures(payload, { dryRun })),
+    ...(await placeDocuments(payload, { dryRun })),
+  ]
 
   for (const { target, swapped } of outcomes)
     console.log(`${target}: ${swapped} placeholders ${dryRun ? 'to replace' : 'replaced'}`)

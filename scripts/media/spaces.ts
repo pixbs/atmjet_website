@@ -1,4 +1,5 @@
 import { LEGACY_PREFIX, SPACES_HOSTS } from '../../src/lib/media'
+import { LEGACY_DOCUMENTS } from '../migrate/assets'
 
 /**
  * The DigitalOcean Spaces objects the legacy data still points at (issue #21, ADR-0002 item 9):
@@ -6,16 +7,8 @@ import { LEGACY_PREFIX, SPACES_HOSTS } from '../../src/lib/media'
  * manifest lists. Pure, so `tests/unit/spaces.test.ts` pins it away from a bucket.
  */
 
-/**
- * The four documents the business-agents page linked by URL rather than through a table
- * (`docs/legacy-inventory.md` section 9.4; the double space in the checklist name is theirs).
- */
-export const LEGACY_PDFS = [
-  'https://atmjet.ams3.cdn.digitaloceanspaces.com/Checklist%20for%20ordering%20%20a%20private%20jet%20for%20an%20executive%20EN.pdf',
-  'https://atmjet.ams3.cdn.digitaloceanspaces.com/Checklist%20for%20ordering%20%20a%20private%20jet%20for%20an%20executive%20RU.pdf',
-  'https://atmjet.ams3.cdn.digitaloceanspaces.com/presentation/ATM%20JET%20Presentation.pdf',
-  'https://atmjet.ams3.cdn.digitaloceanspaces.com/presentation/ATM%20JET%20Presentation%20RU.pdf',
-] as const
+/** The four documents the business-agents page linked by URL rather than through a table. */
+export const LEGACY_PDFS: readonly string[] = LEGACY_DOCUMENTS.map((document) => document.url)
 
 /** A column value that names an object, with the row it came from. */
 export interface SpacesReference {
