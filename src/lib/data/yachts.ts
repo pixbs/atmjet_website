@@ -2,7 +2,7 @@ import type { Payload } from 'payload'
 import { cache } from 'react'
 
 import type { Locale } from '@/i18n/locales'
-import { mediaSource, type ImageSource, type MediaLike } from '@/lib/media'
+import { rowImageSource, type ImageSource, type PictureRow } from '@/lib/media'
 import type { Listable } from '@/lib/sitemap'
 import {
   matchesCharter,
@@ -29,29 +29,6 @@ export interface SaleYachtListing extends SaleYachtFacts {
   guests?: number | null
   cabins?: number | null
   crew?: number | null
-}
-
-/** One row of the photos array: the upload, or the address it still lives at (E5.12). */
-interface YachtPhoto {
-  media?: number | string | MediaLike | null
-  externalUrl?: string | null
-  alt?: string | null
-}
-
-/**
- * A photograph as a component draws it. The row carries its own alt and may carry its own
- * address, so what it says wins over the upload it points at.
- */
-function photoSource(photo: YachtPhoto): ImageSource | null {
-  const upload = typeof photo.media === 'object' && photo.media !== null ? photo.media : {}
-  const external = (photo.externalUrl ?? '').trim()
-  const alt = (photo.alt ?? '').trim()
-
-  return mediaSource({
-    ...upload,
-    ...(external === '' ? {} : { externalUrl: external }),
-    ...(alt === '' ? {} : { alt }),
-  })
 }
 
 /**
@@ -91,7 +68,7 @@ export const listSaleYachts = cache(
         id: yacht.id,
         name: yacht.name,
         photos: (yacht.photos ?? []).flatMap((photo) => {
-          const source = photoSource(photo)
+          const source = rowImageSource(photo)
           return source === null ? [] : [source]
         }),
         guests: yacht.sale?.guests,
@@ -171,7 +148,7 @@ export const searchCharterYachts = cache(
         cabins: yacht.charter?.cabins,
         bathrooms: yacht.charter?.bathrooms,
         refit: yacht.charter?.refit,
-        photo: photoSource(yacht.photos?.[0] ?? {}),
+        photo: rowImageSource(yacht.photos?.[0]),
       }))
 
       // Narrowed before it is ordered, as the legacy did both in the browser.
@@ -228,9 +205,9 @@ export const resolveYacht = cache(
 
 /** The photographs of a yacht, in the order an editor put them in, without the rows that carry
  * nothing to draw. */
-export function yachtPhotographs(photos: YachtPhoto[] | null | undefined): ImageSource[] {
+export function yachtPhotographs(photos: PictureRow[] | null | undefined): ImageSource[] {
   return (photos ?? []).flatMap((photo) => {
-    const source = photoSource(photo)
+    const source = rowImageSource(photo)
 
     return source === null ? [] : [source]
   })

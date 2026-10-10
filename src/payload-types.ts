@@ -1225,7 +1225,7 @@ export interface Aircraft {
    */
   images?:
     | {
-        type: 'exterior' | 'cabin' | 'cockpit';
+        type: 'exterior' | 'cabin' | 'cockpit' | 'notail' | 'plan' | 'other';
         media?: (number | null) | Media;
         /**
          * Set while the file still lives on a legacy host, as on Media.

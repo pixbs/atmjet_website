@@ -3,6 +3,7 @@ import path from 'node:path'
 import type { File, Payload } from 'payload'
 
 import { DEFAULT_LOCALE } from '../../src/i18n/locales'
+import { legacyMirror, legacyPictureAddress } from '../../src/lib/media'
 
 /**
  * The pictures the legacy pages drew from `public/images` (issue #84, `docs/legacy-inventory.md`
@@ -114,11 +115,89 @@ export function mediaFilename(legacyPath: string): string {
   return legacyPath.split('/').join('-')
 }
 
+/**
+ * The four documents the business-agents page offered by address rather than through a table
+ * (`docs/legacy-inventory.md` section 9.4): the checklist and the presentation, each in English
+ * and in Russian; the Ukrainian page opened the English one, as the legacy did. They live on
+ * the Space, so they come across from the mirror of #21 rather than from `legacy/v1`.
+ */
+export interface LegacyDocument {
+  /** The address the legacy page linked. */
+  url: string
+  filename: string
+  alt: string
+  /** Which row of the documents block opens it: the checklist first, the presentation second. */
+  document: number
+  locale: 'en' | 'ru'
+}
+
+const SPACE = 'https://atmjet.ams3.cdn.digitaloceanspaces.com'
+const CHECKLIST = `${SPACE}/Checklist%20for%20ordering%20%20a%20private%20jet%20for%20an%20executive`
+
+export const LEGACY_DOCUMENTS: readonly LegacyDocument[] = [
+  {
+    url: `${CHECKLIST}%20EN.pdf`,
+    filename: 'business-agents-checklist-en.pdf',
+    alt: 'Checklist for ordering a private jet for an executive',
+    document: 0,
+    locale: 'en',
+  },
+  {
+    url: `${CHECKLIST}%20RU.pdf`,
+    filename: 'business-agents-checklist-ru.pdf',
+    alt: 'Checklist for ordering a private jet for an executive, in Russian',
+    document: 0,
+    locale: 'ru',
+  },
+  {
+    url: `${SPACE}/presentation/ATM%20JET%20Presentation.pdf`,
+    filename: 'business-agents-presentation-en.pdf',
+    alt: 'ATM JET presentation',
+    document: 1,
+    locale: 'en',
+  },
+  {
+    url: `${SPACE}/presentation/ATM%20JET%20Presentation%20RU.pdf`,
+    filename: 'business-agents-presentation-ru.pdf',
+    alt: 'ATM JET presentation, in Russian',
+    document: 1,
+    locale: 'ru',
+  },
+]
+
+/** The Media filename a row of the documents block opens in a language; Ukrainian reads English. */
+export function documentFilename(
+  documents: readonly LegacyDocument[],
+  row: number,
+  locale: string,
+): string | undefined {
+  const wanted = locale === 'ru' ? 'ru' : 'en'
+
+  return documents.find((one) => one.document === row && one.locale === wanted)?.filename
+}
+
 const MIME_TYPES: Record<string, string> = {
   '.jpg': 'image/jpeg',
+  '.pdf': 'application/pdf',
   '.png': 'image/png',
   '.svg': 'image/svg+xml',
   '.webp': 'image/webp',
+}
+
+/** A document as the mirror holds it; the Space itself answers where there is no bucket. */
+export async function fetchDocument(url: string): Promise<Buffer> {
+  const address = legacyPictureAddress(url, legacyMirror())
+  for (let attempt = 1; ; attempt++) {
+    try {
+      const response = await fetch(address, { signal: AbortSignal.timeout(120_000) })
+      if (!response.ok) throw new Error(`${address} answered ${response.status}`)
+
+      return Buffer.from(await response.arrayBuffer())
+    } catch (error) {
+      if (attempt === 3) throw error
+      await new Promise((resolve) => setTimeout(resolve, 5_000 * attempt))
+    }
+  }
 }
 
 /** Reads a file of `public/images` as the given ref of this repository holds it. */
@@ -154,54 +233,94 @@ export async function importLegacyAssets(
   const { read, assets = LEGACY_ASSETS, dryRun = false } = options
   const outcomes: AssetOutcome[] = []
 
-  for (const asset of assets) {
-    const filename = mediaFilename(asset.path)
-    const data = read(asset.path)
-    const { docs } = await payload.find({
-      collection: 'media',
-      where: { filename: { equals: filename } },
-      limit: 1,
-      depth: 0,
-      overrideAccess: true,
-    })
-    const existing = docs[0]
-
-    if (existing) {
-      outcomes.push({ path: asset.path, filename, action: 'unchanged', id: existing.id })
-      continue
-    }
-
-    if (dryRun) {
-      outcomes.push({ path: asset.path, filename, action: 'created' })
-      continue
-    }
-
-    const file: File = {
-      data,
-      mimetype: MIME_TYPES[path.extname(filename)] ?? 'application/octet-stream',
-      name: filename,
-      size: data.length,
-    }
-    const created = await payload.create({
-      collection: 'media',
-      data: { alt: asset.alt },
-      file,
-      locale: DEFAULT_LOCALE,
-      overrideAccess: true,
-      // A bulk write has nothing to invalidate: no page draws these until an editor picks one.
-      context: { skipRevalidation: true },
-    })
-
-    outcomes.push({ path: asset.path, filename, action: 'created', id: created.id })
-  }
+  for (const asset of assets)
+    outcomes.push(
+      await importOne(payload, {
+        path: asset.path,
+        filename: mediaFilename(asset.path),
+        alt: asset.alt,
+        data: read(asset.path),
+        dryRun,
+      }),
+    )
 
   return outcomes
 }
 
-/** The manifest, one picture per line: legacy path, Media filename, Media id in this database. */
+/**
+ * Creates the Media document of each of the four documents that has none, from the mirror;
+ * one already under the filename is left as it is. The file is fetched on a dry run too, so
+ * the run proves the mirror holds it.
+ */
+export async function importLegacyDocuments(
+  payload: Payload,
+  options: {
+    fetchFile?: (url: string) => Promise<Buffer>
+    documents?: readonly LegacyDocument[]
+    dryRun?: boolean
+  } = {},
+): Promise<AssetOutcome[]> {
+  const { fetchFile = fetchDocument, documents = LEGACY_DOCUMENTS, dryRun = false } = options
+  const outcomes: AssetOutcome[] = []
+
+  for (const document of documents)
+    outcomes.push(
+      await importOne(payload, {
+        path: document.url,
+        filename: document.filename,
+        alt: document.alt,
+        data: await fetchFile(document.url),
+        dryRun,
+      }),
+    )
+
+  return outcomes
+}
+
+async function importOne(
+  payload: Payload,
+  one: { path: string; filename: string; alt: string; data: Buffer; dryRun: boolean },
+): Promise<AssetOutcome> {
+  const { filename } = one
+  const { docs } = await payload.find({
+    collection: 'media',
+    where: { filename: { equals: filename } },
+    limit: 1,
+    depth: 0,
+    overrideAccess: true,
+  })
+  const existing = docs[0]
+  if (existing) return { path: one.path, filename, action: 'unchanged', id: existing.id }
+  if (one.dryRun) return { path: one.path, filename, action: 'created' }
+
+  const file: File = {
+    data: one.data,
+    mimetype: MIME_TYPES[path.extname(filename)] ?? 'application/octet-stream',
+    name: filename,
+    size: one.data.length,
+  }
+  const created = await payload.create({
+    collection: 'media',
+    data: { alt: one.alt },
+    file,
+    locale: DEFAULT_LOCALE,
+    overrideAccess: true,
+    // A bulk write has nothing to invalidate: no page draws these until an editor picks one.
+    context: { skipRevalidation: true },
+  })
+
+  return { path: one.path, filename, action: 'created', id: created.id }
+}
+
+/**
+ * The manifest, one file per line: the legacy address (a path under `/images/`, or the URL a
+ * document was linked by), the Media filename, the Media id in this database.
+ */
 export function manifestTsv(outcomes: readonly AssetOutcome[]): string {
+  const address = (p: string) => (/^https?:\/\//.test(p) ? p : `/images/${p}`)
+
   return [
     'legacy path\tmedia filename\tmedia id',
-    ...outcomes.map(({ path: p, filename, id }) => `/images/${p}\t${filename}\t${id ?? ''}`),
+    ...outcomes.map(({ path: p, filename, id }) => `${address(p)}\t${filename}\t${id ?? ''}`),
   ].join('\n')
 }
