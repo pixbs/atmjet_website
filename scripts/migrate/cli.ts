@@ -9,7 +9,7 @@
  *   bun run import:legacy yachts [--schema legacy] [--dry-run]     (contacts, charter, then sale)
  *   bun run import:legacy empty-legs [--schema legacy] [--dry-run] (after airports)
  *   bun run import:legacy reconcile [--schema legacy]
- *   bun run import:legacy urls --base-url https://staging.example [--schema legacy]
+ *   bun run import:legacy urls --base-url https://staging.example [--schema legacy] [--sample 400] [--concurrency 4]
  *   bun run import:legacy compare --base-url https://staging.example [--legacy-url https://atmjet.com] [--sample 30]
  *   bun run import:legacy assets [--ref legacy/v1] [--dry-run]     (prints the manifest)
  *   bun run import:legacy pictures [--dry-run]                     (after assets)
@@ -38,7 +38,7 @@ import {
 } from './reconcile'
 import type { ImportReport } from './runner'
 import { compareRendered } from './compare'
-import { legacyPaths, legacyReferences, unanswered } from './urls'
+import { legacyPaths, legacyReferences, samplePaths, unanswered } from './urls'
 import { importVehicles } from './vehicles'
 import { importCharterYachts, importSaleYachts } from './yachts'
 
@@ -124,9 +124,13 @@ if (command === 'airports') {
     console.error('import:legacy urls needs --base-url, the deployment to ask')
     process.exit(1)
   }
-  const paths = legacyPaths(await legacyReferences(payload, schema))
+  const every = legacyPaths(await legacyReferences(payload, schema))
+  const sample = flag('sample')
+  const paths = sample ? samplePaths(every, Number(sample)) : every
+  const concurrency = flag('concurrency')
   const failed = await unanswered(baseUrl, paths, {
     bypass: process.env.VERCEL_AUTOMATION_BYPASS_SECRET,
+    ...(concurrency ? { concurrency: Number(concurrency) } : {}),
   })
 
   for (const { path, status, location } of failed)

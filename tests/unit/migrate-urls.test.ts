@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { legacyPaths, unanswered } from '../../scripts/migrate/urls'
+import { legacyPaths, samplePaths, unanswered } from '../../scripts/migrate/urls'
 
 /**
  * The legacy URLs the new site must answer (issue #85): what the legacy sitemaps and cards
@@ -80,5 +80,33 @@ describe('an answer', () => {
     await unanswered('https://staging.example', ['/en'], { fetcher, bypass: 'secret' })
 
     expect(seen).toEqual(['secret'])
+  })
+})
+
+describe('a sample of the URLs', () => {
+  it('keeps every static page and spreads the detail pages over their lists', () => {
+    const paths = [
+      '/',
+      '/en',
+      '/ru',
+      '/yachts',
+      ...['a', 'b', 'c', 'd', 'e', 'f'].map((slug) => `/en/aircraft/${slug}`),
+      ...['y1', 'y2'].map((slug) => `/en/yachts/${slug}`),
+    ]
+
+    expect(samplePaths(paths, 8)).toEqual([
+      '/',
+      '/en',
+      '/ru',
+      '/yachts',
+      '/en/aircraft/a',
+      '/en/aircraft/c',
+      '/en/aircraft/e',
+      '/en/yachts/y1',
+    ])
+  })
+
+  it('is the whole list when the list is small enough', () => {
+    expect(samplePaths(['/', '/en/aircraft/a'], 10)).toEqual(['/', '/en/aircraft/a'])
   })
 })
