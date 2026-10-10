@@ -10,6 +10,7 @@
  *   bun run import:legacy empty-legs [--schema legacy] [--dry-run] (after airports)
  *   bun run import:legacy reconcile [--schema legacy]
  *   bun run import:legacy urls --base-url https://staging.example [--schema legacy]
+ *   bun run import:legacy compare --base-url https://staging.example [--legacy-url https://atmjet.com] [--sample 30]
  *   bun run import:legacy assets [--ref legacy/v1] [--dry-run]     (prints the manifest)
  *   bun run import:legacy pictures [--dry-run]                     (after assets)
  *
@@ -36,6 +37,7 @@ import {
   vehicleChecks,
 } from './reconcile'
 import type { ImportReport } from './runner'
+import { compareRendered } from './compare'
 import { legacyPaths, legacyReferences, unanswered } from './urls'
 import { importVehicles } from './vehicles'
 import { importCharterYachts, importSaleYachts } from './yachts'
@@ -59,6 +61,7 @@ const COMMANDS = [
   'empty-legs',
   'reconcile',
   'urls',
+  'compare',
   'assets',
   'pictures',
 ]
@@ -94,6 +97,27 @@ if (command === 'airports') {
   for (const { yacht, column, contact } of orphans)
     console.log(`orphan new_yachts ${yacht} ${column} ${contact}: no such contact, left empty`)
   console.log(`${orphans.length} contact references name no contact`)
+} else if (command === 'compare') {
+  const baseUrl = flag('base-url')
+  if (!baseUrl) {
+    console.error('compare: --base-url <deployment> is required')
+    process.exit(1)
+  }
+  const legacyUrl = flag('legacy-url')
+  const sample = flag('sample')
+  const results = await compareRendered(payload, {
+    baseUrl,
+    ...(legacyUrl ? { legacyUrl } : {}),
+    ...(sample ? { sample: Number(sample) } : {}),
+    schema,
+  })
+  for (const { path, status, differences } of results)
+    console.log(
+      `${path} [${status.join('→')}]: ${differences.length === 0 ? 'same' : differences.join('; ')}`,
+    )
+  const differing = results.filter((one) => one.differences.length > 0)
+  console.log(`${results.length} pages compared, ${differing.length} differ`)
+  process.exit(differing.length === 0 ? 0 : 1)
 } else if (command === 'urls') {
   const baseUrl = flag('base-url')
   if (baseUrl === undefined) {
