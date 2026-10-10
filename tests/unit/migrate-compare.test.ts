@@ -28,6 +28,14 @@ describe('what a page says', () => {
       figures: {},
     })
   })
+
+  it('reads the misspelt legacy label as the word it means, and leaves a blurb out', () => {
+    const page = rendered(
+      '<h3>14.74m/2.49m</h3><p>lenght/width</p><h3>Telegram</h3><p>Manage your enquiries and bookings on the go via private chat with our team</p>',
+    )
+
+    expect(page.figures).toEqual({ 'length/width': '14.74m/2.49m' })
+  })
 })
 
 describe('the differences', () => {
@@ -47,6 +55,12 @@ describe('the differences', () => {
       'max pax: "13" → "14"',
       'year: "2017" → missing',
     ])
+  })
+
+  it('let a legacy page that drew no heading go, and spacing that moved', () => {
+    // The legacy sent a catalogue slug without pictures to its listing: nothing to compare.
+    expect(differences(rendered('<p>listing</p>'), rendered('<h1>CRJ-1000</h1>'))).toEqual([])
+    expect(differences(rendered('<h1>"Outlaw "</h1>'), rendered('<h1>"Outlaw"</h1>'))).toEqual([])
   })
 
   it('let the port say more than the legacy did', () => {

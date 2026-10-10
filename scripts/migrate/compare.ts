@@ -42,27 +42,44 @@ export function text(markup: string): string {
     .trim()
 }
 
+/** A figure's label is a few words; a pair with a sentence over it is a blurb, not a figure. */
+const LABEL_LENGTH = 32
+
+/**
+ * The one word the legacy card misspelt and the port spells right (`docs/legacy-inventory.md`
+ * section 13, `fix-while-porting`), so the figure is matched by what it means.
+ */
+const spelt = (label: string): string => label.replace(/\blenght\b/g, 'length')
+
 export function rendered(html: string): Rendered {
   const heading = html.match(/<h1[^>]*>([\s\S]*?)<\/h1>/)
   const figures: Record<string, string> = {}
   for (const match of html.matchAll(/<h3[^>]*>([\s\S]*?)<\/h3>\s*<p[^>]*>([\s\S]*?)<\/p>/g)) {
-    const label = text(match[2] ?? '')
+    const label = spelt(text(match[2] ?? ''))
     // The first figure under a label is the card's; a second is another section's.
-    if (label !== '' && !(label in figures)) figures[label] = text(match[1] ?? '')
+    if (label !== '' && label.length <= LABEL_LENGTH && !(label in figures))
+      figures[label] = text(match[1] ?? '')
   }
 
   return { heading: heading ? text(heading[1] ?? '') : null, figures }
 }
 
-/** What the port says differently from the legacy, one line each; nothing when it says the same. */
+/** The same words, whatever the spacing around them: `"Outlaw "` and `"Outlaw"` say the same. */
+const same = (a: string, b: string): boolean => a.replace(/\s+/g, '') === b.replace(/\s+/g, '')
+
+/**
+ * What the port says differently from the legacy, one line each; nothing when it says the same.
+ * A legacy page with no heading drew no page at all (the legacy sent such a slug to its listing),
+ * so there is nothing of it to compare; the port may say more than the legacy did.
+ */
 export function differences(legacy: Rendered, port: Rendered): string[] {
   const found: string[] = []
-  if (legacy.heading !== port.heading)
+  if (legacy.heading !== null && (port.heading === null || !same(legacy.heading, port.heading)))
     found.push(`heading: ${JSON.stringify(legacy.heading)} → ${JSON.stringify(port.heading)}`)
   for (const [label, value] of Object.entries(legacy.figures)) {
     const ours = port.figures[label]
     if (ours === undefined) found.push(`${label}: ${JSON.stringify(value)} → missing`)
-    else if (ours !== value)
+    else if (!same(ours, value))
       found.push(`${label}: ${JSON.stringify(value)} → ${JSON.stringify(ours)}`)
   }
 
