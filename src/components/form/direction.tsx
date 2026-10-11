@@ -53,6 +53,7 @@ export function Direction({
             label={t('from')}
             locale={locale}
             onChange={field.onChange}
+            placeholder={t('from')}
             value={field.value}
             wrapperClassName={cn(AIRPORT, FIRST)}
           />
@@ -67,6 +68,7 @@ export function Direction({
             label={t('to')}
             locale={locale}
             onChange={field.onChange}
+            placeholder={t('to')}
             value={field.value ?? ''}
             wrapperClassName={AIRPORT}
           />
