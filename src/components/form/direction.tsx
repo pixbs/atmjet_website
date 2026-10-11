@@ -7,6 +7,7 @@ import { AirportSearch } from '@/components/ui/airport-search'
 import { CounterInput } from '@/components/ui/counter-input'
 import { Input } from '@/components/ui/input'
 import type { Locale } from '@/i18n/locales'
+import { cn } from '@/lib/cn'
 import type { FlightRequest } from '@/lib/flight-request'
 
 /**
@@ -17,13 +18,16 @@ import type { FlightRequest } from '@/lib/flight-request'
  * legacy leg positioned its own labels absolutely, with no `htmlFor` on any of them, so a
  * screen reader read four unnamed fields and a click on a label focused nothing (issue #96).
  *
- * The ends are rounded by the box that holds them rather than by a rounding class on each of
- * the four, which is the same shape in both directions: stacked and rounded top and bottom on a
- * narrow screen, in a row and rounded left and right from the large breakpoint.
+ * The first and last fields round themselves, as the legacy ones did: a box clipping the leg to
+ * round it clips the airport list under the field too (#441).
  */
 
 /** Only the two airports are given a floor: the counter has to keep the width of its own row. */
 const AIRPORT = 'lg:h-full lg:min-w-40'
+
+/** Top and bottom when stacked, left and right in a row; the airport panel clips its input. */
+const FIRST = 'overflow-hidden rounded-t-xl lg:rounded-none lg:rounded-l-xl'
+const LAST = 'rounded-b-xl lg:rounded-none lg:rounded-r-xl'
 
 export function Direction({
   index,
@@ -39,7 +43,7 @@ export function Direction({
   const { control } = useFormContext<FlightRequest>()
 
   return (
-    <div className="w-full content-stretch items-stretch justify-stretch gap-0.5 overflow-hidden rounded-xl lg:flex-row">
+    <div className="w-full content-stretch items-stretch justify-stretch gap-0.5 rounded-xl lg:flex-row">
       <Controller
         control={control}
         name={`legs.${index}.from`}
@@ -50,7 +54,7 @@ export function Direction({
             locale={locale}
             onChange={field.onChange}
             value={field.value}
-            wrapperClassName={AIRPORT}
+            wrapperClassName={cn(AIRPORT, FIRST)}
           />
         )}
       />
@@ -107,7 +111,7 @@ export function Direction({
             label={t('passengers')}
             onValueChange={field.onChange}
             value={field.value}
-            wrapperClassName="lg:h-full"
+            wrapperClassName={cn('lg:h-full', LAST)}
           />
         )}
       />

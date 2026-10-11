@@ -83,6 +83,8 @@ test.describe('the flight request', () => {
     await expect(options.first()).toHaveText(
       'Dubai (OMDB) United Arab Emirates, Dubai International',
     )
+    // Seen, not only rendered: the click scrolls a clipped list into view, a visitor cannot (#441).
+    await expect(options.first()).toBeInViewport()
 
     await options.first().click()
     await expect(from).toHaveValue('Dubai (OMDB) United Arab Emirates, Dubai International')
