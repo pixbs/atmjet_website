@@ -1,6 +1,13 @@
 import { describe, expect, it } from 'vitest'
 
-import { airportOption, normaliseCode, normaliseText, rankAirports } from '@/lib/airports'
+import {
+  airportOption,
+  airportSearchText,
+  normaliseCode,
+  normaliseText,
+  rankAirports,
+  searchTerms,
+} from '@/lib/airports'
 
 /**
  * Airport normalisation (issue #64). The legacy data arrives from two tables with different
@@ -126,8 +133,138 @@ describe('the de-duplication a ranked list goes through', () => {
     expect(rankAirports(rows, 10)).toHaveLength(1)
   })
 
-  it('cannot tell two airports apart when neither has a city or a code', () => {
-    // The legacy de-duplication had the same blind spot; a row like that has nothing to show.
-    expect(rankAirports([{ label: 'One' }, { label: 'Another' }], 10)).toHaveLength(1)
+  it('keeps airfields without codes apart by their names, which the legacy key could not', () => {
+    // 11,650 imported airfields share their city, an administrative area, with another (#443).
+    const rows = [
+      { city: 'Moscow Oblast', label: 'Kievo' },
+      { city: 'Moscow Oblast', label: 'Lyubertsy' },
+      { city: 'Moscow Oblast', label: 'Kievo' },
+    ]
+
+    expect(rankAirports(rows, 10).map((one) => one.label)).toEqual(['Kievo', 'Lyubertsy'])
+  })
+
+  it('cannot tell two airports apart when they have neither a code, a city nor a name', () => {
+    expect(rankAirports([{ passengersPerYear: 1 }, { passengersPerYear: 2 }], 10)).toHaveLength(1)
+  })
+})
+
+/**
+ * What a term is matched against (#443): the legacy search patched its misses one at a time
+ * (`docs/legacy-inventory.md` sections 8.5 and 8.6: `ilike`, `saint`↔`st`, title-casing for
+ * Cyrillic, a hard-coded Bilbao), and each of those cases is pinned here once.
+ */
+describe('airportSearchText', () => {
+  const words = (airport: Parameters<typeof airportSearchText>[0]) =>
+    airportSearchText(airport).split(' ')
+
+  it('ignores case, accents, ё, apostrophes, dashes and punctuation', () => {
+    expect(words({ name: 'Nice Côte d’Azur', city: 'ОРЁЛ', country: 'St.-Exupéry–Lyon' })).toEqual(
+      expect.arrayContaining(['nice', 'cote', 'dazur', 'орел', 'exupery', 'lyon']),
+    )
+  })
+
+  it('holds both spellings of a saint, as the legacy search re-queried them', () => {
+    expect(words({ city: 'St. Louis County' })).toEqual(expect.arrayContaining(['st', 'saint']))
+    expect(words({ name: 'Minneapolis–Saint Paul' })).toEqual(
+      expect.arrayContaining(['st', 'saint', 'paul']),
+    )
+    expect(words({ name: 'Sainte-Marie' })).toEqual(expect.arrayContaining(['ste', 'sainte']))
+  })
+
+  it('holds every Cyrillic word in Latin letters too, so either script finds it', () => {
+    // The English record of Tolmachevo names it after the town of Ob; only Russian says Novosibirsk.
+    expect(words({ aliases: 'Новосибирск (Толмачёво)' })).toEqual(
+      expect.arrayContaining(['новосибирск', 'novosibirsk', 'tolmachevo']),
+    )
+    expect(words({ city: 'Київ' })).toContain('kyiv')
+  })
+
+  it('leaves out a Latin reading short enough to be another word', () => {
+    // Every Oak airfield is `Дуб` in Russian, and `dub` would rank them above Dubai.
+    expect(words({ name: 'Белый Дуб' })).not.toContain('dub')
+  })
+
+  it('reads every language of a localized field, and both codes', () => {
+    expect(
+      words({ city: { en: 'Moscow', ru: 'Москва' }, icao: 'UUEE', iata: 'SVO', country: null }),
+    ).toEqual(expect.arrayContaining(['moscow', 'москва', 'moskva', 'uuee', 'svo']))
+  })
+})
+
+describe('searchTerms', () => {
+  it('folds a term exactly as a name is folded', () => {
+    expect(searchTerms(' Saint-Petersburg ')).toEqual([['saint'], ['petersburg']])
+    expect(searchTerms("Côte d'Azur")).toEqual([['cote'], ['dazur']])
+    expect(searchTerms('Орёл')).toEqual([['орел', 'orel']])
+  })
+
+  it('looks up nothing shorter than two characters, or punctuation alone', () => {
+    expect(searchTerms('d')).toEqual([])
+    expect(searchTerms('a.')).toEqual([])
+    expect(searchTerms(' -- ')).toEqual([])
+  })
+
+  it('reads a long term only so far, because every word is a condition on a public endpoint', () => {
+    expect(searchTerms(Array.from({ length: 50 }, (_, i) => `word${i}`).join(' ')).length).toBe(6)
+  })
+})
+
+/** The order the list offers what matched (#443): code, word, traffic, in that weight. */
+describe('rankAirports with a term', () => {
+  interface Airport {
+    name: string
+    city?: string
+    aliases?: string
+    icao?: string
+    iata?: string
+    passengersPerYear?: number
+  }
+  const ranked = (term: string, airports: Airport[]) =>
+    rankAirports(
+      airports.map((airport) => ({
+        ...airport,
+        label: airport.name,
+        search: airportSearchText(airport),
+      })),
+      10,
+      term,
+    ).map((airport) => airport.label)
+
+  it('puts the airport whose code was typed before a busier one the letters are inside', () => {
+    const riyadh = { name: 'King Khaled', icao: 'OERK', passengersPerYear: 30_000_000 }
+    const pulkovo = { name: 'Pulkovo', iata: 'LED', passengersPerYear: 19_000_000 }
+
+    expect(ranked('led', [riyadh, pulkovo])).toEqual(['Pulkovo', 'King Khaled'])
+  })
+
+  it('puts a whole word before a busier airport it only begins', () => {
+    const heraklion = { name: 'Nikos Kazantzakis', icao: 'LGIR', passengersPerYear: 8_000_000 }
+    const kazan = { name: 'Kazan', icao: 'UWKD', passengersPerYear: 4_600_000 }
+
+    expect(ranked('Kazan', [heraklion, kazan])).toEqual(['Kazan', 'Nikos Kazantzakis'])
+  })
+
+  it('puts a city being typed before an unknown airport whose code it spells', () => {
+    const moses = { name: 'Moses Point', iata: 'MOS' }
+    const moscow = { name: 'Sheremetyevo', city: 'Moscow', passengersPerYear: 45_000_000 }
+
+    expect(ranked('mos', [moses, moscow])).toEqual(['Sheremetyevo', 'Moses Point'])
+    // In capitals it reads as the code it is.
+    expect(ranked('MOS', [moses, moscow])).toEqual(['Moses Point', 'Sheremetyevo'])
+  })
+
+  it('puts every match at the start of a word before one inside a word, however busy', () => {
+    const losAngeles = { name: 'Los Angeles', aliases: 'Municipal', passengersPerYear: 88_000_000 }
+    const nice = { name: 'Nice', passengersPerYear: 14_000_000 }
+
+    expect(ranked('nic', [losAngeles, nice])).toEqual(['Nice', 'Los Angeles'])
+  })
+
+  it('puts an airport with a code before an airfield without, all else equal', () => {
+    const ranch = { name: 'Flying Eagle', city: 'Орел' }
+    const orel = { name: 'Orel Yuzhny', city: 'Орёл', icao: 'UUOR' }
+
+    expect(ranked('орел', [ranch, orel])).toEqual(['Orel Yuzhny', 'Flying Eagle'])
   })
 })

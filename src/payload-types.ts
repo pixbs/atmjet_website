@@ -1155,7 +1155,7 @@ export interface Airport {
   city?: string | null;
   country?: string | null;
   /**
-   * Other names the search should match, comma separated. The legacy column is the misspelled `alies_en` / `alies_ru`.
+   * Other names the search should match, separated by | or commas. The legacy column is the misspelled `alies_en` / `alies_ru`.
    */
   aliases?: string | null;
   /**
@@ -1180,6 +1180,7 @@ export interface Airport {
    * Wikidata identifier from the legacy `new_airports` table.
    */
   wikidata?: string | null;
+  search?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -2880,6 +2881,7 @@ export interface AirportsSelect<T extends boolean = true> {
   latitude?: T;
   longitude?: T;
   wikidata?: T;
+  search?: T;
   updatedAt?: T;
   createdAt?: T;
 }
