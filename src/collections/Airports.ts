@@ -1,10 +1,12 @@
 import type { CollectionConfig } from 'payload'
 
+import type { Airport } from '@/payload-types'
+
 import { anyone, editorOrAdmin } from '@/access'
 import { ALL_LOCALES, DEFAULT_LOCALE, type Locale } from '@/i18n/locales'
 import { searchAirports } from '@/lib/data/airports'
 import { revalidateCollection } from '@/hooks/revalidate'
-import { normaliseCode, normaliseText } from '@/lib/airports'
+import { airportSearchText, normaliseCode, normaliseText, SEARCHED_FIELDS } from '@/lib/airports'
 
 /**
  * Airports (issue #64). The legacy site held the same facts in two tables: `airports`, with
@@ -23,6 +25,9 @@ const revalidation = revalidateCollection('airports')
  * runs, not while somebody is typing (issue #159).
  */
 const SEARCH_CACHE = 'public, max-age=60, s-maxage=600, stale-while-revalidate=86400'
+
+/** The searched fields that are localized, so a write in one language replaces only that one. */
+const LOCALIZED = new Set<string>(['city', 'name', 'country', 'aliases'])
 
 /** The locale a request asks for, or the default one: a locale nobody serves searches nothing. */
 function searchLocale(value: string | null): Locale {
@@ -68,6 +73,39 @@ export const Airports: CollectionConfig = {
   hooks: {
     afterChange: [revalidation.afterChange],
     afterDelete: [revalidation.afterDelete],
+    beforeChange: [
+      async ({ data, operation, originalDoc, req }) => {
+        // The stored names in every language, with this write's values over its own (#443). The
+        // adapter rather than `findByID`, which would leave `locale: 'all'` on the shared request.
+        const stored =
+          operation === 'update' && originalDoc?.id !== undefined
+            ? await req.payload.db.findOne<Airport>({
+                collection: 'airports',
+                where: { id: { equals: originalDoc.id } },
+                locale: 'all',
+                select: Object.fromEntries(SEARCHED_FIELDS.map((field) => [field, true])),
+                req,
+              })
+            : undefined
+        const locale = req.locale ?? DEFAULT_LOCALE
+
+        data.search = airportSearchText(
+          Object.fromEntries(
+            SEARCHED_FIELDS.map((field) => {
+              const before: unknown = stored?.[field]
+              if (!(field in data)) return [field, before]
+
+              const value: unknown = data[field]
+              const perLocale =
+                LOCALIZED.has(field) && (value === null || typeof value !== 'object')
+              return [field, perLocale ? { ...(before as object), [locale]: value } : value]
+            }),
+          ),
+        )
+
+        return data
+      },
+    ],
     beforeValidate: [
       ({ data }) => {
         if (!data) return data
@@ -132,7 +170,7 @@ export const Airports: CollectionConfig = {
       index: true,
       admin: {
         description:
-          'Other names the search should match, comma separated. The legacy column is the misspelled `alies_en` / `alies_ru`.',
+          'Other names the search should match, separated by | or commas. The legacy column is the misspelled `alies_en` / `alies_ru`.',
       },
     },
     {
@@ -181,6 +219,13 @@ export const Airports: CollectionConfig = {
       name: 'wikidata',
       type: 'text',
       admin: { description: 'Wikidata identifier from the legacy `new_airports` table.' },
+    },
+    {
+      // Kept by the `beforeChange` hook; the search endpoint matches a term against it (#443).
+      name: 'search',
+      type: 'text',
+      // Hidden from editors only: a field hidden from the API cannot be queried either.
+      admin: { hidden: true },
     },
   ],
 }
