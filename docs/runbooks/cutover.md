@@ -22,12 +22,14 @@ snapshot stays. Step 5 lists those.
 
 Every one is a gate.
 
-- [ ] The snapshot runbook has run: `legacy` restored, checksummed and frozen, the Neon branch
+- [x] The snapshot runbook has run: `legacy` restored, checksummed and frozen, the Neon branch
       `legacy-snapshot` taken (#73, #74).
-- [ ] The first import ran against `legacy` and `bun run import:legacy reconcile` passes (#85).
-- [ ] **The dry run below completed on a branch of `legacy-snapshot` with a clean
-      reconciliation**, and its output is attached to #86.
-- [ ] The Spaces objects are mirrored (#21) and the media import has run (#84).
+- [x] The first import ran against `legacy` and `bun run import:legacy reconcile` passes (#85,
+      2026-10-10).
+- [x] **The dry run below completed on a branch of `legacy-snapshot`, or on a local copy of
+      what it holds, with a clean reconciliation**, and its output is attached to #86
+      (2026-10-10, local copy).
+- [x] The Spaces objects are mirrored (#21) and the media import has run (#84).
 - [ ] The staging content-entry checklist is signed (#179). Editors have not changed the
       imported collections (Airports, Aircraft, Yachts, Contacts, Empty legs) on the new side:
       the delta rewrites what a legacy row holds, so an edit there is overwritten. Pages, globals

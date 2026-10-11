@@ -1,7 +1,7 @@
 import type { Payload } from 'payload'
 
-import { DEFAULT_LOCALE } from '../../src/i18n/locales'
-import { mediaFilename } from './assets'
+import { ALL_LOCALES, DEFAULT_LOCALE } from '../../src/i18n/locales'
+import { documentFilename, LEGACY_DOCUMENTS, mediaFilename, type LegacyDocument } from './assets'
 
 /**
  * Puts the legacy picture back in every section the seed drew a placeholder in (issue #84): the
@@ -387,6 +387,74 @@ export async function placePictures(
       overrideAccess: true,
       context: { skipRevalidation: true },
     })
+
+  return outcomes
+}
+
+/**
+ * Points each row of the business-agents documents block at the file it opens in each language
+ * (`import:legacy assets` brings the four across): the checklist and the presentation, English
+ * or Russian, and English where the legacy had no Ukrainian file. Only a placeholder is
+ * replaced, so a file an editor chose stays, and a run can be repeated.
+ */
+export async function placeDocuments(
+  payload: Payload,
+  options: {
+    documents?: readonly LegacyDocument[]
+    placeholders?: readonly string[]
+    /** The page that carries the documents block; the business-agents page unless a test names its own. */
+    page?: string
+    dryRun?: boolean
+  } = {},
+): Promise<PictureOutcome[]> {
+  const {
+    documents = LEGACY_DOCUMENTS,
+    placeholders: replaceable = PLACEHOLDERS,
+    page: slug = 'business_agents',
+    dryRun = false,
+  } = options
+  const ids = await mediaIds(payload, [...documents.map((one) => one.filename), ...replaceable])
+  const placeholders = new Set<unknown>(replaceable.map((name) => ids.get(name)).filter(Boolean))
+  const outcomes: PictureOutcome[] = []
+
+  for (const locale of ALL_LOCALES) {
+    const { docs } = await payload.find({
+      collection: 'pages',
+      where: { slug: { equals: slug } },
+      limit: 1,
+      depth: 0,
+      locale,
+      overrideAccess: true,
+    })
+    const page = docs[0]
+    if (!page) continue
+
+    const layout = page.layout ?? []
+    const block = layout.find((one) => one.blockType === 'documents') as
+      { documents?: Row[] } | undefined
+    let swapped = 0
+    ;(block?.documents ?? []).forEach((row, index) => {
+      const filename = documentFilename(documents, index, locale)
+      const id = filename === undefined ? undefined : ids.get(filename)
+      if (id === undefined || !placeholders.has(idOf(row.file))) return
+
+      row.file = id
+      swapped += 1
+    })
+
+    outcomes.push({ target: `${slug} [${locale}]`, swapped })
+    if (swapped === 0 || dryRun) continue
+
+    // The file is localized, so each language is written in its own pass, with its own words.
+    await payload.update({
+      collection: 'pages',
+      id: page.id,
+      data: { layout },
+      locale,
+      overrideAccess: true,
+      context: { skipRevalidation: true },
+    })
+  }
 
   return outcomes
 }

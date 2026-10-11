@@ -9,7 +9,8 @@
  *   bun run import:legacy yachts [--schema legacy] [--dry-run]     (contacts, charter, then sale)
  *   bun run import:legacy empty-legs [--schema legacy] [--dry-run] (after airports)
  *   bun run import:legacy reconcile [--schema legacy]
- *   bun run import:legacy urls --base-url https://staging.example [--schema legacy]
+ *   bun run import:legacy urls --base-url https://staging.example [--schema legacy] [--sample 400] [--concurrency 4]
+ *   bun run import:legacy compare --base-url https://staging.example [--legacy-url https://atmjet.com] [--sample 30]
  *   bun run import:legacy assets [--ref legacy/v1] [--dry-run]     (prints the manifest)
  *   bun run import:legacy pictures [--dry-run]                     (after assets)
  *
@@ -19,8 +20,8 @@
 import { getPayload } from 'payload'
 
 import config from '../../src/payload.config'
-import { gitReader, importLegacyAssets, manifestTsv } from './assets'
-import { placePictures } from './pictures'
+import { gitReader, importLegacyAssets, importLegacyDocuments, manifestTsv } from './assets'
+import { placeDocuments, placePictures } from './pictures'
 import { importCatalogue } from './aircraft'
 import { importEmptyLegs } from './empty-legs'
 import { importAirports } from './airports'
@@ -36,7 +37,8 @@ import {
   vehicleChecks,
 } from './reconcile'
 import type { ImportReport } from './runner'
-import { legacyPaths, legacyReferences, unanswered } from './urls'
+import { compareRendered } from './compare'
+import { legacyPaths, legacyReferences, samplePaths, unanswered } from './urls'
 import { importVehicles } from './vehicles'
 import { importCharterYachts, importSaleYachts } from './yachts'
 
@@ -59,6 +61,7 @@ const COMMANDS = [
   'empty-legs',
   'reconcile',
   'urls',
+  'compare',
   'assets',
   'pictures',
 ]
@@ -94,15 +97,40 @@ if (command === 'airports') {
   for (const { yacht, column, contact } of orphans)
     console.log(`orphan new_yachts ${yacht} ${column} ${contact}: no such contact, left empty`)
   console.log(`${orphans.length} contact references name no contact`)
+} else if (command === 'compare') {
+  const baseUrl = flag('base-url')
+  if (!baseUrl) {
+    console.error('compare: --base-url <deployment> is required')
+    process.exit(1)
+  }
+  const legacyUrl = flag('legacy-url')
+  const sample = flag('sample')
+  const results = await compareRendered(payload, {
+    baseUrl,
+    ...(legacyUrl ? { legacyUrl } : {}),
+    ...(sample ? { sample: Number(sample) } : {}),
+    schema,
+  })
+  for (const { path, status, differences } of results)
+    console.log(
+      `${path} [${status.join('→')}]: ${differences.length === 0 ? 'same' : differences.join('; ')}`,
+    )
+  const differing = results.filter((one) => one.differences.length > 0)
+  console.log(`${results.length} pages compared, ${differing.length} differ`)
+  process.exit(differing.length === 0 ? 0 : 1)
 } else if (command === 'urls') {
   const baseUrl = flag('base-url')
   if (baseUrl === undefined) {
     console.error('import:legacy urls needs --base-url, the deployment to ask')
     process.exit(1)
   }
-  const paths = legacyPaths(await legacyReferences(payload, schema))
+  const every = legacyPaths(await legacyReferences(payload, schema))
+  const sample = flag('sample')
+  const paths = sample ? samplePaths(every, Number(sample)) : every
+  const concurrency = flag('concurrency')
   const failed = await unanswered(baseUrl, paths, {
     bypass: process.env.VERCEL_AUTOMATION_BYPASS_SECRET,
+    ...(concurrency ? { concurrency: Number(concurrency) } : {}),
   })
 
   for (const { path, status, location } of failed)
@@ -115,16 +143,19 @@ if (command === 'airports') {
   for (const action of ['created', 'updated', 'unchanged'] as const)
     console.log(`${outcomes.filter((one) => one.action === action).length} redirects ${action}`)
 } else if (command === 'assets') {
-  const outcomes = await importLegacyAssets(payload, {
-    read: gitReader(flag('ref') ?? 'legacy/v1'),
-    dryRun,
-  })
+  const outcomes = [
+    ...(await importLegacyAssets(payload, { read: gitReader(flag('ref') ?? 'legacy/v1'), dryRun })),
+    ...(await importLegacyDocuments(payload, { dryRun })),
+  ]
 
   console.log(manifestTsv(outcomes))
   for (const action of ['created', 'unchanged'] as const)
-    console.error(`${outcomes.filter((one) => one.action === action).length} pictures ${action}`)
+    console.error(`${outcomes.filter((one) => one.action === action).length} files ${action}`)
 } else if (command === 'pictures') {
-  const outcomes = await placePictures(payload, { dryRun })
+  const outcomes = [
+    ...(await placePictures(payload, { dryRun })),
+    ...(await placeDocuments(payload, { dryRun })),
+  ]
 
   for (const { target, swapped } of outcomes)
     console.log(`${target}: ${swapped} placeholders ${dryRun ? 'to replace' : 'replaced'}`)

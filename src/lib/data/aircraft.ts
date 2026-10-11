@@ -8,7 +8,7 @@ import {
   type AircraftQuery,
   type AircraftSort,
 } from '@/lib/aircraft'
-import { mediaSource, type ImageSource } from '@/lib/media'
+import { rowImageSource, type ImageSource } from '@/lib/media'
 import type { Listable } from '@/lib/sitemap'
 
 import { getPayloadClient } from './payload'
@@ -87,9 +87,7 @@ export const listCatalogueAircraft = cache(
         model: aircraft.type?.model ?? aircraft.type?.name ?? aircraft.registrationDisplay,
         year: aircraft.specification?.yearOfProduction,
         passengers: aircraft.specification?.passengers,
-        image: mediaSource(
-          typeof aircraft.images?.[0]?.media === 'object' ? aircraft.images[0].media : null,
-        ),
+        image: rowImageSource(aircraft.images?.[0]),
       }))
     } catch (error) {
       console.warn('[aircraft] the database was unreachable, so the section lists none.', error)
@@ -189,10 +187,9 @@ export const searchAircraft = cache(
       return {
         aircraft: [...measured.docs, ...unmeasured.docs.slice(0, Math.max(room, 0))].flatMap(
           (one) => {
-            const cover = one.images?.find((entry) => entry.type === 'exterior')?.media
             // An upload an editor has deleted leaves a card with nothing to draw; the query
             // has already left out the aircraft that never had a photograph.
-            const image = mediaSource(typeof cover === 'object' ? cover : null)
+            const image = rowImageSource(one.images?.find((entry) => entry.type === 'exterior'))
             if (image === null) return []
 
             return [

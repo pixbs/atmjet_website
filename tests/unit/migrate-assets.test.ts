@@ -1,7 +1,15 @@
 import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
 
-import { LEGACY_ASSETS, manifestTsv, mediaFilename } from '../../scripts/migrate/assets'
+import { normaliseSpacesUrl } from '../../scripts/media/spaces'
+
+import {
+  LEGACY_ASSETS,
+  LEGACY_DOCUMENTS,
+  documentFilename,
+  manifestTsv,
+  mediaFilename,
+} from '../../scripts/migrate/assets'
 
 /**
  * The pictures the media import brings across (issue #84): exactly the ones
@@ -98,6 +106,47 @@ describe('the manifest', () => {
       ]),
     ).toBe(
       'legacy path\tmedia filename\tmedia id\n/images/home_page/footer.jpg\thome_page-footer.jpg\t7',
+    )
+  })
+})
+
+describe('the legacy documents', () => {
+  it('are the checklist and the presentation, each in English and in Russian, on the Space', () => {
+    expect(LEGACY_DOCUMENTS.map((one) => [one.document, one.locale])).toEqual([
+      [0, 'en'],
+      [0, 'ru'],
+      [1, 'en'],
+      [1, 'ru'],
+    ])
+    for (const one of LEGACY_DOCUMENTS) {
+      expect(normaliseSpacesUrl(one.url)).not.toBeNull()
+      expect(one.filename).toMatch(/\.pdf$/)
+      expect(one.alt.trim()).not.toBe('')
+    }
+    expect(new Set(LEGACY_DOCUMENTS.map((one) => one.filename)).size).toBe(4)
+  })
+
+  it('open in the language of the page, and in English for a language the legacy had no file for', () => {
+    expect(documentFilename(LEGACY_DOCUMENTS, 0, 'ru')).toBe('business-agents-checklist-ru.pdf')
+    expect(documentFilename(LEGACY_DOCUMENTS, 1, 'en')).toBe('business-agents-presentation-en.pdf')
+    expect(documentFilename(LEGACY_DOCUMENTS, 1, 'uk')).toBe('business-agents-presentation-en.pdf')
+    expect(documentFilename(LEGACY_DOCUMENTS, 2, 'en')).toBeUndefined()
+  })
+})
+
+describe('the manifest of a document', () => {
+  it('reads the address the page linked, not a path under /images/', () => {
+    expect(
+      manifestTsv([
+        {
+          path: 'https://atmjet.ams3.cdn.digitaloceanspaces.com/presentation/ATM%20JET%20Presentation.pdf',
+          filename: 'business-agents-presentation-en.pdf',
+          action: 'created',
+          id: 9,
+        },
+      ]),
+    ).toBe(
+      'legacy path\tmedia filename\tmedia id\nhttps://atmjet.ams3.cdn.digitaloceanspaces.com/presentation/ATM%20JET%20Presentation.pdf\tbusiness-agents-presentation-en.pdf\t9',
     )
   })
 })

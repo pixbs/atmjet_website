@@ -68,19 +68,33 @@ async function references(): Promise<SpacesReference[]> {
   return (result.rows ?? []) as SpacesReference[]
 }
 
-/** What the Space says about an object, without fetching it. */
+/**
+ * What the Space says about an object, without fetching it. A request that fails on the way
+ * (a timeout, a name lookup) is asked again after a pause, so that a lapse in the network is
+ * not written down as an object the Space does not have; only the Space's own answer counts.
+ */
 async function head(url: string): Promise<Pick<ManifestEntry, 'status' | 'size' | 'contentType'>> {
-  try {
-    const response = await fetch(url, { method: 'HEAD', redirect: 'follow' })
-    const length = response.headers.get('content-length')
+  for (let attempt = 1; ; attempt++) {
+    try {
+      const response = await fetch(url, {
+        method: 'HEAD',
+        redirect: 'follow',
+        signal: AbortSignal.timeout(30_000),
+      })
+      const length = response.headers.get('content-length')
 
-    return {
-      status: response.status,
-      size: length === null ? null : Number(length),
-      contentType: response.headers.get('content-type'),
+      return {
+        status: response.status,
+        size: length === null ? null : Number(length),
+        contentType: response.headers.get('content-type'),
+      }
+    } catch (error) {
+      if (attempt === 3) {
+        console.error(`mirror-spaces: ${url}: ${(error as Error).message}`)
+        return { status: 0, size: null, contentType: null }
+      }
+      await new Promise((resolve) => setTimeout(resolve, 5_000 * attempt))
     }
-  } catch {
-    return { status: 0, size: null, contentType: null }
   }
 }
 
@@ -96,7 +110,9 @@ async function alreadyCopied(key: string, size: number | null): Promise<boolean>
 }
 
 async function copy(entry: ManifestEntry): Promise<void> {
-  const response = await fetch(entry.url)
+  // A transfer that stalls is given up after two minutes and reported as uncopied, so one
+  // object the Space stops answering for cannot hold the whole run open.
+  const response = await fetch(entry.url, { signal: AbortSignal.timeout(120_000) })
   if (!response.ok) throw new Error(`${entry.url} answered ${response.status} to a GET`)
 
   await client.send(
@@ -106,6 +122,7 @@ async function copy(entry: ManifestEntry): Promise<void> {
       Body: Buffer.from(await response.arrayBuffer()),
       ...(entry.contentType === null ? {} : { ContentType: entry.contentType }),
     }),
+    { abortSignal: AbortSignal.timeout(120_000) },
   )
 }
 
@@ -150,8 +167,12 @@ async function main(): Promise<void> {
       manifest.filter((entry) => entry.status === 200),
       concurrency,
       async (entry) => {
-        if (!(await alreadyCopied(entry.key, entry.size))) await copy(entry)
-        copied.add(entry.key)
+        try {
+          if (!(await alreadyCopied(entry.key, entry.size))) await copy(entry)
+          copied.add(entry.key)
+        } catch (error) {
+          console.error(`mirror-spaces: ${entry.key}: ${(error as Error).message}`)
+        }
         done += 1
         if (done % 500 === 0) console.log(`mirror-spaces: copied ${done}`)
       },
