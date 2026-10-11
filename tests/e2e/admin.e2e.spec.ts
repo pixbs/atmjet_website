@@ -26,4 +26,11 @@ test.describe('Admin panel', () => {
 
     await expect(page.locator('input[name="email"]')).toBeVisible()
   })
+
+  // Where an admin issues the key an agent enters content with (issue #71).
+  test('opens the MCP API keys list view', async ({ admin, page }) => {
+    await admin.gotoCollection('payload-mcp-api-keys')
+
+    await expect(page.locator('h1', { hasText: 'API Keys' }).first()).toBeVisible()
+  })
 })

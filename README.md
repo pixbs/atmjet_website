@@ -57,6 +57,24 @@ scripts/ci           convention checks (hooks + CI) scripts/db     database runb
 - Decisions are recorded in [`docs/adr/`](docs/adr/README.md).
 - Required checks on every pull request: `conventions` (branch, commits, PR title, no AI attribution) and `ci` (static checks, migrations, tests, build).
 
+## Entering content through MCP
+
+`@payloadcms/plugin-mcp` serves a [Model Context Protocol](https://modelcontextprotocol.io) endpoint at `/api/mcp`, so an agent can enter the E10 content under the same access rules as the admin (issue #71). The admin itself stays plain at `/admin`, with no custom branding, and no other template plugin (`plugin-form-builder` included: the forms are custom for pixel parity) is installed.
+
+- **Keys are admin-only.** An admin creates one in `/admin` under **MCP → API Keys**, copies it before saving (it is masked from then on) and ticks what it may do; a new key may do nothing. A key acts as the admin who created it and is refused as soon as that person is no longer an admin. Delete it when the work is done; a person cannot be deleted while they still hold one.
+- **What it reaches:** find, create and update on `pages`, `airports`, `aircraft`, `yachts` and `empty-legs`; find and update on `media`; the `header`, `footer` and `site-settings` globals. People, contacts, leads and the migration ledger are not exposed, and nothing can be deleted through it.
+- **Connecting a client:** Streamable HTTP with the key as a bearer token, for example:
+
+  ```json
+  {
+    "type": "http",
+    "url": "https://<host>/api/mcp",
+    "headers": { "Authorization": "Bearer <key>" }
+  }
+  ```
+
+The rules are in [`docs/access-matrix.md`](docs/access-matrix.md) and tested in `tests/int/mcp.int.spec.ts`.
+
 ## License
 
 Proprietary. See [`LICENSE`](LICENSE).
