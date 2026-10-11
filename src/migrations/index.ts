@@ -41,6 +41,7 @@ import * as migration_20260925_121001_contacts_legacy_attributes from './2026092
 import * as migration_20260925_123625_legacy_redirects_per_aircraft from './20260925_123625_legacy_redirects_per_aircraft';
 import * as migration_20261007_113955_payload_3_90 from './20261007_113955_payload_3_90';
 import * as migration_20261010_055525_aircraft_image_kinds from './20261010_055525_aircraft_image_kinds';
+import * as migration_20261011_061432_privacy_page from './20261011_061432_privacy_page';
 
 export const migrations = [
   {
@@ -256,6 +257,11 @@ export const migrations = [
   {
     up: migration_20261010_055525_aircraft_image_kinds.up,
     down: migration_20261010_055525_aircraft_image_kinds.down,
-    name: '20261010_055525_aircraft_image_kinds'
+    name: '20261010_055525_aircraft_image_kinds',
+  },
+  {
+    up: migration_20261011_061432_privacy_page.up,
+    down: migration_20261011_061432_privacy_page.down,
+    name: '20261011_061432_privacy_page'
   },
 ];

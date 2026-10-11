@@ -20,3 +20,4 @@ Notes on `leads` specifically:
 - The `userAgent` field exists for spam triage. It is not used for anything else and is covered by the same retention period.
 - Deleting a lead deletes its delivery history with it; if a delivery failure needs to outlive the lead, record it in the logs, not here.
 - There is no automatic deletion job yet. Until there is one, the retention above is a manual procedure, and whoever runs it should say so in the issue that asks for the job.
+- The privacy policy (`/privacy`, issue #57) promises visitors this period, so a change to it is a change to the policy too.

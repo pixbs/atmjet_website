@@ -297,6 +297,7 @@ export interface Page {
         | PrivilegeBlock
         | QuoteBlock
         | RecentYachtsBlock
+        | RichTextBlock
         | TilesBlock
         | TransferBlock
         | WeInspectBlock
@@ -933,6 +934,34 @@ export interface RecentYachtsBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'recentYachts';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "RichTextBlock".
+ */
+export interface RichTextBlock {
+  title: string;
+  /**
+   * Section headings, lists, bold text and links; the title is the h1.
+   */
+  content: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'richText';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -2060,6 +2089,7 @@ export interface PagesSelect<T extends boolean = true> {
         privilege?: T | PrivilegeBlockSelect<T>;
         quote?: T | QuoteBlockSelect<T>;
         recentYachts?: T | RecentYachtsBlockSelect<T>;
+        richText?: T | RichTextBlockSelect<T>;
         tiles?: T | TilesBlockSelect<T>;
         transfer?: T | TransferBlockSelect<T>;
         weInspect?: T | WeInspectBlockSelect<T>;
@@ -2540,6 +2570,16 @@ export interface QuoteBlockSelect<T extends boolean = true> {
 export interface RecentYachtsBlockSelect<T extends boolean = true> {
   title?: T;
   limit?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "RichTextBlock_select".
+ */
+export interface RichTextBlockSelect<T extends boolean = true> {
+  title?: T;
+  content?: T;
   id?: T;
   blockName?: T;
 }

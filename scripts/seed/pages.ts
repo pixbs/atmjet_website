@@ -1,8 +1,11 @@
-import type { Payload } from 'payload'
+import { readFileSync } from 'node:fs'
+
+import { convertMarkdownToLexical, editorConfigFactory } from '@payloadcms/richtext-lexical'
+import type { Payload, RichTextField } from 'payload'
 
 import { PAGE_LOCALES, PAGE_SLUGS } from '../../src/collections/Pages'
 import { ALL_LOCALES, type Locale } from '../../src/i18n/locales'
-import type { Page } from '../../src/payload-types'
+import type { Page, RichTextBlock } from '../../src/payload-types'
 import { prose } from './prose'
 import type { SeedOutcome } from './report'
 
@@ -25,6 +28,11 @@ const TITLES: Record<string, { en: string; ru: string; uk: string }> = {
   group_charters: { en: 'Group charters', ru: 'Групповые перевозки', uk: 'Group charters' },
   medical_aviation: { en: 'Medical aviation', ru: 'Медицинская авиация', uk: 'Медична авіація' },
   partners: { en: 'Partners', ru: 'Партнёры', uk: 'Партнери' },
+  privacy: {
+    en: 'Privacy Policy',
+    ru: 'Политика конфиденциальности',
+    uk: 'Політика конфіденційності',
+  },
   sales_dept: { en: 'Sales department', ru: 'Отдел продаж', uk: 'Sales department' },
   sales_yachts: { en: 'Yachts for sale', ru: 'Яхты на продажу', uk: 'Yachts for sale' },
   yachts: { en: 'Yacht charter', ru: 'Аренда яхт', uk: 'Оренда яхт' },
@@ -576,6 +584,35 @@ interface Fixture {
   photo: number
   surface: number
   pages: ReadonlyMap<string, number>
+  /** The privacy policy in each language, as the editor stores it (issue #57). */
+  privacy: Record<Locale, RichTextBlock['content']>
+}
+
+/**
+ * The privacy policy (issue #57), read from the Markdown it is written and reviewed in under
+ * `scripts/seed/privacy` and converted by the editor the block's field uses, so the seed can
+ * only write what an editor could have typed there.
+ */
+function privacyPolicy(payload: Payload): Fixture['privacy'] {
+  const layout = payload.collections.pages.config.flattenedFields.find(
+    (field) => field.name === 'layout',
+  )
+  const block = layout?.type === 'blocks' ? layout.blocks.find((b) => b.slug === 'richText') : null
+  const content = block?.fields.find(
+    (field): field is RichTextField => 'name' in field && field.name === 'content',
+  )
+  if (!content) throw new Error('seed: the rich text block has no content field')
+
+  const editorConfig = editorConfigFactory.fromField({ field: content })
+  const read = (locale: Locale) =>
+    readFileSync(new URL(`./privacy/${locale}.md`, import.meta.url), 'utf8')
+
+  return Object.fromEntries(
+    ALL_LOCALES.map((locale) => [
+      locale,
+      convertMarkdownToLexical({ editorConfig, markdown: read(locale) }),
+    ]),
+  ) as Fixture['privacy']
 }
 
 /**
@@ -1695,6 +1732,14 @@ function layoutFor(slug: string, locale: Locale, fixture: Fixture): Layout {
       image: fixture.photo,
     })
 
+  // The policy the legacy cookie banner linked to (issue #57), under the heading it linked with.
+  if (slug === 'privacy')
+    sections.push({
+      blockType: 'richText',
+      title: TITLES.privacy[locale],
+      content: fixture.privacy[locale],
+    })
+
   // The home page, in the order the legacy file drew it (issue #134, section 4, route
   // `/[locale]`). Every one of these sections was on it, several of them on it alone, so they
   // are gathered here rather than left scattered through the list a block at a time.
@@ -2497,6 +2542,8 @@ function translated(
         return { ...block, id }
       case 'recentYachts':
         return { ...block, id }
+      case 'richText':
+        return { ...block, id }
       case 'tiles':
         return {
           ...block,
@@ -2609,6 +2656,7 @@ export async function seedPages(payload: Payload): Promise<SeedOutcome[]> {
     photo: await upload(payload, 'seed-gold.png'),
     surface: await upload(payload, 'seed-surface.png'),
     pages: new Map(pages.docs.map((page) => [page.slug ?? '', page.id])),
+    privacy: privacyPolicy(payload),
   }
 
   const outcomes: SeedOutcome[] = []
