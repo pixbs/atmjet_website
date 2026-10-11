@@ -27,7 +27,8 @@ const AIRCRAFT_OFFERINGS = ['charter', 'sale', 'lease', 'cargo'] as const
 const AIRCRAFT_ORIGINS = ['aircrafts-catalog', 'vehicles-legacy', 'manual'] as const
 
 /** The image roles the legacy `aircraft_images.type` enum allowed. */
-const AIRCRAFT_IMAGE_TYPES = ['exterior', 'cabin', 'cockpit'] as const
+/** The kinds the catalogue files its pictures under; the legacy drew every kind, in its order. */
+const AIRCRAFT_IMAGE_TYPES = ['exterior', 'cabin', 'cockpit', 'notail', 'plan', 'other'] as const
 
 export const Aircraft: CollectionConfig = {
   slug: 'aircraft',

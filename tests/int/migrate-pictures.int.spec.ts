@@ -1,9 +1,11 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 
-import { mediaFilename } from '../../scripts/migrate/assets'
-import { placePictures, type Placement } from '../../scripts/migrate/pictures'
+import type { File } from 'payload'
+
+import { mediaFilename, type LegacyDocument } from '../../scripts/migrate/assets'
+import { placeDocuments, placePictures, type Placement } from '../../scripts/migrate/pictures'
 import { createMedia, pngFile } from '../factories'
-import { createRegistry, uniqueSuffix, type TestRegistry } from '../helpers/payload'
+import { createRegistry, getTestPayload, uniqueSuffix, type TestRegistry } from '../helpers/payload'
 
 /**
  * The legacy pictures going back into a page's sections (issue #84): into the placeholders, in
@@ -136,5 +138,121 @@ describe('putting the legacy pictures into a page', () => {
     })
 
     expect(outcomes[0]).toEqual({ target: slug, swapped: 0 })
+  })
+})
+
+describe('putting the legacy documents into the business agents page', () => {
+  const suffix = uniqueSuffix()
+  const slug = `documents-${suffix}`
+  const placeholder = `placeholder-${suffix}.png`
+  const pdf = (name: string): File => {
+    // The least Payload accepts as a PDF: the header, an xref marker and the end-of-file marker.
+    const data = Buffer.from('%PDF-1.4\nxref\n0 0\ntrailer<<>>\nstartxref\n9\n%%EOF\n')
+
+    return { data, mimetype: 'application/pdf', name, size: data.length }
+  }
+  const documents: LegacyDocument[] = (
+    [
+      [0, 'en'],
+      [0, 'ru'],
+      [1, 'en'],
+      [1, 'ru'],
+    ] as const
+  ).map(([document, locale]) => ({
+    url: `https://atmjet.ams3.cdn.digitaloceanspaces.com/${suffix}-${document}-${locale}.pdf`,
+    filename: `document-${suffix}-${document}-${locale}.pdf`,
+    alt: `Document ${document} in ${locale}`,
+    document,
+    locale,
+  }))
+  const ids: Record<string, number> = {}
+  let page: number
+
+  beforeAll(async () => {
+    const payload = await getTestPayload()
+    ids.placeholder = (await createMedia(registry, { alt: 'Placeholder' }, pngFile(placeholder))).id
+    for (const one of documents)
+      ids[one.filename] = (await createMedia(registry, { alt: one.alt }, pdf(one.filename))).id
+
+    const rows = (title: string, label: string) =>
+      [0, 1].map(() => ({ title, label, image: ids.placeholder, file: ids.placeholder }))
+    const created = await registry.create('pages', {
+      title: 'Documents',
+      slug,
+      _status: 'published',
+      layout: [{ blockType: 'documents', documents: rows('Checklist', 'Open guide') }],
+    })
+    page = created.id
+    // The seed writes the other languages the same way: each with its own words and the one
+    // placeholder, since an upload the block requires cannot be left out.
+    const block = (created.layout as unknown as [{ id: string; documents: { id: string }[] }])[0]
+    for (const [locale, title, label] of [
+      ['ru', 'Чек-лист', 'Скачать'],
+      ['uk', 'Чекліст', 'Завантажити'],
+    ] as const)
+      await payload.update({
+        collection: 'pages',
+        id: page,
+        locale,
+        data: {
+          title: `Documents (${locale})`,
+          layout: [
+            {
+              id: block.id,
+              blockType: 'documents',
+              documents: block.documents.map((row) => ({
+                id: row.id,
+                title,
+                label,
+                image: ids.placeholder,
+                file: ids.placeholder,
+              })),
+            },
+          ],
+        },
+        overrideAccess: true,
+        context: { skipRevalidation: true },
+      })
+  })
+
+  const files = async (locale: 'en' | 'ru' | 'uk') => {
+    const payload = await getTestPayload()
+    const read = await payload.findByID({
+      collection: 'pages',
+      id: page,
+      depth: 0,
+      locale,
+      overrideAccess: true,
+    })
+    const block = read.layout?.[0] as { documents?: { file?: unknown }[] } | undefined
+
+    return (block?.documents ?? []).map((row) => row.file)
+  }
+
+  it('opens each document in the language of the page, and in English where the legacy had none', async () => {
+    const payload = await getTestPayload()
+    const outcomes = await placeDocuments(payload, {
+      documents,
+      placeholders: [placeholder],
+      page: slug,
+    })
+
+    expect(outcomes.map((one) => one.swapped)).toEqual([2, 2, 2])
+    const id = (document: number, locale: 'en' | 'ru') =>
+      ids[`document-${suffix}-${document}-${locale}.pdf`]
+    expect(await files('en')).toEqual([id(0, 'en'), id(1, 'en')])
+    expect(await files('ru')).toEqual([id(0, 'ru'), id(1, 'ru')])
+    expect(await files('uk')).toEqual([id(0, 'en'), id(1, 'en')])
+  })
+
+  it('has nothing left to do the second time', async () => {
+    const payload = await getTestPayload()
+    const outcomes = await placeDocuments(payload, {
+      documents,
+      placeholders: [placeholder],
+      page: slug,
+    })
+
+    expect(outcomes.map((one) => one.swapped)).toEqual([0, 0, 0])
   })
 })

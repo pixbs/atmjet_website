@@ -17,6 +17,8 @@ const SLUGS = [
   'business_agents',
   'group_charters',
   'partners',
+  // The policy the cookie banner links to (issue #57).
+  'privacy',
   'sales_dept',
   'sales_yachts',
   'yachts',

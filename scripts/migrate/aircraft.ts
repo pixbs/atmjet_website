@@ -75,7 +75,7 @@ export interface AircraftsRow extends RealText {
 export interface AircraftImageRow {
   id: number
   aircraft_id: number
-  type: 'exterior' | 'cabin' | 'cockpit'
+  type: 'exterior' | 'cabin' | 'cockpit' | 'notail' | 'plan' | 'other'
   url: string
 }
 

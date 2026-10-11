@@ -94,6 +94,23 @@ async function answer(
   return { path, status: 310, location: url.pathname }
 }
 
+/**
+ * A sample of the paths for a run that must not ask a deployment for every one of them: every
+ * static page in its three spellings, and the detail pages spread over their lists, so a check
+ * repeated while the migration is worked on costs a few hundred requests rather than twenty
+ * thousand. The full list is for the verification of cutover day (`docs/runbooks/cutover.md`).
+ */
+export function samplePaths(paths: string[], size: number): string[] {
+  const detail = (path: string) => /^(\/[a-z]{2})?\/(aircraft|yachts)\/./.test(path)
+  const kept = paths.filter((path) => !detail(path))
+  const rest = paths.filter(detail)
+  const room = Math.max(0, size - kept.length)
+  if (rest.length <= room) return [...kept, ...rest]
+  const step = rest.length / room
+
+  return [...kept, ...Array.from({ length: room }, (_, index) => rest[Math.floor(index * step)]!)]
+}
+
 /** The paths that do not end on a page of this site answering 200. */
 export async function unanswered(
   baseUrl: string,

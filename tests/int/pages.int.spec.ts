@@ -58,10 +58,12 @@ describe('page paths', () => {
     expect(pathForPage('ru', 'empty_legs')).toBe('/ru/empty_legs')
   })
 
-  it('covers the thirteen static routes of the legacy site', () => {
-    expect(PAGE_SLUGS).toHaveLength(13)
+  it('covers the thirteen static routes of the legacy site, and its missing privacy page', () => {
+    expect(PAGE_SLUGS).toHaveLength(14)
     expect(PAGE_SLUGS).toContain('')
     expect(PAGE_SLUGS).toContain('sales_yachts')
+    // The cookie banner linked to it and it answered 404 (section 13, entry 71; issue #57).
+    expect(PAGE_SLUGS).toContain('privacy')
     // The legacy slugs use underscores; parity depends on keeping them.
     expect(PAGE_SLUGS.filter((slug) => slug.includes('-'))).toEqual([])
   })
