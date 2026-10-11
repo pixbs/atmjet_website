@@ -57,16 +57,28 @@ export const Airports: CollectionConfig = {
       path: '/search',
       method: 'get',
       handler: async (req) => {
-        const options = await searchAirports(
-          {
-            term: req.searchParams.get('q') ?? '',
-            locale: searchLocale(req.searchParams.get('locale')),
-          },
-          // The request's own Payload, so the search runs inside its transaction and user.
-          async () => req.payload,
-        )
+        try {
+          const options = await searchAirports(
+            {
+              term: req.searchParams.get('q') ?? '',
+              locale: searchLocale(req.searchParams.get('locale')),
+            },
+            // The request's own Payload, so the search runs inside its transaction and user.
+            async () => req.payload,
+          )
 
-        return Response.json({ options }, { headers: { 'cache-control': SEARCH_CACHE } })
+          return Response.json({ options }, { headers: { 'cache-control': SEARCH_CACHE } })
+        } catch (error) {
+          // Never cached: a cold database answered as "no airports" would be served for a day.
+          console.warn(
+            '[airports] the search could not be run, so the field offers nothing.',
+            error,
+          )
+          return Response.json(
+            { options: [] },
+            { status: 503, headers: { 'cache-control': 'no-store' } },
+          )
+        }
       },
     },
   ],

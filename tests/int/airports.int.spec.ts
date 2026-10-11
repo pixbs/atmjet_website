@@ -1,3 +1,4 @@
+import type { PayloadRequest } from 'payload'
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
 
 import { searchAirports } from '@/lib/data/airports'
@@ -453,5 +454,23 @@ describe('the search the airport field reads', () => {
         Promise.reject(new Error('connection refused')),
       ),
     ).rejects.toThrow('connection refused')
+  })
+
+  it('answers a failed search with 503 and nothing an edge may keep', async () => {
+    // A cold database answered as "no airports" with the success headers was served for a day.
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined)
+    const endpoints = registry.payload.collections.airports.config.endpoints || []
+    const search = endpoints.find((endpoint) => endpoint.path === '/search')
+    const failing = { find: () => Promise.reject(new Error('connection refused')) }
+
+    const response = await search!.handler({
+      searchParams: new URLSearchParams({ q: 'dubai' }),
+      payload: failing,
+    } as unknown as PayloadRequest)
+
+    expect(response.status).toBe(503)
+    expect(response.headers.get('cache-control')).toBe('no-store')
+    expect(warn).toHaveBeenCalled()
+    warn.mockRestore()
   })
 })
