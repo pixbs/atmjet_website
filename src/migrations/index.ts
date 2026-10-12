@@ -43,6 +43,7 @@ import * as migration_20261007_113955_payload_3_90 from './20261007_113955_paylo
 import * as migration_20261010_055525_aircraft_image_kinds from './20261010_055525_aircraft_image_kinds';
 import * as migration_20261011_061432_privacy_page from './20261011_061432_privacy_page';
 import * as migration_20261011_062533_mcp_api_keys from './20261011_062533_mcp_api_keys';
+import * as migration_20261011_103454_airport_search from './20261011_103454_airport_search';
 
 export const migrations = [
   {
@@ -268,6 +269,11 @@ export const migrations = [
   {
     up: migration_20261011_062533_mcp_api_keys.up,
     down: migration_20261011_062533_mcp_api_keys.down,
-    name: '20261011_062533_mcp_api_keys'
+    name: '20261011_062533_mcp_api_keys',
+  },
+  {
+    up: migration_20261011_103454_airport_search.up,
+    down: migration_20261011_103454_airport_search.down,
+    name: '20261011_103454_airport_search'
   },
 ];
