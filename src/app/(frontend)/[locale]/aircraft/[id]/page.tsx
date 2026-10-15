@@ -16,7 +16,7 @@ import { JsonLd } from '@/components/ui/json-ld'
 import type { Locale } from '@/i18n/locales'
 import { resolveAircraft } from '@/lib/data/aircraft'
 import { getEnabledLocales } from '@/lib/data/site-settings'
-import { rowImageSource } from '@/lib/media'
+import { named, rowImageSource } from '@/lib/media'
 import { pageMetadata } from '@/lib/metadata'
 import { breadcrumbs, product } from '@/lib/structured-data'
 import { siteOrigin } from '@/lib/urls'
@@ -97,12 +97,15 @@ export default async function AircraftDetailPage({ params }: { params: Promise<D
   const form = await getTranslations({ locale, namespace: 'form' })
   const common = await getTranslations({ locale, namespace: 'common' })
 
-  const photographs = (aircraft.images ?? []).flatMap((entry) => {
-    const image = rowImageSource(entry)
-
-    return image === null ? [] : [image]
-  })
   const name = [aircraft.type?.name, aircraft.registrationDisplay].filter(Boolean).join(' ')
+  const photographs = named(
+    (aircraft.images ?? []).flatMap((entry) => {
+      const image = rowImageSource(entry)
+
+      return image === null ? [] : [image]
+    }),
+    name,
+  )
   const origin = siteOrigin()
   const trail = breadcrumbs(origin, locale as Locale, common('home'), {
     slug: `aircraft/${id}`,
@@ -296,7 +299,7 @@ export default async function AircraftDetailPage({ params }: { params: Promise<D
         <div className="relative -z-1 -mb-hero-overlap h-hero-band w-full overflow-hidden">
           {photographs[0] && (
             <Image
-              alt={photographs[0].alt === '' ? name : photographs[0].alt}
+              alt={photographs[0].alt}
               className="object-cover object-center"
               fill
               priority
@@ -334,7 +337,7 @@ export default async function AircraftDetailPage({ params }: { params: Promise<D
           <div className="gap-10 md:grid md:grid-cols-2">
             {beside && (
               <Image
-                alt={beside.alt === '' ? name : beside.alt}
+                alt={beside.alt}
                 className="rounded-3xl"
                 height={600}
                 src={beside.src}
@@ -358,7 +361,7 @@ export default async function AircraftDetailPage({ params }: { params: Promise<D
               {stacked.map((photo) => (
                 <Image
                   key={photo.src}
-                  alt={photo.alt === '' ? name : photo.alt}
+                  alt={photo.alt}
                   className="rounded-3xl border border-graphite-800 bg-graphite-950"
                   height={400}
                   sizes="(min-width: 768px) 45vw, 90vw"

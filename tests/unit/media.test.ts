@@ -5,6 +5,7 @@ import {
   legacyMirror,
   legacyPictureAddress,
   mediaSource,
+  named,
   rowImageSource,
 } from '@/lib/media'
 
@@ -101,6 +102,20 @@ describe('mediaSource', () => {
     const source = mediaSource({ url: '/api/media/file/a.png', alt: 'A' })
 
     expect(source).toEqual({ src: '/api/media/file/a.png', alt: 'A' })
+  })
+})
+
+describe('named', () => {
+  it('names a photograph the row left without words after the page, so its thumbnail has a name', () => {
+    const imported = rowImageSource({
+      externalUrl: 'https://atmjet.s3.eu-north-1.amazonaws.com/a.jpg',
+    })
+    const captioned = { src: '/b.jpg', alt: 'The cabin' }
+
+    expect(named([imported!, captioned], 'Cessna 425 VH-BSM').map((photo) => photo.alt)).toEqual([
+      'Cessna 425 VH-BSM',
+      'The cabin',
+    ])
   })
 })
 

@@ -153,6 +153,13 @@ export function rowImageSource(
   )
 }
 
+/**
+ * Each photograph answers to the page's own name where the row carries no words of its own, so
+ * a gallery thumbnail is never a button without a name (issue #428).
+ */
+export const named = (photographs: ImageSource[], name: string): ImageSource[] =>
+  photographs.map((photo) => (photo.alt === '' ? { ...photo, alt: name } : photo))
+
 /** The image a gallery opens on: the one asked for, or the nearest one that exists. */
 export function imageIndex(requested: number, count: number): number {
   if (count <= 0) return 0
