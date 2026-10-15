@@ -14,7 +14,7 @@ import { JsonLd } from '@/components/ui/json-ld'
 import type { Locale } from '@/i18n/locales'
 import { resolveYacht, yachtPhotographs } from '@/lib/data/yachts'
 import { getEnabledLocales } from '@/lib/data/site-settings'
-import type { ImageSource } from '@/lib/media'
+import { named } from '@/lib/media'
 import { pageMetadata } from '@/lib/metadata'
 import { breadcrumbs, product } from '@/lib/structured-data'
 import { plainText } from '@/lib/text'
@@ -46,10 +46,6 @@ interface DetailParams {
 /** The name the page is titled with, as the listing card composes it. */
 const nameOf = (yacht: { manufacturer?: string | null; name: string }): string =>
   [yacht.manufacturer, yacht.name && `"${yacht.name}"`].filter(Boolean).join(' ')
-
-/** Each photograph answers to the yacht's own name where the row carries no words of its own. */
-const named = (photographs: ImageSource[], name: string): ImageSource[] =>
-  photographs.map((photo) => (photo.alt === '' ? { ...photo, alt: name } : photo))
 
 export async function generateMetadata({
   params,
