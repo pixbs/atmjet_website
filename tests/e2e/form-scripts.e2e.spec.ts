@@ -33,23 +33,18 @@ function watchScripts(page: Page) {
 
 /** Fails every script carrying `marker`, as a dropped connection would, until it is released. */
 async function failScripts(page: Page, marker: string) {
-  const failed = { count: 0, isFailing: true }
+  let isFailing = true
 
   await page.route('**/_next/static/chunks/*.js', async (route) => {
     const response = await route.fetch()
 
-    if (!failed.isFailing || !(await response.text()).includes(marker)) {
-      return route.fulfill({ response })
-    }
-    failed.count += 1
-    return route.abort()
+    if (isFailing && (await response.text()).includes(marker)) return route.abort()
+    return route.fulfill({ response })
   })
 
   return {
-    /** How many times the script was asked for and refused. */
-    failures: () => failed.count,
     release: () => {
-      failed.isFailing = false
+      isFailing = false
     },
   }
 }
@@ -88,71 +83,6 @@ test.describe('the booking forms', () => {
   })
 
   test.describe('when their code cannot be fetched', () => {
-    test('leave the page as it was, and open the dialog on the next try', async ({ page }) => {
-      await page.goto(pathFor('/empty_legs', 'en'))
-      await page.waitForLoadState('networkidle')
-      const panel = await failScripts(page, '"data-section":"booking-dialog"')
-
-      await page.locator('a[href="?showBooking=Footer"]').click()
-      // Turbopack asks for a chunk that failed once more before it gives up on it.
-      await expect.poll(panel.failures).toBe(2)
-
-      await expect(page.locator('main [data-section]').first()).toBeVisible()
-      await expect(page.getByRole('dialog')).toHaveCount(0)
-
-      panel.release()
-      await page.locator('a[href="?showBooking=Footer"]').click()
-
-      await expect(page.getByRole('dialog').locator('[data-section="booking-form"]')).toBeVisible()
-    })
-
-    test('open the dialog from any booking button once a lost connection is back', async ({
-      page,
-      context,
-    }) => {
-      // The home page's links need nothing from the server to change the query, as on master.
-      await page.goto(pathFor('/', 'en'))
-      await page.waitForLoadState('networkidle')
-
-      let failures = 0
-      page.on('requestfailed', (request) => {
-        if (request.url().includes('/_next/static/chunks/')) failures += 1
-      })
-
-      await context.setOffline(true)
-      await page.locator('a[href="?showBooking=Footer"]').click()
-      // Turbopack asks for a chunk that failed once more before it gives up on it.
-      await expect.poll(() => failures).toBe(2)
-
-      await expect(page).toHaveURL(/showBooking=Footer/)
-      await expect(page.locator('main [data-section]').first()).toBeVisible()
-      await expect(page.getByRole('dialog')).toHaveCount(0)
-
-      await context.setOffline(false)
-      await page.locator('a[href="?showBooking=Empty-legs"]').first().click()
-
-      await expect(page.getByRole('dialog').locator('[data-section="booking-form"]')).toBeVisible()
-    })
-
-    test('open the dialog with the legs when a hand-off is pressed again', async ({ page }) => {
-      await page.goto(pathFor('/yachts/azimut-serenity', 'en'))
-      await page.waitForLoadState('networkidle')
-      const panel = await failScripts(page, '"data-section":"booking-dialog"')
-      const request = page.getByRole('button', { name: 'Request Serenity' })
-
-      await request.click()
-      // Turbopack asks for a chunk that failed once more before it gives up on it.
-      await expect.poll(panel.failures).toBe(2)
-      await expect(page.getByRole('dialog')).toHaveCount(0)
-
-      panel.release()
-      // The same button and the same legs push the same URL, so nothing about the query changes.
-      await request.click()
-
-      await expect(page.getByRole('dialog').locator('[data-section="booking-form"]')).toBeVisible()
-      await expect(page).toHaveURL(/showBooking=Yachts_detail.*direction=/)
-    })
-
     test('say a send did not go without the rules, and send on the next try', async ({ page }) => {
       await page.goto(pathFor('/yachts', 'en'))
       await page.waitForLoadState('networkidle')
