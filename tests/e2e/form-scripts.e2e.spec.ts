@@ -33,17 +33,24 @@ function watchScripts(page: Page) {
 
 /** Fails every script carrying `marker`, as a dropped connection would, until it is released. */
 async function failScripts(page: Page, marker: string) {
-  let isFailing = true
+  const failed = { count: 0, isFailing: true }
 
   await page.route('**/_next/static/chunks/*.js', async (route) => {
     const response = await route.fetch()
 
-    if (isFailing && (await response.text()).includes(marker)) return route.abort()
-    return route.fulfill({ response })
+    if (!failed.isFailing || !(await response.text()).includes(marker)) {
+      return route.fulfill({ response })
+    }
+    failed.count += 1
+    return route.abort()
   })
 
-  return () => {
-    isFailing = false
+  return {
+    /** How many times the script was asked for and refused. */
+    failures: () => failed.count,
+    release: () => {
+      failed.isFailing = false
+    },
   }
 }
 
@@ -82,18 +89,19 @@ test.describe('the booking forms', () => {
 
   test.describe('when their code cannot be fetched', () => {
     test('leave the page as it was, and open the dialog on the next try', async ({ page }) => {
-      await page.goto(pathFor('/', 'en'))
+      await page.goto(pathFor('/empty_legs', 'en'))
       await page.waitForLoadState('networkidle')
-      const release = await failScripts(page, '"data-section":"booking-dialog"')
+      const panel = await failScripts(page, '"data-section":"booking-dialog"')
 
       await page.locator('a[href="?showBooking=Footer"]').click()
+      await expect.poll(panel.failures).toBeGreaterThan(0)
 
-      await expect(page).toHaveURL(/showBooking=Footer/)
-      await expect(page.locator('[data-section="hero-video"]')).toBeVisible()
+      // The query is taken back out, so pressing the same button again is a new opening.
+      await expect(page).not.toHaveURL(/showBooking/)
+      await expect(page.locator('main [data-section]').first()).toBeVisible()
       await expect(page.getByRole('dialog')).toHaveCount(0)
 
-      release()
-      await page.goBack()
+      panel.release()
       await page.locator('a[href="?showBooking=Footer"]').click()
 
       await expect(page.getByRole('dialog').locator('[data-section="booking-form"]')).toBeVisible()
@@ -102,7 +110,7 @@ test.describe('the booking forms', () => {
     test('say a send did not go without the rules, and send on the next try', async ({ page }) => {
       await page.goto(pathFor('/yachts', 'en'))
       await page.waitForLoadState('networkidle')
-      const release = await failScripts(page, LIBRARIES.zod)
+      const zod = await failScripts(page, LIBRARIES.zod)
       const form = contactForm(page)
 
       await form.getByRole('textbox', { name: 'Name' }).fill(`A caller ${Date.now().toString(36)}`)
@@ -114,7 +122,7 @@ test.describe('the booking forms', () => {
 
       await expect(form.getByRole('alert')).toHaveText('Something went wrong. Please try again.')
 
-      release()
+      zod.release()
       await form.getByRole('button', { name: 'Try again' }).click()
 
       await expect(page.locator('[data-section="contact-us"] [data-state="sent"]')).toBeVisible()
@@ -123,7 +131,7 @@ test.describe('the booking forms', () => {
     test('keep the phone field shut and asking, and format on the next try', async ({ page }) => {
       await page.goto(pathFor('/yachts', 'en'))
       await page.waitForLoadState('networkidle')
-      const release = await failScripts(page, LIBRARIES.phone)
+      const phone = await failScripts(page, LIBRARIES.phone)
       const form = contactForm(page)
       const field = form.getByRole('textbox', { name: 'Phone number' })
       const country = form.getByRole('button', { name: 'United Arab Emirates' })
@@ -134,7 +142,7 @@ test.describe('the booking forms', () => {
       await expect(country).toHaveAttribute('aria-expanded', 'false')
       await expect(form.getByRole('listbox')).toHaveCount(0)
 
-      release()
+      phone.release()
       await form.getByRole('textbox', { name: 'Name' }).focus()
       await field.focus()
 

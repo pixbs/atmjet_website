@@ -1,6 +1,6 @@
 'use client'
 
-import { useSearchParams } from 'next/navigation'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
 import type { PhoneInputProps } from '@/components/ui/phone-input'
@@ -38,22 +38,25 @@ type Panel = typeof import('./booking-dialog-panel').BookingDialogPanel
 
 export function BookingDialog(props: BookingDialogProps) {
   const isOpen = useSearchParams().has('showBooking')
+  const pathname = usePathname()
+  const router = useRouter()
   const [Panel, setPanel] = useState<Panel | null>(null)
 
-  // Closed on almost every visit, so the form, zod and the phone field load only once it opens.
-  // A panel that cannot be fetched leaves the page as it was, and the next opening asks again.
+  // Closed on almost every visit, so the panel loads once the query opens it, after hydration
+  // (ADR-0007); one that cannot be fetched takes the query out again, as `close()` does, so the
+  // next press of any booking button is an opening that asks for it again.
   useEffect(() => {
     if (!isOpen || Panel !== null) return
 
     let isCurrent = true
     import('./booking-dialog-panel').then(
       (panel) => isCurrent && setPanel(() => panel.BookingDialogPanel),
-      () => undefined,
+      () => isCurrent && router.replace(pathname, { scroll: false }),
     )
     return () => {
       isCurrent = false
     }
-  }, [isOpen, Panel])
+  }, [isOpen, Panel, pathname, router])
 
   return isOpen && Panel !== null ? <Panel {...props} /> : null
 }
