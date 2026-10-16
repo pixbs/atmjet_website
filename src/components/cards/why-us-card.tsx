@@ -51,14 +51,10 @@ export function WhyUsCard({ num, title, description, image, top, className }: Wh
       {image && (
         <Image
           alt={image.alt}
-          className="aspect-video w-full object-cover object-center lg:w-1/2"
+          className="aspect-video w-full shrink-0 object-cover object-center lg:w-1/2"
           height={1200}
-          /* Still 1200 wide for a 575-pixel box (issue #176), and what holds it there is the
-             narrower file rather than the `sizes` that would ask for one: declaring the box in
-             `sizes` moves sixteen captures, declaring it as the width moves two of the
-             styleguide's and not always the same way, and declaring 1200 in a corrected 16:9
-             moves none — so the file is what those captures are rasterised around, and a
-             baseline regenerated for a narrower one would not hold. */
+          /* `shrink-0` pins the box the 1200-wide file used to hold open, which `sizes` no longer does (issue #176). */
+          sizes="(min-width: 1024px) 50vw, 100vw"
           src={image.src}
           width={1200}
         />
