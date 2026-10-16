@@ -94,15 +94,42 @@ test.describe('the booking forms', () => {
       const panel = await failScripts(page, '"data-section":"booking-dialog"')
 
       await page.locator('a[href="?showBooking=Footer"]').click()
-      await expect.poll(panel.failures).toBeGreaterThan(0)
+      // Turbopack asks for a chunk that failed once more before it gives up on it.
+      await expect.poll(panel.failures).toBe(2)
 
-      // The query is taken back out, so pressing the same button again is a new opening.
-      await expect(page).not.toHaveURL(/showBooking/)
       await expect(page.locator('main [data-section]').first()).toBeVisible()
       await expect(page.getByRole('dialog')).toHaveCount(0)
 
       panel.release()
       await page.locator('a[href="?showBooking=Footer"]').click()
+
+      await expect(page.getByRole('dialog').locator('[data-section="booking-form"]')).toBeVisible()
+    })
+
+    test('open the dialog from any booking button once a lost connection is back', async ({
+      page,
+      context,
+    }) => {
+      // The home page's links need nothing from the server to change the query, as on master.
+      await page.goto(pathFor('/', 'en'))
+      await page.waitForLoadState('networkidle')
+
+      let failures = 0
+      page.on('requestfailed', (request) => {
+        if (request.url().includes('/_next/static/chunks/')) failures += 1
+      })
+
+      await context.setOffline(true)
+      await page.locator('a[href="?showBooking=Footer"]').click()
+      // Turbopack asks for a chunk that failed once more before it gives up on it.
+      await expect.poll(() => failures).toBe(2)
+
+      await expect(page).toHaveURL(/showBooking=Footer/)
+      await expect(page.locator('main [data-section]').first()).toBeVisible()
+      await expect(page.getByRole('dialog')).toHaveCount(0)
+
+      await context.setOffline(false)
+      await page.locator('a[href="?showBooking=Empty-legs"]').first().click()
 
       await expect(page.getByRole('dialog').locator('[data-section="booking-form"]')).toBeVisible()
     })

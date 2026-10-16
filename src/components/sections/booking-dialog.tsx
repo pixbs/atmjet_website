@@ -1,6 +1,6 @@
 'use client'
 
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
 import type { PhoneInputProps } from '@/components/ui/phone-input'
@@ -37,26 +37,36 @@ export interface BookingDialogProps {
 type Panel = typeof import('./booking-dialog-panel').BookingDialogPanel
 
 export function BookingDialog(props: BookingDialogProps) {
-  const isOpen = useSearchParams().has('showBooking')
-  const pathname = usePathname()
-  const router = useRouter()
+  const searchParams = useSearchParams()
+  const isOpen = searchParams.has('showBooking')
+  const query = searchParams.toString()
   const [Panel, setPanel] = useState<Panel | null>(null)
 
   // Closed on almost every visit, so the panel loads once the query opens it, after hydration
-  // (ADR-0007); one that cannot be fetched takes the query out again, as `close()` does, so the
-  // next press of any booking button is an opening that asks for it again.
+  // (ADR-0007); one that cannot be fetched leaves the page as it was, and the next press of any
+  // booking button, or the next change of the query, asks for it again without a navigation.
   useEffect(() => {
     if (!isOpen || Panel !== null) return
 
     let isCurrent = true
-    import('./booking-dialog-panel').then(
-      (panel) => isCurrent && setPanel(() => panel.BookingDialogPanel),
-      () => isCurrent && router.replace(pathname, { scroll: false }),
-    )
+    const load = () =>
+      import('./booking-dialog-panel').then(
+        (panel) => isCurrent && setPanel(() => panel.BookingDialogPanel),
+        () => undefined,
+      )
+    const retry = (event: MouseEvent) => {
+      if (event.target instanceof Element && event.target.closest('a[href*="showBooking="]')) {
+        void load()
+      }
+    }
+
+    void load()
+    document.addEventListener('click', retry)
     return () => {
       isCurrent = false
+      document.removeEventListener('click', retry)
     }
-  }, [isOpen, Panel, pathname, router])
+  }, [isOpen, Panel, query])
 
   return isOpen && Panel !== null ? <Panel {...props} /> : null
 }
