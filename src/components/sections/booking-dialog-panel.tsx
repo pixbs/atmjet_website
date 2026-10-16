@@ -15,6 +15,7 @@ import type { BookingDialogProps } from './booking-dialog'
 export function BookingDialogPanel({
   locale,
   defaultCountry,
+  flag,
   tags,
   social,
   phone,
@@ -88,6 +89,7 @@ export function BookingDialogPanel({
           </button>
           <BookingForm
             defaultCountry={defaultCountry}
+            flag={flag}
             formType="booking-dialog"
             locale={locale}
             tags={tags}

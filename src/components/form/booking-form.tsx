@@ -65,6 +65,7 @@ function elapsedSince(shownAt: number | null, sentAt: number | undefined): numbe
 export function BookingForm({
   locale,
   defaultCountry,
+  flag,
   formType,
   source,
   tags = [],
@@ -73,6 +74,7 @@ export function BookingForm({
   locale: Locale
   /** Where the phone field opens, resolved from the request on the server (issue #160). */
   defaultCountry: PhoneInputProps['defaultCountry']
+  flag: PhoneInputProps['flag']
   /** Which form this is, for the record the lead keeps (issue #68). */
   formType: (typeof LEAD_FORM_TYPES)[number]
   /** What the lead is traced back to where no button opened the form, as the inline one is. */
@@ -197,6 +199,7 @@ export function BookingForm({
             render={({ field }) => (
               <PhoneInput
                 defaultCountry={defaultCountry}
+                flag={flag}
                 id={`${chipId}-phone`}
                 invalid={shows('phone')}
                 label={t('phone')}

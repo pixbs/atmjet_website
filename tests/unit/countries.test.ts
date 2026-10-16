@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
-import { countries, countryName, defaultCountry } from '@/lib/countries'
+import { countries, defaultCountry } from '@/lib/countries'
+import { countryName } from '@/lib/country-name'
 
 /**
  * The countries the phone field offers (issue #160, `docs/legacy-inventory.md` sections 1.4 and
