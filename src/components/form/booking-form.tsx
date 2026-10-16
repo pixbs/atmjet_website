@@ -1,6 +1,5 @@
 'use client'
 
-import { zodResolver } from '@hookform/resolvers/zod'
 import { useTranslations } from 'next-intl'
 import { useId, useState, type BaseSyntheticEvent } from 'react'
 import { Controller, useForm } from 'react-hook-form'
@@ -8,9 +7,10 @@ import { Controller, useForm } from 'react-hook-form'
 import { Checkmark } from '@/components/icons'
 import { PhoneInput, type PhoneInputProps } from '@/components/ui/phone-input'
 import type { Locale } from '@/i18n/locales'
-import { bookingSchema, parseDirections, type Booking } from '@/lib/booking'
+import type { Booking } from '@/lib/booking'
 import { cn } from '@/lib/cn'
 import { submitLead } from '@/lib/data/leads'
+import { lazyZodResolver } from '@/lib/lazy-resolver'
 import type { LEAD_FORM_TYPES } from '@/lib/leads'
 import { HONEYPOT_FIELD } from '@/lib/spam'
 
@@ -36,6 +36,8 @@ const FIELD =
 
 const CHIP =
   'cursor-pointer rounded-full border border-graphite-700 px-5 py-2 font-semibold uppercase transition-colors hover:border-graphite-100 peer-checked:border-transparent peer-checked:bg-gold peer-checked:text-graphite-900'
+
+const resolver = lazyZodResolver(() => import('@/lib/booking').then((rules) => rules.bookingSchema))
 
 /**
  * How long the form was on screen before it was sent, measured between the moment it appeared
@@ -90,7 +92,7 @@ export function BookingForm({
     register,
     reset,
   } = useForm<Booking>({
-    resolver: zodResolver(bookingSchema),
+    resolver,
     // The legacy timing: a field is judged when it is left, not while it is being typed.
     mode: 'onBlur',
     defaultValues: { name: '', email: '', phone: '', tags: [] },
@@ -102,6 +104,7 @@ export function BookingForm({
     const query = new URLSearchParams(window.location.search)
     const form = event?.target as HTMLFormElement | undefined
     const honeypot = form?.elements.namedItem(HONEYPOT_FIELD)
+    const { parseDirections } = await import('@/lib/booking')
     const { ok } = await submitLead({
       values,
       formType,

@@ -1,6 +1,5 @@
 'use client'
 
-import { zodResolver } from '@hookform/resolvers/zod'
 import { useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
@@ -9,13 +8,9 @@ import { FormProvider, useFieldArray, useForm } from 'react-hook-form'
 import { buttonVariants } from '@/components/ui/button'
 import type { Locale } from '@/i18n/locales'
 import { cn } from '@/lib/cn'
-import {
-  emptyLeg,
-  flightRequestSchema,
-  handoffQuery,
-  MAX_LEGS,
-  type FlightRequest,
-} from '@/lib/flight-request'
+import type { FlightRequest } from '@/lib/flight-request'
+import { emptyLeg, handoffQuery, MAX_LEGS } from '@/lib/handoff'
+import { lazyZodResolver } from '@/lib/lazy-resolver'
 
 import { Direction } from './direction'
 
@@ -33,6 +28,10 @@ import { Direction } from './direction'
  */
 const SECONDARY = 'border border-graphite-800 bg-graphite-900 text-white'
 
+const resolver = lazyZodResolver(() =>
+  import('@/lib/flight-request').then((rules) => rules.flightRequestSchema),
+)
+
 export function RequestForm({
   locale,
   label,
@@ -49,7 +48,7 @@ export function RequestForm({
   const [isRoundTrip, setIsRoundTrip] = useState(false)
 
   const methods = useForm<FlightRequest>({
-    resolver: zodResolver(flightRequestSchema),
+    resolver,
     defaultValues: { legs: [emptyLeg()] },
   })
   const { control, handleSubmit } = methods

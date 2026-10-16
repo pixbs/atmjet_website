@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest'
 
 import { bookingSchema, submissionSchema } from '@/lib/booking'
-import { legSchema, MAX_LEGS } from '@/lib/flight-request'
+import { legSchema } from '@/lib/flight-request'
+import { MAX_LEGS } from '@/lib/handoff'
 import { LEAD_TAGS_MAX } from '@/lib/leads'
 import { leadMessage, readTelegramSettings } from '@/lib/telegram'
 import type { Lead } from '@/payload-types'
