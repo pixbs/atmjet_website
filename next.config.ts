@@ -63,4 +63,31 @@ const nextConfig: NextConfig = {
 /** Points next-intl at src/i18n/request.ts, which resolves the locale and loads its messages. */
 const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts')
 
-export default withNextIntl(withPayload(nextConfig, { devBundleServerPackages: false }))
+const config = withNextIntl(withPayload(nextConfig, { devBundleServerPackages: false }))
+
+/** The colour-scheme client hint `withPayload` sends on every path; only the admin reads it. */
+const CLIENT_HINT_HEADERS = ['Accept-CH', 'Critical-CH', 'Vary']
+
+/**
+ * Next merges every matching rule, so the hint is moved out of `withPayload`'s `/:path*` rule
+ * rather than overridden: `Critical-CH` makes Chrome render a public page's first visit twice
+ * (issue #453).
+ */
+export default {
+  ...config,
+  async headers() {
+    const rules = (await config.headers?.()) ?? []
+
+    return rules.flatMap((rule) => {
+      if (rule.source !== '/:path*') return [rule]
+
+      const isHint = (header: { key: string }) => CLIENT_HINT_HEADERS.includes(header.key)
+      const rest = rule.headers.filter((header) => !isHint(header))
+
+      return [
+        ...(rest.length ? [{ ...rule, headers: rest }] : []),
+        { ...rule, source: '/admin/:path*', headers: rule.headers.filter(isHint) },
+      ]
+    })
+  },
+} satisfies NextConfig
