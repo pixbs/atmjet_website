@@ -1,20 +1,20 @@
 'use client'
 
-import * as Flags from 'country-flag-icons/react/3x2'
 import type { CountryCode } from 'libphonenumber-js'
-import { useEffect, useId, useMemo, useRef, useState, type KeyboardEvent } from 'react'
+import {
+  useEffect,
+  useId,
+  useMemo,
+  useRef,
+  useState,
+  type KeyboardEvent,
+  type ReactNode,
+} from 'react'
 
 import type { Locale } from '@/i18n/locales'
 import { cn } from '@/lib/cn'
-import { countries, countryName, type Country } from '@/lib/countries'
-import {
-  countryForNumber,
-  formatPhone,
-  guardsThePlus,
-  isValidPhone,
-  matchesSearch,
-  numberForCountry,
-} from '@/lib/phone'
+import type { Country } from '@/lib/countries'
+import { countryName } from '@/lib/country-name'
 
 /**
  * The phone field of the booking form (issue #108, `docs/legacy-inventory.md` section 7.2): a
@@ -41,12 +41,24 @@ const PANEL =
 const OPTION =
   'flex cursor-pointer items-center gap-4 px-4 py-3 text-graphite-800 first:rounded-t-xl last:rounded-b-xl hover:bg-graphite-100'
 
+/** Fetched when the field is first reached, so libphonenumber and the flags load with it (#428). */
+const loadTools = () =>
+  Promise.all([
+    import('@/lib/phone'),
+    import('@/lib/countries'),
+    import('country-flag-icons/react/3x2'),
+  ]).then(([phone, { countries }, Flags]) => ({ ...phone, countries, Flags }))
+
+type Tools = Awaited<ReturnType<typeof loadTools>>
+
 export interface PhoneInputProps {
   id: string
   label: string
   locale: Locale
   /** Where the field opens, resolved from the request on the server (issue #160). */
   defaultCountry: CountryCode
+  /** The flag of `defaultCountry`, drawn on the server (`CountryFlag`). */
+  flag: ReactNode
   value?: string
   onChange?: (value: string) => void
   /** Told when the field is left, which is when a form built on it judges what is in it. */
@@ -69,6 +81,7 @@ export function PhoneInput({
   label,
   locale,
   defaultCountry,
+  flag,
   value,
   onChange,
   onBlur,
@@ -85,17 +98,49 @@ export function PhoneInput({
   const [active, setActive] = useState(0)
   const [isTouched, setIsTouched] = useState(false)
   const list = useRef<HTMLUListElement>(null)
+  const input = useRef<HTMLInputElement>(null)
+  const isLoading = useRef(false)
+  const [tools, setTools] = useState<Tools | null>(null)
 
   const number = value ?? own
-  const all = useMemo(() => countries(locale), [locale])
-  const shown = useMemo(() => all.filter((one) => matchesSearch(one, search)), [all, search])
-  const Flag = Flags[country]
-  const isWrong = invalid ?? (isTouched && number !== '' && number !== '+' && !isValidPhone(number))
+  const all = useMemo(() => tools?.countries(locale) ?? [], [tools, locale])
+  const shown = useMemo(
+    () => (tools === null ? [] : all.filter((one) => tools.matchesSearch(one, search))),
+    [all, search, tools],
+  )
+  const Flag = country === defaultCountry ? undefined : tools?.Flags[country]
+  const isWrong =
+    invalid ??
+    (isTouched && number !== '' && number !== '+' && tools !== null && !tools.isValidPhone(number))
   const optionId = (index: number) => `${listId}-${index}`
 
   const put = (next: string) => {
     setOwn(next)
     onChange?.(next)
+  }
+
+  const type = (loaded: Tools, typed: string) => {
+    const next = loaded.formatPhone(typed)
+    put(next)
+    setCountry(loaded.countryForNumber(next) ?? country)
+  }
+
+  const load = () => {
+    if (isLoading.current) return
+    isLoading.current = true
+    loadTools().then(
+      (loaded) => {
+        setTools(loaded)
+        // What was typed before they arrived is formatted as if they had been there all along.
+        const typed = input.current?.value ?? ''
+        if (typed !== '') type(loaded, typed)
+      },
+      () => {
+        // Not fetched: the list stays shut and the next focus, press or pointer asks again.
+        isLoading.current = false
+        setIsOpen(false)
+      },
+    )
   }
 
   useEffect(() => {
@@ -115,8 +160,9 @@ export function PhoneInput({
   }, [active, isOpen])
 
   const choose = (chosen: Country) => {
+    if (tools === null) return
     setCountry(chosen.iso)
-    put(numberForCountry(number, chosen.dialCode))
+    put(tools.numberForCountry(number, chosen.dialCode))
     setIsOpen(false)
     setSearch('')
     setActive(0)
@@ -143,7 +189,7 @@ export function PhoneInput({
       <label className="text-sm text-white" htmlFor={id}>
         {label}
       </label>
-      <div className="relative" ref={field}>
+      <div className="relative" onFocus={load} onPointerEnter={load} ref={field}>
         <input
           aria-invalid={isWrong || undefined}
           className={cn(
@@ -152,9 +198,8 @@ export function PhoneInput({
           )}
           id={id}
           onChange={(event) => {
-            const next = formatPhone(event.target.value)
-            put(next)
-            setCountry(countryForNumber(next) ?? country)
+            if (tools === null) put(event.target.value)
+            else type(tools, event.target.value)
           }}
           onBlur={() => {
             setIsTouched(true)
@@ -167,27 +212,29 @@ export function PhoneInput({
             const eats = event.key === 'Backspace' || event.key === 'Delete'
             if (
               eats &&
-              guardsThePlus(event.currentTarget.value, event.currentTarget.selectionStart)
+              tools?.guardsThePlus(event.currentTarget.value, event.currentTarget.selectionStart)
             )
               event.preventDefault()
           }}
+          ref={input}
           type="tel"
           value={number === '+' ? '' : number}
         />
         <button
-          aria-controls={isOpen ? listId : undefined}
-          aria-expanded={isOpen}
+          aria-controls={isOpen && tools !== null ? listId : undefined}
+          aria-expanded={isOpen && tools !== null}
           // What the button shows and what pressing it changes: the country, by its name.
           aria-label={countryName(country, locale)}
           className="absolute inset-y-0 left-0 flex flex-row items-center gap-2 rounded-none bg-transparent pl-4 hover:opacity-100"
           onClick={() => {
+            load()
             setIsOpen((open) => !open)
             setSearch('')
             setActive(0)
           }}
           type="button"
         >
-          {Flag && <Flag className="size-4" title={countryName(country, locale)} />}
+          {Flag ? <Flag className="size-4" title={countryName(country, locale)} /> : flag}
           <svg
             aria-hidden="true"
             className="size-3 text-graphite-700"
@@ -199,7 +246,7 @@ export function PhoneInput({
             <path d="m6 9 6 6 6-6" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </button>
-        {isOpen && (
+        {isOpen && tools !== null && (
           <div className={PANEL}>
             <input
               aria-activedescendant={shown[active] ? optionId(active) : undefined}
@@ -228,7 +275,7 @@ export function PhoneInput({
               tabIndex={0}
             >
               {shown.map((one, index) => {
-                const Icon = Flags[one.iso]
+                const Icon = tools.Flags[one.iso]
 
                 return (
                   <li

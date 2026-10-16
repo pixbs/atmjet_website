@@ -2,6 +2,8 @@ import { getCountries, getCountryCallingCode, type CountryCode } from 'libphonen
 
 import type { Locale } from '@/i18n/locales'
 
+import { displayNames } from './country-name'
+
 /**
  * The countries the phone field offers, and the one it opens on (issue #160,
  * `docs/legacy-inventory.md` sections 1.4 and 7.2).
@@ -30,14 +32,6 @@ export interface Country {
   dialCode: string
   /** In the language being read. */
   name: string
-}
-
-const displayNames = (locale: Locale) =>
-  new Intl.DisplayNames([locale, 'en'], { type: 'region', fallback: 'code' })
-
-/** A country's name in the language being read: `United Arab Emirates`, `ОАЭ`, `ОАЕ`. */
-export function countryName(iso: CountryCode, locale: Locale): string {
-  return displayNames(locale).of(iso) ?? iso
 }
 
 /**

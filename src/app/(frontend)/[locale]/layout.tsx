@@ -11,6 +11,7 @@ import { BookingDialog } from '@/components/sections/booking-dialog'
 import { CookieConsent } from '@/components/sections/cookie-consent'
 import { Footer } from '@/components/sections/footer'
 import { Header } from '@/components/sections/header'
+import { CountryFlag } from '@/components/ui/country-flag'
 import { JsonLd } from '@/components/ui/json-ld'
 import type { Locale } from '@/i18n/locales'
 import { defaultCountry } from '@/lib/countries'
@@ -91,6 +92,8 @@ export default async function LocaleLayout({
     social[network] === '' ? [] : [{ label: tSocial(network), href: social[network] }],
   )
 
+  const country = defaultCountry(null, locale as Locale)
+
   return (
     // The faces are variables on the root element, which is where the `@theme` tokens that
     // resolve `font-sans` and `font-serif` are read from (issue #51).
@@ -115,7 +118,8 @@ export default async function LocaleLayout({
                 shell (`docs/legacy-inventory.md` section 13, entry 98). */}
             <Suspense>
               <BookingDialog
-                defaultCountry={defaultCountry(null, locale as Locale)}
+                defaultCountry={country}
+                flag={<CountryFlag iso={country} locale={locale as Locale} />}
                 labels={{ title: tBooking('dialog'), close: tBooking('close') }}
                 locale={locale as Locale}
                 phone={contact && { label: contact.phone, href: telHref(contact.phone) }}

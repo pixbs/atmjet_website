@@ -1,0 +1,128 @@
+import type { Page } from '@playwright/test'
+
+import { expect, test } from './fixtures'
+import { pathFor } from './routes'
+
+/**
+ * The booking forms load their heaviest code only once a visitor uses them (issue #428): the
+ * phone library and its flags, and zod, were on the first load of every page, in the way of the
+ * largest paint.
+ *
+ * A chunk's name is a hash, so a library is known by a string only it ships: the metadata key of
+ * libphonenumber and the error code of zod.
+ */
+const LIBRARIES = { phone: 'country_calling_codes', zod: 'invalid_type' } as const
+
+type Library = keyof typeof LIBRARIES
+
+/** Which of the libraries the scripts this page has downloaded so far contain. */
+function watchScripts(page: Page) {
+  const seen = new Set<Library>()
+
+  page.on('response', async (response) => {
+    if (response.request().resourceType() !== 'script') return
+    const body = await response.text().catch(() => '')
+
+    for (const [library, marker] of Object.entries(LIBRARIES)) {
+      if (body.includes(marker)) seen.add(library as Library)
+    }
+  })
+
+  return seen
+}
+
+/** Fails every script carrying `marker`, as a dropped connection would, until it is released. */
+async function failScripts(page: Page, marker: string) {
+  let isFailing = true
+
+  await page.route('**/_next/static/chunks/*.js', async (route) => {
+    const response = await route.fetch()
+
+    if (isFailing && (await response.text()).includes(marker)) return route.abort()
+    return route.fulfill({ response })
+  })
+
+  return {
+    release: () => {
+      isFailing = false
+    },
+  }
+}
+
+/** Where the contact section's form is, on a page that ends with it. */
+const contactForm = (page: Page) =>
+  page.locator('[data-section="contact-us"] [data-section="booking-form"]')
+
+test.describe('the booking forms', () => {
+  for (const path of ['/', '/aircraft', '/aircraft/MOUSE', '/yachts']) {
+    test(`leave the phone library and zod off the first load of ${path}`, async ({ page }) => {
+      const seen = watchScripts(page)
+
+      await page.goto(pathFor(path, 'en'))
+      await page.waitForLoadState('networkidle')
+
+      expect([...seen]).toEqual([])
+    })
+  }
+
+  test('fetch them as soon as the contact form is used', async ({ page }) => {
+    const seen = watchScripts(page)
+    await page.goto(pathFor('/yachts', 'en'))
+    const form = page.locator('[data-section="contact-us"] [data-section="booking-form"]')
+
+    await form.getByRole('textbox', { name: 'Phone number' }).fill('971504589926')
+    await form.getByRole('textbox', { name: 'Name' }).focus()
+
+    // Formatted, and judged when it is left, as it was before the code was split off.
+    await expect(form.getByRole('textbox', { name: 'Phone number' })).toHaveValue(
+      '+971 50 458 9926',
+    )
+    await form.getByRole('textbox', { name: 'Email' }).focus()
+    await expect(form.getByText('Required')).toBeVisible()
+    await expect.poll(() => [...seen].sort()).toEqual(['phone', 'zod'])
+  })
+
+  test.describe('when their code cannot be fetched', () => {
+    test('say a send did not go without the rules, and send on the next try', async ({ page }) => {
+      await page.goto(pathFor('/yachts', 'en'))
+      await page.waitForLoadState('networkidle')
+      const zod = await failScripts(page, LIBRARIES.zod)
+      const form = contactForm(page)
+
+      await form.getByRole('textbox', { name: 'Name' }).fill(`A caller ${Date.now().toString(36)}`)
+      await form.getByRole('textbox', { name: 'Phone number' }).fill('971504589926')
+      await form.getByRole('textbox', { name: 'Email' }).fill('caller@example.com')
+      // The action refuses a form sent faster than a person fills one in (issue #157).
+      await page.waitForTimeout(2_500)
+      await form.getByRole('button', { name: 'Send' }).click()
+
+      await expect(form.getByRole('alert')).toHaveText('Something went wrong. Please try again.')
+
+      zod.release()
+      await form.getByRole('button', { name: 'Try again' }).click()
+
+      await expect(page.locator('[data-section="contact-us"] [data-state="sent"]')).toBeVisible()
+    })
+
+    test('keep the phone field shut and asking, and format on the next try', async ({ page }) => {
+      await page.goto(pathFor('/yachts', 'en'))
+      await page.waitForLoadState('networkidle')
+      const phone = await failScripts(page, LIBRARIES.phone)
+      const form = contactForm(page)
+      const field = form.getByRole('textbox', { name: 'Phone number' })
+      const country = form.getByRole('button', { name: 'United Arab Emirates' })
+
+      await field.fill('971504589926')
+      await country.click()
+
+      await expect(country).toHaveAttribute('aria-expanded', 'false')
+      await expect(form.getByRole('listbox')).toHaveCount(0)
+
+      phone.release()
+      await form.getByRole('textbox', { name: 'Name' }).focus()
+      await field.focus()
+
+      await expect(field).toHaveValue('+971 50 458 9926')
+    })
+  })
+})

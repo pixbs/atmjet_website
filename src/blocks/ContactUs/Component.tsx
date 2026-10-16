@@ -3,6 +3,7 @@ import { getTranslations } from 'next-intl/server'
 import { BookingForm } from '@/components/form/booking-form'
 import { ArrowTr } from '@/components/icons'
 import { Reveal } from '@/components/motion/reveal'
+import { CountryFlag } from '@/components/ui/country-flag'
 import type { Locale } from '@/i18n/locales'
 import { cn } from '@/lib/cn'
 import { defaultCountry } from '@/lib/countries'
@@ -41,6 +42,9 @@ export interface ContactUsProps {
 }
 
 export async function ContactUs({ telegram, whatsapp, hours, source, locale }: ContactUsProps) {
+  // Where the phone field opens: the home country of the language, until the request can say
+  // where the visitor is (issue #160).
+  const country = defaultCountry(null, locale)
   const [social, contact, t] = await Promise.all([
     getSocialLinks(),
     getSiteContact(),
@@ -78,9 +82,8 @@ export async function ContactUs({ telegram, whatsapp, hours, source, locale }: C
         <div className="gap-10 lg:flex-row">
           <Reveal className="card w-full p-10 lg:w-2/3 lg:p-16" once variants={contactBlock(0.6)}>
             <BookingForm
-              // Where the phone field opens: the home country of the language, until the
-              // request can say where the visitor is (issue #160).
-              defaultCountry={defaultCountry(null, locale)}
+              defaultCountry={country}
+              flag={<CountryFlag iso={country} locale={locale} />}
               formType="contact-us-inline"
               locale={locale}
               source={source}
