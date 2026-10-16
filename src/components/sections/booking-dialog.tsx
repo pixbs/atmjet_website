@@ -43,8 +43,8 @@ export function BookingDialog(props: BookingDialogProps) {
   const [Panel, setPanel] = useState<Panel | null>(null)
 
   // Closed on almost every visit, so the panel loads once the query opens it, after hydration
-  // (ADR-0007); one that cannot be fetched leaves the page as it was, and the next press of any
-  // booking button, or the next change of the query, asks for it again without a navigation.
+  // (ADR-0007); one that cannot be fetched leaves the page as it was, and the next press of
+  // anything, or the next change of the query, asks for it again without a navigation.
   useEffect(() => {
     if (!isOpen || Panel !== null) return
 
@@ -54,11 +54,7 @@ export function BookingDialog(props: BookingDialogProps) {
         (panel) => isCurrent && setPanel(() => panel.BookingDialogPanel),
         () => undefined,
       )
-    const retry = (event: MouseEvent) => {
-      if (event.target instanceof Element && event.target.closest('a[href*="showBooking="]')) {
-        void load()
-      }
-    }
+    const retry = () => void load()
 
     void load()
     document.addEventListener('click', retry)

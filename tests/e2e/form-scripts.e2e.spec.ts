@@ -134,6 +134,25 @@ test.describe('the booking forms', () => {
       await expect(page.getByRole('dialog').locator('[data-section="booking-form"]')).toBeVisible()
     })
 
+    test('open the dialog with the legs when a hand-off is pressed again', async ({ page }) => {
+      await page.goto(pathFor('/yachts/azimut-serenity', 'en'))
+      await page.waitForLoadState('networkidle')
+      const panel = await failScripts(page, '"data-section":"booking-dialog"')
+      const request = page.getByRole('button', { name: 'Request Serenity' })
+
+      await request.click()
+      // Turbopack asks for a chunk that failed once more before it gives up on it.
+      await expect.poll(panel.failures).toBe(2)
+      await expect(page.getByRole('dialog')).toHaveCount(0)
+
+      panel.release()
+      // The same button and the same legs push the same URL, so nothing about the query changes.
+      await request.click()
+
+      await expect(page.getByRole('dialog').locator('[data-section="booking-form"]')).toBeVisible()
+      await expect(page).toHaveURL(/showBooking=Yachts_detail.*direction=/)
+    })
+
     test('say a send did not go without the rules, and send on the next try', async ({ page }) => {
       await page.goto(pathFor('/yachts', 'en'))
       await page.waitForLoadState('networkidle')
