@@ -128,12 +128,19 @@ export function PhoneInput({
   const load = () => {
     if (isLoading.current) return
     isLoading.current = true
-    void loadTools().then((loaded) => {
-      setTools(loaded)
-      // What was typed before they arrived is formatted as if they had been there all along.
-      const typed = input.current?.value ?? ''
-      if (typed !== '') type(loaded, typed)
-    })
+    loadTools().then(
+      (loaded) => {
+        setTools(loaded)
+        // What was typed before they arrived is formatted as if they had been there all along.
+        const typed = input.current?.value ?? ''
+        if (typed !== '') type(loaded, typed)
+      },
+      () => {
+        // Not fetched: the list stays shut and the next focus, press or pointer asks again.
+        isLoading.current = false
+        setIsOpen(false)
+      },
+    )
   }
 
   useEffect(() => {
@@ -214,8 +221,8 @@ export function PhoneInput({
           value={number === '+' ? '' : number}
         />
         <button
-          aria-controls={isOpen ? listId : undefined}
-          aria-expanded={isOpen}
+          aria-controls={isOpen && tools !== null ? listId : undefined}
+          aria-expanded={isOpen && tools !== null}
           // What the button shows and what pressing it changes: the country, by its name.
           aria-label={countryName(country, locale)}
           className="absolute inset-y-0 left-0 flex flex-row items-center gap-2 rounded-none bg-transparent pl-4 hover:opacity-100"

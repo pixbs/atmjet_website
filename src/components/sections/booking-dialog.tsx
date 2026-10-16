@@ -1,7 +1,7 @@
 'use client'
 
-import dynamic from 'next/dynamic'
 import { useSearchParams } from 'next/navigation'
+import { useEffect, useState } from 'react'
 
 import type { PhoneInputProps } from '@/components/ui/phone-input'
 import type { Locale } from '@/i18n/locales'
@@ -34,11 +34,26 @@ export interface BookingDialogProps {
   labels: { title: string; close: string }
 }
 
-const BookingDialogPanel = dynamic(() =>
-  import('./booking-dialog-panel').then((panel) => panel.BookingDialogPanel),
-)
+type Panel = typeof import('./booking-dialog-panel').BookingDialogPanel
 
 export function BookingDialog(props: BookingDialogProps) {
+  const isOpen = useSearchParams().has('showBooking')
+  const [Panel, setPanel] = useState<Panel | null>(null)
+
   // Closed on almost every visit, so the form, zod and the phone field load only once it opens.
-  return useSearchParams().has('showBooking') ? <BookingDialogPanel {...props} /> : null
+  // A panel that cannot be fetched leaves the page as it was, and the next opening asks again.
+  useEffect(() => {
+    if (!isOpen || Panel !== null) return
+
+    let isCurrent = true
+    import('./booking-dialog-panel').then(
+      (panel) => isCurrent && setPanel(() => panel.BookingDialogPanel),
+      () => undefined,
+    )
+    return () => {
+      isCurrent = false
+    }
+  }, [isOpen, Panel])
+
+  return isOpen && Panel !== null ? <Panel {...props} /> : null
 }

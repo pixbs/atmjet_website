@@ -31,6 +31,26 @@ function watchScripts(page: Page) {
   return seen
 }
 
+/** Fails every script carrying `marker`, as a dropped connection would, until it is released. */
+async function failScripts(page: Page, marker: string) {
+  let isFailing = true
+
+  await page.route('**/_next/static/chunks/*.js', async (route) => {
+    const response = await route.fetch()
+
+    if (isFailing && (await response.text()).includes(marker)) return route.abort()
+    return route.fulfill({ response })
+  })
+
+  return () => {
+    isFailing = false
+  }
+}
+
+/** Where the contact section's form is, on a page that ends with it. */
+const contactForm = (page: Page) =>
+  page.locator('[data-section="contact-us"] [data-section="booking-form"]')
+
 test.describe('the booking forms', () => {
   for (const path of ['/', '/aircraft', '/aircraft/MOUSE', '/yachts']) {
     test(`leave the phone library and zod off the first load of ${path}`, async ({ page }) => {
@@ -58,5 +78,67 @@ test.describe('the booking forms', () => {
     await form.getByRole('textbox', { name: 'Email' }).focus()
     await expect(form.getByText('Required')).toBeVisible()
     await expect.poll(() => [...seen].sort()).toEqual(['phone', 'zod'])
+  })
+
+  test.describe('when their code cannot be fetched', () => {
+    test('leave the page as it was, and open the dialog on the next try', async ({ page }) => {
+      await page.goto(pathFor('/', 'en'))
+      await page.waitForLoadState('networkidle')
+      const release = await failScripts(page, '"data-section":"booking-dialog"')
+
+      await page.locator('a[href="?showBooking=Footer"]').click()
+
+      await expect(page).toHaveURL(/showBooking=Footer/)
+      await expect(page.locator('[data-section="hero-video"]')).toBeVisible()
+      await expect(page.getByRole('dialog')).toHaveCount(0)
+
+      release()
+      await page.goBack()
+      await page.locator('a[href="?showBooking=Footer"]').click()
+
+      await expect(page.getByRole('dialog').locator('[data-section="booking-form"]')).toBeVisible()
+    })
+
+    test('say a send did not go without the rules, and send on the next try', async ({ page }) => {
+      await page.goto(pathFor('/yachts', 'en'))
+      await page.waitForLoadState('networkidle')
+      const release = await failScripts(page, LIBRARIES.zod)
+      const form = contactForm(page)
+
+      await form.getByRole('textbox', { name: 'Name' }).fill(`A caller ${Date.now().toString(36)}`)
+      await form.getByRole('textbox', { name: 'Phone number' }).fill('971504589926')
+      await form.getByRole('textbox', { name: 'Email' }).fill('caller@example.com')
+      // The action refuses a form sent faster than a person fills one in (issue #157).
+      await page.waitForTimeout(2_500)
+      await form.getByRole('button', { name: 'Send' }).click()
+
+      await expect(form.getByRole('alert')).toHaveText('Something went wrong. Please try again.')
+
+      release()
+      await form.getByRole('button', { name: 'Try again' }).click()
+
+      await expect(page.locator('[data-section="contact-us"] [data-state="sent"]')).toBeVisible()
+    })
+
+    test('keep the phone field shut and asking, and format on the next try', async ({ page }) => {
+      await page.goto(pathFor('/yachts', 'en'))
+      await page.waitForLoadState('networkidle')
+      const release = await failScripts(page, LIBRARIES.phone)
+      const form = contactForm(page)
+      const field = form.getByRole('textbox', { name: 'Phone number' })
+      const country = form.getByRole('button', { name: 'United Arab Emirates' })
+
+      await field.fill('971504589926')
+      await country.click()
+
+      await expect(country).toHaveAttribute('aria-expanded', 'false')
+      await expect(form.getByRole('listbox')).toHaveCount(0)
+
+      release()
+      await form.getByRole('textbox', { name: 'Name' }).focus()
+      await field.focus()
+
+      await expect(field).toHaveValue('+971 50 458 9926')
+    })
   })
 })

@@ -167,7 +167,10 @@ export function BookingForm({
         data-section="booking-form"
         // The legacy form asked the browser not to validate it: the rules are zod's.
         noValidate
-        onSubmit={handleSubmit(submit)}
+        // Rules that could not be fetched are a send that did not go, and the button says so.
+        onSubmit={handleSubmit(submit, (errors) => {
+          if (errors.root !== undefined) setHasFailed(true)
+        })}
         ref={noteShown}
       >
         {/* The honeypot (issue #157): out of the page for a person and out of the tab order, so

@@ -28,4 +28,17 @@ describe('a resolver that fetches its schema', () => {
 
     expect(await lazy(values, undefined, options)).toEqual({ values, errors: {} })
   })
+
+  it('says the rules are missing when they cannot be fetched, and asks again next time', async () => {
+    const values = { name: '', email: 'nobody', phone: '+971', tags: [] }
+    let calls = 0
+    const flaky = lazyZodResolver(() =>
+      ++calls === 1 ? Promise.reject(new Error('offline')) : Promise.resolve(bookingSchema),
+    )
+
+    expect((await flaky(values, undefined, options)).errors).toEqual({
+      root: { type: 'unavailable' },
+    })
+    expect(await flaky(values, undefined, options)).toEqual(await eager(values, undefined, options))
+  })
 })
