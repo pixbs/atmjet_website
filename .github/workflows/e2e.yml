@@ -147,17 +147,26 @@ jobs:
         # layout is told by the section only it renders (`src/app/(frontend)/[locale]/aircraft/[id]/page.tsx`).
         run: |
           get() { curl -s ${VERCEL_AUTOMATION_BYPASS_SECRET:+-H "x-vercel-protection-bypass: $VERCEL_AUTOMATION_BYPASS_SECRET"} "$@"; }
-          draws() { [[ "$(get "$BASE_URL$1")" == *"data-section=\"aircraft-$2\""* ]]; }
-          gallery=""
-          for path in $(get -L "$BASE_URL/en/aircraft" | grep -o 'href="/en/aircraft/[^"]*"' | cut -d'"' -f2); do
-            if draws "$path" detail; then gallery="$path"; break; fi
-          done
+          # Asked twice, as a page rendered on a cold database answers with a redirect to the listing.
+          draws() { for _ in 1 2; do [[ "$(get "$BASE_URL$1")" == *"data-section=\"aircraft-$2\""* ]] && return; sleep 5; done; false; }
+          # The gallery page is pinned, as its image weight is the photographs' and the listing
+          # puts the newest aircraft first (`docs/performance-baseline.md`).
+          gallery=/en/aircraft/vh-bsm
+          if ! draws "$gallery" detail; then
+            echo "::warning::$gallery does not draw the gallery layout, so the first listing card that does is audited"
+            gallery=""
+            for path in $(get -L "$BASE_URL/en/aircraft" | grep -o 'href="/en/aircraft/[^"]*"' | cut -d'"' -f2); do
+              if draws "$path" detail; then gallery="$path"; break; fi
+            done
+          fi
           # No card links to the basic layout, which is an aircraft without photographs: the legacy
           # baseline's own `UPM-018` where the import brought it, else the seed's `GATMB`.
-          basic=""
-          for path in /en/aircraft/UPM-018 /en/aircraft/GATMB; do
-            if draws "$path" basic; then basic="$path"; break; fi
-          done
+          basic=/en/aircraft/UPM-018
+          if ! draws "$basic" basic; then
+            echo "::warning::$basic does not draw the basic layout, so the seed's GATMB is audited"
+            basic=/en/aircraft/GATMB
+            draws "$basic" basic || basic=""
+          fi
           if [ -z "$gallery" ]; then echo "::error::no aircraft on the listing draws the gallery layout"; exit 1; fi
           if [ -z "$basic" ]; then echo "::error::neither UPM-018 nor GATMB answers in the basic layout"; exit 1; fi
           echo "Auditing $basic (basic) and $gallery (gallery)"

@@ -40,8 +40,26 @@ card (`docs/legacy-inventory.md` section 12).
 
 ## The budgets
 
-`lighthouserc.cjs` asserts two tiers on desktop, the form factor its runs use, for each of the four
+`lighthouserc.cjs` asserts two tiers on desktop, the form factor its runs use, for each of the five
 pages. TBT stands in for INP, which a lab run cannot measure.
+
+The `lighthouse` job audits the home page, the aircraft listing, the yachts page and two aircraft
+pages, one per layout (issue #428), each checked by the section only that layout renders:
+
+- **Basic layout:** `UPM-018`, the legacy row's own aircraft, or, with a warning, the seed's
+  `GATMB` where the deployment has not imported it. No listing card links to the basic layout, because the listing
+  needs a photograph. It is held to the `UPM-018` row above.
+- **Gallery layout:** `vh-bsm`, or, with a warning, the first listing card that draws a gallery. It
+  is pinned because its image weight is that of its photographs (the hero alone weighs 43 to
+  268 KiB from one aircraft to the next) and the listing shows the newest aircraft first.
+
+The job fails if either page is missing. A local run audits the seed's `GATMB` and `MOUSE`.
+
+The legacy never measured a gallery page, so that page has a budget of its own. **A page the legacy
+never had gets the CI maximum plus 20% for the weight it adds, and the legacy detail page's numbers
+where layout does not matter.** For `vh-bsm`, images may weigh 360 KiB (the CI maximum was 301 KiB
+over 21 audits from 2026-10-14 to 2026-10-16, 150 of them the footer photograph the runner loads
+lazily). Its total weight, LCP and TBT keep the `UPM-018` numbers.
 
 - **Errors: no worse than legacy.** Total byte weight and image weight may not exceed the desktop
   row above. LCP and TBT may not exceed the legacy number or Lighthouse's own "good" (1200 ms and
@@ -74,4 +92,5 @@ of three), with the seed's content and pictures:
 Every weight, TBT, CLS and category budget passed. On each page the largest paint is a heading
 that enters with the legacy's own animation once the page has hydrated, so the gap is the time to
 hydrate rather than the markup. The staging detail page is a catalogue aircraft with its gallery,
-where the legacy row is the basic layout, so that row compares two different pages.
+where the legacy row is the basic layout, so that row compared two different pages until each
+layout was audited on its own (issue #428).

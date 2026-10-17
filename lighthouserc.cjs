@@ -35,6 +35,12 @@ const LEGACY = [
   { page: '/en/yachts/?$', lcp: 911, tbt: 72, bytes: 1805, images: 818 },
 ]
 
+/**
+ * `vh-bsm`, the gallery layout the legacy was never measured on: the legacy detail page's numbers,
+ * and its images at the CI maximum plus 20% (`docs/performance-baseline.md`, issue #428).
+ */
+const GALLERY_BUDGET = { page: `${GALLERY}/?$`, lcp: 674, tbt: 30, bytes: 1080, images: 360 }
+
 module.exports = {
   ci: {
     collect: {
@@ -66,7 +72,7 @@ module.exports = {
             'total-byte-weight': ['warn', { maxNumericValue: 2667 * KIB }],
           },
         },
-        ...LEGACY.flatMap(({ page, lcp, tbt, bytes, images }) => [
+        ...[...LEGACY, GALLERY_BUDGET].flatMap(({ page, lcp, tbt, bytes, images }) => [
           {
             matchingUrlPattern: page,
             assertions: {
