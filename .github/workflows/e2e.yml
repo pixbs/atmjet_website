@@ -143,18 +143,46 @@ jobs:
           ref: ${{ needs.gate.outputs.sha }}
       - name: Pages to audit
         id: pages
-        # The detail page is the listing's first card, so it is one the deployment really has.
+        # One aircraft page per layout, each one the deployment really draws in it (issue #428): a
+        # layout is told by the section only it renders (`src/app/(frontend)/[locale]/aircraft/[id]/page.tsx`).
         run: |
-          detail="$(curl -sL ${VERCEL_AUTOMATION_BYPASS_SECRET:+-H "x-vercel-protection-bypass: $VERCEL_AUTOMATION_BYPASS_SECRET"} \
-            "$BASE_URL/en/aircraft" | grep -o 'href="/en/aircraft/[^"]*"' | head -1 | cut -d'"' -f2)"
-          if [ -z "$detail" ]; then echo "::error::the aircraft listing links to no aircraft"; exit 1; fi
-          echo "detail=$detail" >> "$GITHUB_OUTPUT"
+          get() { curl -s ${VERCEL_AUTOMATION_BYPASS_SECRET:+-H "x-vercel-protection-bypass: $VERCEL_AUTOMATION_BYPASS_SECRET"} "$@"; }
+          # Asked twice, as a page rendered on a cold database answers with a redirect to the listing.
+          draws() { for _ in 1 2; do [[ "$(get "$BASE_URL$1")" == *"data-section=\"aircraft-$2\""* ]] && return; sleep 5; done; false; }
+          # The gallery page is pinned, as its image weight is the photographs' and the listing
+          # puts the newest aircraft first (`docs/performance-baseline.md`).
+          gallery=/en/aircraft/vh-bsm
+          if ! draws "$gallery" detail; then
+            echo "::warning::$gallery does not draw the gallery layout, so the first listing card that does is audited"
+            gallery=""
+            for path in $(get -L "$BASE_URL/en/aircraft" | grep -o 'href="/en/aircraft/[^"]*"' | cut -d'"' -f2); do
+              if draws "$path" detail; then gallery="$path"; break; fi
+            done
+          fi
+          # No card links to the basic layout, which is an aircraft without photographs: the legacy
+          # baseline's own `UPM-018` where the import brought it, else the seed's `GATMB`.
+          basic=/en/aircraft/UPM-018
+          if ! draws "$basic" basic; then
+            echo "::warning::$basic does not draw the basic layout, so the seed's GATMB is audited"
+            basic=/en/aircraft/GATMB
+            draws "$basic" basic || basic=""
+          fi
+          if [ -z "$gallery" ]; then echo "::error::no aircraft on the listing draws the gallery layout"; exit 1; fi
+          if [ -z "$basic" ]; then echo "::error::neither UPM-018 nor GATMB answers in the basic layout"; exit 1; fi
+          echo "Auditing $basic (basic) and $gallery (gallery)"
+          echo "basic=$basic" >> "$GITHUB_OUTPUT"
+          echo "gallery=$gallery" >> "$GITHUB_OUTPUT"
       - uses: treosh/lighthouse-ci-action@3e7e23fb74242897f95c0ba9cabad3d0227b9b18 # 12.6.2
+        env:
+          # The rows of `lighthouserc.cjs` that budget each layout match on these paths.
+          LHCI_BASIC_AIRCRAFT: ${{ steps.pages.outputs.basic }}
+          LHCI_GALLERY_AIRCRAFT: ${{ steps.pages.outputs.gallery }}
         with:
           urls: |
             ${{ env.BASE_URL }}/en
             ${{ env.BASE_URL }}/en/aircraft
-            ${{ env.BASE_URL }}${{ steps.pages.outputs.detail }}
+            ${{ env.BASE_URL }}${{ steps.pages.outputs.basic }}
+            ${{ env.BASE_URL }}${{ steps.pages.outputs.gallery }}
             ${{ env.BASE_URL }}/en/yachts
           runs: 3
           configPath: ./lighthouserc.cjs

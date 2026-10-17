@@ -8,6 +8,13 @@ const bypass = process.env.VERCEL_AUTOMATION_BYPASS_SECRET
 const KIB = 1024
 
 /**
+ * One aircraft page per layout (issue #428): the `lighthouse` job passes the ones it found on the
+ * deployment, and a local run audits the seed's, `GATMB` unphotographed and `MOUSE` with a gallery.
+ */
+const BASIC = process.env.LHCI_BASIC_AIRCRAFT || '/en/aircraft/GATMB'
+const GALLERY = process.env.LHCI_GALLERY_AIRCRAFT || '/en/aircraft/MOUSE'
+
+/**
  * The legacy site's desktop medians in milliseconds and KiB, the preset every run of this config
  * uses (`docs/performance-baseline.md`, issue #43): no page may do worse. TBT stands in for INP,
  * which a lab run cannot measure. CLS is not here: the legacy shifted by 0.93 and more, and the
@@ -23,15 +30,22 @@ const GOOD = { lcp: 1200, tbt: 150 }
 const LEGACY = [
   { page: '/en/?$', lcp: 944, tbt: 33, bytes: 14297, images: 338 },
   { page: '/en/aircraft/?$', lcp: 1681, tbt: 32, bytes: 19771, images: 18843 },
-  { page: '/en/aircraft/[^/]+/?$', lcp: 674, tbt: 30, bytes: 1080, images: 160 },
+  // `UPM-018`, the basic layout.
+  { page: `${BASIC}/?$`, lcp: 674, tbt: 30, bytes: 1080, images: 160 },
   { page: '/en/yachts/?$', lcp: 911, tbt: 72, bytes: 1805, images: 818 },
 ]
+
+/**
+ * `vh-bsm`, the gallery layout the legacy was never measured on: the legacy detail page's numbers,
+ * and its images at the CI maximum plus 20% (`docs/performance-baseline.md`, issue #428).
+ */
+const GALLERY_BUDGET = { page: `${GALLERY}/?$`, lcp: 674, tbt: 30, bytes: 1080, images: 360 }
 
 module.exports = {
   ci: {
     collect: {
-      // The four pages of the budgets; `MOUSE` is the seeded aircraft (`bun run seed`).
-      url: ['/en', '/en/aircraft', '/en/aircraft/MOUSE', '/en/yachts'].map(
+      // The pages of the budgets, with the seeded aircraft (`bun run seed`).
+      url: ['/en', '/en/aircraft', BASIC, GALLERY, '/en/yachts'].map(
         (path) => `http://localhost:3000${path}`,
       ),
       numberOfRuns: 1,
@@ -58,7 +72,7 @@ module.exports = {
             'total-byte-weight': ['warn', { maxNumericValue: 2667 * KIB }],
           },
         },
-        ...LEGACY.flatMap(({ page, lcp, tbt, bytes, images }) => [
+        ...[...LEGACY, GALLERY_BUDGET].flatMap(({ page, lcp, tbt, bytes, images }) => [
           {
             matchingUrlPattern: page,
             assertions: {
