@@ -1,5 +1,10 @@
 import { afterAll, beforeEach, describe, expect, it, vi } from 'vitest'
 
+// Loading Payload cold outlasts the 5 s test timeout under the full parallel run (issue #462), so it
+// loads here at collection, as through `tests/helpers/payload.ts` elsewhere, leaving each case only
+// the config.
+import '@/payload.config'
+
 /**
  * Where Payload thinks this deployment answers (issue #265).
  *
