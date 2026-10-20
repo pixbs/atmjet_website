@@ -27,7 +27,7 @@ Settings that cannot live in code. Tick them in the epic issue (#3) as they are 
 - [ ] Workflow permissions: read repository contents (workflows declare what they need: `conventions` and `scrub comments` request `pull-requests: write` to remove tool footers).
 - [ ] Variables (Settings → Secrets and variables → Actions → Variables):
   - `STAGING_URL`: the new Vercel project's staging URL (target of the nightly and master `e2e` runs)
-- [ ] Secrets: `VERCEL_AUTOMATION_BYPASS_SECRET` (Vercel → Deployment Protection → Protection Bypass for Automation) so the browser tier can reach protected previews.
+- [x] Secrets: `VERCEL_AUTOMATION_BYPASS_SECRET` (Vercel → Deployment Protection → Protection Bypass for Automation) so the browser tier can reach protected previews.
 - [ ] Secret `DATABASE_URL`: the connection string of the database the staging deployment reads, so the `e2e` browser job can create the administrator it signs in as (#17).
 - [ ] Run the `labels` workflow once (`workflow_dispatch`) to normalise label colours and descriptions.
 - [ ] After the first merge, run the `e2e` workflow once with `workflow_dispatch` against the staging URL; its triggers only fire from the default branch.
