@@ -1,5 +1,7 @@
 import { z } from 'zod'
 
+import { MAX_LEGS } from './handoff'
+
 /**
  * The flight request a visitor builds before anyone asks their name (issue #151,
  * `docs/legacy-inventory.md` sections 7.1 and 7.6): one to four legs, or one leg there and back.
@@ -9,9 +11,6 @@ import { z } from 'zod'
  * the legacy form rendered no errors at all, so an invalid submit did nothing and said nothing
  * (section 13, entry 64).
  */
-
-/** The most legs the legacy form offered to add. */
-export const MAX_LEGS = 4
 
 /**
  * What a leg may carry. The legacy schema bounded none of it, which matters once a leg is on its
@@ -60,25 +59,6 @@ export const directionSchema = legSchema.partial().extend({
 })
 
 export type Direction = z.infer<typeof directionSchema>
-
-/** What a leg starts as: one passenger and nothing else, as the legacy default did. */
-export const emptyLeg = (): FlightLeg => ({ from: '', to: '', date: '', passengers: 1 })
-
-/**
- * Where the form sends a visitor once the legs are filled in: the page they are on, with the
- * query the booking dialog of E6.6 opens on (`docs/legacy-inventory.md` section 7.6).
- *
- * The legs travel as JSON in the query, as they did on the legacy site, so the dialog reads
- * them without a round trip to the server; `returnDate` is left out where it is empty rather
- * than sent as `""`, which is what the legacy round-trip form did to a one-way leg.
- */
-export function handoffQuery(legs: readonly Direction[], source = 'Flight_request'): string {
-  const direction = legs.map((leg) =>
-    Object.fromEntries(Object.entries(leg).filter(([, value]) => value !== '')),
-  )
-
-  return `?showBooking=${source}&direction=${encodeURIComponent(JSON.stringify(direction))}`
-}
 
 /** The two detail pages that hand a leg to the dialog, as a lead records them. */
 const DETAIL_PAGES = { aircraft: 'Aircraft_detail', yacht: 'Yachts_detail' } as const

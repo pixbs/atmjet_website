@@ -5,6 +5,7 @@ import { AnimatePresence, m } from 'motion/react'
 import { useTranslations } from 'next-intl'
 import { useEffect, useState, useSyncExternalStore } from 'react'
 
+import { Link } from '@/i18n/navigation'
 import {
   ACCEPT_ALL,
   consentCookies,
@@ -116,10 +117,14 @@ export function CookieConsent({ gtmId }: { gtmId?: string }) {
             variants={banner}
           >
             <div className="container flex-row! flex-wrap gap-6 rounded-2xl bg-graphite-950 p-6">
-              {/* The legacy sentence ended in a link to `/privacy`, which answered 404 there
-                  (section 13, entry 71); issue #57 decided that nothing points at it until the
-                  policy text exists, so the clause that introduced it goes with the link. */}
-              <p>{t('message')}</p>
+              {/* The legacy link answered 404 (section 13, entry 71) and is the policy now (issue
+                  #57), underlined because colour alone fails WCAG 1.4.1 (`link-in-text-block`). */}
+              <p>
+                {t('message')}{' '}
+                <Link className="text-white underline" href="/privacy">
+                  {t('privacyPolicy')}
+                </Link>
+              </p>
               <div className="flex-row flex-wrap items-center gap-2">
                 <button
                   className="middle dark w-full md:w-auto"

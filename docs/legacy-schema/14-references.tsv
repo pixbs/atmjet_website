@@ -1,0 +1,11 @@
+measure	value
+new_yachts.contact_id without a contact row	0
+new_yachts.captain_id without a contact row	0
+contact rows no yacht points at	7
+aircrafts with no image	3907
+aircrafts with images but no exterior one (no listing cover)	180
+aircrafts with an image of a type other than exterior, cabin or cockpit	158
+most images on one aircraft	14
+aircrafts.airport_icao absent from airports.icao_code	801
+aircrafts.airport_icao absent from new_airports.icao	179
+airports ICAO codes absent from new_airports	1169

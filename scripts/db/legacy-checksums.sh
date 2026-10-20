@@ -14,11 +14,13 @@ psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -Atq \
   -c "SELECT table_name FROM information_schema.tables WHERE table_schema = '$schema' AND table_type = 'BASE TABLE' ORDER BY table_name" |
   while read -r table; do
     [[ -z "$table" ]] && continue
-    order="$(psql "$DATABASE_URL" -Atq -c "SELECT string_agg(quote_ident(a.attname), ', ' ORDER BY k.ord) FROM pg_index i JOIN pg_attribute a ON a.attrelid = i.indrelid AND a.attnum = ANY (i.indkey) CROSS JOIN LATERAL unnest(i.indkey) WITH ORDINALITY AS k(attnum, ord) WHERE i.indrelid = '\"$schema\".\"$table\"'::regclass AND i.indisprimary AND k.attnum = a.attnum")"
-    [[ -z "$order" ]] && order="1"
+    # Each key column is compared as text under the "C" collation, so integer keys sort the
+    # same on every server and database collation; a table without a key orders by its whole row.
+    order="$(psql "$DATABASE_URL" -Atq -c "SELECT string_agg(quote_ident(a.attname) || '::text COLLATE \"C\"', ', ' ORDER BY k.ord) FROM pg_index i JOIN pg_attribute a ON a.attrelid = i.indrelid AND a.attnum = ANY (i.indkey) CROSS JOIN LATERAL unnest(i.indkey) WITH ORDINALITY AS k(attnum, ord) WHERE i.indrelid = '\"$schema\".\"$table\"'::regclass AND i.indisprimary AND k.attnum = a.attnum")"
+    [[ -z "$order" ]] && order='t::text COLLATE "C"'
     count="$(psql "$DATABASE_URL" -Atq -c "SELECT count(*) FROM \"$schema\".\"$table\"")"
     checksum="$(psql "$DATABASE_URL" -Atq \
       -c "SET timezone = 'UTC'" \
-      -c "COPY (SELECT t.*::text FROM \"$schema\".\"$table\" t ORDER BY $order COLLATE \"C\") TO STDOUT" | md5sum | cut -d' ' -f1)"
+      -c "COPY (SELECT t.*::text FROM \"$schema\".\"$table\" t ORDER BY $order) TO STDOUT" | md5sum | cut -d' ' -f1)"
     printf '%s\t%s\t%s\t%s\n' "$schema" "$table" "$count" "$checksum"
   done

@@ -7,7 +7,7 @@ import { AirportSearch } from '@/components/ui/airport-search'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import type { Locale } from '@/i18n/locales'
-import { emptyLeg, handoffQuery } from '@/lib/flight-request'
+import { emptyLeg, handoffQuery } from '@/lib/handoff'
 
 /**
  * The form a detail page asks for one aircraft with (issue #138,

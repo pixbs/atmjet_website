@@ -32,6 +32,7 @@ import { photoDescriptor } from '@/blocks/PhotoDescriptor/config'
 import { privilege } from '@/blocks/Privilege/config'
 import { quote } from '@/blocks/Quote/config'
 import { recentYachts } from '@/blocks/RecentYachts/config'
+import { richText } from '@/blocks/RichText/config'
 import { tiles } from '@/blocks/Tiles/config'
 import { transfer } from '@/blocks/Transfer/config'
 import { weInspect } from '@/blocks/WeInspect/config'
@@ -49,7 +50,10 @@ import { revalidateCollection } from '@/hooks/revalidate'
  * `layout` is the blocks field every ported section lands in (E7), one block per issue.
  */
 
-/** The thirteen static routes of section 2.1. The empty slug is the home page. */
+/**
+ * The thirteen static routes of section 2.1, and the privacy policy the legacy cookie banner
+ * linked to without the page existing (issue #57). The empty slug is the home page.
+ */
 export const PAGE_SLUGS = [
   '',
   'aircraft',
@@ -61,6 +65,7 @@ export const PAGE_SLUGS = [
   'group_charters',
   'medical_aviation',
   'partners',
+  'privacy',
   'sales_dept',
   'sales_yachts',
   'yachts',
@@ -188,6 +193,7 @@ export const Pages: CollectionConfig = {
         privilege,
         quote,
         recentYachts,
+        richText,
         tiles,
         transfer,
         weInspect,

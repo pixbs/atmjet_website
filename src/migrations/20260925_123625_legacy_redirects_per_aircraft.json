@@ -311,6 +311,13 @@
           "primaryKey": false,
           "notNull": false
         },
+        "prefix": {
+          "name": "prefix",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'media'"
+        },
         "updated_at": {
           "name": "updated_at",
           "type": "timestamp(3) with time zone",
@@ -22434,13 +22441,19 @@
         },
         "id": {
           "name": "id",
-          "type": "numeric",
+          "type": "varchar",
           "primaryKey": true,
           "notNull": true
         },
         "table": {
           "name": "table",
           "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "legacy_id": {
+          "name": "legacy_id",
+          "type": "numeric",
           "primaryKey": false,
           "notNull": true
         }
@@ -23222,6 +23235,12 @@
         "photo_id": {
           "name": "photo_id",
           "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "legacy_attributes": {
+          "name": "legacy_attributes",
+          "type": "jsonb",
           "primaryKey": false,
           "notNull": false
         },
@@ -25226,6 +25245,158 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
+    "public.migration_runs": {
+      "name": "migration_runs",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "source_key": {
+          "name": "source_key",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "source_table": {
+          "name": "source_table",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "source_id": {
+          "name": "source_id",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "target": {
+          "name": "target",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "document_id": {
+          "name": "document_id",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "action": {
+          "name": "action",
+          "type": "enum_migration_runs_action",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "run_id": {
+          "name": "run_id",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp(3) with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp(3) with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "migration_runs_source_key_idx": {
+          "name": "migration_runs_source_key_idx",
+          "columns": [
+            {
+              "expression": "source_key",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "migration_runs_source_table_idx": {
+          "name": "migration_runs_source_table_idx",
+          "columns": [
+            {
+              "expression": "source_table",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "migration_runs_run_id_idx": {
+          "name": "migration_runs_run_id_idx",
+          "columns": [
+            {
+              "expression": "run_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "migration_runs_updated_at_idx": {
+          "name": "migration_runs_updated_at_idx",
+          "columns": [
+            {
+              "expression": "updated_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "migration_runs_created_at_idx": {
+          "name": "migration_runs_created_at_idx",
+          "columns": [
+            {
+              "expression": "created_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
     "public.redirects": {
       "name": "redirects",
       "schema": "",
@@ -25475,338 +25646,6 @@
             "id"
           ],
           "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.payload_mcp_api_keys": {
-      "name": "payload_mcp_api_keys",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "serial",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "user_id": {
-          "name": "user_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "label": {
-          "name": "label",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "description": {
-          "name": "description",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "pages_find": {
-          "name": "pages_find",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": false,
-          "default": false
-        },
-        "pages_create": {
-          "name": "pages_create",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": false,
-          "default": false
-        },
-        "pages_update": {
-          "name": "pages_update",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": false,
-          "default": false
-        },
-        "pages_delete": {
-          "name": "pages_delete",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": false,
-          "default": false
-        },
-        "airports_find": {
-          "name": "airports_find",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": false,
-          "default": false
-        },
-        "airports_create": {
-          "name": "airports_create",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": false,
-          "default": false
-        },
-        "airports_update": {
-          "name": "airports_update",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": false,
-          "default": false
-        },
-        "airports_delete": {
-          "name": "airports_delete",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": false,
-          "default": false
-        },
-        "aircraft_find": {
-          "name": "aircraft_find",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": false,
-          "default": false
-        },
-        "aircraft_create": {
-          "name": "aircraft_create",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": false,
-          "default": false
-        },
-        "aircraft_update": {
-          "name": "aircraft_update",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": false,
-          "default": false
-        },
-        "aircraft_delete": {
-          "name": "aircraft_delete",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": false,
-          "default": false
-        },
-        "yachts_find": {
-          "name": "yachts_find",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": false,
-          "default": false
-        },
-        "yachts_create": {
-          "name": "yachts_create",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": false,
-          "default": false
-        },
-        "yachts_update": {
-          "name": "yachts_update",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": false,
-          "default": false
-        },
-        "yachts_delete": {
-          "name": "yachts_delete",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": false,
-          "default": false
-        },
-        "empty_legs_find": {
-          "name": "empty_legs_find",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": false,
-          "default": false
-        },
-        "empty_legs_create": {
-          "name": "empty_legs_create",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": false,
-          "default": false
-        },
-        "empty_legs_update": {
-          "name": "empty_legs_update",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": false,
-          "default": false
-        },
-        "empty_legs_delete": {
-          "name": "empty_legs_delete",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": false,
-          "default": false
-        },
-        "redirects_find": {
-          "name": "redirects_find",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": false,
-          "default": false
-        },
-        "redirects_create": {
-          "name": "redirects_create",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": false,
-          "default": false
-        },
-        "redirects_update": {
-          "name": "redirects_update",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": false,
-          "default": false
-        },
-        "redirects_delete": {
-          "name": "redirects_delete",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": false,
-          "default": false
-        },
-        "media_find": {
-          "name": "media_find",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": false,
-          "default": false
-        },
-        "header_find": {
-          "name": "header_find",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": false,
-          "default": false
-        },
-        "header_update": {
-          "name": "header_update",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": false,
-          "default": false
-        },
-        "footer_find": {
-          "name": "footer_find",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": false,
-          "default": false
-        },
-        "footer_update": {
-          "name": "footer_update",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": false,
-          "default": false
-        },
-        "updated_at": {
-          "name": "updated_at",
-          "type": "timestamp(3) with time zone",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp(3) with time zone",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        },
-        "enable_a_p_i_key": {
-          "name": "enable_a_p_i_key",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "api_key": {
-          "name": "api_key",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "api_key_index": {
-          "name": "api_key_index",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        }
-      },
-      "indexes": {
-        "payload_mcp_api_keys_user_idx": {
-          "name": "payload_mcp_api_keys_user_idx",
-          "columns": [
-            {
-              "expression": "user_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "payload_mcp_api_keys_updated_at_idx": {
-          "name": "payload_mcp_api_keys_updated_at_idx",
-          "columns": [
-            {
-              "expression": "updated_at",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "payload_mcp_api_keys_created_at_idx": {
-          "name": "payload_mcp_api_keys_created_at_idx",
-          "columns": [
-            {
-              "expression": "created_at",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        }
-      },
-      "foreignKeys": {
-        "payload_mcp_api_keys_user_id_users_id_fk": {
-          "name": "payload_mcp_api_keys_user_id_users_id_fk",
-          "tableFrom": "payload_mcp_api_keys",
-          "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "set null",
           "onUpdate": "no action"
         }
       },
@@ -26384,14 +26223,14 @@
           "primaryKey": false,
           "notNull": false
         },
-        "redirects_id": {
-          "name": "redirects_id",
+        "migration_runs_id": {
+          "name": "migration_runs_id",
           "type": "integer",
           "primaryKey": false,
           "notNull": false
         },
-        "payload_mcp_api_keys_id": {
-          "name": "payload_mcp_api_keys_id",
+        "redirects_id": {
+          "name": "redirects_id",
           "type": "integer",
           "primaryKey": false,
           "notNull": false
@@ -26578,11 +26417,11 @@
           "method": "btree",
           "with": {}
         },
-        "payload_locked_documents_rels_redirects_id_idx": {
-          "name": "payload_locked_documents_rels_redirects_id_idx",
+        "payload_locked_documents_rels_migration_runs_id_idx": {
+          "name": "payload_locked_documents_rels_migration_runs_id_idx",
           "columns": [
             {
-              "expression": "redirects_id",
+              "expression": "migration_runs_id",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
@@ -26593,11 +26432,11 @@
           "method": "btree",
           "with": {}
         },
-        "payload_locked_documents_rels_payload_mcp_api_keys_id_idx": {
-          "name": "payload_locked_documents_rels_payload_mcp_api_keys_id_idx",
+        "payload_locked_documents_rels_redirects_id_idx": {
+          "name": "payload_locked_documents_rels_redirects_id_idx",
           "columns": [
             {
-              "expression": "payload_mcp_api_keys_id",
+              "expression": "redirects_id",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
@@ -26740,12 +26579,12 @@
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "payload_locked_documents_rels_redirects_fk": {
-          "name": "payload_locked_documents_rels_redirects_fk",
+        "payload_locked_documents_rels_migration_runs_fk": {
+          "name": "payload_locked_documents_rels_migration_runs_fk",
           "tableFrom": "payload_locked_documents_rels",
-          "tableTo": "redirects",
+          "tableTo": "migration_runs",
           "columnsFrom": [
-            "redirects_id"
+            "migration_runs_id"
           ],
           "columnsTo": [
             "id"
@@ -26753,12 +26592,12 @@
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "payload_locked_documents_rels_payload_mcp_api_keys_fk": {
-          "name": "payload_locked_documents_rels_payload_mcp_api_keys_fk",
+        "payload_locked_documents_rels_redirects_fk": {
+          "name": "payload_locked_documents_rels_redirects_fk",
           "tableFrom": "payload_locked_documents_rels",
-          "tableTo": "payload_mcp_api_keys",
+          "tableTo": "redirects",
           "columnsFrom": [
-            "payload_mcp_api_keys_id"
+            "redirects_id"
           ],
           "columnsTo": [
             "id"
@@ -26897,12 +26736,6 @@
           "type": "integer",
           "primaryKey": false,
           "notNull": false
-        },
-        "payload_mcp_api_keys_id": {
-          "name": "payload_mcp_api_keys_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false
         }
       },
       "indexes": {
@@ -26965,21 +26798,6 @@
           "concurrently": false,
           "method": "btree",
           "with": {}
-        },
-        "payload_preferences_rels_payload_mcp_api_keys_id_idx": {
-          "name": "payload_preferences_rels_payload_mcp_api_keys_id_idx",
-          "columns": [
-            {
-              "expression": "payload_mcp_api_keys_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
         }
       },
       "foreignKeys": {
@@ -27002,19 +26820,6 @@
           "tableTo": "users",
           "columnsFrom": [
             "users_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        },
-        "payload_preferences_rels_payload_mcp_api_keys_fk": {
-          "name": "payload_preferences_rels_payload_mcp_api_keys_fk",
-          "tableFrom": "payload_preferences_rels",
-          "tableTo": "payload_mcp_api_keys",
-          "columnsFrom": [
-            "payload_mcp_api_keys_id"
           ],
           "columnsTo": [
             "id"
@@ -28751,6 +28556,14 @@
         "uk"
       ]
     },
+    "public.enum_migration_runs_action": {
+      "name": "enum_migration_runs_action",
+      "schema": "public",
+      "values": [
+        "created",
+        "updated"
+      ]
+    },
     "public.enum_redirects_to_type": {
       "name": "enum_redirects_to_type",
       "schema": "public",
@@ -28834,6 +28647,6 @@
     "tables": {},
     "columns": {}
   },
-  "id": "6d29bbc8-d812-4bfb-b30b-cce482892479",
+  "id": "97cd7b6d-b340-4d34-8855-85469ab6f0a0",
   "prevId": "00000000-0000-0000-0000-000000000000"
 }

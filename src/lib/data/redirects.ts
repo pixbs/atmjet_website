@@ -5,6 +5,7 @@ import type { Locale } from '@/i18n/locales'
 import {
   bySpecificity,
   matchRedirect,
+  redirectCandidates,
   type RedirectMatch,
   type RedirectRule,
 } from '@/lib/redirects'
@@ -83,6 +84,8 @@ export async function findRedirect(
     const payload = await client()
     const result = await payload.find({
       collection: 'redirects',
+      // Only the rows that could catch this path: the map holds a rule per aircraft.
+      where: { from: { in: redirectCandidates(pathname) } },
       depth: 1,
       limit: 0,
       pagination: false,

@@ -73,6 +73,17 @@ test.describe('the flight request', () => {
     await expect(legsOf(page)).toHaveCount(1)
   })
 
+  test('says in each empty airport field what it takes, as the legacy leg did', async ({
+    page,
+  }) => {
+    // The legacy repeated the label as the placeholder (section 7.1); two short words sit inside
+    // a capture's tolerance, so the visual tier cannot tell they are gone (#441).
+    for (const name of ['From', 'To']) {
+      const field = formOf(page).getByRole('combobox', { name }).first()
+      await expect(field).toHaveAttribute('placeholder', name)
+    }
+  })
+
   test('offers the airports the search ranks, and puts the one chosen into the leg', async ({
     page,
   }) => {
@@ -83,6 +94,8 @@ test.describe('the flight request', () => {
     await expect(options.first()).toHaveText(
       'Dubai (OMDB) United Arab Emirates, Dubai International',
     )
+    // Seen, not only rendered: the click scrolls a clipped list into view, a visitor cannot (#441).
+    await expect(options.first()).toBeInViewport()
 
     await options.first().click()
     await expect(from).toHaveValue('Dubai (OMDB) United Arab Emirates, Dubai International')

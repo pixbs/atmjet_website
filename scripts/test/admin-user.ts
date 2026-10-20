@@ -12,9 +12,13 @@ import { getPayload } from 'payload'
 
 import config from '../../src/payload.config.js'
 
+// The password is the run's own (`tests/helpers/admin-user-setup.ts`): this account is created
+// in the database a deployment reads, so one written here would open staging to anyone (#422).
+const password = process.env.E2E_ADMIN_PASSWORD ?? ''
+
 const TEST_USER = {
   email: 'dev@payloadcms.com',
-  password: 'test',
+  password,
   // The specs walk the collection views, which only an administrator may reach.
   roles: ['admin' as const],
 }
@@ -24,6 +28,11 @@ if (action !== 'create' && action !== 'delete') {
   console.error(
     `Usage: bun run scripts/test/admin-user.ts create|delete (got ${action ?? 'nothing'})`,
   )
+  process.exit(1)
+}
+
+if (action === 'create' && password === '') {
+  console.error('admin-user: E2E_ADMIN_PASSWORD is not set, and no administrator gets a known one')
   process.exit(1)
 }
 

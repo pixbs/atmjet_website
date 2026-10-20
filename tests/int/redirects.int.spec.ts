@@ -51,6 +51,19 @@ describe('a rule that points at a page', () => {
   })
 })
 
+describe('finding the rule for a path', () => {
+  it('reads the rules that could catch it, the one above it included', async () => {
+    const client = () => Promise.resolve(registry.payload)
+    const broad = await registry.create('redirects', redirect({ matchSubPaths: true }))
+    const exact = await registry.create('redirects', redirect())
+
+    expect((await findRedirect('en', `${broad.from}/g650/gallery`, client))?.destination).toBe(
+      '/en/aircraft/g650/gallery',
+    )
+    expect(await findRedirect('en', `${exact.from}/g650`, client)).toBeUndefined()
+  })
+})
+
 describe('validation', () => {
   it('stores one spelling of a path, whatever an editor types', async () => {
     const created = await registry.create(

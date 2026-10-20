@@ -20,7 +20,7 @@ export const Users: CollectionConfig = {
     // A stolen password is worth less if guessing is slow: five tries, then a ten-minute lock.
     maxLoginAttempts: 5,
     lockTime: 10 * 60 * 1000,
-    // A person signs in; the only keys are the MCP plugin's, issued by an admin (docs/access-matrix.md).
+    // No API keys until something needs one; an unused key is only ever a liability.
     useAPIKey: false,
   },
   hooks: {

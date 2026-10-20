@@ -55,7 +55,6 @@ export function Autocomplete({
   defaultValue,
   id,
   className,
-  wrapperClassName,
   ...props
 }: AutocompleteProps) {
   const listId = useId()
@@ -107,7 +106,9 @@ export function Autocomplete({
   }
 
   return (
-    <div className={cn('relative w-full', wrapperClassName)}>
+    // `wrapperClassName` reaches the panel, as on every field, so a caller that clips the panel to
+    // round it leaves this list alone (#441).
+    <div className="relative w-full">
       <Input
         {...props}
         aria-activedescendant={shown && active >= 0 ? optionId(active) : undefined}

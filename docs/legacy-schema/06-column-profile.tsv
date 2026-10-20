@@ -1,0 +1,177 @@
+table_name	column_name	nulls	blank	padded	distinct_values	min_length	max_length
+aircraft_images	id	0	0	0	18570	1	5
+aircraft_images	aircraft_id	0	0	0	4935	1	4
+aircraft_images	type	0	0	0	6	4	8
+aircraft_images	url	0	0	0	18570	74	99
+aircrafts	id	0	0	0	8842	1	4
+aircrafts	slug	0	0	0	8842	3	24
+aircrafts	registration_number	2	0	3	8840	3	13
+aircrafts	year_of_production	0	0	0	65	4	4
+aircrafts	passengers_max	835	0	0	101	1	3
+aircrafts	serial_number	22	1	207	7983	1	15
+aircrafts	hours_flown	8814	0	0	28	3	5
+aircrafts	cycles	8820	0	0	22	3	4
+aircrafts	verified_at	754	0	0	3276	20	27
+aircrafts	tech_operator	8763	0	0	53	3	42
+aircrafts	is_cargo	8094	0	0	1	4	4
+aircrafts	is_for_sale	8826	0	0	1	4	4
+aircrafts	is_for_lease	8842	0	0	0		
+aircrafts	is_for_charter	0	0	0	1	4	4
+aircrafts	pdf_attachment	7529	0	0	1313	77	161
+aircrafts	pdf_attachment_name	7529	0	0	1304	5	89
+aircrafts	company_slug	0	0	0	1495	3	47
+aircrafts	company_name	0	0	27	1505	5	71
+aircrafts	extension_refurbishment	7866	0	0	1	4	4
+aircrafts	extension_view_360	8528	0	0	287	23	196
+aircrafts	extension_cabin_crew	6781	0	0	1	4	4
+aircrafts	extension_divan_seats	7613	0	0	17	1	2
+aircrafts	extension_lavatory	4689	0	0	1	4	4
+aircrafts	extension_beds	8072	0	0	15	1	2
+aircrafts	extension_hot_meal	6577	0	0	1	4	4
+aircrafts	extension_wireless_internet	7201	0	0	1	4	4
+aircrafts	extension_pets_allowed	8335	0	0	1	4	4
+aircrafts	extension_cabin_height	8031	0	0	62	4	6
+aircrafts	extension_cabin_length	8083	0	0	206	4	6
+aircrafts	extension_cabin_width	8061	0	0	97	4	6
+aircrafts	extension_luggage_volume	8236	0	0	143	4	6
+aircrafts	extension_shower	8816	0	0	1	4	4
+aircrafts	extension_satellite_phone	7467	0	0	1	4	4
+aircrafts	extension_sleeping_places	8058	0	0	19	1	2
+aircrafts	extension_description	5934	1	42	2060	1	4062
+aircrafts	extension_spec_equipment	8648	1	8	133	3	843
+aircrafts	airport_iata	450	0	0	846	3	3
+aircrafts	airport_icao	43	0	0	941	4	4
+aircrafts	airport_name	40	0	0	941	3	55
+aircrafts	aircraft_type_slug	0	0	0	468	4	34
+aircrafts	aircraft_type_name	0	0	94	469	5	38
+aircrafts	aircraft_type_speed_typical	1691	0	0	143	3	7
+aircrafts	aircraft_type_range_maximum	826	0	0	249	3	5
+aircrafts	aircraft_type_cabin_height	2247	0	0	62	1	4
+aircrafts	aircraft_type_cabin_length	2258	0	0	144	1	5
+aircrafts	aircraft_type_cabin_width	2200	0	0	80	3	4
+aircrafts	aircraft_type_pax_maximum	947	0	0	51	1	3
+aircrafts	aircraft_type_aircraft_class_name	0	0	0	8	5	16
+airports	id	0	0	0	9375	1	4
+airports	iata_code	0	0	0	9375	3	3
+airports	icao_code	0	1424	0	7494	0	4
+airports	name_rus	0	5920	0	3360	0	37
+airports	name_eng	0	0	1	8788	2	60
+airports	city_rus	0	4549	1	4272	0	27
+airports	city_eng	0	4	0	8513	0	64
+airports	gmt_offset	0	213	0	51	0	11
+airports	country_rus	0	0	0	237	3	32
+airports	country_eng	0	0	0	237	3	32
+airports	iso_code	0	1	0	237	0	19
+airports	latitude	0	0	0	8907	1	17
+airports	longitude	0	0	0	9057	1	17
+atmjet_admin__empty_legs	id	0	0	0	0		
+atmjet_admin__empty_legs	start	0	0	0	0		
+atmjet_admin__empty_legs	end	0	0	0	0		
+atmjet_admin__empty_legs	from	0	0	0	0		
+atmjet_admin__empty_legs	to	0	0	0	0		
+atmjet_admin__empty_legs	type	0	0	0	0		
+atmjet_admin__empty_legs	company	0	0	0	0		
+atmjet_admin__empty_legs	safety	0	0	0	0		
+atmjet_admin__empty_legs	price	0	0	0	0		
+atmjet_admin__empty_legs	order	0	0	0	0		
+atmjet_admin__empty_legs	category	0	0	0	0		
+atmjet_admin__users	id	0	0	0	3		
+atmjet_admin__users	username	0	0	0	3		
+atmjet_admin__users	password	0	0	0	3		
+city_list	id	0	0	0	0		
+city_list	name	0	0	0	0		
+contact	id	0	0	0	9		
+contact	name	0	0	0	9		
+contact	phone	0	0	0	9		
+contact	email	9	0	0	0		
+migration_status	id	0	0	0	0		
+migration_status	last_processed_page	0	0	0	0		
+migration_status	last_processed_slug	0	0	0	0		
+new_airports	id	0	0	0	27087	5	5
+new_airports	icao	13795	0	0	11366	3	74
+new_airports	iata	17629	0	0	7736	3	4
+new_airports	label_en	159	0	0	23814	3	67
+new_airports	label_ru	133	0	0	23753	2	73
+new_airports	city_en	2250	0	0	7600	2	64
+new_airports	city_ru	2248	0	0	7364	2	52
+new_airports	country_en	53	0	0	227	4	47
+new_airports	country_ru	53	0	0	227	3	63
+new_airports	passengers_per_year	20911	0	0	3817	1	9
+new_airports	type_en	0	0	0	16	7	32
+new_airports	type_ru	90	0	0	6	8	30
+new_airports	alies_en	8493	0	0	16628	2	574
+new_airports	alies_ru	25737	0	0	974	3	291
+new_airports	wikidata	0	0	0	25047	36	41
+new_yachts	id	0	0	0	85	1	3
+new_yachts	name	1	0	2	84	2	16
+new_yachts	description	0	0	6	79	189	631
+new_yachts	manufacturer	0	60	1	15	0	13
+new_yachts	owner	58	0	0	10	1	16
+new_yachts	contact_id	84	0	0	1	1	1
+new_yachts	bussines_price	58	0	0	16	3	5
+new_yachts	customer_price	0	0	0	41	3	6
+new_yachts	currency	1	0	0	1	3	3
+new_yachts	captain_id	84	0	0	1	1	1
+new_yachts	location	0	0	0	2	12	13
+new_yachts	length	0	0	0	46	2	4
+new_yachts	guests_day	0	0	0	28	1	3
+new_yachts	guests_night	0	0	0	11	1	2
+new_yachts	cabins	0	0	0	10	1	3
+new_yachts	bathrooms	0	0	0	8	1	1
+new_yachts	refit	0	0	0	9	4	4
+new_yachts	min_hours	0	0	0	6	1	2
+new_yachts	included	0	0	5	11	12	235
+new_yachts	photos	0	0	0	85	2	3917
+new_yachts	slug	0	0	0	85	2	16
+new_yachts	description_ru	14	0	10	69	192	605
+new_yachts	included_en	0	0	6	6	37	235
+vehicles	id	0	0	0	10016	5	5
+vehicles	article	10016	0	0	0		
+vehicles	price	0	0	0	1	4	4
+vehicles	old_price	0	0	0	1	4	4
+vehicles	weight	0	0	0	1	5	5
+vehicles	image	0	0	0	10016	50	50
+vehicles	thumb	0	0	0	10016	50	50
+vehicles	vendor	0	0	0	1	1	1
+vehicles	made_in	0	10016	0	1	0	0
+vehicles	new	0	0	0	1	1	1
+vehicles	popular	0	0	0	1	1	1
+vehicles	favorite	0	0	0	1	1	1
+vehicles	tags	10016	0	0	0		
+vehicles	color	10016	0	0	0		
+vehicles	size	10016	0	0	0		
+vehicles	source	0	0	0	1	1	1
+vehicles	yacht_maxspeed	0	3423	0	119	0	20
+vehicles	yacht_speed	0	3423	0	107	0	20
+vehicles	yacht_winter_areas	0	10016	0	1	0	0
+vehicles	yacht_summer_areas	0	10016	0	1	0	0
+vehicles	yacht_guests	0	3423	0	17	0	2
+vehicles	yacht_year	0	3423	0	27	0	4
+vehicles	yacht_builder	0	3424	29	585	0	50
+vehicles	yacht_length	0	3423	0	1365	0	8
+vehicles	tail_homebase_country	0	6623	0	91	0	21
+vehicles	tail_maxpax	0	6602	0	60	0	4
+vehicles	tail_homebase_name	0	6623	0	584	0	58
+vehicles	tail_homebase	0	6618	18	717	0	10
+vehicles	tail_operator	0	6607	43	1305	0	77
+vehicles	tail_number	0	6594	0	3413	0	9
+vehicles	tail_model	0	6594	56	346	0	27
+vehicles	tail_manufacturer	0	6842	136	167	0	53
+vehicles	tail_exteriorrefit	0	8655	0	46	0	4
+vehicles	tail_interiorrefit	0	8484	0	45	0	5
+vehicles	tail_homebase_city	0	6676	0	501	0	33
+vehicles	tail_year	0	6606	0	53	0	4
+yachts	id	0	0	0	2	1	1
+yachts	name	1	0	0	1	4	4
+yachts	shipyard	0	0	0	2	6	8
+yachts	year	0	0	0	2	4	4
+yachts	length	0	0	0	2	2	5
+yachts	beam	0	0	0	2	4	4
+yachts	draft	0	0	0	2	1	3
+yachts	cabins	0	0	0	2	1	1
+yachts	guests	0	0	0	2	1	2
+yachts	crew	0	0	0	2	1	1
+yachts	cruising_speed	0	0	0	2	2	2
+yachts	max_speed	0	0	0	2	2	2
+yachts	location	0	0	0	2	5	6
+yachts	pictures	0	0	0	2	771	2269

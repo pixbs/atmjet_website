@@ -1,5 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
 
+import { legacyMirror, legacyPictureAddress } from '@/lib/media'
 import type { AircraftQuery } from '@/lib/aircraft'
 import { listCatalogueAircraft, resolveAircraft, searchAircraft } from '@/lib/data/aircraft'
 import { createMedia, createUser } from '../factories'
@@ -87,7 +88,7 @@ describe('provenance', () => {
           legacyVehicleId: 88,
           legacyTailNumber: 'RA-73025',
           legacySlug: 'gulfstream-g650-ra-73025',
-          mergedFrom: [{ table: 'vehicles', id: 88 }],
+          mergedFrom: [{ table: 'vehicles', legacyId: 88 }],
           importRunId: 'run-2026-09-13',
         },
       }),
@@ -95,7 +96,7 @@ describe('provenance', () => {
 
     expect(created.provenance?.origin).toBe('aircrafts-catalog')
     expect(created.provenance?.legacyAircraftId).toBe(412)
-    expect(created.provenance?.mergedFrom?.[0]).toMatchObject({ table: 'vehicles', id: 88 })
+    expect(created.provenance?.mergedFrom?.[0]).toMatchObject({ table: 'vehicles', legacyId: 88 })
   })
 })
 
@@ -287,6 +288,22 @@ describe('the listing the aircraft carousel reads', () => {
     expect(mine?.passengers).toBe(14)
     expect(mine?.year ?? null).toBeNull()
     expect(mine?.image?.src).toContain(upload.filename)
+  })
+
+  it('draws the photograph a row still names by address, from where it is mirrored', async () => {
+    // The importers write the legacy address on the row and no upload (E5.12, #84); the card is
+    // drawn from the mirrored copy of #21 where there is a bucket, from the Space otherwise.
+    const externalUrl = `https://atmjet.ams3.digitaloceanspaces.com/planes/${uniqueSuffix()}.jpg`
+    const created = await registry.create(
+      'aircraft',
+      aircraft({ images: [{ type: 'exterior', externalUrl }] }),
+    )
+
+    const listed = await listCatalogueAircraft('en', 500, client)
+    const mine = listed.find((one) => one.id === created.id)
+
+    expect(mine?.image?.src).toBe(legacyPictureAddress(externalUrl, legacyMirror()))
+    expect(mine?.image?.src).toContain(externalUrl.slice(externalUrl.indexOf('/planes/')))
   })
 })
 

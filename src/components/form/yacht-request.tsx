@@ -5,7 +5,7 @@ import { useState, type FormEvent } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { handoffQuery } from '@/lib/flight-request'
+import { handoffQuery } from '@/lib/handoff'
 
 /**
  * The form a yacht's page asks for it with (issue #140, `docs/legacy-inventory.md` section 4,

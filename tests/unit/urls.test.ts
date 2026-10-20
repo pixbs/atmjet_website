@@ -16,9 +16,20 @@ describe('siteOrigin', () => {
   })
 
   it('uses the development origin when the environment names none', () => {
-    // A preview without the variable set advertises itself, never the legacy hard-coded host.
-    expect(siteOrigin(undefined)).toBe('http://localhost:3000')
-    expect(siteOrigin('  ')).toBe('http://localhost:3000')
+    // A clone without the variable set advertises itself, never the legacy hard-coded host.
+    // Blank rather than absent: an absent argument reads this machine's own `.env`.
+    expect(siteOrigin('', '')).toBe('http://localhost:3000')
+    expect(siteOrigin('  ', '')).toBe('http://localhost:3000')
+  })
+
+  it('names the production domain Vercel provides when no variable overrides it', () => {
+    // A deployment needs no variable of its own (#403); Vercel's holds a bare host.
+    expect(siteOrigin('', 'atmjetwebsiterefactor.vercel.app')).toBe(
+      'https://atmjetwebsiterefactor.vercel.app',
+    )
+    expect(siteOrigin('https://atmjet.com', 'atmjetwebsiterefactor.vercel.app')).toBe(
+      'https://atmjet.com',
+    )
   })
 
   it('adds the scheme a deployment host variable does not carry', () => {
@@ -41,6 +52,21 @@ describe('siteOrigin', () => {
     try {
       expect(siteOrigin('https://')).toBe('http://localhost:3000')
       expect(warn).toHaveBeenCalled()
+    } finally {
+      warn.mockRestore()
+    }
+  })
+
+  it('passes over a value with no host a browser can reach, to the next one it has', () => {
+    // Staging held `-`, and Payload refused every admin save from any other origin (#17).
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined)
+
+    try {
+      expect(siteOrigin('-', 'atmjetwebsiterefactor.vercel.app')).toBe(
+        'https://atmjetwebsiterefactor.vercel.app',
+      )
+      expect(siteOrigin('-', '')).toBe('http://localhost:3000')
+      expect(warn).toHaveBeenCalledTimes(2)
     } finally {
       warn.mockRestore()
     }

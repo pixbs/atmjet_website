@@ -107,6 +107,8 @@ jobs:
           fi
       - name: Unit and integration tests with coverage
         run: bun run test:int
+      - name: Imports reconciled on the legacy fixture
+        run: bun run test:reconcile
       - name: Production build
         run: bun run build
       - name: The build prerendered the pages it was given

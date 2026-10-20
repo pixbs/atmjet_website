@@ -18,6 +18,13 @@ const cacheOf = async (request: APIRequestContext, path: string) => {
   return response.headers()
 }
 
+/**
+ * Whether a response came out of the page cache. A local server names it `x-nextjs-cache`;
+ * Vercel keeps that header to itself and answers with `x-vercel-cache` instead (issue #17).
+ */
+const cached = (headers: Record<string, string>) =>
+  headers['x-nextjs-cache'] ?? headers['x-vercel-cache']
+
 /** The REST API as the administrator the run creates, which is how an editor's save arrives. */
 async function asAdmin(request: APIRequestContext): Promise<Record<string, string>> {
   const response = await request.post('/api/users/login', {
@@ -42,12 +49,12 @@ test.describe('what a page type does with a cache', () => {
     const headers = await cacheOf(request, pathFor('/partners', 'en'))
 
     expect(headers['x-nextjs-prerender']).toBeTruthy()
-    expect(headers['x-nextjs-cache']).toBeTruthy()
+    expect(cached(headers)).toBeTruthy()
   })
 
   test('the sitemaps and robots come from a cache entry too', async ({ request }) => {
     for (const path of ['/sitemap.xml', '/aircraft/sitemap.xml', '/yachts/sitemap.xml']) {
-      expect((await cacheOf(request, path))['x-nextjs-cache'], path).toBeTruthy()
+      expect(cached(await cacheOf(request, path)), path).toBeTruthy()
     }
   })
 
@@ -66,35 +73,37 @@ test.describe('what a page type does with a cache', () => {
 test.describe('an editor saving a page', () => {
   test('changes what the next visitor is served', async ({ request }) => {
     const headers = await asAdmin(request)
-    const found = await request.get('/api/pages?where[slug][equals]=partners&limit=1&depth=0', {
+    // A page of the run's own: the run shares staging with its editors and with the run of the
+    // next commit, and a title put back after an edit can only be the one it found (issue #17).
+    const slug = `e2e-caching-${Date.now()}`
+    const created = await request.post('/api/pages', {
       headers,
+      data: { title: `Before ${slug}`, slug, layout: [], _status: 'published' },
     })
-    const { docs } = (await found.json()) as { docs: Array<{ id: number | string; title: string }> }
-    const page = docs[0]
 
-    expect(page, 'the seeded partners page').toBeTruthy()
+    expect(created.status()).toBe(201)
 
-    const restored = page.title
-    const renamed = `${restored} ${Date.now()}`
+    const { doc } = (await created.json()) as { doc: { id: number | string } }
+    const served = async () => (await request.get(pathFor(`/${slug}`, 'en'))).text()
 
     try {
-      const saved = await request.patch(`/api/pages/${page.id}`, {
+      // Read once before the save, so there is a rendered page for the save to replace.
+      await expect.poll(served, { timeout: 15_000 }).toContain(`Before ${slug}`)
+
+      const saved = await request.patch(`/api/pages/${doc.id}`, {
         headers,
-        data: { title: renamed, _status: 'published' },
+        data: { title: `After ${slug}`, _status: 'published' },
       })
 
       expect(saved.status()).toBe(200)
 
-      // No polling: the hooks drop the rendered pages inside the request that saved, so the
-      // next one is already re-rendered. Before #178 this served the old title for ever.
-      const html = await (await request.get(pathFor('/partners', 'en'))).text()
-
-      expect(html).toContain(renamed)
+      // The hooks drop the rendered pages inside the request that saved, so a local server's
+      // next answer is already re-rendered; before #178 it served the old title for ever. A
+      // deployment purges its edge cache too, but the region this runs against hears of it a
+      // moment after the one that saved (issue #17), hence the poll rather than one read.
+      await expect.poll(served, { timeout: 15_000 }).toContain(`After ${slug}`)
     } finally {
-      await request.patch(`/api/pages/${page.id}`, {
-        headers,
-        data: { title: restored, _status: 'published' },
-      })
+      await request.delete(`/api/pages/${doc.id}`, { headers })
     }
   })
 })

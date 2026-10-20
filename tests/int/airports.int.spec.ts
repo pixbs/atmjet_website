@@ -1,3 +1,4 @@
+import type { PayloadRequest } from 'payload'
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
 
 import { searchAirports } from '@/lib/data/airports'
@@ -335,14 +336,140 @@ describe('the search the airport field reads', () => {
     ).resolves.toHaveLength(2)
   })
 
-  it('offers nothing rather than an error when the database cannot be reached', async () => {
-    const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined)
+  /** A marker of letters and digits only, so folding keeps it one word in either script. */
+  const tag = () => uniqueSuffix().replace(/[^a-z0-9]/gi, '')
 
+  it('finds a saint under either spelling, with or without its dot and hyphen', async () => {
+    // The legacy search re-queried `st` as `saint` so both showed (section 8.6).
+    const marker = `Louis${tag()}`
+    await airportIn(
+      'ZZ06',
+      [`St. ${marker}`, 'Nowhere', 'Lambert'],
+      [marker, 'Нигде', 'Ламберт'],
+      5,
+    )
+
+    for (const term of [`Saint ${marker}`, `st-${marker}`, `ST ${marker}`])
+      await expect(searchAirports({ term, locale: 'en' }, client)).resolves.toEqual([
+        `St. ${marker} (ZZ06) Nowhere, Lambert`,
+      ])
+  })
+
+  it('finds ё under е and a term in any case, without relying on the database to fold', async () => {
+    // The legacy title-cased a term because its database did not fold Cyrillic (section 8.6).
+    const marker = tag()
+    await airportIn(
+      'ZZ07',
+      [`Orel${marker}`, 'Nowhere', 'South'],
+      [`Орёл${marker}`, 'Нигде', 'Южный'],
+    )
+
+    for (const term of [`орел${marker}`, `ОРЁЛ${marker}`])
+      await expect(searchAirports({ term, locale: 'ru' }, client)).resolves.toEqual([
+        `Орёл${marker} (ZZ07) Нигде, Южный`,
+      ])
+  })
+
+  it('finds the words of a term in different fields, and the very option it offered', async () => {
+    const marker = `Loiu${tag()}`
+    await airportIn('ZZ08', [marker, 'Biscay', 'Bilbao Airport'], [marker, 'Бискайя', 'Бильбао'], 3)
+    const option = `${marker} (ZZ08) Biscay, Bilbao Airport`
+
+    // What the field holds after a pick is searched again on any edit of it.
+    for (const term of [`${marker} Biscay`, `Bilbao ${marker}`, option])
+      await expect(searchAirports({ term, locale: 'en' }, client)).resolves.toEqual([option])
+  })
+
+  it('finds a name written only in Cyrillic from Latin letters', async () => {
+    // Tolmachevo's English record is named after the town of Ob; only Russian says Novosibirsk.
+    const marker = tag()
+    await airportIn(
+      'ZZ09',
+      ['Ob', 'Nowhere', 'Tolmachevo'],
+      [`Звездоград${marker}`, 'Нигде', 'Толмачёво'],
+    )
+
+    await expect(
+      searchAirports({ term: `Zvezdograd${marker}`, locale: 'en' }, client),
+    ).resolves.toEqual(['Ob (ZZ09) Nowhere, Tolmachevo'])
+  })
+
+  it('keeps the words of one language when another is written again', async () => {
+    const marker = tag()
+    const created = await airportIn(
+      'ZZ10',
+      [`Before${marker}`, 'Nowhere', 'Field'],
+      [`Город${marker}`, 'Нигде', 'Поле'],
+    )
+
+    await registry.payload.update({
+      collection: 'airports',
+      id: created.id,
+      data: { city: `After${marker}` },
+      overrideAccess: true,
+    })
+
+    await expect(searchAirports({ term: `город${marker}`, locale: 'ru' }, client)).resolves.toEqual(
+      [`Город${marker} (ZZ10) Нигде, Поле`],
+    )
+    await expect(searchAirports({ term: `after${marker}`, locale: 'en' }, client)).resolves.toEqual(
+      [`After${marker} (ZZ10) Nowhere, Field`],
+    )
+    await expect(
+      searchAirports({ term: `before${marker}`, locale: 'en' }, client),
+    ).resolves.toEqual([])
+  })
+
+  it('offers every airfield without a code that shares a city, told apart by its name', async () => {
+    // 11,650 imported airfields share their city, an administrative area, with another.
+    const marker = `Oblast${tag()}`
+    for (const name of ['Kievo', 'Lyubertsy'])
+      await registry.create('airports', { city: marker, country: 'Nowhere', name })
+
+    const options = await searchAirports({ term: marker, locale: 'en' }, client)
+
+    expect(options).toHaveLength(2)
+    expect(options).toEqual(
+      expect.arrayContaining([`${marker} Nowhere, Kievo`, `${marker} Nowhere, Lyubertsy`]),
+    )
+  })
+
+  it("names an airport in another language when it has none in the page's", async () => {
+    // The legacy template printed `ru || en` and `en || ru`, never nothing.
+    const marker = tag()
+    await registry.create(
+      'airports',
+      { icao: 'ZZ11', city: `Город${marker}`, country: 'Нигде', name: 'Поле' },
+      { locale: 'ru' },
+    )
+
+    await expect(searchAirports({ term: `город${marker}`, locale: 'en' }, client)).resolves.toEqual(
+      [`Город${marker} (ZZ11) Нигде, Поле`],
+    )
+  })
+
+  it('lets a failure through rather than answering that nothing matched', async () => {
     await expect(
       searchAirports({ term: 'dubai', locale: 'en' }, () =>
         Promise.reject(new Error('connection refused')),
       ),
-    ).resolves.toEqual([])
+    ).rejects.toThrow('connection refused')
+  })
+
+  it('answers a failed search with 503 and nothing an edge may keep', async () => {
+    // A cold database answered as "no airports" with the success headers was served for a day.
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined)
+    const endpoints = registry.payload.collections.airports.config.endpoints || []
+    const search = endpoints.find((endpoint) => endpoint.path === '/search')
+    const failing = { find: () => Promise.reject(new Error('connection refused')) }
+
+    const response = await search!.handler({
+      searchParams: new URLSearchParams({ q: 'dubai' }),
+      payload: failing,
+    } as unknown as PayloadRequest)
+
+    expect(response.status).toBe(503)
+    expect(response.headers.get('cache-control')).toBe('no-store')
     expect(warn).toHaveBeenCalled()
     warn.mockRestore()
   })

@@ -23,6 +23,7 @@ import { YachtsCard } from '@/components/cards/yachts-card'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { Carousel, CarouselArrows, CarouselDots, CarouselProgress } from '@/components/ui/carousel'
 import { Checkbox } from '@/components/ui/checkbox'
+import { CountryFlag } from '@/components/ui/country-flag'
 import { CounterInput } from '@/components/ui/counter-input'
 import { Gallery } from '@/components/ui/gallery'
 import { Input } from '@/components/ui/input'
@@ -699,6 +700,9 @@ export default async function StyleguidePage({ params }: { params: Promise<{ loc
         <div className="w-full max-w-screen-sm gap-4">
           <PhoneInput
             defaultCountry={defaultCountry(null, locale as Locale)}
+            flag={
+              <CountryFlag iso={defaultCountry(null, locale as Locale)} locale={locale as Locale} />
+            }
             id="phone-number"
             label="Phone"
             labels={{ search: 'Search', noResults: 'No results', countries: 'Countries' }}
@@ -749,6 +753,9 @@ export default async function StyleguidePage({ params }: { params: Promise<{ loc
         <div className="w-full max-w-screen-sm">
           <BookingForm
             defaultCountry={defaultCountry(null, locale as Locale)}
+            flag={
+              <CountryFlag iso={defaultCountry(null, locale as Locale)} locale={locale as Locale} />
+            }
             formType="booking-dialog"
             locale={locale as Locale}
             tags={[tBooking('tagPartnership'), tBooking('tagPress'), tBooking('tagOther')]}

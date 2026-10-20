@@ -25,7 +25,7 @@ vi.mock('next/cache', () => ({ revalidatePath, revalidateTag }))
  *
  * What the seed writes is keyed by natural keys rather than by `uniqueSuffix`: thirteen pages by
  * slug, two uploads by filename, the airports and the flights between them by code, two yachts
- * by name, four aircraft by registration, five redirects by path and two globals. Vitest gives every file its own worker against one
+ * by name, four aircraft by registration, a redirect per legacy path and two per aircraft, and two globals. Vitest gives every file its own worker against one
  * database, so a second suite that seeds — or that deletes what the seed wrote — races this one:
  * a cleanup landing between two runs makes the second report `created` where idempotency says
  * `unchanged`, which is how the tier came to fail about one run in three.
@@ -45,7 +45,9 @@ const EXPECTED_DOCUMENTS =
   SEED_AIRCRAFT.length +
   PAGE_SLUGS.length +
   SEEDED_GLOBALS.length +
-  LEGACY_REDIRECTS.length
+  LEGACY_REDIRECTS.length +
+  // `/planes/<slug>` and `/aircrafts/<slug>` for each seeded aircraft (issue #172).
+  SEED_AIRCRAFT.length * 2
 
 let registry: TestRegistry
 
@@ -130,11 +132,14 @@ describe('seed', () => {
  * before it reports success (issue #172). Both live here rather than beside the collection,
  * because both run the seed.
  */
+/** The legacy rules, and `/planes/<slug>` and `/aircrafts/<slug>` for each seeded aircraft. */
+const SEEDED_RULES = LEGACY_REDIRECTS.length + SEED_AIRCRAFT.length * 2
+
 describe('the redirect map', () => {
   it('lands the legacy map and reports it unchanged on a second run', async () => {
     const first = await seedRedirects(registry.payload)
 
-    expect(first).toHaveLength(LEGACY_REDIRECTS.length)
+    expect(first).toHaveLength(SEEDED_RULES)
     expect(first.every((outcome) => outcome.action !== 'updated')).toBe(true)
 
     const second = await seedRedirects(registry.payload)
@@ -151,11 +156,25 @@ describe('the redirect map', () => {
       destination: '/en/aircraft',
       status: 308,
     })
-    expect(await findRedirect('ru', '/aircrafts/ra-73025', client)).toEqual({
-      destination: '/ru/aircraft/ra-73025',
+    expect(await findRedirect('ru', '/aircrafts/MOUSE', client)).toEqual({
+      destination: '/ru/aircraft/MOUSE',
       status: 308,
     })
     expect(await findRedirect('en', '/yachts', client)).toBeUndefined()
+  })
+
+  it('answers an old aircraft URL only for an aircraft there is (issue #172)', async () => {
+    await seedRedirects(registry.payload)
+
+    const client = () => Promise.resolve(registry.payload)
+
+    // The legacy `/planes/:id` pattern sent anything on; an id naming no aircraft is a 404 now.
+    expect(await findRedirect('en', '/planes/MOUSE', client)).toEqual({
+      destination: '/en/aircraft/MOUSE',
+      status: 308,
+    })
+    expect(await findRedirect('en', '/planes/ra-73025', client)).toBeUndefined()
+    expect(await findRedirect('en', '/aircrafts/g650/gallery', client)).toBeUndefined()
   })
 })
 
@@ -197,7 +216,7 @@ describe('the map as a whole', () => {
   }
 
   it('accepts the map the site ships with', async () => {
-    await expect(seedWith([])).resolves.toHaveLength(LEGACY_REDIRECTS.length)
+    await expect(seedWith([])).resolves.toHaveLength(SEEDED_RULES)
   })
 
   it('refuses a map that sends a visitor round in circles', async () => {

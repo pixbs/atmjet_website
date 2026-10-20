@@ -32,15 +32,16 @@ export const adminOrSelf: Access = ({ req: { user } }) => {
   return { id: { equals: user.id } }
 }
 
-/** An administrator, narrowed to the documents bound to them: a credential is readable by its owner alone. */
-export const adminOwnOnly: Access = ({ req: { user } }) => {
-  if (!user || !hasRole(user, 'admin')) return false
-
-  return { user: { equals: user.id } }
-}
-
 /**
  * Field-level guard for anything that would let someone widen their own access. Without it an
  * editor could add `admin` to their own roles and quietly take over the site.
  */
 export const adminFieldOnly: FieldAccess = ({ req: { user } }) => hasRole(user, 'admin')
+
+/**
+ * Field-level read for personal data: admins only, and never through `/api/mcp`, whose responses
+ * go to a model whatever depth it asks for (issue #71). The plugin tags its requests `'MCP'`,
+ * outside Payload's own `payloadAPI` union.
+ */
+export const adminFieldOffMcp: FieldAccess = ({ req }) =>
+  hasRole(req.user, 'admin') && (req.payloadAPI as string) !== 'MCP'

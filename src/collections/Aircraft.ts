@@ -27,7 +27,8 @@ const AIRCRAFT_OFFERINGS = ['charter', 'sale', 'lease', 'cargo'] as const
 const AIRCRAFT_ORIGINS = ['aircrafts-catalog', 'vehicles-legacy', 'manual'] as const
 
 /** The image roles the legacy `aircraft_images.type` enum allowed. */
-const AIRCRAFT_IMAGE_TYPES = ['exterior', 'cabin', 'cockpit'] as const
+/** The kinds the catalogue files its pictures under; the legacy drew every kind, in its order. */
+const AIRCRAFT_IMAGE_TYPES = ['exterior', 'cabin', 'cockpit', 'notail', 'plan', 'other'] as const
 
 export const Aircraft: CollectionConfig = {
   slug: 'aircraft',
@@ -260,7 +261,9 @@ export const Aircraft: CollectionConfig = {
           admin: { description: 'Every legacy row folded into this document.' },
           fields: [
             { name: 'table', type: 'text', required: true },
-            { name: 'id', type: 'number', required: true },
+            // Not `id`, which is the array row's own key: two aircraft merging the same legacy
+            // id would otherwise share one primary key.
+            { name: 'legacyId', type: 'number', required: true },
           ],
         },
       ],

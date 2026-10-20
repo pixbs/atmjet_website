@@ -3,6 +3,7 @@ import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import { mcpPlugin } from '@payloadcms/plugin-mcp'
 import { redirectsPlugin } from '@payloadcms/plugin-redirects'
 import { seoPlugin } from '@payloadcms/plugin-seo'
+import { s3Storage } from '@payloadcms/storage-s3'
 import { en } from '@payloadcms/translations/languages/en'
 import { ru } from '@payloadcms/translations/languages/ru'
 import { uk } from '@payloadcms/translations/languages/uk'
@@ -20,15 +21,25 @@ import { Contacts } from './collections/Contacts'
 import { Yachts } from './collections/Yachts'
 import { EmptyLegs } from './collections/EmptyLegs'
 import { Leads } from './collections/Leads'
+import { MigrationRuns } from './collections/MigrationRuns'
 import { sendTelegramLead } from './jobs/send-telegram-lead'
 import { redirectsOverrides, REDIRECT_TYPES } from './collections/Redirects'
+import { adminKeysOnly, mcpApiKeysOverride } from './collections/McpApiKeys'
 import { Header } from './globals/Header'
 import { Footer } from './globals/Footer'
 import { SiteSettings } from './globals/SiteSettings'
-import { admin, adminOwnOnly, hasRole } from './access'
+import { hasRole } from './access'
 import { DEFAULT_LOCALE, LOCALE_DEFINITIONS } from './i18n/locales'
 import { readEnvironment } from './lib/env'
+import { mediaFileUrl, MEDIA_PREFIX, readS3Settings } from './lib/storage'
 import { siteOrigin } from './lib/urls'
+
+/**
+ * The media bucket, or `null` where the environment names none (issue #20). Read once here
+ * rather than per upload, so a half-written group fails when the config loads.
+ */
+const s3 = readS3Settings()
+const publicUrl = s3?.publicUrl
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -66,7 +77,18 @@ export default buildConfig({
   i18n: {
     supportedLanguages: { en, ru, uk },
   },
-  collections: [Users, Media, Pages, Airports, Aircraft, Contacts, Yachts, EmptyLegs, Leads],
+  collections: [
+    Users,
+    Media,
+    Pages,
+    Airports,
+    Aircraft,
+    Contacts,
+    Yachts,
+    EmptyLegs,
+    Leads,
+    MigrationRuns,
+  ],
   // The chrome and the values every page links to (issue #61). One document each, so there is
   // nothing to list and nothing to publish.
   globals: [Header, Footer, SiteSettings],
@@ -115,6 +137,34 @@ export default buildConfig({
   },
   sharp,
   plugins: [
+    // Uploads go to the bucket where the environment names one and to Payload's own disk
+    // storage where it does not, which is local development and every test run (issue #20).
+    // The fields go in either way, so one set of migrations describes both.
+    s3Storage({
+      enabled: s3 !== null,
+      alwaysInsertFields: true,
+      bucket: s3?.bucket ?? '',
+      config: {
+        region: s3?.region ?? '',
+        credentials: {
+          accessKeyId: s3?.accessKeyId ?? '',
+          secretAccessKey: s3?.secretAccessKey ?? '',
+        },
+        // Only an S3-compatible host needs one; AWS builds its own from the region.
+        ...(s3?.endpoint === undefined ? {} : { endpoint: s3.endpoint }),
+      },
+      collections: {
+        media: {
+          prefix: MEDIA_PREFIX,
+          ...(publicUrl === undefined
+            ? {}
+            : {
+                generateFileURL: ({ filename, prefix }) =>
+                  mediaFileUrl(publicUrl, filename, prefix),
+              }),
+        },
+      },
+    }),
     // Localized meta fields per page; E11.1 refines what each route actually emits.
     seoPlugin({
       collections: ['pages'],
@@ -137,38 +187,24 @@ export default buildConfig({
       },
       overrides: redirectsOverrides,
     }),
-    // Agents enter content at /api/mcp (issue #71): only what an editor runs, never people or leads.
+    // Agents enter the E10 content through /api/mcp with a key only an admin holds (issue #71);
+    // people and leads stay out, and nothing is deleted through it.
     mcpPlugin({
       collections: {
-        pages: { enabled: true },
-        airports: { enabled: true },
-        aircraft: { enabled: true },
-        yachts: { enabled: true },
-        'empty-legs': { enabled: true },
-        redirects: { enabled: true },
-        media: { enabled: { find: true } },
+        pages: { enabled: { find: true, create: true, update: true } },
+        media: { enabled: { find: true, update: true } },
+        airports: { enabled: { find: true, create: true, update: true } },
+        aircraft: { enabled: { find: true, create: true, update: true } },
+        yachts: { enabled: { find: true, create: true, update: true } },
+        'empty-legs': { enabled: { find: true, create: true, update: true } },
       },
       globals: {
         header: { enabled: true },
         footer: { enabled: true },
+        'site-settings': { enabled: true },
       },
-      // Only an admin issues a key, and a key stays readable by the admin it belongs to alone.
-      overrideApiKeyCollection: (collection) => ({
-        ...collection,
-        access: {
-          create: admin,
-          read: adminOwnOnly,
-          update: adminOwnOnly,
-          delete: adminOwnOnly,
-          unlock: adminOwnOnly,
-        },
-      }),
-      // A key acts as an editor, so the admin-only contact fields stay out of the model's reach at any depth.
-      overrideAuth: async (_req, getDefaultMcpAccessSettings) => {
-        const settings = await getDefaultMcpAccessSettings()
-
-        return { ...settings, user: { ...settings.user, roles: ['editor'] } }
-      },
+      overrideApiKeyCollection: mcpApiKeysOverride,
+      overrideAuth: adminKeysOnly,
     }),
   ],
 })

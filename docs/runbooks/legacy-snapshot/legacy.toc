@@ -1,0 +1,133 @@
+;
+; Archive created at 2026-10-05 19:56:30 CST
+;     dbname: verceldb
+;     TOC Entries: 122
+;     Compression: gzip
+;     Dump Version: 1.16-0
+;     Format: CUSTOM
+;     Integer: 4 bytes
+;     Offset: 8 bytes
+;     Dumped from database version: 16.15 (eb11870)
+;     Dumped by pg_dump version: 18.6
+;
+;
+; Selected TOC Entries:
+;
+7; 2615 41013 SCHEMA - drizzle default
+2; 3079 155648 EXTENSION - pg_trgm 
+3552; 0 0 COMMENT - EXTENSION pg_trgm 
+274; 1255 163865 FUNCTION public airports_search_vector_update() default
+222; 1259 41015 TABLE drizzle __drizzle_migrations default
+221; 1259 41014 SEQUENCE drizzle __drizzle_migrations_id_seq default
+3553; 0 0 SEQUENCE OWNED BY drizzle __drizzle_migrations_id_seq default
+238; 1259 221185 TABLE public aircraft_images default
+237; 1259 221184 SEQUENCE public aircraft_images_id_seq default
+3554; 0 0 SEQUENCE OWNED BY public aircraft_images_id_seq default
+240; 1259 221194 TABLE public aircrafts default
+239; 1259 221193 SEQUENCE public aircrafts_id_seq default
+3555; 0 0 SEQUENCE OWNED BY public aircrafts_id_seq default
+218; 1259 40971 TABLE public airports default
+217; 1259 40970 SEQUENCE public airports_id_seq default
+3556; 0 0 SEQUENCE OWNED BY public airports_id_seq default
+226; 1259 73729 TABLE public atmjet_admin__empty_legs default
+225; 1259 73728 SEQUENCE public atmjet_admin__empty_legs_id_seq default
+3557; 0 0 SEQUENCE OWNED BY public atmjet_admin__empty_legs_id_seq default
+228; 1259 73739 TABLE public atmjet_admin__users default
+227; 1259 73738 SEQUENCE public atmjet_admin__users_id_seq default
+3558; 0 0 SEQUENCE OWNED BY public atmjet_admin__users_id_seq default
+220; 1259 40980 TABLE public city_list default
+219; 1259 40979 SEQUENCE public city_list_id_seq default
+3559; 0 0 SEQUENCE OWNED BY public city_list_id_seq default
+236; 1259 188426 TABLE public contact default
+235; 1259 188425 SEQUENCE public contact_id_seq default
+3560; 0 0 SEQUENCE OWNED BY public contact_id_seq default
+234; 1259 188417 TABLE public new_yachts default
+233; 1259 188416 SEQUENCE public localYachts_id_seq default
+3561; 0 0 SEQUENCE OWNED BY public localYachts_id_seq default
+242; 1259 221209 TABLE public migration_status default
+241; 1259 221208 SEQUENCE public migration_status_id_seq default
+3562; 0 0 SEQUENCE OWNED BY public migration_status_id_seq default
+232; 1259 164009 TABLE public new_airports default
+231; 1259 164008 SEQUENCE public new_airports_id_seq default
+3563; 0 0 SEQUENCE OWNED BY public new_airports_id_seq default
+224; 1259 41024 TABLE public vehicles default
+223; 1259 41023 SEQUENCE public vehicles_id_seq default
+3564; 0 0 SEQUENCE OWNED BY public vehicles_id_seq default
+230; 1259 98309 TABLE public yachts default
+229; 1259 98308 SEQUENCE public yachts_id_seq default
+3565; 0 0 SEQUENCE OWNED BY public yachts_id_seq default
+3294; 2604 41018 DEFAULT drizzle __drizzle_migrations id default
+3312; 2604 221188 DEFAULT public aircraft_images id default
+3313; 2604 221197 DEFAULT public aircrafts id default
+3291; 2604 40974 DEFAULT public airports id default
+3305; 2604 73732 DEFAULT public atmjet_admin__empty_legs id default
+3307; 2604 73742 DEFAULT public atmjet_admin__users id default
+3292; 2604 40983 DEFAULT public city_list id default
+3311; 2604 188429 DEFAULT public contact id default
+3326; 2604 221212 DEFAULT public migration_status id default
+3309; 2604 164012 DEFAULT public new_airports id default
+3310; 2604 188420 DEFAULT public new_yachts id default
+3295; 2604 41027 DEFAULT public vehicles id default
+3308; 2604 98312 DEFAULT public yachts id default
+3525; 0 41015 TABLE DATA drizzle __drizzle_migrations default
+3541; 0 221185 TABLE DATA public aircraft_images default
+3543; 0 221194 TABLE DATA public aircrafts default
+3521; 0 40971 TABLE DATA public airports default
+3529; 0 73729 TABLE DATA public atmjet_admin__empty_legs default
+3531; 0 73739 TABLE DATA public atmjet_admin__users default
+3523; 0 40980 TABLE DATA public city_list default
+3539; 0 188426 TABLE DATA public contact default
+3545; 0 221209 TABLE DATA public migration_status default
+3535; 0 164009 TABLE DATA public new_airports default
+3537; 0 188417 TABLE DATA public new_yachts default
+3527; 0 41024 TABLE DATA public vehicles default
+3533; 0 98309 TABLE DATA public yachts default
+3566; 0 0 SEQUENCE SET drizzle __drizzle_migrations_id_seq default
+3567; 0 0 SEQUENCE SET public aircraft_images_id_seq default
+3568; 0 0 SEQUENCE SET public aircrafts_id_seq default
+3569; 0 0 SEQUENCE SET public airports_id_seq default
+3570; 0 0 SEQUENCE SET public atmjet_admin__empty_legs_id_seq default
+3571; 0 0 SEQUENCE SET public atmjet_admin__users_id_seq default
+3572; 0 0 SEQUENCE SET public city_list_id_seq default
+3573; 0 0 SEQUENCE SET public contact_id_seq default
+3574; 0 0 SEQUENCE SET public localYachts_id_seq default
+3575; 0 0 SEQUENCE SET public migration_status_id_seq default
+3576; 0 0 SEQUENCE SET public new_airports_id_seq default
+3577; 0 0 SEQUENCE SET public vehicles_id_seq default
+3578; 0 0 SEQUENCE SET public yachts_id_seq default
+3332; 2606 41022 CONSTRAINT drizzle __drizzle_migrations __drizzle_migrations_pkey default
+3369; 2606 221192 CONSTRAINT public aircraft_images aircraft_images_pkey default
+3371; 2606 221205 CONSTRAINT public aircrafts aircrafts_id_unique default
+3373; 2606 221207 CONSTRAINT public aircrafts aircrafts_slug_unique default
+3328; 2606 40978 CONSTRAINT public airports airports_pkey default
+3344; 2606 73737 CONSTRAINT public atmjet_admin__empty_legs atmjet_admin__empty_legs_pkey default
+3346; 2606 73746 CONSTRAINT public atmjet_admin__users atmjet_admin__users_pkey default
+3330; 2606 40986 CONSTRAINT public city_list city_list_pkey default
+3367; 2606 188433 CONSTRAINT public contact contact_pkey default
+3364; 2606 188424 CONSTRAINT public new_yachts localYachts_pkey default
+3375; 2606 221216 CONSTRAINT public migration_status migration_status_pkey default
+3360; 2606 164016 CONSTRAINT public new_airports new_airports_pkey default
+3341; 2606 41040 CONSTRAINT public vehicles vehicles_pkey default
+3348; 2606 98316 CONSTRAINT public yachts yachts_pkey default
+3333; 1259 41041 INDEX public article_idx default
+3361; 1259 188440 INDEX public captain_idx default
+3362; 1259 188439 INDEX public contact_idx default
+3334; 1259 41046 INDEX public favorite_idx default
+3349; 1259 164023 INDEX public iata_idx default
+3350; 1259 164022 INDEX public icao_idx default
+3351; 1259 164030 INDEX public idx_airports_alies_en default
+3352; 1259 164031 INDEX public idx_airports_alies_ru default
+3353; 1259 164024 INDEX public idx_airports_city_en default
+3354; 1259 164025 INDEX public idx_airports_city_ru default
+3355; 1259 164028 INDEX public idx_airports_country_en default
+3356; 1259 164029 INDEX public idx_airports_country_ru default
+3357; 1259 164026 INDEX public idx_airports_label_en default
+3358; 1259 164027 INDEX public idx_airports_label_ru default
+3335; 1259 41048 INDEX public made_in_idx default
+3336; 1259 41045 INDEX public new_idx default
+3337; 1259 41043 INDEX public old_price_idx default
+3338; 1259 41047 INDEX public popular_idx default
+3339; 1259 41042 INDEX public price_idx default
+3342; 1259 41044 INDEX public vendor_idx default
+3365; 1259 188441 INDEX public yacht_name_idx default
+3376; 2606 221217 FK CONSTRAINT public aircraft_images aircraft_images_aircraft_id_aircrafts_id_fk default

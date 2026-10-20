@@ -10,7 +10,10 @@ import { execFileSync } from 'node:child_process'
  */
 export const testUser = {
   email: 'dev@payloadcms.com',
-  password: 'test',
+  // Generated for the run by `admin-user-setup.ts` and inherited by every worker (#422).
+  get password(): string {
+    return process.env.E2E_ADMIN_PASSWORD ?? ''
+  },
   roles: ['admin' as const],
 }
 

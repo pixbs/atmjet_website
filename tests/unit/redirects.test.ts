@@ -6,6 +6,7 @@ import {
   findRedirectLoop,
   matchRedirect,
   normaliseRedirectPath,
+  redirectCandidates,
   shadowedPaths,
   type RedirectRule,
 } from '@/lib/redirects'
@@ -228,5 +229,37 @@ describe('shadowedPaths', () => {
     const rules: RedirectRule[] = [{ from: '/', to: '/aircraft' }]
 
     expect(shadowedPaths(rules, [''], 'en')).toEqual(['/'])
+  })
+})
+
+describe('the rules a path can be caught by (issue #172)', () => {
+  it('are the path itself and every path above it, nearest first', () => {
+    expect(redirectCandidates('/planes/ra-73025/gallery')).toEqual([
+      '/planes/ra-73025/gallery',
+      '/planes/ra-73025',
+      '/planes',
+    ])
+  })
+
+  it('are compared in the spelling the collection stores', () => {
+    expect(redirectCandidates('planes/')).toEqual(['/planes'])
+    expect(redirectCandidates('/')).toEqual(['/'])
+  })
+
+  it('include every rule that matches, so querying them loses no match', () => {
+    const rules = [
+      { from: '/planes', to: '/aircraft', matchSubPaths: true },
+      { from: '/planes/ra-73025', to: '/aircraft/RA73025' },
+    ]
+    const path = '/planes/ra-73025'
+    const candidates = new Set(redirectCandidates(path))
+
+    expect(
+      matchRedirect(
+        rules.filter((rule) => candidates.has(rule.from)),
+        path,
+        'en',
+      ),
+    ).toEqual(matchRedirect(rules, path, 'en'))
   })
 })

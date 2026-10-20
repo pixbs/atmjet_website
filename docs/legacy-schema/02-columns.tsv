@@ -1,0 +1,177 @@
+table_name	position	column_name	type	not_null	default_value
+aircraft_images	1	id	integer	t	nextval('aircraft_images_id_seq'::regclass)
+aircraft_images	2	aircraft_id	integer	t	
+aircraft_images	3	type	text	t	
+aircraft_images	4	url	text	t	
+aircrafts	1	id	integer	t	nextval('aircrafts_id_seq'::regclass)
+aircrafts	2	slug	text	t	
+aircrafts	3	registration_number	text	f	
+aircrafts	4	year_of_production	integer	f	
+aircrafts	5	passengers_max	integer	f	
+aircrafts	6	serial_number	text	f	
+aircrafts	7	hours_flown	integer	f	
+aircrafts	8	cycles	integer	f	
+aircrafts	9	verified_at	text	f	
+aircrafts	10	tech_operator	text	f	
+aircrafts	11	is_cargo	boolean	f	false
+aircrafts	12	is_for_sale	boolean	f	false
+aircrafts	13	is_for_lease	boolean	f	false
+aircrafts	14	is_for_charter	boolean	f	false
+aircrafts	15	pdf_attachment	text	f	
+aircrafts	16	pdf_attachment_name	text	f	
+aircrafts	17	company_slug	text	f	
+aircrafts	18	company_name	text	f	
+aircrafts	19	extension_refurbishment	boolean	f	false
+aircrafts	20	extension_view_360	text	f	
+aircrafts	21	extension_cabin_crew	boolean	f	false
+aircrafts	22	extension_divan_seats	integer	f	
+aircrafts	23	extension_lavatory	boolean	f	false
+aircrafts	24	extension_beds	integer	f	
+aircrafts	25	extension_hot_meal	boolean	f	false
+aircrafts	26	extension_wireless_internet	boolean	f	false
+aircrafts	27	extension_pets_allowed	boolean	f	false
+aircrafts	28	extension_cabin_height	text	f	
+aircrafts	29	extension_cabin_length	text	f	
+aircrafts	30	extension_cabin_width	text	f	
+aircrafts	31	extension_luggage_volume	text	f	
+aircrafts	32	extension_shower	boolean	f	false
+aircrafts	33	extension_satellite_phone	boolean	f	false
+aircrafts	34	extension_sleeping_places	integer	f	
+aircrafts	35	extension_description	text	f	
+aircrafts	36	extension_spec_equipment	text	f	
+aircrafts	37	airport_iata	text	f	
+aircrafts	38	airport_icao	text	f	
+aircrafts	39	airport_name	text	f	
+aircrafts	40	aircraft_type_slug	text	f	
+aircrafts	41	aircraft_type_name	text	f	
+aircrafts	42	aircraft_type_speed_typical	real	f	
+aircrafts	43	aircraft_type_range_maximum	integer	f	
+aircrafts	44	aircraft_type_cabin_height	real	f	
+aircrafts	45	aircraft_type_cabin_length	real	f	
+aircrafts	46	aircraft_type_cabin_width	real	f	
+aircrafts	47	aircraft_type_pax_maximum	integer	f	
+aircrafts	48	aircraft_type_aircraft_class_name	text	f	
+airports	1	id	integer	t	nextval('airports_id_seq'::regclass)
+airports	2	iata_code	character varying(255)	t	
+airports	3	icao_code	character varying(255)	t	
+airports	4	name_rus	character varying(255)	t	
+airports	5	name_eng	character varying(255)	t	
+airports	6	city_rus	character varying(255)	t	
+airports	7	city_eng	character varying(255)	t	
+airports	8	gmt_offset	character varying(255)	t	
+airports	9	country_rus	character varying(255)	t	
+airports	10	country_eng	character varying(255)	t	
+airports	11	iso_code	character varying(255)	t	
+airports	12	latitude	character varying(255)	t	
+airports	13	longitude	character varying(255)	t	
+atmjet_admin__empty_legs	1	id	integer	t	nextval('atmjet_admin__empty_legs_id_seq'::regclass)
+atmjet_admin__empty_legs	2	start	timestamp with time zone	t	
+atmjet_admin__empty_legs	3	end	timestamp with time zone	t	
+atmjet_admin__empty_legs	4	from	character varying(4)	t	
+atmjet_admin__empty_legs	5	to	character varying(4)	t	
+atmjet_admin__empty_legs	6	type	character varying(255)	f	
+atmjet_admin__empty_legs	7	company	character varying(255)	f	
+atmjet_admin__empty_legs	8	safety	character varying(255)	f	
+atmjet_admin__empty_legs	9	price	integer	f	0
+atmjet_admin__empty_legs	10	order	integer	f	
+atmjet_admin__empty_legs	11	category	character varying(255)	f	
+atmjet_admin__users	1	id	integer	t	nextval('atmjet_admin__users_id_seq'::regclass)
+atmjet_admin__users	2	username	character varying(256)	t	
+atmjet_admin__users	3	password	text	t	
+city_list	1	id	integer	t	nextval('city_list_id_seq'::regclass)
+city_list	2	name	character varying(30)	t	''::character varying
+contact	1	id	integer	t	nextval('contact_id_seq'::regclass)
+contact	2	name	text	f	
+contact	3	phone	text	f	
+contact	4	email	text	f	
+migration_status	1	id	integer	t	nextval('migration_status_id_seq'::regclass)
+migration_status	2	last_processed_page	integer	f	
+migration_status	3	last_processed_slug	text	f	
+new_airports	1	id	integer	t	nextval('new_airports_id_seq'::regclass)
+new_airports	2	icao	text	f	
+new_airports	3	iata	text	f	
+new_airports	4	label_en	text	f	
+new_airports	5	label_ru	text	f	
+new_airports	6	city_en	text	f	
+new_airports	7	city_ru	text	f	
+new_airports	8	country_en	text	f	
+new_airports	9	country_ru	text	f	
+new_airports	10	passengers_per_year	text	f	
+new_airports	11	type_en	text	f	
+new_airports	12	type_ru	text	f	
+new_airports	13	alies_en	text	f	
+new_airports	14	alies_ru	text	f	
+new_airports	15	wikidata	text	f	
+new_yachts	1	id	integer	t	nextval('"localYachts_id_seq"'::regclass)
+new_yachts	2	name	text	f	
+new_yachts	3	description	text	f	
+new_yachts	4	manufacturer	text	f	
+new_yachts	5	owner	text	f	
+new_yachts	6	contact_id	integer	f	
+new_yachts	7	bussines_price	numeric	f	
+new_yachts	8	customer_price	numeric	f	
+new_yachts	9	currency	text	f	
+new_yachts	10	captain_id	integer	f	
+new_yachts	11	location	text	f	
+new_yachts	12	length	numeric	f	
+new_yachts	13	guests_day	numeric	f	
+new_yachts	14	guests_night	numeric	f	
+new_yachts	15	cabins	text	f	
+new_yachts	16	bathrooms	text	f	
+new_yachts	17	refit	numeric	f	
+new_yachts	18	min_hours	numeric	f	
+new_yachts	19	included	text	f	
+new_yachts	20	photos	text[]	f	
+new_yachts	21	slug	text	f	
+new_yachts	22	description_ru	text	f	
+new_yachts	23	included_en	text	f	
+vehicles	1	id	integer	t	nextval('vehicles_id_seq'::regclass)
+vehicles	2	article	character varying(50)	f	
+vehicles	3	price	numeric(12,2)	f	0.00
+vehicles	4	old_price	numeric(12,2)	f	0.00
+vehicles	5	weight	numeric(13,3)	f	0.000
+vehicles	6	image	character varying(255)	f	
+vehicles	7	thumb	character varying(255)	f	
+vehicles	8	vendor	integer	f	0
+vehicles	9	made_in	character varying(100)	f	''::character varying
+vehicles	10	new	integer	f	0
+vehicles	11	popular	integer	f	0
+vehicles	12	favorite	integer	f	0
+vehicles	13	tags	text	f	
+vehicles	14	color	text	f	
+vehicles	15	size	text	f	
+vehicles	16	source	integer	f	1
+vehicles	17	yacht_maxspeed	character varying(20)	f	
+vehicles	18	yacht_speed	character varying(20)	f	
+vehicles	19	yacht_winter_areas	character varying(255)	f	
+vehicles	20	yacht_summer_areas	character varying(255)	f	
+vehicles	21	yacht_guests	character varying(20)	f	
+vehicles	22	yacht_year	character varying(20)	f	
+vehicles	23	yacht_builder	character varying(100)	f	
+vehicles	24	yacht_length	character varying(50)	f	
+vehicles	25	tail_homebase_country	character varying(100)	f	
+vehicles	26	tail_maxpax	character varying(20)	f	
+vehicles	27	tail_homebase_name	character varying(255)	f	
+vehicles	28	tail_homebase	character varying(255)	f	
+vehicles	29	tail_operator	character varying(100)	f	
+vehicles	30	tail_number	character varying(50)	f	
+vehicles	31	tail_model	character varying(100)	f	
+vehicles	32	tail_manufacturer	character varying(100)	f	
+vehicles	33	tail_exteriorrefit	character varying(20)	f	
+vehicles	34	tail_interiorrefit	character varying(20)	f	
+vehicles	35	tail_homebase_city	character varying(100)	f	
+vehicles	36	tail_year	character varying(20)	f	
+yachts	1	id	integer	t	nextval('yachts_id_seq'::regclass)
+yachts	2	name	text	f	
+yachts	3	shipyard	text	f	
+yachts	4	year	integer	f	
+yachts	5	length	numeric	f	
+yachts	6	beam	numeric	f	
+yachts	7	draft	numeric	f	
+yachts	8	cabins	integer	f	
+yachts	9	guests	integer	f	
+yachts	10	crew	integer	f	
+yachts	11	cruising_speed	integer	f	
+yachts	12	max_speed	integer	f	
+yachts	13	location	text	f	
+yachts	14	pictures	text[]	f	

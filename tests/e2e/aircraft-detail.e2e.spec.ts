@@ -101,6 +101,15 @@ test.describe('the request a detail page takes', () => {
     await expect(page).toHaveURL(/direction=/)
     await expect(page).toHaveURL(/2026-10-01/)
   })
+
+  test('shows the airports it offers over the rest of the card', async ({ page }) => {
+    await page.goto(pathFor('/aircraft/MOUSE', 'en'))
+
+    await page.getByRole('combobox', { name: 'From' }).fill('dub')
+
+    // In the viewport, not only in the DOM: the field's rounded wrapper clipped the list (#441).
+    await expect(page.getByRole('option').first()).toBeInViewport()
+  })
 })
 
 /**

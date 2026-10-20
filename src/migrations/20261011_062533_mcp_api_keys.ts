@@ -10,32 +10,26 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"pages_find" boolean DEFAULT false,
   	"pages_create" boolean DEFAULT false,
   	"pages_update" boolean DEFAULT false,
-  	"pages_delete" boolean DEFAULT false,
+  	"media_find" boolean DEFAULT false,
+  	"media_update" boolean DEFAULT false,
   	"airports_find" boolean DEFAULT false,
   	"airports_create" boolean DEFAULT false,
   	"airports_update" boolean DEFAULT false,
-  	"airports_delete" boolean DEFAULT false,
   	"aircraft_find" boolean DEFAULT false,
   	"aircraft_create" boolean DEFAULT false,
   	"aircraft_update" boolean DEFAULT false,
-  	"aircraft_delete" boolean DEFAULT false,
   	"yachts_find" boolean DEFAULT false,
   	"yachts_create" boolean DEFAULT false,
   	"yachts_update" boolean DEFAULT false,
-  	"yachts_delete" boolean DEFAULT false,
   	"empty_legs_find" boolean DEFAULT false,
   	"empty_legs_create" boolean DEFAULT false,
   	"empty_legs_update" boolean DEFAULT false,
-  	"empty_legs_delete" boolean DEFAULT false,
-  	"redirects_find" boolean DEFAULT false,
-  	"redirects_create" boolean DEFAULT false,
-  	"redirects_update" boolean DEFAULT false,
-  	"redirects_delete" boolean DEFAULT false,
-  	"media_find" boolean DEFAULT false,
   	"header_find" boolean DEFAULT false,
   	"header_update" boolean DEFAULT false,
   	"footer_find" boolean DEFAULT false,
   	"footer_update" boolean DEFAULT false,
+  	"site_settings_find" boolean DEFAULT false,
+  	"site_settings_update" boolean DEFAULT false,
   	"updated_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
   	"created_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
   	"enable_a_p_i_key" boolean,
@@ -55,8 +49,9 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   CREATE INDEX "payload_preferences_rels_payload_mcp_api_keys_id_idx" ON "payload_preferences_rels" USING btree ("payload_mcp_api_keys_id");`)
 }
 
-// Dependents first, table last: the generated order dropped the table with CASCADE and then failed on the constraints it took (issue #71).
 export async function down({ db, payload, req }: MigrateDownArgs): Promise<void> {
+  // Generated the other way round, dropping the table first took its two foreign keys with it
+  // and the DROP CONSTRAINT that followed failed, so nothing rolled back (issue #71).
   await db.execute(sql`
    ALTER TABLE "payload_locked_documents_rels" DROP CONSTRAINT IF EXISTS "payload_locked_documents_rels_payload_mcp_api_keys_fk";
   ALTER TABLE "payload_preferences_rels" DROP CONSTRAINT IF EXISTS "payload_preferences_rels_payload_mcp_api_keys_fk";
@@ -64,5 +59,6 @@ export async function down({ db, payload, req }: MigrateDownArgs): Promise<void>
   DROP INDEX IF EXISTS "payload_preferences_rels_payload_mcp_api_keys_id_idx";
   ALTER TABLE "payload_locked_documents_rels" DROP COLUMN IF EXISTS "payload_mcp_api_keys_id";
   ALTER TABLE "payload_preferences_rels" DROP COLUMN IF EXISTS "payload_mcp_api_keys_id";
-  DROP TABLE IF EXISTS "payload_mcp_api_keys";`)
+  ALTER TABLE "payload_mcp_api_keys" DISABLE ROW LEVEL SECURITY;
+  DROP TABLE "payload_mcp_api_keys" CASCADE;`)
 }

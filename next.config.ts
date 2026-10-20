@@ -7,6 +7,18 @@ import { fileURLToPath } from 'url'
 const __filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(__filename)
 
+/**
+ * The hosts `next/image` may fetch from. `mediaSource` hands `Media.externalUrl` straight to it
+ * (`src/lib/media.ts`): the bucket the uploads go to (issue #20, `S3_PUBLIC_URL`), and the two
+ * the legacy config named (`docs/legacy-inventory.md` section 2.1), the old bucket the legacy
+ * rows still point at and the Spaces host E1.6 mirrors.
+ */
+const REMOTE_IMAGE_HOSTS = [
+  'atmjet-payload.s3.eu-north-1.amazonaws.com',
+  'atmjet.s3.eu-north-1.amazonaws.com',
+  'atmjet.ams3.cdn.digitaloceanspaces.com',
+]
+
 const nextConfig: NextConfig = {
   images: {
     localPatterns: [
@@ -14,6 +26,25 @@ const nextConfig: NextConfig = {
         pathname: '/api/media/file/**',
       },
     ],
+    remotePatterns: REMOTE_IMAGE_HOSTS.map((hostname) => ({
+      protocol: 'https' as const,
+      hostname,
+      pathname: '/**',
+    })),
+  },
+  /**
+   * The videos are served from `public/` rather than a bucket (the decision on issue #175),
+   * where Next's default `max-age=0` sends the player back to the server on every visit before
+   * it may reuse the sixteen megabytes it already holds; the path names one file for good,
+   * since replacing the video means a new name in the block's `video` field.
+   */
+  async headers() {
+    return [
+      {
+        source: '/video/:path*',
+        headers: [{ key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }],
+      },
+    ]
   },
   webpack: (webpackConfig) => {
     webpackConfig.resolve.extensionAlias = {
@@ -32,4 +63,31 @@ const nextConfig: NextConfig = {
 /** Points next-intl at src/i18n/request.ts, which resolves the locale and loads its messages. */
 const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts')
 
-export default withNextIntl(withPayload(nextConfig, { devBundleServerPackages: false }))
+const config = withNextIntl(withPayload(nextConfig, { devBundleServerPackages: false }))
+
+/** The colour-scheme client hint `withPayload` sends on every path; only the admin reads it. */
+const CLIENT_HINT_HEADERS = ['Accept-CH', 'Critical-CH', 'Vary']
+
+/**
+ * Next merges every matching rule, so the hint is moved out of `withPayload`'s `/:path*` rule
+ * rather than overridden: `Critical-CH` makes Chrome render a public page's first visit twice
+ * (issue #453).
+ */
+export default {
+  ...config,
+  async headers() {
+    const rules = (await config.headers?.()) ?? []
+
+    return rules.flatMap((rule) => {
+      if (rule.source !== '/:path*') return [rule]
+
+      const isHint = (header: { key: string }) => CLIENT_HINT_HEADERS.includes(header.key)
+      const rest = rule.headers.filter((header) => !isHint(header))
+
+      return [
+        ...(rest.length ? [{ ...rule, headers: rest }] : []),
+        { ...rule, source: '/admin/:path*', headers: rule.headers.filter(isHint) },
+      ]
+    })
+  },
+} satisfies NextConfig

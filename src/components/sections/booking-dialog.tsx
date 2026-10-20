@@ -29,6 +29,7 @@ export interface BookingDialogProps {
   locale: Locale
   /** Where the phone field opens, resolved from the request on the server (issue #160). */
   defaultCountry: PhoneInputProps['defaultCountry']
+  flag: PhoneInputProps['flag']
   /** The chips a visitor may tick, in the language being read. */
   tags: readonly string[]
   /** The three accounts, from the site settings the chrome already reads (issue #61). */
@@ -41,6 +42,7 @@ export interface BookingDialogProps {
 export function BookingDialog({
   locale,
   defaultCountry,
+  flag,
   tags,
   social,
   phone,
@@ -120,6 +122,7 @@ export function BookingDialog({
           </button>
           <BookingForm
             defaultCountry={defaultCountry}
+            flag={flag}
             formType="booking-dialog"
             locale={locale}
             tags={tags}

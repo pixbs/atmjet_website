@@ -33,7 +33,7 @@ Never read Payload from a client component, and never fetch the initial content 
 | Listings with `searchParams`                        | Rendered on demand, one render per query                          | **rendered per request**: `searchParams` is a request-time API      |
 | Anything reading `headers()` or `cookies()`         | Dynamic; keep it to the smallest possible subtree                 | dynamic                                                             |
 
-The third column is what `tests/e2e/caching.e2e.spec.ts` reads back off a running build, and the last two rows are the gap between the plan and the site: neither catalogue opts into a cache, so every visit re-queries Payload. Closing it means a `generateStaticParams` over each catalogue (both sets are already enumerated, by `listAircraftForSitemap` and `listCharterYachtsForSitemap`) or a `'use cache'` reader; it belongs to the issue that decides it, not to a page that happens to be edited.
+The third column is what `tests/e2e/caching.e2e.spec.ts` reads back off a running build (on Vercel the cache header is `x-vercel-cache`; `x-nextjs-cache` is a local server's, #17), and the last two rows are the gap between the plan and the site: neither catalogue opts into a cache, so every visit re-queries Payload. Closing it means a `generateStaticParams` over each catalogue (both sets are already enumerated, by `listAircraftForSitemap` and `listCharterYachtsForSitemap`) or a `'use cache'` reader; it belongs to the issue that decides it, not to a page that happens to be edited.
 
 `generateStaticParams` reads `getEnabledLocales()` (`src/lib/data/site-settings.ts`), never a hard-coded list, so a language an administrator enables is prerendered without touching a page (issue #53).
 

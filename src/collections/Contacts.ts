@@ -1,6 +1,6 @@
 import type { CollectionConfig, RelationshipField } from 'payload'
 
-import { admin, adminFieldOnly, hasRole } from '@/access'
+import { admin, adminFieldOffMcp, adminFieldOnly, hasRole } from '@/access'
 import { provenanceGroup } from '@/fields/provenance'
 
 /**
@@ -49,7 +49,7 @@ export function contactRelationship(field: {
     relationTo: CONTACTS_SLUG,
     index: true,
     access: {
-      read: adminFieldOnly,
+      read: adminFieldOffMcp,
       create: adminFieldOnly,
       update: adminFieldOnly,
     },
@@ -111,6 +111,14 @@ export const Contacts: CollectionConfig = {
       admin: {
         description:
           'No legacy column, so the import leaves it empty. Media is public: do not upload anything here that the person would not want served from a URL.',
+      },
+    },
+    {
+      name: 'legacyAttributes',
+      type: 'json',
+      admin: {
+        description:
+          'A legacy value no field above accepts, such as an email that is not one, kept verbatim.',
       },
     },
     provenanceGroup({

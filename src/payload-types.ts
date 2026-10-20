@@ -77,6 +77,7 @@ export interface Config {
     yachts: Yacht;
     'empty-legs': EmptyLeg;
     leads: Lead;
+    'migration-runs': MigrationRun;
     redirects: Redirect;
     'payload-mcp-api-keys': PayloadMcpApiKey;
     'payload-kv': PayloadKv;
@@ -96,6 +97,7 @@ export interface Config {
     yachts: YachtsSelect<false> | YachtsSelect<true>;
     'empty-legs': EmptyLegsSelect<false> | EmptyLegsSelect<true>;
     leads: LeadsSelect<false> | LeadsSelect<true>;
+    'migration-runs': MigrationRunsSelect<false> | MigrationRunsSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     'payload-mcp-api-keys': PayloadMcpApiKeysSelect<false> | PayloadMcpApiKeysSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
@@ -188,6 +190,7 @@ export interface User {
   resetPasswordExpiration?: string | null;
   salt?: string | null;
   hash?: string | null;
+  resetPasswordRequestedAt?: string | null;
   loginAttempts?: number | null;
   lockUntil?: string | null;
   sessions?:
@@ -214,6 +217,8 @@ export interface Media {
    * Set while the file still lives on a legacy host. Components prefer it over the upload.
    */
   externalUrl?: string | null;
+  prefix?: string | null;
+  _objectKey?: string | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -313,6 +318,7 @@ export interface Page {
         | PrivilegeBlock
         | QuoteBlock
         | RecentYachtsBlock
+        | RichTextBlock
         | TilesBlock
         | TransferBlock
         | WeInspectBlock
@@ -952,6 +958,34 @@ export interface RecentYachtsBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "RichTextBlock".
+ */
+export interface RichTextBlock {
+  title: string;
+  /**
+   * Section headings, lists, bold text and links; the title is the h1.
+   */
+  content: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'richText';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "TilesBlock".
  */
 export interface TilesBlock {
@@ -1121,7 +1155,7 @@ export interface Airport {
   city?: string | null;
   country?: string | null;
   /**
-   * Other names the search should match, comma separated. The legacy column is the misspelled `alies_en` / `alies_ru`.
+   * Other names the search should match, separated by | or commas. The legacy column is the misspelled `alies_en` / `alies_ru`.
    */
   aliases?: string | null;
   /**
@@ -1146,6 +1180,7 @@ export interface Airport {
    * Wikidata identifier from the legacy `new_airports` table.
    */
   wikidata?: string | null;
+  search?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -1241,7 +1276,7 @@ export interface Aircraft {
    */
   images?:
     | {
-        type: 'exterior' | 'cabin' | 'cockpit';
+        type: 'exterior' | 'cabin' | 'cockpit' | 'notail' | 'plan' | 'other';
         media?: (number | null) | Media;
         /**
          * Set while the file still lives on a legacy host, as on Media.
@@ -1277,7 +1312,8 @@ export interface Aircraft {
     mergedFrom?:
       | {
           table: string;
-          id: number;
+          legacyId: number;
+          id?: string | null;
         }[]
       | null;
     importRunId?: string | null;
@@ -1315,6 +1351,18 @@ export interface Contact {
    * No legacy column, so the import leaves it empty. Media is public: do not upload anything here that the person would not want served from a URL.
    */
   photo?: (number | null) | Media;
+  /**
+   * A legacy value no field above accepts, such as an email that is not one, kept verbatim.
+   */
+  legacyAttributes?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
   /**
    * Where this document came from (ADR-0002 section 8).
    */
@@ -1666,6 +1714,33 @@ export interface Lead {
   createdAt: string;
 }
 /**
+ * What the imports have written so far. Written by scripts/migrate, not by hand.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "migration-runs".
+ */
+export interface MigrationRun {
+  id: number;
+  /**
+   * `<table>:<id>`, the pair a resumed run looks the row up by.
+   */
+  sourceKey: string;
+  sourceTable: string;
+  sourceId: string;
+  /**
+   * The collection the row became a document in.
+   */
+  target: string;
+  documentId: string;
+  action: 'created' | 'updated';
+  /**
+   * The run that wrote it, as the document provenance records it.
+   */
+  runId: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * Old URLs that must keep resolving. The final list is decided in E11.3; what is seeded is the legacy next.config.mjs map.
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1737,10 +1812,16 @@ export interface PayloadMcpApiKey {
      * Allow clients to update pages.
      */
     update?: boolean | null;
+  };
+  media?: {
     /**
-     * Allow clients to delete pages.
+     * Allow clients to find media.
      */
-    delete?: boolean | null;
+    find?: boolean | null;
+    /**
+     * Allow clients to update media.
+     */
+    update?: boolean | null;
   };
   airports?: {
     /**
@@ -1755,10 +1836,6 @@ export interface PayloadMcpApiKey {
      * Allow clients to update airports.
      */
     update?: boolean | null;
-    /**
-     * Allow clients to delete airports.
-     */
-    delete?: boolean | null;
   };
   aircraft?: {
     /**
@@ -1773,10 +1850,6 @@ export interface PayloadMcpApiKey {
      * Allow clients to update aircraft.
      */
     update?: boolean | null;
-    /**
-     * Allow clients to delete aircraft.
-     */
-    delete?: boolean | null;
   };
   yachts?: {
     /**
@@ -1791,10 +1864,6 @@ export interface PayloadMcpApiKey {
      * Allow clients to update yachts.
      */
     update?: boolean | null;
-    /**
-     * Allow clients to delete yachts.
-     */
-    delete?: boolean | null;
   };
   emptyLegs?: {
     /**
@@ -1809,34 +1878,6 @@ export interface PayloadMcpApiKey {
      * Allow clients to update empty-legs.
      */
     update?: boolean | null;
-    /**
-     * Allow clients to delete empty-legs.
-     */
-    delete?: boolean | null;
-  };
-  redirects?: {
-    /**
-     * Allow clients to find redirects.
-     */
-    find?: boolean | null;
-    /**
-     * Allow clients to create redirects.
-     */
-    create?: boolean | null;
-    /**
-     * Allow clients to update redirects.
-     */
-    update?: boolean | null;
-    /**
-     * Allow clients to delete redirects.
-     */
-    delete?: boolean | null;
-  };
-  media?: {
-    /**
-     * Allow clients to find media.
-     */
-    find?: boolean | null;
   };
   header?: {
     /**
@@ -1858,11 +1899,22 @@ export interface PayloadMcpApiKey {
      */
     update?: boolean | null;
   };
+  siteSettings?: {
+    /**
+     * Allow clients to find site-settings global.
+     */
+    find?: boolean | null;
+    /**
+     * Allow clients to update site-settings global.
+     */
+    update?: boolean | null;
+  };
   updatedAt: string;
   createdAt: string;
   enableAPIKey?: boolean | null;
   apiKey?: string | null;
   apiKeyIndex?: string | null;
+  hasAPIKey?: boolean | null;
   collection: 'payload-mcp-api-keys';
 }
 /**
@@ -2018,6 +2070,10 @@ export interface PayloadLockedDocument {
         value: number | Lead;
       } | null)
     | ({
+        relationTo: 'migration-runs';
+        value: number | MigrationRun;
+      } | null)
+    | ({
         relationTo: 'redirects';
         value: number | Redirect;
       } | null)
@@ -2090,6 +2146,7 @@ export interface UsersSelect<T extends boolean = true> {
   resetPasswordExpiration?: T;
   salt?: T;
   hash?: T;
+  resetPasswordRequestedAt?: T;
   loginAttempts?: T;
   lockUntil?: T;
   sessions?:
@@ -2107,6 +2164,8 @@ export interface UsersSelect<T extends boolean = true> {
 export interface MediaSelect<T extends boolean = true> {
   alt?: T;
   externalUrl?: T;
+  prefix?: T;
+  _objectKey?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;
@@ -2204,6 +2263,7 @@ export interface PagesSelect<T extends boolean = true> {
         privilege?: T | PrivilegeBlockSelect<T>;
         quote?: T | QuoteBlockSelect<T>;
         recentYachts?: T | RecentYachtsBlockSelect<T>;
+        richText?: T | RichTextBlockSelect<T>;
         tiles?: T | TilesBlockSelect<T>;
         transfer?: T | TransferBlockSelect<T>;
         weInspect?: T | WeInspectBlockSelect<T>;
@@ -2689,6 +2749,16 @@ export interface RecentYachtsBlockSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "RichTextBlock_select".
+ */
+export interface RichTextBlockSelect<T extends boolean = true> {
+  title?: T;
+  content?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "TilesBlock_select".
  */
 export interface TilesBlockSelect<T extends boolean = true> {
@@ -2811,6 +2881,7 @@ export interface AirportsSelect<T extends boolean = true> {
   latitude?: T;
   longitude?: T;
   wikidata?: T;
+  search?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -2904,6 +2975,7 @@ export interface AircraftSelect<T extends boolean = true> {
           | T
           | {
               table?: T;
+              legacyId?: T;
               id?: T;
             };
         importRunId?: T;
@@ -2923,6 +2995,7 @@ export interface ContactsSelect<T extends boolean = true> {
   phone?: T;
   email?: T;
   photo?: T;
+  legacyAttributes?: T;
   provenance?:
     | T
     | {
@@ -3094,6 +3167,21 @@ export interface LeadsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "migration-runs_select".
+ */
+export interface MigrationRunsSelect<T extends boolean = true> {
+  sourceKey?: T;
+  sourceTable?: T;
+  sourceId?: T;
+  target?: T;
+  documentId?: T;
+  action?: T;
+  runId?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redirects_select".
  */
 export interface RedirectsSelect<T extends boolean = true> {
@@ -3126,7 +3214,12 @@ export interface PayloadMcpApiKeysSelect<T extends boolean = true> {
         find?: T;
         create?: T;
         update?: T;
-        delete?: T;
+      };
+  media?:
+    | T
+    | {
+        find?: T;
+        update?: T;
       };
   airports?:
     | T
@@ -3134,7 +3227,6 @@ export interface PayloadMcpApiKeysSelect<T extends boolean = true> {
         find?: T;
         create?: T;
         update?: T;
-        delete?: T;
       };
   aircraft?:
     | T
@@ -3142,7 +3234,6 @@ export interface PayloadMcpApiKeysSelect<T extends boolean = true> {
         find?: T;
         create?: T;
         update?: T;
-        delete?: T;
       };
   yachts?:
     | T
@@ -3150,7 +3241,6 @@ export interface PayloadMcpApiKeysSelect<T extends boolean = true> {
         find?: T;
         create?: T;
         update?: T;
-        delete?: T;
       };
   emptyLegs?:
     | T
@@ -3158,20 +3248,6 @@ export interface PayloadMcpApiKeysSelect<T extends boolean = true> {
         find?: T;
         create?: T;
         update?: T;
-        delete?: T;
-      };
-  redirects?:
-    | T
-    | {
-        find?: T;
-        create?: T;
-        update?: T;
-        delete?: T;
-      };
-  media?:
-    | T
-    | {
-        find?: T;
       };
   header?:
     | T
@@ -3185,11 +3261,18 @@ export interface PayloadMcpApiKeysSelect<T extends boolean = true> {
         find?: T;
         update?: T;
       };
+  siteSettings?:
+    | T
+    | {
+        find?: T;
+        update?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   enableAPIKey?: T;
   apiKey?: T;
   apiKeyIndex?: T;
+  hasAPIKey?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -3544,7 +3627,15 @@ export interface TaskSchedulePublish {
       value: number | Page;
     } | null;
     global?: string | null;
-    user?: (number | null) | User;
+    user?:
+      | ({
+          relationTo: 'users';
+          value: number | User;
+        } | null)
+      | ({
+          relationTo: 'payload-mcp-api-keys';
+          value: number | PayloadMcpApiKey;
+        } | null);
   };
   output?: unknown;
 }

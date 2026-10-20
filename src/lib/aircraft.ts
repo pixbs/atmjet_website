@@ -75,3 +75,28 @@ export function aircraftSlug(aircraft: {
     aircraft.registrationDisplay
   )
 }
+
+/**
+ * The picture the legacy basic page laid its band over (`docs/legacy-inventory.md` section 4,
+ * `aircraft/[id]/old.tsx`): the `vehicles.image` of the row the document came from, which the
+ * import keeps in `legacyAttributes` rather than `images` so the plane stays out of the
+ * catalogue listing as the legacy kept it (`scripts/migrate/vehicles.ts`, #84). The document's
+ * own row first; the one row there is otherwise; nothing when neither names a picture.
+ */
+export function legacyBandPicture(aircraft: {
+  legacyAttributes?: unknown
+  provenance?: { legacyVehicleId?: number | null } | null
+}): string | undefined {
+  const attributes = aircraft.legacyAttributes as
+    { vehicles?: Record<string, { image?: unknown } | null> } | null | undefined
+  const vehicles = attributes?.vehicles
+  if (!vehicles) return undefined
+
+  const own = aircraft.provenance?.legacyVehicleId
+  const row =
+    (own === undefined || own === null ? undefined : vehicles[String(own)]) ??
+    Object.values(vehicles)[0]
+  const image = typeof row?.image === 'string' ? row.image.trim() : ''
+
+  return image === '' ? undefined : image
+}

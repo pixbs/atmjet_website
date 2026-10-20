@@ -5,9 +5,13 @@
  */
 import type { Payload } from 'payload'
 
-/** Previews share the production database until they get branches of their own (issue #18). */
+/**
+ * Every deployment migrates the database it reads: production its own, a preview the Neon branch
+ * the Vercel integration creates for it (issue #18). Only `vercel dev` is left alone, since it
+ * reads a developer's database that `bun run dev` pushes.
+ */
 export function migratesOn(vercelEnv: string | undefined): boolean {
-  return vercelEnv === undefined || vercelEnv === 'production'
+  return vercelEnv !== 'development'
 }
 
 /** `bun run dev` pushes the schema and records it as a migration in batch -1. */

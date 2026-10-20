@@ -1,0 +1,187 @@
+/**
+ * Runs an import, or the reconciliation, against the legacy schema of the database
+ * `DATABASE_URL` names (`docs/adr/0002-database-migration-strategy.md` items 6, 7 and 10).
+ *
+ *   bun run import:legacy airports [--schema legacy] [--dry-run]
+ *   bun run import:legacy aircraft [--schema legacy] [--dry-run]   (after airports)
+ *   bun run import:legacy vehicles [--schema legacy] [--dry-run]   (after aircraft)
+ *   bun run import:legacy redirects                                 (after the aircraft imports)
+ *   bun run import:legacy yachts [--schema legacy] [--dry-run]     (contacts, charter, then sale)
+ *   bun run import:legacy empty-legs [--schema legacy] [--dry-run] (after airports)
+ *   bun run import:legacy reconcile [--schema legacy]
+ *   bun run import:legacy urls --base-url https://staging.example [--schema legacy] [--sample 400] [--concurrency 4]
+ *   bun run import:legacy compare --base-url https://staging.example [--legacy-url https://atmjet.com] [--sample 30]
+ *   bun run import:legacy assets [--ref legacy/v1] [--dry-run]     (prints the manifest)
+ *   bun run import:legacy pictures [--dry-run]                     (after assets)
+ *
+ * An import can be run again at any point: rows the ledger already holds are skipped, and the
+ * reconciliation exits non-zero while anything is missing.
+ */
+import { getPayload } from 'payload'
+
+import config from '../../src/payload.config'
+import { gitReader, importLegacyAssets, importLegacyDocuments, manifestTsv } from './assets'
+import { placeDocuments, placePictures } from './pictures'
+import { importCatalogue } from './aircraft'
+import { importEmptyLegs } from './empty-legs'
+import { importAirports } from './airports'
+import { writeAircraftRedirects } from './redirects'
+import {
+  aircraftChecks,
+  airportChecks,
+  charterChecks,
+  emptyLegChecks,
+  failures,
+  reconcile,
+  saleChecks,
+  vehicleChecks,
+} from './reconcile'
+import type { ImportReport } from './runner'
+import { compareRendered } from './compare'
+import { legacyPaths, legacyReferences, samplePaths, unanswered } from './urls'
+import { importVehicles } from './vehicles'
+import { importCharterYachts, importSaleYachts } from './yachts'
+
+function flag(name: string): string | undefined {
+  const index = process.argv.indexOf(`--${name}`)
+
+  return index === -1 ? undefined : process.argv[index + 1]
+}
+
+const command = process.argv[2]
+const schema = flag('schema') ?? 'legacy'
+const dryRun = process.argv.includes('--dry-run')
+
+const COMMANDS = [
+  'airports',
+  'aircraft',
+  'vehicles',
+  'redirects',
+  'yachts',
+  'empty-legs',
+  'reconcile',
+  'urls',
+  'compare',
+  'assets',
+  'pictures',
+]
+
+if (command === undefined || !COMMANDS.includes(command)) {
+  console.error(`Usage: bun run import:legacy ${COMMANDS.join('|')} [--schema legacy] [--dry-run]`)
+  process.exit(1)
+}
+
+const report = ({ table, collection, read, created, updated, skipped }: ImportReport) =>
+  console.log(
+    `${table} → ${collection}: ${read} read, ${created} created, ${updated} updated, ${skipped} skipped`,
+  )
+
+const payload = await getPayload({ config: await config })
+
+if (command === 'airports') {
+  const { reports, differences } = await importAirports(payload, { schema, dryRun })
+
+  reports.forEach(report)
+  for (const { icao, field, legacy, newer } of differences)
+    console.log(`differs ${icao} ${field}: "${legacy}" → "${newer}" (new_airports kept)`)
+  console.log(`${differences.length} values differ between the two airport tables`)
+} else if (command === 'aircraft') {
+  report(await importCatalogue(payload, { schema, dryRun }))
+} else if (command === 'vehicles') {
+  report(await importVehicles(payload, { schema, dryRun }))
+} else if (command === 'yachts') {
+  const { reports, orphans } = await importCharterYachts(payload, { schema, dryRun })
+
+  reports.forEach(report)
+  report(await importSaleYachts(payload, { schema, dryRun }))
+  for (const { yacht, column, contact } of orphans)
+    console.log(`orphan new_yachts ${yacht} ${column} ${contact}: no such contact, left empty`)
+  console.log(`${orphans.length} contact references name no contact`)
+} else if (command === 'compare') {
+  const baseUrl = flag('base-url')
+  if (!baseUrl) {
+    console.error('compare: --base-url <deployment> is required')
+    process.exit(1)
+  }
+  const legacyUrl = flag('legacy-url')
+  const sample = flag('sample')
+  const results = await compareRendered(payload, {
+    baseUrl,
+    ...(legacyUrl ? { legacyUrl } : {}),
+    ...(sample ? { sample: Number(sample) } : {}),
+    schema,
+  })
+  for (const { path, status, differences } of results)
+    console.log(
+      `${path} [${status.join('→')}]: ${differences.length === 0 ? 'same' : differences.join('; ')}`,
+    )
+  const differing = results.filter((one) => one.differences.length > 0)
+  console.log(`${results.length} pages compared, ${differing.length} differ`)
+  process.exit(differing.length === 0 ? 0 : 1)
+} else if (command === 'urls') {
+  const baseUrl = flag('base-url')
+  if (baseUrl === undefined) {
+    console.error('import:legacy urls needs --base-url, the deployment to ask')
+    process.exit(1)
+  }
+  const every = legacyPaths(await legacyReferences(payload, schema))
+  const sample = flag('sample')
+  const paths = sample ? samplePaths(every, Number(sample)) : every
+  const concurrency = flag('concurrency')
+  const failed = await unanswered(baseUrl, paths, {
+    bypass: process.env.VERCEL_AUTOMATION_BYPASS_SECRET,
+    ...(concurrency ? { concurrency: Number(concurrency) } : {}),
+  })
+
+  for (const { path, status, location } of failed)
+    console.error(`${status} ${path}${location ? ` → ${location}` : ''}`)
+  console.log(`${paths.length - failed.length} of ${paths.length} legacy URLs answer`)
+  process.exit(failed.length === 0 ? 0 : 1)
+} else if (command === 'redirects') {
+  const outcomes = await writeAircraftRedirects(payload)
+
+  for (const action of ['created', 'updated', 'unchanged'] as const)
+    console.log(`${outcomes.filter((one) => one.action === action).length} redirects ${action}`)
+} else if (command === 'assets') {
+  const outcomes = [
+    ...(await importLegacyAssets(payload, { read: gitReader(flag('ref') ?? 'legacy/v1'), dryRun })),
+    ...(await importLegacyDocuments(payload, { dryRun })),
+  ]
+
+  console.log(manifestTsv(outcomes))
+  for (const action of ['created', 'unchanged'] as const)
+    console.error(`${outcomes.filter((one) => one.action === action).length} files ${action}`)
+} else if (command === 'pictures') {
+  const outcomes = [
+    ...(await placePictures(payload, { dryRun })),
+    ...(await placeDocuments(payload, { dryRun })),
+  ]
+
+  for (const { target, swapped } of outcomes)
+    console.log(`${target}: ${swapped} placeholders ${dryRun ? 'to replace' : 'replaced'}`)
+} else if (command === 'empty-legs') {
+  const { report: legs, unresolved } = await importEmptyLegs(payload, { schema, dryRun })
+
+  report(legs)
+  for (const { leg, column, icao } of unresolved)
+    console.log(`unresolved empty leg ${leg} ${column} ${icao}: no such airport, kept as text`)
+  console.log(`${unresolved.length} empty leg codes name no airport`)
+} else {
+  const checks = [
+    ...airportChecks(schema),
+    ...aircraftChecks(schema),
+    ...vehicleChecks(schema),
+    ...charterChecks(schema),
+    ...saleChecks(schema),
+    ...emptyLegChecks(schema),
+  ]
+  const failed = failures(await reconcile(payload, checks))
+
+  for (const line of failed) console.error(line)
+  console.log(
+    failed.length === 0 ? 'reconciled: every check passes' : `${failed.length} checks fail`,
+  )
+  process.exit(failed.length === 0 ? 0 : 1)
+}
+
+process.exit(0)

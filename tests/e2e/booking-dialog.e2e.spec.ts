@@ -29,6 +29,14 @@ test.describe('the booking dialog', () => {
     await expect(dialogOf(page)).toHaveCount(0)
   })
 
+  test('is in the HTML the server sends where a page is rendered on request', async ({
+    request,
+  }) => {
+    const html = await (await request.get(`${pathFor('/yachts', 'en')}?showBooking=Footer`)).text()
+
+    expect(html).toContain('data-section="booking-dialog"')
+  })
+
   test('opens on the query, whichever button wrote it', async ({ page }) => {
     // Any value at all opens it; the thirteen the legacy site used are listed in section 7.5.
     for (const source of ['Header', 'Footer', 'Empty-legs']) {

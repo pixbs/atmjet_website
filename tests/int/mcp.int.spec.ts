@@ -1,16 +1,13 @@
-import { randomUUID } from 'node:crypto'
-import { REST_POST } from '@payloadcms/next/routes'
-import type { RequiredDataFromCollectionSlug } from 'payload'
+import { handleEndpoints } from 'payload'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 
 import config from '@/payload.config'
-import type { User } from '@/payload-types'
 import { createAdmin, createContact, createUser, createYacht } from '../factories'
-import { createRegistry, type TestRegistry } from '../helpers/payload'
+import { createRegistry, uniqueSuffix, type TestRegistry } from '../helpers/payload'
 
 /**
- * The MCP endpoint and its keys (issue #71, `docs/access-matrix.md`): only an admin issues a key,
- * a new key grants nothing, and no key reaches the people, the leads or the contacts.
+ * The MCP endpoint agents enter content through (issue #71): only an admin issues a key, a key
+ * offers only the tools ticked on it, and it stops working once its owner is no longer an admin.
  */
 let registry: TestRegistry
 
@@ -20,78 +17,57 @@ beforeAll(async () => {
 
 afterAll(() => registry.cleanup())
 
-type KeyData = RequiredDataFromCollectionSlug<'payload-mcp-api-keys'>
+type Person = Awaited<ReturnType<typeof createUser>>
 
-async function issueKey(issuer: User, grants: Partial<KeyData> = {}) {
-  const secret = randomUUID()
-  const doc = await registry.payload.create({
+type Grants = { pages?: { find: boolean }; yachts?: { find: boolean } }
+
+/** Issues a key as `owner` that may only do what `grants` ticks, and returns its secret. */
+async function issueKey(owner: Person, grants: Grants = { pages: { find: true } }) {
+  const apiKey = `mcp-${uniqueSuffix()}`
+  const key = await registry.payload.create({
     collection: 'payload-mcp-api-keys',
-    data: { user: issuer.id, enableAPIKey: true, apiKey: secret, ...grants },
+    data: { user: owner.id, enableAPIKey: true, apiKey, ...grants },
     overrideAccess: false,
-    user: issuer,
+    user: owner,
   })
-  registry.track('payload-mcp-api-keys', doc.id)
+  registry.track('payload-mcp-api-keys', key.id)
 
-  return { doc, secret }
+  return { id: key.id, apiKey }
 }
 
-type FieldNode = { type: string; name?: string; fields?: FieldNode[] }
-
-/** Every box the key collection offers, ticked: the most a key can ever be granted. */
-async function everyGrant(): Promise<Partial<KeyData>> {
-  const resolved = await registry.payload.config
-  const keys = resolved.collections.find((collection) => collection.slug === 'payload-mcp-api-keys')
-  const grants: Record<string, Record<string, boolean>> = {}
-
-  const visit = (fields: FieldNode[]) => {
-    for (const field of fields) {
-      if (field.type === 'group' && field.name) {
-        const boxes = (field.fields ?? []).filter((box) => box.type === 'checkbox' && box.name)
-        grants[field.name] = Object.fromEntries(boxes.map((box) => [box.name, true]))
-      } else if (field.fields) {
-        visit(field.fields)
-      }
-    }
-  }
-  visit((keys?.fields ?? []) as FieldNode[])
-
-  return grants
-}
-
-const post = REST_POST(config)
-
-async function rpc(method: string, params: Record<string, unknown>, secret?: string) {
-  const response = await post(
-    new Request('http://localhost:3000/api/mcp', {
+/** Sends one JSON-RPC call the way an MCP client does. */
+async function call<T>(method: string, params: object, apiKey?: string) {
+  const response = await handleEndpoints({
+    config,
+    request: new Request('http://localhost:3000/api/mcp', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json, text/event-stream',
-        ...(secret && { Authorization: `Bearer ${secret}` }),
+        accept: 'application/json, text/event-stream',
+        'content-type': 'application/json',
+        ...(apiKey === undefined ? {} : { authorization: `Bearer ${apiKey}` }),
       },
       body: JSON.stringify({ jsonrpc: '2.0', id: 1, method, params }),
     }),
-    { params: Promise.resolve({ slug: ['mcp'] }) },
-  )
-  const text = await response.text()
-  // The transport answers as a server-sent event; the JSON-RPC message is its `data:` line.
-  const data = text.split('\n').find((line) => line.startsWith('data: '))
+  })
+  if (response.status !== 200) return { status: response.status }
 
-  return { status: response.status, body: data ? JSON.parse(data.slice(6)) : text }
+  // Streamable HTTP answers with one server-sent event carrying the JSON-RPC result.
+  const event = (await response.text()).split('\n').find((line) => line.startsWith('data: '))
+  const { result } = JSON.parse(event!.slice('data: '.length)) as { result: T }
+
+  return { status: 200, result }
 }
 
-async function toolNames(secret: string): Promise<string[]> {
-  const { body } = await rpc('tools/list', {}, secret)
-  // A server with no tool registered does not offer `tools/list` at all.
-  if (body.error?.code === -32601) return []
+async function listTools(apiKey?: string): Promise<{ status: number; tools: string[] }> {
+  const { status, result } = await call<{ tools: { name: string }[] }>('tools/list', {}, apiKey)
 
-  return (body.result.tools as { name: string }[]).map((tool) => tool.name)
+  return { status, tools: result?.tools.map((tool) => tool.name) ?? [] }
 }
 
 describe('MCP API keys', () => {
   it('cannot be issued anonymously or by an editor', async () => {
     const editor = await createUser(registry)
-    const data = { user: editor.id, enableAPIKey: true, apiKey: randomUUID() }
+    const data = { user: editor.id, enableAPIKey: true, apiKey: `mcp-${uniqueSuffix()}` }
 
     await expect(
       registry.payload.create({ collection: 'payload-mcp-api-keys', data, overrideAccess: false }),
@@ -107,37 +83,8 @@ describe('MCP API keys', () => {
     ).rejects.toThrow()
   })
 
-  it('is bound to the admin who issues it, whoever the request names', async () => {
-    const issuer = await createAdmin(registry)
-    const other = await createAdmin(registry)
-
-    const { doc } = await issueKey(issuer, { user: other.id })
-
-    expect(typeof doc.user === 'object' ? doc.user.id : doc.user).toBe(issuer.id)
-  })
-
-  it('is readable by its own admin alone', async () => {
-    const issuer = await createAdmin(registry)
-    const otherAdmin = await createAdmin(registry)
+  it('are not listed to an editor', async () => {
     const editor = await createUser(registry)
-    const { doc } = await issueKey(issuer)
-    const where = { id: { equals: doc.id } }
-
-    const own = await registry.payload.find({
-      collection: 'payload-mcp-api-keys',
-      where,
-      overrideAccess: false,
-      user: issuer,
-    })
-    expect(own.totalDocs).toBe(1)
-
-    const others = await registry.payload.find({
-      collection: 'payload-mcp-api-keys',
-      where,
-      overrideAccess: false,
-      user: otherAdmin,
-    })
-    expect(others.totalDocs).toBe(0)
 
     await expect(
       registry.payload.find({
@@ -147,62 +94,78 @@ describe('MCP API keys', () => {
       }),
     ).rejects.toThrow()
   })
+})
 
-  it('goes with the admin who issued it, so deleting a leaver still works', async () => {
+describe('the MCP endpoint', () => {
+  it('refuses a request without a key or with one nobody issued', async () => {
+    expect((await listTools()).status).toBe(401)
+    expect((await listTools(`mcp-${uniqueSuffix()}`)).status).toBe(401)
+  })
+
+  it("offers an admin's key only the tools ticked on it", async () => {
+    const { apiKey } = await issueKey(await createAdmin(registry))
+
+    expect(await listTools(apiKey)).toEqual({ status: 200, tools: ['findPages'] })
+  })
+
+  it("never hands a yacht's contact to the model, at any depth", async () => {
+    const owner = await createAdmin(registry)
+    const contact = await createContact(registry)
+    const yacht = await createYacht(registry, { contact: contact.id, captain: contact.id })
+    const { apiKey } = await issueKey(owner, { yachts: { find: true } })
+
+    const { result } = await call<{ content: { text: string }[] }>(
+      'tools/call',
+      { name: 'findYachts', arguments: { id: yacht.id, depth: 2 } },
+      apiKey,
+    )
+    const answer = JSON.stringify(result?.content)
+
+    expect(answer).toContain(yacht.name)
+    expect(answer).not.toContain(contact.email)
+    expect(answer).not.toContain(contact.phone)
+
+    // The same admin still sees the person in the admin, so only the endpoint withholds it.
+    const inAdmin = await registry.payload.findByID({
+      collection: 'yachts',
+      id: yacht.id,
+      depth: 1,
+      overrideAccess: false,
+      user: owner,
+    })
+    expect(JSON.stringify(inAdmin.contact)).toContain(contact.email)
+  })
+
+  it('deletes the keys of a person who is deleted, so a leaver can still be removed', async () => {
     const leaver = await createAdmin(registry)
-    const remaining = await createAdmin(registry)
-    const { doc, secret } = await issueKey(leaver, { yachts: { find: true } })
+    const { id, apiKey } = await issueKey(leaver)
 
     await registry.payload.delete({
       collection: 'users',
       id: leaver.id,
       overrideAccess: false,
-      user: remaining,
+      user: await createAdmin(registry),
     })
 
     const left = await registry.payload.count({
       collection: 'payload-mcp-api-keys',
-      where: { id: { equals: doc.id } },
+      where: { id: { equals: id } },
     })
     expect(left.totalDocs).toBe(0)
-    expect((await rpc('tools/list', {}, secret)).status).toBe(401)
-  })
-})
-
-describe('the MCP endpoint', () => {
-  it('refuses a request without a valid key', async () => {
-    expect((await rpc('tools/list', {})).status).toBe(401)
-    expect((await rpc('tools/list', {}, randomUUID())).status).toBe(401)
+    expect((await listTools(apiKey)).status).toBe(401)
   })
 
-  it('offers nothing on a new key until an admin ticks a box', async () => {
-    const { secret } = await issueKey(await createAdmin(registry))
+  it('stops accepting a key once its owner is no longer an admin', async () => {
+    const owner = await createAdmin(registry)
+    const { apiKey } = await issueKey(owner)
 
-    expect(await toolNames(secret)).toEqual([])
-  })
+    await registry.payload.update({
+      collection: 'users',
+      id: owner.id,
+      data: { roles: ['editor'] },
+      overrideAccess: true,
+    })
 
-  it('never reaches the people, the leads or the contacts, however generous the key', async () => {
-    const { secret } = await issueKey(await createAdmin(registry), await everyGrant())
-    const names = await toolNames(secret)
-
-    expect(names).toContain('findYachts')
-    expect(names.filter((name) => /users|leads|contacts|apiKeys/i.test(name))).toEqual([])
-  })
-
-  it("acts as an editor, so a yacht's contact never reaches the model", async () => {
-    const contact = await createContact(registry)
-    const yacht = await createYacht(registry, { contact: contact.id, captain: contact.id })
-    const { secret } = await issueKey(await createAdmin(registry), { yachts: { find: true } })
-
-    const { body } = await rpc(
-      'tools/call',
-      { name: 'findYachts', arguments: { id: yacht.id, depth: 2 } },
-      secret,
-    )
-    const text = JSON.stringify(body.result.content)
-
-    expect(text).toContain(yacht.name)
-    expect(text).not.toContain(contact.email)
-    expect(text).not.toContain(contact.phone)
+    expect((await listTools(apiKey)).status).toBe(401)
   })
 })

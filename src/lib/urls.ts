@@ -10,7 +10,8 @@ import type { Locale } from '@/i18n/locales'
 const DEVELOPMENT_ORIGIN = 'http://localhost:3000'
 
 /**
- * The canonical origin, without a trailing slash, from the variable `payload.config.ts` reads.
+ * The canonical origin, without a trailing slash: `NEXT_PUBLIC_SITE_URL` when one is set, else
+ * the production domain Vercel gives every deployment (issue #403), else localhost.
  *
  * The scheme is added when the variable does not carry one. Vercel's own host variables hold a
  * bare host — `VERCEL_PROJECT_PRODUCTION_URL` is documented as being without a scheme, and the
@@ -20,22 +21,36 @@ const DEVELOPMENT_ORIGIN = 'http://localhost:3000'
  * `new URL` does not, and `metadataBase` is a `new URL` that runs while a page is prerendered,
  * so a bare host there fails the build rather than one page.
  */
-export function siteOrigin(configured = process.env.NEXT_PUBLIC_SITE_URL): string {
-  const named = (configured ?? '').trim()
-  if (named === '') return DEVELOPMENT_ORIGIN
+export function siteOrigin(
+  configured = process.env.NEXT_PUBLIC_SITE_URL,
+  production = process.env.VERCEL_PROJECT_PRODUCTION_URL,
+): string {
+  // A value that is not an address falls through to the next one: Payload pins its CSRF check to
+  // this origin, so `-` in the variable refused every save in the admin (#17).
+  for (const named of [configured, production].map((value) => (value ?? '').trim())) {
+    if (named === '') continue
+    const origin = originOf(named)
+    if (origin !== null) return origin
 
+    console.warn(`[urls] the site origin is not an address (${named}), so it is ignored.`)
+  }
+
+  return DEVELOPMENT_ORIGIN
+}
+
+function originOf(named: string): string | null {
   // The scheme goes on before the trailing slash comes off, or `https://` loses its own slashes.
   const absolute = /^[a-z][a-z\d+.-]*:\/\//i.test(named) ? named : `https://${named}`
   const origin = absolute.replace(/\/+$/, '')
 
   try {
-    new URL(origin)
-    return origin
+    const { hostname } = new URL(origin)
+    // `new URL` takes `https://-`; a host a browser can reach has a dot, or is this machine.
+    const reachable = hostname === 'localhost' || hostname.includes('.') || hostname.startsWith('[')
+
+    return reachable ? origin : null
   } catch {
-    console.warn(
-      `[urls] NEXT_PUBLIC_SITE_URL is not an address (${named}); the site describes itself as ${DEVELOPMENT_ORIGIN}.`,
-    )
-    return DEVELOPMENT_ORIGIN
+    return null
   }
 }
 

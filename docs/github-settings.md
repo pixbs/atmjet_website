@@ -28,6 +28,7 @@ Settings that cannot live in code. Tick them in the epic issue (#3) as they are 
 - [ ] Variables (Settings → Secrets and variables → Actions → Variables):
   - `STAGING_URL`: the new Vercel project's staging URL (target of the nightly and master `e2e` runs)
 - [ ] Secrets: `VERCEL_AUTOMATION_BYPASS_SECRET` (Vercel → Deployment Protection → Protection Bypass for Automation) so the browser tier can reach protected previews.
+- [ ] Secret `DATABASE_URL`: the connection string of the database the staging deployment reads, so the `e2e` browser job can create the administrator it signs in as (#17).
 - [ ] Run the `labels` workflow once (`workflow_dispatch`) to normalise label colours and descriptions.
 - [ ] After the first merge, run the `e2e` workflow once with `workflow_dispatch` against the staging URL; its triggers only fire from the default branch.
 
@@ -42,7 +43,7 @@ Settings that cannot live in code. Tick them in the epic issue (#3) as they are 
 - [ ] Create a new project from this repository: framework Next.js, package manager Bun (auto-detected from `bun.lock`), Node 24, build command `bun run ci` (runs migrations, then builds), root directory `/`.
 - [ ] Environment variables per environment: the table in `docs/environment.md` says which of them each environment holds, what the site does without each one, and who rotates it. `DATABASE_URL` and `PAYLOAD_SECRET` are the two a deployment cannot start without, and it says so by name.
 - [ ] Cron: `vercel.json` runs `/api/payload-jobs/run` every minute, which is the queue that sends leads to Telegram (E9.5). Vercel signs the call with `CRON_SECRET`, so the variable has to be set for the run to be allowed; a plan without minute-level crons needs the schedule widened.
-- [ ] Neon integration with preview branches so preview builds migrate a branch, never production.
+- [x] Neon integration with preview branches, so a preview build migrates a branch, never production (#18): Storage → `payload-db` → Projects → `atmjet_website_refactor` → Update Project Connection, with "Create Database Branch For Deployment: Preview" and "Require Active Resource Before Deploy" on. Vercel then asks Neon for a branch `preview/<git-branch>` of `main` per preview deployment and injects that branch's `DATABASE_URL` into the build only (it never appears among the project's variables); `bun run ci` migrates it. The branch is deleted with the deployment, which Vercel keeps for its retention period, so the Neon branch list grows with the pull requests until then.
 - [ ] Nothing to install for monitoring: the decision of #36 is the project's own logs and observability, and `docs/runbooks/observability.md` says where each kind of failure is read and what is not collected.
 - [ ] Staging domain on the new project; the production domain moves only at cutover (ADR-0002),
       following `docs/runbooks/domain-switch.md`. Retiring the legacy Vercel project, the legacy

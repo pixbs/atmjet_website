@@ -1,14 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
-import {
-  detailSource,
-  directionSchema,
-  emptyLeg,
-  flightRequestSchema,
-  handoffQuery,
-  legSchema,
-  MAX_LEGS,
-} from '@/lib/flight-request'
+import { detailSource, directionSchema, flightRequestSchema, legSchema } from '@/lib/flight-request'
+import { emptyLeg, handoffQuery, MAX_LEGS } from '@/lib/handoff'
 
 /**
  * The rules a flight request has to meet (issue #151, `docs/legacy-inventory.md` section 7.1),
