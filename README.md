@@ -50,6 +50,16 @@ docs/                ADRs, legacy inventory, backlog, runbooks, GitHub settings 
 scripts/ci           convention checks (hooks + CI) scripts/db     database runbook helpers
 ```
 
+## MCP endpoint
+
+Agents read and write content at `/api/mcp` (`@payloadcms/plugin-mcp`, issue #71). An admin creates a key under **MCP** in the admin sidebar, ticks the operations it needs (a new key grants none) and hands it to the client:
+
+```bash
+claude mcp add --transport http atmjet http://localhost:3000/api/mcp --header "Authorization: Bearer <key>"
+```
+
+A key acts as an editor on the content collections and never reaches users, leads or contacts. It never expires, so delete it when the work is done. Who may do what: [`docs/access-matrix.md`](docs/access-matrix.md).
+
 ## Working on the project
 
 - Read [`AGENTS.md`](AGENTS.md) (rules for humans and AI agents) and [`CONTRIBUTING.md`](CONTRIBUTING.md) (workflow, stacked pull requests, definition of done).

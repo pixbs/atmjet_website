@@ -1,6 +1,6 @@
 # Access-control matrix
 
-Who may do what, per collection and operation. Every cell has a test: the shared rules and the collections without a spec of their own live in `tests/int/access.int.spec.ts`, which also holds the guard that fails when a collection is added without declaring access at all; a collection with its own spec (`airports`, `aircraft`, `contacts`, `yachts`, `empty-legs`, `leads`, `redirects`) keeps its cells there, next to the rest of its behaviour.
+Who may do what, per collection and operation. Every cell has a test: the shared rules and the collections without a spec of their own live in `tests/int/access.int.spec.ts`, which also holds the guard that fails when a collection is added without declaring access at all; a collection with its own spec (`airports`, `aircraft`, `contacts`, `yachts`, `empty-legs`, `leads`, `redirects`, and `payload-mcp-api-keys` in `tests/int/mcp.int.spec.ts`) keeps its cells there, next to the rest of its behaviour.
 
 This is written out in full because the legacy admin had none of it: no roles, unauthenticated yacht routes, and passwords stored in plain text (`docs/legacy-inventory.md` section 14).
 
@@ -93,6 +93,24 @@ A lead is created by the server action of E9.4 through the **Local API**, which 
 
 Retention for both is in `SECURITY.md`.
 
+### `payload-mcp-api-keys`
+
+The keys for `/api/mcp`, from `@payloadcms/plugin-mcp` (issue #71). A key is a bearer credential that never expires, so only an admin issues one, it is bound to that admin whatever the request names, and nobody else reads it, another admin included.
+
+| Operation | Anonymous | Editor | Admin         |
+| --------- | --------- | ------ | ------------- |
+| read      | no        | no     | own keys only |
+| create    | no        | no     | yes           |
+| update    | no        | no     | own keys only |
+| delete    | no        | no     | own keys only |
+
+What a key reaches through the endpoint:
+
+- **Nothing until an admin ticks it.** Every operation is a checkbox on the key, off by default, and the endpoint offers a tool only for a ticked box.
+- **Content only.** The boxes exist for `pages`, `airports`, `aircraft`, `yachts`, `empty-legs`, `redirects`, `media` (read only), `header` and `footer`. `users`, `leads`, `contacts`, `site-settings` and the keys themselves are not offered, however generous the key.
+- **As an editor.** The endpoint runs a key as its admin with the roles narrowed to `editor`, so the cells above apply to it and the admin-only `contact` and `captain` fields on `yachts` stay out of every response, at any depth.
+- **Gone with its owner.** Deleting a user deletes the keys they issued first; the database would refuse the user otherwise.
+
 ## Globals
 
 One document each, so there is no create and no delete: a global is only ever read or written. The cells are tested in `tests/int/globals.int.spec.ts`; the guard that fails when a global is added without declaring access sits next to the collection one in `tests/int/access.int.spec.ts`.
@@ -116,17 +134,18 @@ Rules come from `src/access` and nowhere else, so a collection cannot invent its
 | `admin`          | Admins.                                                                 |
 | `editorOrAdmin`  | The people who run the content.                                         |
 | `adminOrSelf`    | Admins everything; anyone else narrowed to their own document.          |
+| `adminOwnOnly`   | Admins, narrowed to the documents bound to them. For credentials.       |
 | `publishedOnly`  | Editors and admins everything; the public narrowed to published docs.   |
 | `adminFieldOnly` | Field-level: admins only. For fields that would widen someone's access. |
 
-`adminOrSelf` and `publishedOnly` return a query constraint rather than `false`, which is how Payload filters a list instead of rejecting the whole request. That is what lets an editor open the users list and see one row rather than an error.
+`adminOrSelf`, `adminOwnOnly` and `publishedOnly` return a query constraint rather than `false`, which is how Payload filters a list instead of rejecting the whole request. That is what lets an editor open the users list and see one row rather than an error.
 
 ## Hardening
 
 - **CORS and CSRF** are pinned to `NEXT_PUBLIC_SITE_URL`, so no other origin can call the API from a browser or ride a signed-in editor's cookie. Payload appends `serverURL` to the CORS list itself, so the effective set is this deployment alone.
 - **`serverURL`** comes from the environment, never a hard-coded host, unlike the legacy `robots.ts` (`docs/legacy-inventory.md` section 13 item 4).
 - **Login** locks an account for ten minutes after five failed attempts, so a stolen password is worth less.
-- **API keys are off.** Nothing needs one yet, and an unused key is only ever a liability. Turning them on for a collection is a deliberate change with its own tests.
+- **API keys are off for `users`.** The only keys are the MCP ones above: issued by an admin, granted nothing until ticked, run as an editor. A key never expires, so delete it when the work it was issued for is done.
 
 ## Adding a collection or a global
 
