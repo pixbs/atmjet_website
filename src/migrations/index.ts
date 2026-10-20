@@ -34,6 +34,7 @@ import * as migration_20260916_010220_aircraft_listing_block from './20260916_01
 import * as migration_20260916_015448_yachts_listing_block from './20260916_015448_yachts_listing_block';
 import * as migration_20260922_023431_faq_answer_prose from './20260922_023431_faq_answer_prose';
 import * as migration_20260922_030334_yacht_description_prose from './20260922_030334_yacht_description_prose';
+import * as migration_20261020_054240_mcp_api_keys from './20261020_054240_mcp_api_keys';
 
 export const migrations = [
   {
@@ -214,6 +215,11 @@ export const migrations = [
   {
     up: migration_20260922_030334_yacht_description_prose.up,
     down: migration_20260922_030334_yacht_description_prose.down,
-    name: '20260922_030334_yacht_description_prose'
+    name: '20260922_030334_yacht_description_prose',
+  },
+  {
+    up: migration_20261020_054240_mcp_api_keys.up,
+    down: migration_20261020_054240_mcp_api_keys.down,
+    name: '20261020_054240_mcp_api_keys'
   },
 ];

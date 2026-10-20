@@ -1,5 +1,6 @@
 import { postgresAdapter } from '@payloadcms/db-postgres'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
+import { mcpPlugin } from '@payloadcms/plugin-mcp'
 import { redirectsPlugin } from '@payloadcms/plugin-redirects'
 import { seoPlugin } from '@payloadcms/plugin-seo'
 import { en } from '@payloadcms/translations/languages/en'
@@ -24,7 +25,7 @@ import { redirectsOverrides, REDIRECT_TYPES } from './collections/Redirects'
 import { Header } from './globals/Header'
 import { Footer } from './globals/Footer'
 import { SiteSettings } from './globals/SiteSettings'
-import { hasRole } from './access'
+import { admin, adminOwnOnly, hasRole } from './access'
 import { DEFAULT_LOCALE, LOCALE_DEFINITIONS } from './i18n/locales'
 import { readEnvironment } from './lib/env'
 import { siteOrigin } from './lib/urls'
@@ -135,6 +136,39 @@ export default buildConfig({
         },
       },
       overrides: redirectsOverrides,
+    }),
+    // Agents enter content at /api/mcp (issue #71): only what an editor runs, never people or leads.
+    mcpPlugin({
+      collections: {
+        pages: { enabled: true },
+        airports: { enabled: true },
+        aircraft: { enabled: true },
+        yachts: { enabled: true },
+        'empty-legs': { enabled: true },
+        redirects: { enabled: true },
+        media: { enabled: { find: true } },
+      },
+      globals: {
+        header: { enabled: true },
+        footer: { enabled: true },
+      },
+      // Only an admin issues a key, and a key stays readable by the admin it belongs to alone.
+      overrideApiKeyCollection: (collection) => ({
+        ...collection,
+        access: {
+          create: admin,
+          read: adminOwnOnly,
+          update: adminOwnOnly,
+          delete: adminOwnOnly,
+          unlock: adminOwnOnly,
+        },
+      }),
+      // A key acts as an editor, so the admin-only contact fields stay out of the model's reach at any depth.
+      overrideAuth: async (_req, getDefaultMcpAccessSettings) => {
+        const settings = await getDefaultMcpAccessSettings()
+
+        return { ...settings, user: { ...settings.user, roles: ['editor'] } }
+      },
     }),
   ],
 })

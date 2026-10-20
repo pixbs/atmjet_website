@@ -20,8 +20,20 @@ export const Users: CollectionConfig = {
     // A stolen password is worth less if guessing is slow: five tries, then a ten-minute lock.
     maxLoginAttempts: 5,
     lockTime: 10 * 60 * 1000,
-    // No API keys until something needs one; an unused key is only ever a liability.
+    // A person signs in; the only keys are the MCP plugin's, issued by an admin (docs/access-matrix.md).
     useAPIKey: false,
+  },
+  hooks: {
+    // A key acts as its owner and the database refuses to delete an owner who still has one (issue #71).
+    beforeDelete: [
+      async ({ id, req }) => {
+        await req.payload.delete({
+          collection: 'payload-mcp-api-keys',
+          where: { user: { equals: id } },
+          req,
+        })
+      },
+    ],
   },
   access: {
     // A person may see and edit themselves; only an admin sees or changes everyone.

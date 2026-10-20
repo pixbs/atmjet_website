@@ -32,6 +32,13 @@ export const adminOrSelf: Access = ({ req: { user } }) => {
   return { id: { equals: user.id } }
 }
 
+/** An administrator, narrowed to the documents bound to them: a credential is readable by its owner alone. */
+export const adminOwnOnly: Access = ({ req: { user } }) => {
+  if (!user || !hasRole(user, 'admin')) return false
+
+  return { user: { equals: user.id } }
+}
+
 /**
  * Field-level guard for anything that would let someone widen their own access. Without it an
  * editor could add `admin` to their own roles and quietly take over the site.
