@@ -1,6 +1,6 @@
 import type { CollectionConfig, RelationshipField } from 'payload'
 
-import { admin, adminFieldOnly, hasRole } from '@/access'
+import { admin, adminFieldOffMcp, adminFieldOnly, hasRole } from '@/access'
 import { provenanceGroup } from '@/fields/provenance'
 
 /**
@@ -49,7 +49,7 @@ export function contactRelationship(field: {
     relationTo: CONTACTS_SLUG,
     index: true,
     access: {
-      read: adminFieldOnly,
+      read: adminFieldOffMcp,
       create: adminFieldOnly,
       update: adminFieldOnly,
     },

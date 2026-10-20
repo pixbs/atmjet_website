@@ -23,6 +23,18 @@ export const Users: CollectionConfig = {
     // No API keys until something needs one; an unused key is only ever a liability.
     useAPIKey: false,
   },
+  hooks: {
+    // A key acts as its owner and the database refuses to delete an owner who still has one (issue #71).
+    beforeDelete: [
+      async ({ id, req }) => {
+        await req.payload.delete({
+          collection: 'payload-mcp-api-keys',
+          where: { user: { equals: id } },
+          req,
+        })
+      },
+    ],
+  },
   access: {
     // A person may see and edit themselves; only an admin sees or changes everyone.
     read: adminOrSelf,

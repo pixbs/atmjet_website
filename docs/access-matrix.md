@@ -76,7 +76,7 @@ Personal data — a name, a phone number and an e-mail address — that the lega
 | update    | no        | no     | yes   |
 | delete    | no        | no     | yes   |
 
-Field-level, on the other side of the relationship: every field that points at a contact is built by `contactRelationship()` in `src/collections/Contacts.ts`, which declares `read`, `create` and `update` as `adminFieldOnly`. Collection access alone would stop Payload populating the document but still return the stored id on the parent, which is one lookup away from the person; field access removes the field outright. Yachts (issue #65) carries two such fields, from the legacy `contact_id` and `captain_id`.
+Field-level, on the other side of the relationship: every field that points at a contact is built by `contactRelationship()` in `src/collections/Contacts.ts`, which declares `create` and `update` as `adminFieldOnly` and `read` as `adminFieldOffMcp`: the MCP endpoint runs as an admin and answers a model, so it never reads the field, at any depth. Collection access alone would stop Payload populating the document but still return the stored id on the parent, which is one lookup away from the person; field access removes the field outright. Yachts (issue #65) carries two such fields, from the legacy `contact_id` and `captain_id`.
 
 There is no public projection of a contact: no legacy page showed any part of one, so nothing outside the admin reads `phone`, `email` or even the name.
 
@@ -117,7 +117,7 @@ The keys of the MCP endpoint at `/api/mcp` (issue #71), from `@payloadcms/plugin
 | update    | no        | no     | yes   |
 | delete    | no        | no     | yes   |
 
-A key is bound to the admin who created it and acts as them, so everything it reaches still goes through the rules above. It offers only the operations ticked on it, none by default, and the endpoint refuses it once its owner is no longer an admin (`adminKeysOnly`). The stored key is never read back, and Payload accepts it on `/api/mcp` only, not on the REST or GraphQL API. The cells are tested in `tests/int/mcp.int.spec.ts`.
+A key is bound to the admin who created it and acts as them, so everything it reaches still goes through the rules above. It offers only the operations ticked on it, none by default, and the endpoint refuses it once its owner is no longer an admin (`adminKeysOnly`). Deleting a user deletes their keys first, since the database refuses an owner who still holds one. The stored key is never read back, and Payload accepts it on `/api/mcp` only, not on the REST or GraphQL API. The cells are tested in `tests/int/mcp.int.spec.ts`.
 
 ## Globals
 
@@ -135,15 +135,16 @@ Reads are public because every page renders the navigation, the phone number and
 
 Rules come from `src/access` and nowhere else, so a collection cannot invent its own spelling of the same idea.
 
-| Helper           | Grants                                                                  |
-| ---------------- | ----------------------------------------------------------------------- |
-| `anyone`         | Everyone, signed in or not.                                             |
-| `authenticated`  | Any signed-in user, whatever their role.                                |
-| `admin`          | Admins.                                                                 |
-| `editorOrAdmin`  | The people who run the content.                                         |
-| `adminOrSelf`    | Admins everything; anyone else narrowed to their own document.          |
-| `publishedOnly`  | Editors and admins everything; the public narrowed to published docs.   |
-| `adminFieldOnly` | Field-level: admins only. For fields that would widen someone's access. |
+| Helper             | Grants                                                                      |
+| ------------------ | --------------------------------------------------------------------------- |
+| `anyone`           | Everyone, signed in or not.                                                 |
+| `authenticated`    | Any signed-in user, whatever their role.                                    |
+| `admin`            | Admins.                                                                     |
+| `editorOrAdmin`    | The people who run the content.                                             |
+| `adminOrSelf`      | Admins everything; anyone else narrowed to their own document.              |
+| `publishedOnly`    | Editors and admins everything; the public narrowed to published docs.       |
+| `adminFieldOnly`   | Field-level: admins only. For fields that would widen someone's access.     |
+| `adminFieldOffMcp` | Field-level read: admins only, never through `/api/mcp`. For personal data. |
 
 `adminOrSelf` and `publishedOnly` return a query constraint rather than `false`, which is how Payload filters a list instead of rejecting the whole request. That is what lets an editor open the users list and see one row rather than an error.
 
