@@ -63,6 +63,7 @@ scripts/ci           convention checks (hooks + CI) scripts/db     database runb
 
 - **Keys are admin-only.** An admin creates one in `/admin` under **MCP → API Keys**, copies it before saving (it is masked from then on) and ticks what it may do; a new key may do nothing. A key acts as the admin who created it and is refused as soon as that person is no longer an admin. Delete it when the work is done; deleting a person deletes their keys with them.
 - **What it reaches:** find, create and update on `pages`, `airports`, `aircraft`, `yachts` and `empty-legs`; find and update on `media`; the `header`, `footer` and `site-settings` globals. People, contacts, leads and the migration ledger are not exposed, nothing can be deleted through it, and a yacht's contact and captain are left out of every answer, at any depth.
+- **Editing one language:** send a list's row ids back with the rows, as the find tools return them, and the other languages stay as they were. The plugin's 3.x releases refuse row ids, so an edit in one language wiped the rest; `patches/@payloadcms%2Fplugin-mcp@*.patch` lets them through (issue #464). When a plugin upgrade makes `bun install` report that the patch no longer applies, check whether the new release accepts row ids (4.0 does) and drop it. In `site-settings.documents`, whose rows are per language, an id from another language is dropped so the edit still lands.
 - **Connecting a client:** Streamable HTTP with the key as a bearer token, for example:
 
   ```json

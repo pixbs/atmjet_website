@@ -1,8 +1,7 @@
-import { handleEndpoints } from 'payload'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 
-import config from '@/payload.config'
 import { createAdmin, createContact, createUser, createYacht } from '../factories'
+import { call, issueKey } from '../helpers/mcp'
 import { createRegistry, uniqueSuffix, type TestRegistry } from '../helpers/payload'
 
 /**
@@ -16,47 +15,6 @@ beforeAll(async () => {
 })
 
 afterAll(() => registry.cleanup())
-
-type Person = Awaited<ReturnType<typeof createUser>>
-
-type Grants = { pages?: { find: boolean }; yachts?: { find: boolean } }
-
-/** Issues a key as `owner` that may only do what `grants` ticks, and returns its secret. */
-async function issueKey(owner: Person, grants: Grants = { pages: { find: true } }) {
-  const apiKey = `mcp-${uniqueSuffix()}`
-  const key = await registry.payload.create({
-    collection: 'payload-mcp-api-keys',
-    data: { user: owner.id, enableAPIKey: true, apiKey, ...grants },
-    overrideAccess: false,
-    user: owner,
-  })
-  registry.track('payload-mcp-api-keys', key.id)
-
-  return { id: key.id, apiKey }
-}
-
-/** Sends one JSON-RPC call the way an MCP client does. */
-async function call<T>(method: string, params: object, apiKey?: string) {
-  const response = await handleEndpoints({
-    config,
-    request: new Request('http://localhost:3000/api/mcp', {
-      method: 'POST',
-      headers: {
-        accept: 'application/json, text/event-stream',
-        'content-type': 'application/json',
-        ...(apiKey === undefined ? {} : { authorization: `Bearer ${apiKey}` }),
-      },
-      body: JSON.stringify({ jsonrpc: '2.0', id: 1, method, params }),
-    }),
-  })
-  if (response.status !== 200) return { status: response.status }
-
-  // Streamable HTTP answers with one server-sent event carrying the JSON-RPC result.
-  const event = (await response.text()).split('\n').find((line) => line.startsWith('data: '))
-  const { result } = JSON.parse(event!.slice('data: '.length)) as { result: T }
-
-  return { status: 200, result }
-}
 
 async function listTools(apiKey?: string): Promise<{ status: number; tools: string[] }> {
   const { status, result } = await call<{ tools: { name: string }[] }>('tools/list', {}, apiKey)
@@ -103,7 +61,7 @@ describe('the MCP endpoint', () => {
   })
 
   it("offers an admin's key only the tools ticked on it", async () => {
-    const { apiKey } = await issueKey(await createAdmin(registry))
+    const { apiKey } = await issueKey(registry, await createAdmin(registry))
 
     expect(await listTools(apiKey)).toEqual({ status: 200, tools: ['findPages'] })
   })
@@ -112,7 +70,7 @@ describe('the MCP endpoint', () => {
     const owner = await createAdmin(registry)
     const contact = await createContact(registry)
     const yacht = await createYacht(registry, { contact: contact.id, captain: contact.id })
-    const { apiKey } = await issueKey(owner, { yachts: { find: true } })
+    const { apiKey } = await issueKey(registry, owner, { yachts: { find: true } })
 
     const { result } = await call<{ content: { text: string }[] }>(
       'tools/call',
@@ -138,7 +96,7 @@ describe('the MCP endpoint', () => {
 
   it('deletes the keys of a person who is deleted, so a leaver can still be removed', async () => {
     const leaver = await createAdmin(registry)
-    const { id, apiKey } = await issueKey(leaver)
+    const { id, apiKey } = await issueKey(registry, leaver)
 
     await registry.payload.delete({
       collection: 'users',
@@ -157,7 +115,7 @@ describe('the MCP endpoint', () => {
 
   it('stops accepting a key once its owner is no longer an admin', async () => {
     const owner = await createAdmin(registry)
-    const { apiKey } = await issueKey(owner)
+    const { apiKey } = await issueKey(registry, owner)
 
     await registry.payload.update({
       collection: 'users',
@@ -167,5 +125,54 @@ describe('the MCP endpoint', () => {
     })
 
     expect((await listTools(apiKey)).status).toBe(401)
+  })
+})
+
+// Issue #464: a row id keeps a row's localized fields attached to it, so a write in one language must carry it.
+describe('editing one language through MCP', () => {
+  it("changes a yacht's photo captions in Russian and leaves the English ones", async () => {
+    const yacht = await createYacht(registry, {
+      photos: [
+        { externalUrl: 'https://example.test/bow.jpg', alt: 'Bow at anchor' },
+        { externalUrl: 'https://example.test/deck.jpg', alt: 'Sun deck' },
+      ],
+    })
+    const { apiKey } = await issueKey(registry, await createAdmin(registry), {
+      yachts: { update: true },
+    })
+    const russian = ['Нос на якоре', 'Солнечная палуба']
+
+    const { result } = await call<{ isError?: boolean }>(
+      'tools/call',
+      {
+        name: 'updateYachts',
+        arguments: {
+          id: yacht.id,
+          locale: 'ru',
+          photos: (yacht.photos ?? []).map((photo, index) => ({
+            id: photo.id,
+            externalUrl: photo.externalUrl,
+            alt: russian[index],
+          })),
+        },
+      },
+      apiKey,
+    )
+    expect(result).toBeDefined()
+    expect(result?.isError).not.toBe(true)
+
+    const captions = async (locale: 'en' | 'ru') =>
+      (
+        await registry.payload.findByID({
+          collection: 'yachts',
+          id: yacht.id,
+          locale,
+          fallbackLocale: false,
+          depth: 0,
+        })
+      ).photos?.map((photo) => photo.alt)
+
+    expect(await captions('en')).toEqual(['Bow at anchor', 'Sun deck'])
+    expect(await captions('ru')).toEqual(russian)
   })
 })
