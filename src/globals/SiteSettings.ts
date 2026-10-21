@@ -25,9 +25,9 @@ function withDefaultLocale(value: unknown): Locale[] {
 }
 
 /**
- * A localized list's rows exist once per locale, so an id an MCP client read in another locale names
- * no row here and the edit is dropped; without it the row is written anew (issue #464,
- * payloadcms/payload#18063).
+ * A localized list's rows exist once per locale, so an id an MCP client read in another locale is
+ * that locale's row and the database refuses the whole edit; without it the row is written anew
+ * (issue #464, payloadcms/payload#18063).
  */
 const keepOwnRowIds: FieldHook = async ({ value, req }) => {
   const locale = req.locale as Locale | 'all' | undefined

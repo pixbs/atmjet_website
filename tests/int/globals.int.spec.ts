@@ -5,6 +5,7 @@ import type { TypedUser } from 'payload'
 import { DEFAULT_LOCALES, type Locale } from '@/i18n/locales'
 import { getEnabledLocales } from '@/lib/data/site-settings'
 import { createAdmin, createMedia, createUser } from '../factories'
+import { call, issueKey } from '../helpers/mcp'
 import { createRegistry, uniqueSuffix, type TestRegistry } from '../helpers/payload'
 
 // The globals revalidate on write, which needs a Next request scope this suite has not got; the
@@ -197,6 +198,60 @@ describe('site settings', () => {
     // The same rule as the navigation above: a required upload is a not-null column, and the
     // delete would fail on it rather than leaving a row an editor can give a new file.
     expect(settings.documents?.[0]).toMatchObject({ label: 'Presentation', file: null })
+  })
+
+  // Here rather than with the other MCP tests: a second suite writing this one document races
+  // this one (issue #306).
+  it('lands a Russian edit of the documents through MCP even when it carries English row ids', async () => {
+    const read = async (locale: 'en' | 'ru') =>
+      (
+        await registry.payload.findGlobal({
+          slug: 'site-settings',
+          locale,
+          fallbackLocale: false,
+          depth: 0,
+        })
+      ).documents ?? []
+    const write = (locale: 'en' | 'ru', documents: { label: string; file?: number | null }[]) =>
+      registry.payload.updateGlobal({
+        slug: 'site-settings',
+        locale,
+        data: { documents },
+        depth: 0,
+        overrideAccess: true,
+        context: { skipRevalidation: true },
+      })
+    const saved = { en: await read('en'), ru: await read('ru') }
+
+    try {
+      await write('en', [{ label: 'Charter terms' }])
+      await write('ru', [{ label: 'Условия чартера' }])
+      const [english] = await read('en')
+      const { apiKey } = await issueKey(registry, await createAdmin(registry), {
+        siteSettings: { update: true },
+      })
+
+      await call(
+        'tools/call',
+        {
+          name: 'updateSiteSettings',
+          arguments: { locale: 'ru', documents: [{ id: english.id, label: 'Условия аренды' }] },
+        },
+        apiKey,
+      )
+
+      expect((await read('en')).map((document) => document.label)).toEqual(['Charter terms'])
+      expect((await read('ru')).map((document) => document.label)).toEqual(['Условия аренды'])
+    } finally {
+      for (const locale of ['en', 'ru'] as const)
+        await write(
+          locale,
+          saved[locale].map(({ label, file }) => ({
+            label,
+            file: typeof file === 'object' ? (file?.id ?? null) : file,
+          })),
+        )
+    }
   })
 
   it('drops the cached pages that render it', async () => {
