@@ -1,0 +1,29 @@
+diff --git a/dist/utils/schemaConversion/sanitizeJsonSchema.js b/dist/utils/schemaConversion/sanitizeJsonSchema.js
+index 2895b8d383de67ca37edd4ad6ffd087615761b8e..855e0e46b38025308a40269f78a433f547a0e643 100644
+--- a/dist/utils/schemaConversion/sanitizeJsonSchema.js
++++ b/dist/utils/schemaConversion/sanitizeJsonSchema.js
+@@ -7,8 +7,9 @@
+  * `'array'`) throughout the schema tree. Without this, `json-schema-to-zod`
+  * emits a Zod union which the MCP SDK serialises back as `anyOf`, stripping
+  * the concrete `type` from the output and breaking schema introspection.
+- */ export function sanitizeJsonSchema(schema) {
+-    delete schema?.properties?.id;
++ */ export function sanitizeJsonSchema(schema, nested = false) {
++    // A row id keeps its localized subfields attached to it; only the document's own id is removed.
++    if (!nested) delete schema?.properties?.id;
+     delete schema?.properties?.createdAt;
+     delete schema?.properties?.updatedAt;
+     if (Array.isArray(schema.required)) {
+@@ -25,10 +26,10 @@
+             }
+             normalizeNullableType(prop);
+             if (prop.properties) {
+-                sanitizeJsonSchema(prop);
++                sanitizeJsonSchema(prop, true);
+             }
+             if (prop.items && typeof prop.items === 'object' && !Array.isArray(prop.items)) {
+-                sanitizeJsonSchema(prop.items);
++                sanitizeJsonSchema(prop.items, true);
+             }
+         }
+     }

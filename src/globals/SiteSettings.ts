@@ -1,4 +1,4 @@
-import type { GlobalConfig } from 'payload'
+import type { FieldHook, GlobalConfig } from 'payload'
 
 import { admin, anyone } from '@/access'
 import { revalidateGlobal } from '@/hooks/revalidate'
@@ -22,6 +22,32 @@ function withDefaultLocale(value: unknown): Locale[] {
   )
 
   return [...known]
+}
+
+/**
+ * A localized list's rows exist once per locale, so an id an MCP client read in another locale names
+ * no row here and the edit is dropped; without it the row is written anew (issue #464,
+ * payloadcms/payload#18063).
+ */
+const keepOwnRowIds: FieldHook = async ({ value, req }) => {
+  const locale = req.locale as Locale | 'all' | undefined
+  if ((req.payloadAPI as string) !== 'MCP' || !Array.isArray(value) || !locale || locale === 'all')
+    return value
+
+  const current = await req.payload.findGlobal({
+    slug: 'site-settings',
+    locale,
+    fallbackLocale: false,
+    depth: 0,
+    select: { documents: true },
+    req,
+  })
+  const own = new Set((current.documents ?? []).map((row) => row.id))
+
+  return value.map((row: { id?: string | null }) => {
+    const { id, ...rest } = row
+    return id && own.has(id) ? row : rest
+  })
 }
 
 export const SiteSettings: GlobalConfig = {
@@ -92,6 +118,7 @@ export const SiteSettings: GlobalConfig = {
       type: 'array',
       localized: true,
       labels: { singular: 'Document', plural: 'Documents' },
+      hooks: { beforeValidate: [keepOwnRowIds] },
       fields: [
         { name: 'label', type: 'text', required: true },
         // Optional like a nav link's page (src/fields/nav.ts): a required upload is a NOT NULL column the

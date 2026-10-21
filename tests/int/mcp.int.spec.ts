@@ -19,7 +19,11 @@ afterAll(() => registry.cleanup())
 
 type Person = Awaited<ReturnType<typeof createUser>>
 
-type Grants = { pages?: { find: boolean }; yachts?: { find: boolean } }
+type Grants = {
+  pages?: { find: boolean }
+  yachts?: { find?: boolean; update?: boolean }
+  siteSettings?: { update: boolean }
+}
 
 /** Issues a key as `owner` that may only do what `grants` ticks, and returns its secret. */
 async function issueKey(owner: Person, grants: Grants = { pages: { find: true } }) {
@@ -167,5 +171,104 @@ describe('the MCP endpoint', () => {
     })
 
     expect((await listTools(apiKey)).status).toBe(401)
+  })
+})
+
+// Issue #464: a row id keeps a row's localized fields attached to it, so a write in one language must carry it.
+describe('editing one language through MCP', () => {
+  it("changes a yacht's photo captions in Russian and leaves the English ones", async () => {
+    const yacht = await createYacht(registry, {
+      photos: [
+        { externalUrl: 'https://example.test/bow.jpg', alt: 'Bow at anchor' },
+        { externalUrl: 'https://example.test/deck.jpg', alt: 'Sun deck' },
+      ],
+    })
+    const { apiKey } = await issueKey(await createAdmin(registry), { yachts: { update: true } })
+    const russian = ['Нос на якоре', 'Солнечная палуба']
+
+    const { result } = await call<{ isError?: boolean }>(
+      'tools/call',
+      {
+        name: 'updateYachts',
+        arguments: {
+          id: yacht.id,
+          locale: 'ru',
+          photos: (yacht.photos ?? []).map((photo, index) => ({
+            id: photo.id,
+            externalUrl: photo.externalUrl,
+            alt: russian[index],
+          })),
+        },
+      },
+      apiKey,
+    )
+    expect(result).toBeDefined()
+    expect(result?.isError).not.toBe(true)
+
+    const captions = async (locale: 'en' | 'ru') =>
+      (
+        await registry.payload.findByID({
+          collection: 'yachts',
+          id: yacht.id,
+          locale,
+          fallbackLocale: false,
+          depth: 0,
+        })
+      ).photos?.map((photo) => photo.alt)
+
+    expect(await captions('en')).toEqual(['Bow at anchor', 'Sun deck'])
+    expect(await captions('ru')).toEqual(russian)
+  })
+
+  it('lands a Russian edit of the site documents even when it carries English row ids', async () => {
+    const read = async (locale: 'en' | 'ru') =>
+      (
+        await registry.payload.findGlobal({
+          slug: 'site-settings',
+          locale,
+          fallbackLocale: false,
+          depth: 0,
+        })
+      ).documents ?? []
+    const write = (locale: 'en' | 'ru', documents: { label: string; file?: number | null }[]) =>
+      registry.payload.updateGlobal({
+        slug: 'site-settings',
+        locale,
+        data: { documents },
+        depth: 0,
+        overrideAccess: true,
+        context: { skipRevalidation: true },
+      })
+    const saved = { en: await read('en'), ru: await read('ru') }
+
+    try {
+      await write('en', [{ label: 'Charter terms' }])
+      await write('ru', [{ label: 'Условия чартера' }])
+      const [english] = await read('en')
+      const { apiKey } = await issueKey(await createAdmin(registry), {
+        siteSettings: { update: true },
+      })
+
+      await call(
+        'tools/call',
+        {
+          name: 'updateSiteSettings',
+          arguments: { locale: 'ru', documents: [{ id: english.id, label: 'Условия аренды' }] },
+        },
+        apiKey,
+      )
+
+      expect((await read('en')).map((document) => document.label)).toEqual(['Charter terms'])
+      expect((await read('ru')).map((document) => document.label)).toEqual(['Условия аренды'])
+    } finally {
+      for (const locale of ['en', 'ru'] as const)
+        await write(
+          locale,
+          saved[locale].map(({ label, file }) => ({
+            label,
+            file: typeof file === 'object' ? (file?.id ?? null) : file,
+          })),
+        )
+    }
   })
 })
