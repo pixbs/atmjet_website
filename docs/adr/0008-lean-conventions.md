@@ -1,6 +1,6 @@
 # ADR-0008: Lean conventions: slices, squash merges, Payload's migration workflow, fixed coverage, one enforcement layer
 
-Status: accepted (2026-09-13). Amends ADR-0001 (merging, pull request scope), ADR-0002 (item 4, development workflow), ADR-0004 (coverage ratchet, tests-required gate) and ADR-0005 (enforcement layers 3 and 6, self-test).
+Status: accepted (2026-09-13); amended 2026-10-24 to keep only the newest migration snapshot (#467). Amends ADR-0001 (merging, pull request scope), ADR-0002 (item 4, development workflow), ADR-0004 (coverage ratchet, tests-required gate) and ADR-0005 (enforcement layers 3 and 6, self-test).
 
 ## Context
 
@@ -27,7 +27,7 @@ The rules produced this, not the people or the tools running them:
 ## Consequences
 
 - The current stack merges as it is; the cleanups (#229, #230, #231) land as small pull requests on `master` instead of surgery inside fourteen branches.
-- Every future migration still writes a full snapshot; fewer migrations and the generated-file attribute keep that out of review.
+- Every migration writes a full snapshot of the schema and Payload diffs the next one against the newest only, so `bun run migrate:create` deletes the snapshots it supersedes and `src/migrations` holds one (#467). The `.ts` migrations stay: production has run them, so the squash of #229 is not repeated.
 - Reviewers judge a pull request on its hand-written lines; the pull request template asks for that number when it is large.
 - The repository settings (merge method, ruleset import) are an owner action (#227).
 - A dependency is justified where it is added rather than in a list that goes stale: `git log -- package.json` is the record of why each one is there.

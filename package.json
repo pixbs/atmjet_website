@@ -20,7 +20,7 @@
     "knip": "knip --production && knip",
     "db:reset": "cross-env NODE_OPTIONS=--no-deprecation payload run scripts/db/reset.ts",
     "migrate": "cross-env NODE_OPTIONS=--no-deprecation payload migrate",
-    "migrate:create": "cross-env NODE_OPTIONS=--no-deprecation payload migrate:create",
+    "migrate:create": "bash scripts/db/migrate-create.sh",
     "migrate:status": "cross-env NODE_OPTIONS=--no-deprecation payload migrate:status",
     "payload": "cross-env NODE_OPTIONS=--no-deprecation payload",
     "prepare": "lefthook install",
