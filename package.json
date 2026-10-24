@@ -97,7 +97,7 @@
     "jsdom": "30.1.1",
     "knip": "^6.39.0",
     "lefthook": "^2.1.16",
-    "pixelmatch": "7",
+    "pixelmatch": "8",
     "pngjs": "7",
     "postcss-load-config": "^6.0.1",
     "prettier": "^3.9.9",
