@@ -1,8 +1,10 @@
 'use client'
 
+import { m } from 'motion/react'
 import { useEffect, useId, useRef, useState, type KeyboardEvent } from 'react'
 
 import { cn } from '@/lib/cn'
+import { busy } from '@/lib/motion'
 
 import { Input, type InputProps } from './input'
 
@@ -37,11 +39,17 @@ const LIST =
 
 const OPTION = 'cursor-pointer px-4 py-2 text-graphite-900'
 
+/** The ring on the line of the value, inside the field's right padding so it never covers text. */
+const SPINNER =
+  'pointer-events-none absolute top-9.5 right-3 size-4 rounded-full border-2 border-graphite-300 border-t-graphite-500'
+
 export interface AutocompleteProps extends Omit<InputProps, 'onChange' | 'value' | 'role'> {
   /** What to offer for what has been typed. Empty keeps the list shut. */
   options: readonly string[]
   /** Told what has been typed, once the typing has settled: where the search happens. */
   onSearch?: (term: string) => void
+  /** The caller is still looking for what to offer, which the field shows until it is answered. */
+  isSearching?: boolean
   /** Controlled mode, as the request form used it. Left out, the field keeps its own value. */
   value?: string
   onChange?: (value: string) => void
@@ -50,6 +58,7 @@ export interface AutocompleteProps extends Omit<InputProps, 'onChange' | 'value'
 export function Autocomplete({
   options,
   onSearch,
+  isSearching = false,
   value,
   onChange,
   defaultValue,
@@ -66,6 +75,8 @@ export function Autocomplete({
 
   const term = value ?? own
   const shown = isOpen && options.length > 0
+  // A field that was left or shut with Escape is not waiting for anything (section 13, entry 100).
+  const isBusy = isOpen && isSearching
   const optionId = (index: number) => `${listId}-${index}`
 
   const put = (next: string) => {
@@ -113,6 +124,7 @@ export function Autocomplete({
         {...props}
         aria-activedescendant={shown && active >= 0 ? optionId(active) : undefined}
         aria-autocomplete="list"
+        aria-busy={isBusy}
         aria-controls={shown ? listId : undefined}
         aria-expanded={shown}
         autoComplete="off"
@@ -128,6 +140,16 @@ export function Autocomplete({
         role="combobox"
         value={term}
       />
+      {isBusy && (
+        <m.span
+          animate="visible"
+          aria-hidden
+          className={SPINNER}
+          data-testid="autocomplete-busy"
+          initial="hidden"
+          variants={busy}
+        />
+      )}
       {shown && (
         <ul className={LIST} id={listId} role="listbox">
           {options.map((option, index) => (

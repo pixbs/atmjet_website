@@ -38,6 +38,8 @@ export const duration = {
   preloaderLogo: 4,
   /** Counter: how long the numbers take to reach their target. */
   count: 0.8,
+  /** One turn of the ring an airport field shows while it searches (section 13, entry 100). */
+  busy: 1,
 } as const
 
 /** Delays in seconds. */
@@ -46,6 +48,8 @@ export const delay = {
   preloaderBackdrop: 2,
   /** Multiplied by the tile index to stagger the grid. */
   tile: 0.1,
+  /** A search answered sooner than this never shows its ring, so a quick answer does not flash. */
+  busy: 0.2,
 } as const
 
 /** How far each legacy animation travelled, in pixels (degrees for `spin`). */
@@ -95,6 +99,23 @@ export const fade: Variants = {
 export const spin: Variants = {
   hidden: { opacity: 0, rotate: offset.spin },
   visible: { opacity: 1, rotate: 0, transition: transition.enter },
+}
+
+/**
+ * The ring an airport field turns while its search runs, which the legacy field never showed
+ * (section 13, entry 100): it fades in once the search has outlasted `delay.busy` and stands
+ * still under reduced motion, where `MotionConfig` drops the turn.
+ */
+export const busy: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    rotate: 360,
+    transition: {
+      opacity: { ...transition.enter, delay: delay.busy },
+      rotate: { duration: duration.busy, ease: 'linear', repeat: Infinity },
+    },
+  },
 }
 
 /** The navbar overlay. */

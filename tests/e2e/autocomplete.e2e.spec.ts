@@ -14,6 +14,28 @@ const SECTION = '[data-section="autocomplete"]'
 
 const fieldOf = (page: Page) => page.locator(SECTION).getByRole('combobox', { name: 'From' })
 const listOf = (page: Page) => page.locator(SECTION).getByRole('listbox')
+const ringOf = (page: Page) => page.locator(SECTION).getByTestId('autocomplete-busy')
+
+/** Keeps every search the field sends waiting until the test answers it, with one option. */
+async function holdSearches(page: Page) {
+  const waiting = new Map<string, () => void>()
+
+  await page.route(
+    (url) => url.pathname === '/api/airports/search',
+    async (route) => {
+      const term = new URL(route.request().url()).searchParams.get('q') ?? ''
+      await new Promise<void>((answer) => waiting.set(term, answer))
+      await route.fulfill({ json: { options: [`Answer to ${term}`] } })
+    },
+  )
+
+  return {
+    answer: async (term: string) => {
+      await expect.poll(() => waiting.has(term)).toBe(true)
+      waiting.get(term)?.()
+    },
+  }
+}
 
 test.describe('the airport autocomplete', () => {
   test.beforeEach(async ({ page }) => {
@@ -35,6 +57,24 @@ test.describe('the airport autocomplete', () => {
     await expect(listOf(page).getByRole('option').first()).toHaveText(
       'Dubai (OMDB) United Arab Emirates, Dubai International',
     )
+  })
+
+  test('shows it is still looking until the term typed last is answered', async ({ page }) => {
+    // The legacy field showed nothing while it searched and looked broken (section 13, entry 100).
+    const searches = await holdSearches(page)
+    const field = fieldOf(page)
+
+    await field.fill('dub')
+    await expect(field).toHaveAttribute('aria-busy', 'true')
+    await expect(ringOf(page)).toBeVisible()
+
+    // Typed over before it was answered, the first search is left waiting and no longer counts.
+    await field.fill('dubai')
+    await searches.answer('dubai')
+
+    await expect(listOf(page).getByRole('option')).toHaveText(['Answer to dubai'])
+    await expect(field).toHaveAttribute('aria-busy', 'false')
+    await expect(ringOf(page)).toHaveCount(0)
   })
 
   test('puts the airport that was clicked into the field and shuts the list', async ({ page }) => {
