@@ -1,8 +1,10 @@
 'use client'
 
+import { m } from 'motion/react'
 import { useEffect, useId, useRef, useState, type KeyboardEvent } from 'react'
 
 import { cn } from '@/lib/cn'
+import { fade, sweep } from '@/lib/motion'
 
 import { Input, type InputProps } from './input'
 
@@ -35,13 +37,28 @@ const MIN_SEARCH_LENGTH = 2
 const LIST =
   'absolute bottom-0 z-dropdown mt-4 max-h-40 w-80 shrink-0 translate-y-full overflow-y-auto rounded-xl border bg-white shadow-lg'
 
-const OPTION = 'cursor-pointer px-4 py-2 text-graphite-900'
+/** The padding of a row, which an option and the skeleton of one share so the two line up. */
+const ROW = 'px-4 py-2'
+
+const OPTION = cn(ROW, 'cursor-pointer text-graphite-900')
+
+/**
+ * The skeleton's rows, one width per line, measured from the airport names a search usually
+ * returns: most take two lines of the list (section 13, entry 100).
+ */
+const SKELETON = [
+  ['w-5/6', 'w-11/12'],
+  ['w-5/6', 'w-3/5'],
+  ['w-4/5', 'w-11/12'],
+] as const
 
 export interface AutocompleteProps extends Omit<InputProps, 'onChange' | 'value' | 'role'> {
   /** What to offer for what has been typed. Empty keeps the list shut. */
   options: readonly string[]
   /** Told what has been typed, once the typing has settled: where the search happens. */
   onSearch?: (term: string) => void
+  /** The caller is still looking for what to offer: the list shows a skeleton until it answers. */
+  isSearching?: boolean
   /** Controlled mode, as the request form used it. Left out, the field keeps its own value. */
   value?: string
   onChange?: (value: string) => void
@@ -50,6 +67,7 @@ export interface AutocompleteProps extends Omit<InputProps, 'onChange' | 'value'
 export function Autocomplete({
   options,
   onSearch,
+  isSearching = false,
   value,
   onChange,
   defaultValue,
@@ -65,7 +83,10 @@ export function Autocomplete({
   const picked = useRef<string | null>(null)
 
   const term = value ?? own
-  const shown = isOpen && options.length > 0
+  // A field that was left or shut with Escape is not waiting for anything (section 13, entry 100).
+  const isBusy = isOpen && isSearching
+  // What an earlier term found stays hidden behind the skeleton, out of reach of the keys too.
+  const shown = isOpen && !isSearching && options.length > 0
   const optionId = (index: number) => `${listId}-${index}`
 
   const put = (next: string) => {
@@ -99,7 +120,7 @@ export function Autocomplete({
 
     // The arrows move through the list rather than through the text of the field.
     event.preventDefault()
-    if (options.length === 0) return
+    if (options.length === 0 || isSearching) return
     setIsOpen(true)
     const step = event.key === 'ArrowDown' ? 1 : -1
     setActive((current) => (current + step + options.length) % options.length)
@@ -113,6 +134,7 @@ export function Autocomplete({
         {...props}
         aria-activedescendant={shown && active >= 0 ? optionId(active) : undefined}
         aria-autocomplete="list"
+        aria-busy={isBusy}
         aria-controls={shown ? listId : undefined}
         aria-expanded={shown}
         autoComplete="off"
@@ -128,6 +150,35 @@ export function Autocomplete({
         role="combobox"
         value={term}
       />
+      {isBusy && (
+        <m.ul
+          animate="visible"
+          aria-hidden
+          className={cn(LIST, 'overflow-hidden')}
+          data-testid="autocomplete-loading"
+          initial="hidden"
+          variants={fade}
+        >
+          {SKELETON.map((lines, row) => (
+            <li key={row} className={ROW}>
+              {lines.map((width, line) => (
+                // A bar half as tall as the line, centred on it, covers what the capitals would.
+                <span key={line} className="flex h-lh items-center">
+                  <span className={cn('h-1/2 rounded-full bg-graphite-300/40', width)} />
+                </span>
+              ))}
+            </li>
+          ))}
+          <li className="absolute inset-0">
+            <m.span
+              animate="visible"
+              className="block h-full w-1/2 bg-linear-to-r from-white/0 via-white/80 to-white/0"
+              initial="hidden"
+              variants={sweep}
+            />
+          </li>
+        </m.ul>
+      )}
       {shown && (
         <ul className={LIST} id={listId} role="listbox">
           {options.map((option, index) => (
