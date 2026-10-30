@@ -5,6 +5,9 @@ import { useCallback, useRef, useState } from 'react'
 import { Autocomplete, type AutocompleteProps } from '@/components/ui/autocomplete'
 import type { Locale } from '@/i18n/locales'
 
+/** A search answered sooner than this never shows the list's skeleton, so it does not flash. */
+const SLOW_SEARCH_MS = 200
+
 /**
  * The airport field: the autocomplete of issue #107 with the search of issue #159 behind it.
  *
@@ -33,7 +36,9 @@ export function AirportSearch({ locale, ...props }: AirportSearchProps) {
   const search = useCallback(
     async (term: string) => {
       latest.current = term
-      setIsSearching(true)
+      const slow = setTimeout(() => {
+        if (latest.current === term) setIsSearching(true)
+      }, SLOW_SEARCH_MS)
 
       try {
         const query = new URLSearchParams({ q: term, locale })
@@ -49,6 +54,7 @@ export function AirportSearch({ locale, ...props }: AirportSearchProps) {
         )
         if (latest.current === term) setOptions([])
       } finally {
+        clearTimeout(slow)
         // Only the answer to the term typed last ends the wait; one it superseded changes nothing.
         if (latest.current === term) setIsSearching(false)
       }
