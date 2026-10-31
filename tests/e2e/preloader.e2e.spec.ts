@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test'
+import { expect, test, type Page } from '@playwright/test'
 
 import { pathFor } from './routes'
 
@@ -46,5 +46,72 @@ test.describe('the preloader', () => {
       page.getByRole('heading', { level: 1, name: 'Behind the preloader' }),
     ).toBeVisible()
     await expect(page.locator('[aria-hidden="true"] svg')).toHaveCount(1)
+  })
+})
+
+/**
+ * The intro the curtain plays over the home page (section 13, entry 101): a window opens in it
+ * onto the hero, which rises into place behind it. What it may not do is move anything for
+ * good, so the hero it leaves is measured against the one drawn without any motion at all.
+ */
+const HOME = pathFor('/', 'en')
+const HERO = '[data-section="hero-video"]'
+
+/** The overline, the heading and the signature, as boxes on the screen. */
+async function heroLines(page: Page) {
+  const hero = page.locator(HERO)
+
+  return Promise.all([
+    hero.locator('p').first().boundingBox(),
+    hero.getByRole('heading', { level: 1 }).boundingBox(),
+    hero.locator('p').last().boundingBox(),
+  ])
+}
+
+/** How many things in the hero are still moved, clipped or faded. */
+function stillMoving(page: Page) {
+  return page.locator(HERO).evaluate(
+    (hero) =>
+      [...hero.querySelectorAll('span, div')].filter((element) => {
+        const style = getComputedStyle(element)
+        const moved = style.transform !== 'none' && style.transform !== 'matrix(1, 0, 0, 1, 0, 0)'
+
+        return moved || style.clipPath !== 'none' || style.opacity !== '1'
+      }).length,
+  )
+}
+
+test.describe('the intro on the home page', () => {
+  test('opens onto the hero and leaves every line where it is drawn without motion', async ({
+    page,
+  }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' })
+    await page.goto(HOME)
+    const drawn = await heroLines(page)
+
+    await page.emulateMedia({ reducedMotion: 'no-preference' })
+    await page.reload()
+    await expect(page.getByTestId('preloader-backdrop')).toHaveCount(0, { timeout: 15_000 })
+    await expect.poll(() => stillMoving(page), { timeout: 5_000 }).toBe(0)
+
+    const rested = await heroLines(page)
+    for (const [index, box] of rested.entries()) {
+      expect(box?.x).toBeCloseTo(drawn[index]!.x, 0)
+      expect(box?.y).toBeCloseTo(drawn[index]!.y, 0)
+      expect(box?.width).toBeCloseTo(drawn[index]!.width, 0)
+      expect(box?.height).toBeCloseTo(drawn[index]!.height, 0)
+    }
+    await expect(page.locator(HERO).getByRole('heading', { level: 1 })).toHaveText(
+      'Flying private made simple',
+    )
+  })
+
+  test('is never drawn for a visitor who asks for less motion', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' })
+    await page.goto(HOME)
+
+    await expect(page.getByTestId('preloader-backdrop')).toBeHidden()
+    await expect(page.getByTestId('preloader-logo')).toBeHidden()
+    await expect(page.locator(HERO).getByRole('heading', { level: 1 })).toBeVisible()
   })
 })

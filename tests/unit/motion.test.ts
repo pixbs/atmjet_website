@@ -6,21 +6,16 @@ import {
   cardReveal,
   contactBlock,
   counterReveal,
-  delay,
   dialog,
   duration,
   easing,
   fade,
-  fadeReveal,
   heroHeadline,
   inViewOnce,
   inViewRepeat,
   offset,
   overlay,
-  preloaderBackdrop,
-  preloaderLogo,
   spin,
-  tile,
   transition,
 } from '@/lib/motion'
 
@@ -34,20 +29,12 @@ describe('legacy timings', () => {
     ['navbar overlay', duration.overlay, 0.2],
     ['cookie banner, modal and booking dialog', duration.dialog, 0.3],
     ['faq accordion', duration.accordion, 0.4],
-    ['tiles', duration.tile, 0.4],
     ['card reveals and the counter', duration.reveal, 0.5],
     ['hero headlines', duration.hero, 1],
     ['line separator', duration.line, 1],
-    ['preloader backdrop', duration.preloaderBackdrop, 0.5],
-    ['preloader logo', duration.preloaderLogo, 4],
     ['counting', duration.count, 0.8],
   ])('%s runs for %ss', (_name, actual, expected) => {
     expect(actual).toBe(expected)
-  })
-
-  it('keeps the preloader backdrop waiting for the logo', () => {
-    expect(delay.preloaderBackdrop).toBe(2)
-    expect(delay.preloaderBackdrop).toBeLessThan(duration.preloaderLogo)
   })
 
   it.each([
@@ -81,7 +68,6 @@ describe('variants', () => {
     ['banner', banner],
     ['heroHeadline', heroHeadline],
     ['cardReveal', cardReveal],
-    ['fadeReveal', fadeReveal],
     ['counterReveal', counterReveal],
     ['accordionContent', accordionContent],
   ])('%s has a hidden and a visible state', (_name, variants) => {
@@ -104,29 +90,11 @@ describe('variants', () => {
     expect(accordionContent.visible).toMatchObject({ height: 'auto' })
   })
 
-  it('scales a tile in and staggers it by its position', () => {
-    expect(tile(0).hidden).toMatchObject({ opacity: 0, scale: 0 })
-    expect(tile(0).visible).toMatchObject({
-      scale: 1,
-      transition: { duration: duration.tile, delay: 0 },
-    })
-    expect(tile(3).visible).toMatchObject({ transition: { delay: 3 * delay.tile } })
-  })
-
   it('delays a contact block by the value the section gave it', () => {
     expect(contactBlock(0.6).hidden).toMatchObject({ opacity: 0, y: offset.contact })
     expect(contactBlock(0.6).visible).toMatchObject({
       transition: { duration: duration.reveal, ease: easing.out, delay: 0.6 },
     })
-  })
-
-  it('runs the preloader logo as one keyframe sequence and keeps a static state', () => {
-    expect(preloaderLogo.visible).toMatchObject({
-      opacity: [0, 1, 1, 1, 0, 0],
-      transition: { duration: duration.preloaderLogo },
-    })
-    expect(preloaderLogo.static).toMatchObject({ opacity: 1, y: 0 })
-    expect(preloaderBackdrop.static).toMatchObject({ opacity: 1, height: '100%' })
   })
 })
 

@@ -1,5 +1,6 @@
 import { RichText } from '@payloadcms/richtext-lexical/react'
 
+import { RiseText } from '@/components/motion/arrive'
 import { Accordion, AccordionItem } from '@/components/ui/accordion'
 import type { FaqBlock } from '@/payload-types'
 
@@ -29,10 +30,16 @@ export function Faq({ title, questions }: FaqProps) {
       {/* `.container` is an unlayered parity rule, so its `flex-col` beats a plain `lg:flex-row`
           exactly as it did on the legacy site (docs/adr/0006-styling-and-motion.md). */}
       <div className="container lg:flex-row!">
-        <h2 className="max-w-10 shrink-0 md:min-w-80">{title}</h2>
+        <RiseText className="max-w-10 shrink-0 md:min-w-80">{title}</RiseText>
         <Accordion className="pt-4" defaultValue={valueOf(0)}>
           {questions.map((entry, index) => (
-            <AccordionItem key={entry.question} title={entry.question} value={valueOf(index)}>
+            <AccordionItem
+              key={entry.question}
+              title={entry.question}
+              value={valueOf(index)}
+              // The questions arrive one after another (section 13, entry 101).
+              wait={0.15 + index * 0.08}
+            >
               <div className="flex flex-row overflow-hidden">
                 {/* The paragraph the converter draws is the one the editor typed; no container
                     around it, because the row above is the box the legacy answer sat in. */}

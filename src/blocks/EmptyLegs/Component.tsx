@@ -2,11 +2,15 @@ import Link from 'next/link'
 import { getLocale, getTranslations } from 'next-intl/server'
 
 import { EmptyLegCard } from '@/components/cards/empty-leg-card'
+import { Arrive, RiseText } from '@/components/motion/arrive'
 import { buttonVariants } from '@/components/ui/button'
 import type { Locale } from '@/i18n/locales'
 import { cn } from '@/lib/cn'
 import { listEmptyLegs } from '@/lib/data/empty-legs'
 import { getTelegramChannel } from '@/lib/data/site-settings'
+
+/** Seconds between one flight arriving and the next, when several come into view at once. */
+const STAGGER = 0.08
 
 /**
  * The empty legs section (issue #117, `docs/legacy-inventory.md` section 5): the heading that
@@ -44,12 +48,14 @@ export async function EmptyLegs({ title, description, limit, booking, channel }:
           on (docs/adr/0006-styling-and-motion.md). */}
       <div className="container gap-8 py-10 lg:flex-row!">
         <div className="top-40 min-w-40 shrink-0 gap-4 self-start lg:sticky lg:w-72">
-          <h2>{title}</h2>
-          <p>{description}</p>
+          <RiseText>{title}</RiseText>
+          <Arrive as="p" wait={0.3}>
+            {description}
+          </Arrive>
         </div>
         {/* The width the legacy column never needed, because its container never became a row. */}
         <div className="w-full gap-4">
-          {legs.map((leg) => (
+          {legs.map((leg, index) => (
             <EmptyLegCard
               key={leg.id}
               booking={booking}
@@ -59,13 +65,20 @@ export async function EmptyLegs({ title, description, limit, booking, channel }:
               noPriceLabel={t('notAvailable')}
               price={leg.price}
               to={leg.to}
+              wait={(index % 4) * STAGGER}
             />
           ))}
           {/* The legacy card also carried `border-0`, which never took effect: `.card` is
               unlayered and beats a utility, there as here (docs/adr/0006-styling-and-motion.md).
-              `md:bg-fixed` does take effect, pinning the gradient to the screen (section 12.4). */}
-          <div className="card mt-4 items-start gap-4 bg-linear-to-b from-graphite-850 from-15% to-teal-950 p-6 md:bg-fixed">
-            <h3>{channel.title}</h3>
+              `md:bg-fixed` does take effect, pinning the gradient to the screen (section 12.4),
+              which is why it fades in where it stands rather than rising. */}
+          <Arrive
+            className="card mt-4 items-start gap-4 bg-linear-to-b from-graphite-850 from-15% to-teal-950 p-6 md:bg-fixed"
+            variant="fadeIn"
+          >
+            <RiseText as="h3" wait={0.2}>
+              {channel.title}
+            </RiseText>
             <p className="text-white">{channel.description}</p>
             {channelHref !== '' && (
               <Link
@@ -78,7 +91,7 @@ export async function EmptyLegs({ title, description, limit, booking, channel }:
                 {channel.label}
               </Link>
             )}
-          </div>
+          </Arrive>
         </div>
       </div>
     </section>
