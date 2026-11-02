@@ -1,5 +1,4 @@
-import Image from 'next/image'
-
+import { Arrive, SettleImage } from '@/components/motion/arrive'
 import { Link } from '@/i18n/navigation'
 import { canonicalRegistration } from '@/lib/aircraft'
 import { cn } from '@/lib/cn'
@@ -19,6 +18,11 @@ import { internalPath } from '@/lib/urls'
  * The rows arrive as they are to be printed. The legacy card hard-coded `Year:` and `Pax:` in
  * English on a site served in three languages (section 10.4), and which specifications a card
  * shows is the section's to decide.
+ *
+ * The card is a slide the carousel moves, so it is never moved itself: what it holds fades in
+ * where it stands at its first pixel on screen, the photograph uncovered and settling, the model
+ * and the rows rising after it, and the photograph leans in under the pointer (section 13, entry
+ * 101). The model is not split into words, because a slide's words size the carousel.
  */
 
 export interface VehicleSpec {
@@ -43,28 +47,34 @@ export function VehicleCard({ registration, model, image, specs, className }: Ve
       className={cn('w-full shrink-0 pr-4 md:w-1/2 lg:w-1/3', className)}
       href={internalPath(`/aircraft/${tail}`)}
     >
-      {/* The legacy drew the photograph as a background on an empty box. */}
-      <div className="relative aspect-video overflow-hidden rounded-xl">
-        <Image
-          alt={image.alt}
-          className="object-cover object-center"
-          fill
-          /* A third of the row, half of it, and the one card the narrow scroller shows with the
-             next one peeking past it — which is four fifths of the screen, not all of it. */
-          sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 85vw"
-          src={image.src}
-        />
-      </div>
-      <h3 className="pt-10">{model}</h3>
-      {specs.map((spec) => (
-        <div
-          key={spec.label}
-          className="h-10 flex-row items-center justify-between border-b border-graphite-800 first:mt-4"
-        >
-          <p className="w-full">{spec.label}</p>
-          <p className="w-full">{spec.value}</p>
+      <Arrive hover variant="fadeIn" whenPeeking>
+        {/* The legacy drew the photograph as a background on an empty box. */}
+        <div className="relative aspect-video overflow-hidden rounded-xl">
+          <SettleImage
+            alt={image.alt}
+            className="object-cover object-center"
+            fill
+            /* A third of the row, half of it, and the one card the narrow scroller shows with the
+               next one peeking past it — which is four fifths of the screen, not all of it. */
+            sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 85vw"
+            src={image.src}
+          />
         </div>
-      ))}
+        <Arrive as="h3" className="pt-10" wait={0.3} whenPeeking>
+          {model}
+        </Arrive>
+        {specs.map((spec, index) => (
+          <Arrive
+            key={spec.label}
+            className="h-10 flex-row items-center justify-between border-b border-graphite-800 first:mt-4"
+            wait={0.4 + index * 0.08}
+            whenPeeking
+          >
+            <p className="w-full">{spec.label}</p>
+            <p className="w-full">{spec.value}</p>
+          </Arrive>
+        ))}
+      </Arrive>
     </Link>
   )
 }
