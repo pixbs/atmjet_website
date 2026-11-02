@@ -33,7 +33,8 @@ const subscribe = (listener: () => void) => {
 const currentStage = () => stage
 const atRest = (): IntroStage => 'none'
 
-function useIntroStage() {
+/** Where the intro is, for whatever arrives with it: the hero and the chrome over it. */
+export function useIntroStage() {
   return useSyncExternalStore(subscribe, currentStage, atRest)
 }
 

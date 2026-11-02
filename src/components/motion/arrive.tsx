@@ -1,8 +1,9 @@
 'use client'
 
-import { m, useInView, useReducedMotion } from 'motion/react'
+import { m, useReducedMotion } from 'motion/react'
 import Image, { type ImageProps } from 'next/image'
 import {
+  useEffect,
   useLayoutEffect,
   useRef,
   useState,
@@ -35,7 +36,7 @@ function useArrival(
   // A clipped element shows the observer no area at all, so it would never be seen arriving:
   // one that is uncovered rather than moved is watched through the box it sits in.
   const watched = useRef<Element | null>(null)
-  const inView = useInView(watched, { once: true, amount })
+  const isSeen = useSeen(watched, amount, isHeld)
 
   useLayoutEffect(() => {
     const element = target.current
@@ -49,17 +50,58 @@ function useArrival(
 
   if (!isHeld) return 'rest'
 
-  return inView ? 'arrived' : 'held'
+  return isSeen ? 'arrived' : 'held'
+}
+
+/**
+ * Whether any of an element, or `amount` of it, has been on screen since it started being waited
+ * for. A box that only touches the edge of a clipped frame is reported as intersecting with none
+ * of it showing, and that is where a carousel keeps its next slide, so only a ratio above nothing
+ * counts; motion's `useInView` reads the intersecting flag alone.
+ */
+function useSeen(target: RefObject<Element | null>, amount: number | 'some', isWaiting: boolean) {
+  const [isSeen, setIsSeen] = useState(false)
+
+  useEffect(() => {
+    const element = target.current
+    if (!isWaiting || isSeen || !element) return
+
+    const least = amount === 'some' ? 0 : amount
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (
+          !entries.some(
+            ({ intersectionRatio }) => intersectionRatio > 0 && intersectionRatio >= least,
+          )
+        )
+          return
+
+        setIsSeen(true)
+        observer.disconnect()
+      },
+      // Just above nothing, so a box going from touching the frame to showing is reported.
+      { threshold: amount === 'some' ? 0.001 : amount },
+    )
+    observer.observe(element)
+
+    return () => observer.disconnect()
+  }, [amount, isSeen, isWaiting, target])
+
+  return isSeen
 }
 
 /**
  * The elements an arrival can be drawn on. Typed as the div they all behave like for motion's
  * purposes, so one component can render any of them.
  */
-const TAGS = { div: m.div, p: m.p, h2: m.h2, h3: m.h3, span: m.span } as Record<
-  string,
-  typeof m.div
->
+const TAGS = {
+  div: m.div,
+  p: m.p,
+  h2: m.h2,
+  h3: m.h3,
+  span: m.span,
+  footer: m.footer,
+} as Record<string, typeof m.div>
 
 /** An element that arrives as it scrolls into view: rising as it fades in, unless told otherwise. */
 export function Arrive({
@@ -72,7 +114,7 @@ export function Arrive({
   style,
   children,
 }: {
-  as?: 'div' | 'p' | 'h2' | 'h3' | 'span'
+  as?: 'div' | 'p' | 'h2' | 'h3' | 'span' | 'footer'
   variant?: keyof typeof ARRIVALS
   /** Seconds after it comes into view before it arrives. */
   wait?: number
@@ -97,6 +139,10 @@ export function Arrive({
       animate={arrival === 'rest' ? undefined : arrival === 'held' ? 'hidden' : 'visible'}
       className={className}
       custom={wait}
+      // Its own observer decides when it arrives. Without this it would join the arrival around
+      // it (motion settles that once, when it is first drawn at rest) and be carried in with it,
+      // seen or not; the photographs inside it still follow it.
+      inherit={false}
       initial={false}
       ref={ref}
       style={style}
@@ -147,7 +193,10 @@ export function RiseText({
 const MotionImage = m.create(Image)
 
 /** What a photograph here is drawn from: the image's own props, less its DOM event handlers. */
-type Photo = Pick<ImageProps, 'alt' | 'className' | 'fill' | 'height' | 'sizes' | 'src' | 'width'>
+type Photo = Pick<
+  ImageProps,
+  'alt' | 'className' | 'fill' | 'height' | 'loading' | 'sizes' | 'src' | 'width'
+>
 
 /**
  * A photograph uncovered from its foot up, never moved or scaled. It follows the arrival of the

@@ -104,6 +104,12 @@ test.describe('the intro on the home page', () => {
     await expect(page.locator(HERO).getByRole('heading', { level: 1 })).toHaveText(
       'Flying private made simple',
     )
+    // The chrome arrives after the hero and comes to rest in place too.
+    for (const chrome of [
+      '[data-section="header"] header',
+      '[data-section="angle-bar"] .rounded-full',
+    ])
+      await expect(page.locator(chrome).first()).toHaveCSS('opacity', '1')
   })
 
   test('is never drawn for a visitor who asks for less motion', async ({ page }) => {

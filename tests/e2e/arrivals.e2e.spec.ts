@@ -19,24 +19,41 @@ const SECTIONS = [
   'tiles',
   'transfer',
   'faq',
+  'footer',
 ]
 
 /**
- * Every box in the sections that is on the screen's width, as it rests on the page. The words a
- * heading is split into while it rises are left out, and so are the slides a carousel keeps off
- * screen, which arrive only when it brings them in.
+ * Every box in the sections that can be seen across, as it rests on the page. The words a heading
+ * is split into while it rises are left out, and so is anything a frame clips out of sight beside
+ * it, such as the slides a carousel keeps past its edge, which arrive only when it brings them in.
  */
 function boxesOf(page: Page) {
   return page.evaluate(
     (sections) =>
       sections.flatMap((name) => {
         const section = document.querySelector(`[data-section="${name}"]`)!
+        // How much of a box's width is left once every clipping frame around it has cut it.
+        const seenAcross = (element: Element, box: DOMRect) => {
+          let [left, right] = [Math.max(box.left, 0), Math.min(box.right, window.innerWidth)]
+          for (let frame = element.parentElement; frame; frame = frame.parentElement) {
+            if (getComputedStyle(frame).overflowX === 'visible') continue
+            const edges = frame.getBoundingClientRect()
+            ;[left, right] = [Math.max(left, edges.left), Math.min(right, edges.right)]
+          }
 
-        return [section, ...section.querySelectorAll('*')]
-          .filter((element) => element.tagName !== 'SPAN')
-          .map((element) => element.getBoundingClientRect())
-          .filter((box) => box.right > 0 && box.left < window.innerWidth)
-          .map((box) => [box.x, box.y + window.scrollY, box.width, box.height].map(Math.round))
+          return right - left
+        }
+
+        return (
+          [section, ...section.querySelectorAll('*')]
+            .filter((element) => element.tagName !== 'SPAN')
+            .map((element) => ({ element, box: element.getBoundingClientRect() }))
+            // A whole pixel at least: a slide waiting on a frame's edge can leave a fraction of one.
+            .filter(({ element, box }) => seenAcross(element, box) >= 1)
+            .map(({ box }) =>
+              [box.x, box.y + window.scrollY, box.width, box.height].map(Math.round),
+            )
+        )
       }),
     SECTIONS,
   )
@@ -115,10 +132,17 @@ test.describe('the sections of the home page', () => {
     const section = page.locator('[data-section="key-features"]')
     await section.scrollIntoViewIfNeeded()
     const photos = section.locator('[class*="aspect-portrait"] img')
-    // The first photograph past the right edge of the screen, which the next arrow brings in.
-    const index = await photos.evaluateAll((images) =>
-      images.findIndex((image) => image.getBoundingClientRect().left >= window.innerWidth),
-    )
+    // The first photograph past the right edge of the carousel's frame, touching it or beyond:
+    // the next arrow brings it in.
+    const index = await photos.evaluateAll((images) => {
+      const slides = images.map((image) => image.closest('[class*="aspect-portrait"]')!)
+      let frame = slides[0]!.parentElement
+      while (frame && getComputedStyle(frame).overflowX === 'visible') frame = frame.parentElement
+      const edge = frame!.getBoundingClientRect().right
+
+      // The slide's own box: a photograph waiting to arrive is drawn larger than its slide.
+      return slides.findIndex((slide) => slide.getBoundingClientRect().left >= edge - 1)
+    })
     const photo = photos.nth(index)
     const clipOf = () => photo.evaluate((element) => getComputedStyle(element).clipPath)
 

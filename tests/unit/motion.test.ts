@@ -14,7 +14,6 @@ import {
   inViewOnce,
   inViewRepeat,
   offset,
-  overlay,
   spin,
   transition,
 } from '@/lib/motion'
@@ -26,7 +25,6 @@ import {
 describe('legacy timings', () => {
   it.each([
     ['tailwindcss-animate default', duration.enter, 0.15],
-    ['navbar overlay', duration.overlay, 0.2],
     ['cookie banner, modal and booking dialog', duration.dialog, 0.3],
     ['faq accordion', duration.accordion, 0.4],
     ['card reveals and the counter', duration.reveal, 0.5],
@@ -63,7 +61,6 @@ describe('variants', () => {
   it.each([
     ['fade', fade],
     ['spin', spin],
-    ['overlay', overlay],
     ['dialog', dialog],
     ['banner', banner],
     ['heroHeadline', heroHeadline],

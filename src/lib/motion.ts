@@ -20,8 +20,6 @@ import type { Transition, Variants } from 'motion/react'
 export const duration = {
   /** tailwindcss-animate default: burger and close icons, navbar, footer and dialog children. */
   enter: 0.15,
-  /** Navbar overlay fade (`duration-200`). */
-  overlay: 0.2,
   /** Cookie banner, cookie modal and booking dialog (`duration-300`). */
   dialog: 0.3,
   /** FAQ accordion content height. */
@@ -59,7 +57,6 @@ export const easing = {
 
 export const transition = {
   enter: { duration: duration.enter, ease: easing.enter },
-  overlay: { duration: duration.overlay, ease: easing.enter },
   dialog: { duration: duration.dialog, ease: easing.enter },
   hero: { duration: duration.hero, ease: easing.enter },
   accordion: { duration: duration.accordion },
@@ -83,12 +80,6 @@ export const fade: Variants = {
 export const spin: Variants = {
   hidden: { opacity: 0, rotate: offset.spin },
   visible: { opacity: 1, rotate: 0, transition: transition.enter },
-}
-
-/** The navbar overlay. */
-export const overlay: Variants = {
-  hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: transition.overlay },
 }
 
 /** Cookie modal and booking dialog. */
@@ -172,6 +163,9 @@ export const intro = {
     overline: 0.35,
     heading: 0.45,
     signature: 0.9,
+    /** And the chrome after them: the header dropping in, then the floating button. */
+    header: 0.9,
+    corner: 1.3,
     /** Between one word of a line and the next. */
     word: 0.07,
   },
@@ -273,6 +267,68 @@ export const settle: Variants = {
   }),
   hover: { scale: 1.05, transition: { duration: 0.9, ease: intro.easing.out } },
 }
+
+/** The header after the intro: held above its place while the curtain is down, then dropped in. */
+export const dropIn: Variants = {
+  hidden: { opacity: 0, y: -24, transition: { duration: 0 } },
+  visible: (wait: number = 0) => ({
+    opacity: 1,
+    y: 0,
+    transition: { duration: 1, ease: intro.easing.out, delay: wait },
+  }),
+}
+
+/** The floating button after the intro: held small while the curtain is down, then grown in. */
+export const growIn: Variants = {
+  hidden: { opacity: 0, scale: 0.6, transition: { duration: 0 } },
+  visible: (wait: number = 0) => ({
+    opacity: 1,
+    scale: 1,
+    transition: { duration: 0.9, ease: intro.easing.out, delay: wait },
+  }),
+}
+
+/** The menu over the whole screen: fades in, and its lines rise one after another. */
+export const menuOverlay: Variants = {
+  hidden: { opacity: 0, transition: { duration: 0.3, ease: intro.easing.in } },
+  visible: {
+    opacity: 1,
+    transition: {
+      duration: 0.5,
+      ease: intro.easing.out,
+      delayChildren: 0.12,
+      staggerChildren: 0.05,
+    },
+  },
+}
+
+/** The floating button's panel: grows from the corner it opens out of, its lines rising in turn. */
+export const menuPanel: Variants = {
+  hidden: { opacity: 0, scale: 0.94, transition: { duration: 0.25, ease: intro.easing.in } },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    transition: {
+      duration: 0.5,
+      ease: intro.easing.out,
+      delayChildren: 0.08,
+      staggerChildren: 0.05,
+    },
+  },
+}
+
+/** One line of a menu, rising into place as the menu opens. */
+export const menuLine: Variants = {
+  hidden: { ...line.under, transition: { duration: 0.25, ease: intro.easing.in } },
+  visible: {
+    ...line.in,
+    transition: { duration: 0.9, ease: intro.easing.out },
+    transitionEnd: { clipPath: 'none' },
+  },
+}
+
+/** A menu link under the pointer: nudged towards where it leads. */
+export const nudge = { x: 10, transition: { duration: 0.6, ease: intro.easing.out } } as const
 
 /** The hero picture: held large while the curtain is down, settling as it opens. */
 export const introBackdrop: Variants = {
