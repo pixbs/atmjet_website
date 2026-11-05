@@ -58,7 +58,7 @@ jobs:
           (cd legacy-baselines && zip -qr ../legacy-baselines.zip .)
           du -sh legacy-baselines legacy-baselines.zip
           jq '[.entries[] | .status] | group_by(.) | map({(.[0]): length}) | add' legacy-baselines/manifest.json
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: legacy-baselines
           path: legacy-baselines.zip
