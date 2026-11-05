@@ -1,0 +1,38 @@
+# Deletes a pull request's Neon preview branch when the pull request closes, instead of when
+# Vercel's 30-day retention removes its last preview (docs/github-settings.md, issue #474).
+name: neon preview cleanup
+
+on:
+  pull_request:
+    types: [closed]
+
+permissions: {}
+
+jobs:
+  delete:
+    name: delete neon preview branch
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+      NEON_PROJECT_ID: ${{ vars.NEON_PROJECT_ID }}
+      BRANCH: preview/${{ github.head_ref }}
+    steps:
+      # Skipped until the owner sets the key, and for forks, which receive no secrets.
+      - name: Find the branch
+        id: find
+        if: env.NEON_API_KEY != '' && env.NEON_PROJECT_ID != ''
+        shell: bash
+        run: |
+          id="$(curl -fsS --get "https://console.neon.tech/api/v2/projects/$NEON_PROJECT_ID/branches" \
+            -H "Authorization: Bearer $NEON_API_KEY" --data-urlencode "search=$BRANCH" |
+            jq -r --arg name "$BRANCH" '[.branches[] | select(.name == $name) | .id][0] // empty')"
+          [ -n "$id" ] || echo "No Neon branch $BRANCH, nothing to delete."
+          echo "id=$id" >> "$GITHUB_OUTPUT"
+      # The action fails on a name it cannot find, so it only runs for a branch that exists.
+      - if: steps.find.outputs.id != ''
+        uses: neondatabase/delete-branch-action@4468d825d5a88ef4012f1705a82f02ec3072f776 # v3.2.1
+        with:
+          project_id: ${{ env.NEON_PROJECT_ID }}
+          branch: ${{ steps.find.outputs.id }}
+          api_key: ${{ env.NEON_API_KEY }}
