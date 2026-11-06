@@ -55,6 +55,29 @@ test.describe('the hero video', () => {
     await expect(sources).toHaveAttribute('src', '/video/background_full.mp4')
   })
 
+  test('lags its picture and lifts its words as it scrolls away, and rests again at the top', async ({
+    page,
+  }) => {
+    await page.goto(pathFor('/', 'en'))
+    // The intro first (section 13, entry 101): the curtain gone and the last word risen.
+    await expect(page.getByTestId('preloader-backdrop')).toHaveCount(0, { timeout: 15_000 })
+    const picture = page.locator(`${SECTION} video`).locator('..')
+    const word = page.locator(SECTION).getByRole('heading', { level: 1 }).locator('span').first()
+    const transformOf = (element: typeof picture) =>
+      element.evaluate((node) => getComputedStyle(node).transform)
+    const AT_REST = /^(none|matrix\(1, 0, 0, 1, 0, 0\))$/
+    await expect.poll(() => transformOf(word), { timeout: 5_000 }).toMatch(AT_REST)
+
+    await page.mouse.wheel(0, 300)
+    // The picture slides down inside its frame while the words travel up past the page.
+    await expect.poll(() => transformOf(picture)).toMatch(/matrix\(1, 0, 0, 1, 0, [1-9]/)
+    await expect.poll(() => transformOf(word)).toMatch(/matrix\(1, 0, 0, 1, 0, -[1-9]/)
+
+    await page.mouse.wheel(0, -1000)
+    await expect.poll(() => transformOf(picture)).toMatch(AT_REST)
+    await expect.poll(() => transformOf(word)).toMatch(AT_REST)
+  })
+
   test('speaks the language of the page it is on', async ({ request }) => {
     const html = await (await request.get(pathFor('/', 'ru'))).text()
 

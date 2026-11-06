@@ -1,4 +1,5 @@
 import { WhyUsCard } from '@/components/cards/why-us-card'
+import { Arrive, RiseText } from '@/components/motion/arrive'
 import type { ImageSource } from '@/lib/media'
 
 /**
@@ -46,8 +47,10 @@ export function WhyUs({ title, description, variant = 'stacked', cards }: WhyUsP
           turns the same row on (docs/adr/0006-styling-and-motion.md). */}
       <div className="container gap-10 lg:flex-row!">
         <div className="top-40 shrink-0 gap-6 self-start lg:sticky lg:w-72">
-          <h2>{title}</h2>
-          <p>{description}</p>
+          <RiseText>{title}</RiseText>
+          <Arrive as="p" wait={0.3}>
+            {description}
+          </Arrive>
         </div>
         <div className="relative w-full self-stretch overflow-clip rounded-2xl" data-cards="why-us">
           {stack}

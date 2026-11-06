@@ -2,6 +2,7 @@ import { getLocale, getTranslations } from 'next-intl/server'
 
 import { VehicleCard } from '@/components/cards/vehicle-card'
 import { VehiclesCarousel } from '@/components/cards/vehicles-carousel'
+import { Arrive, RiseText } from '@/components/motion/arrive'
 import type { Locale } from '@/i18n/locales'
 import { listCatalogueAircraft } from '@/lib/data/aircraft'
 
@@ -16,6 +17,9 @@ import { listCatalogueAircraft } from '@/lib/data/aircraft'
  *
  * The labels the cards print come from the message catalogue. The legacy card wrote `Year:` and
  * `Pax:` in English on a site served in three languages (section 10.4).
+ *
+ * The frame rises with its heading's words, and each card arrives as it comes on screen, whether
+ * the page scrolls it there or the carousel does (section 13, entry 101).
  */
 export interface CatalogueAircraftProps {
   title: string
@@ -39,8 +43,8 @@ export async function CatalogueAircraft({ title, limit }: CatalogueAircraftProps
         {/* The legacy card carried `rounded-2xl` as well, which never took effect: `.card` is
             unlayered and rounds it further (docs/adr/0006-styling-and-motion.md). The gutter is
             open on the right so the next card shows through the edge of the frame. */}
-        <div className="card gap-8 bg-graphite-950 p-8 pr-0! md:gap-10 md:p-10">
-          <h2>{title}</h2>
+        <Arrive className="card gap-8 bg-graphite-950 p-8 pr-0! md:gap-10 md:p-10">
+          <RiseText wait={0.15}>{title}</RiseText>
           <VehiclesCarousel labels={{ previous: t('previous'), next: t('next') }}>
             {aircraft.map(
               (one) =>
@@ -60,7 +64,7 @@ export async function CatalogueAircraft({ title, limit }: CatalogueAircraftProps
                 ),
             )}
           </VehiclesCarousel>
-        </div>
+        </Arrive>
       </div>
     </section>
   )

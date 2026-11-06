@@ -1,7 +1,7 @@
 import Link from 'next/link'
 
+import { Arrive } from '@/components/motion/arrive'
 import { Counter } from '@/components/motion/counter'
-import { Reveal } from '@/components/motion/reveal'
 import { buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/cn'
 import {
@@ -42,6 +42,8 @@ export interface EmptyLegCardProps {
   booking: { label: string; href: string }
   /** What to print instead of a price that is not there. */
   noPriceLabel: string
+  /** Seconds it waits to arrive, so cards that come into view together arrive in turn. */
+  wait?: number
   className?: string
 }
 
@@ -53,12 +55,13 @@ export function EmptyLegCard({
   to,
   booking,
   noPriceLabel,
+  wait,
   className,
 }: EmptyLegCardProps) {
   const hasPrice = typeof price === 'number'
 
   return (
-    <Reveal className={cn('gap-3 bg-graphite-900 p-6', className)}>
+    <Arrive className={cn('gap-3 bg-graphite-900 p-6', className)} wait={wait}>
       <div className="flex-row justify-between">
         <p className="text-sm">{departureLabel(departureAt)}</p>
         {/* The caller builds the href, because a query-only link needs the page it sits on
@@ -85,6 +88,6 @@ export function EmptyLegCard({
         <p>{' -> '}</p>
         <p>{routeEndLabel(to.icao, to.airport)}</p>
       </div>
-    </Reveal>
+    </Arrive>
   )
 }

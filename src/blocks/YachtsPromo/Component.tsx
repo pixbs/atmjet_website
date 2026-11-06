@@ -1,4 +1,5 @@
 import { YachtsCard, type YachtsCardProps } from '@/components/cards/yachts-card'
+import { Arrive, RiseText } from '@/components/motion/arrive'
 
 /**
  * The yachts promotion (issue #121, `docs/legacy-inventory.md` section 5): a heading and a
@@ -14,8 +15,10 @@ export function YachtsPromo({ title, description, image, columns, invitation }: 
   return (
     <section data-section="yachts-promo">
       <div className="container">
-        <h2 className="mb-4 text-center">{title}</h2>
-        <p className="mb-10 text-center">{description}</p>
+        <RiseText className="mb-4 text-center">{title}</RiseText>
+        <Arrive as="p" className="mb-10 text-center" wait={0.3}>
+          {description}
+        </Arrive>
         <YachtsCard columns={columns} image={image} invitation={invitation} />
       </div>
     </section>

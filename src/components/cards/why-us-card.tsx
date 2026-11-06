@@ -1,14 +1,13 @@
-import Image from 'next/image'
-
+import { Arrive, RiseText, UnveilImage } from '@/components/motion/arrive'
 import { Counter } from '@/components/motion/counter'
-import { Reveal } from '@/components/motion/reveal'
 import { cn } from '@/lib/cn'
 import type { ImageSource } from '@/lib/media'
 
 /**
  * One reason to fly with the company, as the "why us" sections stack them (issue #102,
  * `docs/legacy-inventory.md` section 6): a figure that counts up, the reason beside a
- * photograph, on a panel that sticks under the one before it as the section scrolls past.
+ * photograph, on a panel that sticks under the one before it as the section scrolls past. It
+ * arrives once rather than every time it comes back (section 13, entry 101).
  *
  * Where each card comes to rest is the section's to decide and arrives as `top`, because it
  * depends on how many cards there are — the group charters page lays the same card out without
@@ -42,23 +41,28 @@ export interface WhyUsCardProps {
 export function WhyUsCard({ num, title, description, image, top, className }: WhyUsCardProps) {
   return (
     // The offset is per card and counted from the ones above it, so it cannot be a class.
-    <Reveal className={cn(CARD, className)} style={{ top }}>
+    <Arrive className={cn(CARD, className)} style={{ top }}>
       <div className="gap-4 p-8 md:w-full md:pt-16 md:pb-24">
         {num !== undefined && <Counter className={FIGURE}>{num}</Counter>}
-        <h3>{title}</h3>
-        <p>{description}</p>
+        <RiseText as="h3" wait={0.15}>
+          {title}
+        </RiseText>
+        <Arrive as="p" wait={0.3}>
+          {description}
+        </Arrive>
       </div>
       {image && (
-        <Image
+        <UnveilImage
           alt={image.alt}
           className="aspect-video w-full shrink-0 object-cover object-center lg:w-1/2"
           height={1200}
           /* `shrink-0` pins the box the 1200-wide file used to hold open, which `sizes` no longer does (issue #176). */
           sizes="(min-width: 1024px) 50vw, 100vw"
           src={image.src}
+          wait={0.1}
           width={1200}
         />
       )}
-    </Reveal>
+    </Arrive>
   )
 }

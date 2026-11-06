@@ -1,5 +1,4 @@
-import Image from 'next/image'
-
+import { Arrive, UnveilImage } from '@/components/motion/arrive'
 import { Line } from '@/components/motion/line'
 import { Link } from '@/i18n/navigation'
 import { cn } from '@/lib/cn'
@@ -17,6 +16,10 @@ import { internalPath } from '@/lib/urls'
  * settled by the decision of 2026-09-13); one picture is drawn here. And the link carries the
  * locale, where the legacy card wrote a bare `/aircraft/…` that only answers through a redirect
  * (section 3.3).
+ *
+ * It rises into the grid with its photograph uncovered from its foot, then its words (section 13,
+ * entry 101); the photograph keeps the legacy zoom under the pointer. The name is not split into
+ * words: a registration breaks at its hyphen, which a word rising whole cannot.
  */
 export interface AircraftCardProps {
   /** The last segment of the aircraft's own page. */
@@ -25,6 +28,8 @@ export interface AircraftCardProps {
   registration: string
   category: string
   image: ImageSource
+  /** Seconds it waits to arrive, so cards that come into view together arrive in turn. */
+  wait?: number
   className?: string
 }
 
@@ -34,32 +39,39 @@ export function AircraftCard({
   registration,
   category,
   image,
+  wait = 0,
   className,
 }: AircraftCardProps) {
   return (
-    <Link
-      className={cn(
-        'group overflow-hidden rounded-2xl border border-graphite-800 bg-graphite-950 p-0',
-        className,
-      )}
-      href={internalPath(`/aircraft/${slug}`)}
-    >
-      <div className="relative aspect-video overflow-hidden">
-        <Image
-          alt={`${name} ${registration}`}
-          className="object-cover object-center transition-transform duration-300 ease-out group-hover:scale-125"
-          fill
-          sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
-          src={image.src}
-        />
-      </div>
-      <div className="gap-3 p-6 pb-8">
-        <h3>
-          {name} {registration}
-        </h3>
-        <Line />
-        <p>{category}</p>
-      </div>
-    </Link>
+    // The box that arrives, holding the cell the grid stretches for the link to fill.
+    <Arrive wait={wait}>
+      <Link
+        className={cn(
+          'group grow overflow-hidden rounded-2xl border border-graphite-800 bg-graphite-950 p-0',
+          className,
+        )}
+        href={internalPath(`/aircraft/${slug}`)}
+      >
+        <div className="relative aspect-video overflow-hidden">
+          <UnveilImage
+            alt={`${name} ${registration}`}
+            className="object-cover object-center transition-transform duration-300 ease-out group-hover:scale-125"
+            fill
+            sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+            src={image.src}
+            wait={wait + 0.1}
+          />
+        </div>
+        <div className="gap-3 p-6 pb-8">
+          <Arrive as="h3" wait={wait + 0.2}>
+            {name} {registration}
+          </Arrive>
+          <Line />
+          <Arrive as="p" wait={wait + 0.3}>
+            {category}
+          </Arrive>
+        </div>
+      </Link>
+    </Arrive>
   )
 }

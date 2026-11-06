@@ -1,5 +1,6 @@
 import { PrivilegeCard } from '@/components/cards/privilege-card'
 import { DiamondGold, Exchange, PlaneGold } from '@/components/icons'
+import { Arrive, RiseText } from '@/components/motion/arrive'
 import { buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/cn'
 import { getSocialLinks } from '@/lib/data/site-settings'
@@ -12,6 +13,10 @@ import type { ImageSource } from '@/lib/media'
  *
  * Where the two buttons lead is the site's, not the section's, so it comes from the settings
  * the header and the footer already read (issue #61).
+ *
+ * The white words rise and the gold ones are drawn from left to right; the panel fades in where
+ * it stands, because its pattern is pinned to the screen and would jump if it moved (section 13,
+ * entry 101).
  */
 
 /** The three the legacy section drew, by the name the block stores. */
@@ -42,8 +47,13 @@ export async function Privilege({ title, goldTitle, cards, contact }: PrivilegeP
           `lg:flex-row` exactly as it did on the legacy site (docs/adr/0006-styling-and-motion.md). */}
       <div className="container gap-10 lg:flex-row!">
         <h2 className="top-40 shrink-0 gap-6 self-start lg:sticky lg:w-72">
-          <span className="lg:text-4xl">{title}</span> <br />
-          <span className={cn(HEADING, 'font-serif')}>{goldTitle}</span>
+          <RiseText as="span" className="lg:text-4xl">
+            {title}
+          </RiseText>{' '}
+          <br />
+          <Arrive as="span" className={cn(HEADING, 'font-serif')} variant="gild" wait={0.3}>
+            {goldTitle}
+          </Arrive>
         </h2>
         <div className="relative w-full gap-4 self-stretch overflow-clip">
           {/* The clipped box the stack slides inside. */}
@@ -63,7 +73,7 @@ export async function Privilege({ title, goldTitle, cards, contact }: PrivilegeP
               )
             })}
           </div>
-          <div className="overflow-clip rounded-2xl bg-gold p-0.5">
+          <Arrive className="overflow-clip rounded-2xl bg-gold p-0.5" variant="fadeIn">
             <div
               className="rounded-2xl bg-graphite-950 bg-fixed lg:flex-row-reverse"
               // The pattern is an upload rather than the legacy's hard-coded file, so it is
@@ -75,9 +85,13 @@ export async function Privilege({ title, goldTitle, cards, contact }: PrivilegeP
               }
             >
               <div className="w-full justify-center p-6 md:p-10">
-                <h3 className={HEADING}>{contact.title}</h3>
-                <p className="pt-4">{contact.description}</p>
-                <div className="flex-row flex-wrap gap-4 pt-6">
+                <Arrive as="h3" className={HEADING} variant="gild" wait={0.2}>
+                  {contact.title}
+                </Arrive>
+                <Arrive as="p" className="pt-4" wait={0.35}>
+                  {contact.description}
+                </Arrive>
+                <Arrive className="flex-row flex-wrap gap-4 pt-6" wait={0.5}>
                   {/* Addresses outside this site, so neither `Link` nor a locale: plain
                       anchors, wearing the button rather than holding one (issue #262). */}
                   <a
@@ -92,10 +106,10 @@ export async function Privilege({ title, goldTitle, cards, contact }: PrivilegeP
                   >
                     {contact.whatsapp}
                   </a>
-                </div>
+                </Arrive>
               </div>
             </div>
-          </div>
+          </Arrive>
         </div>
       </div>
     </section>

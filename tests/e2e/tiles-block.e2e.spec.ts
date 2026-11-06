@@ -3,8 +3,8 @@ import { expect, test } from '@playwright/test'
 import { pathFor } from './routes'
 
 /**
- * The tiles grid as a block (issue #122, `docs/legacy-inventory.md` section 5): the tiles scale
- * in one after another when the grid is scrolled to, and stay in once they have.
+ * The tiles grid as a block (issue #122, `docs/legacy-inventory.md` section 5): the tiles
+ * arrive one after another when the grid is scrolled to, and stay in once they have.
  *
  * The legacy watched the grid with one observer and animated every tile from that reading;
  * each tile watches itself here, so what is worth asserting is that they are still hidden

@@ -1,4 +1,5 @@
 import { RequestForm } from '@/components/form/request-form'
+import { Arrive, RiseText } from '@/components/motion/arrive'
 import type { Locale } from '@/i18n/locales'
 import { cn } from '@/lib/cn'
 
@@ -23,8 +24,11 @@ export function MakeBooking({
     <section data-section="make-booking" data-variant={variant}>
       <div className="container py-12">
         <div className={cn('gap-8', variant === 'card' && 'rounded-2xl bg-graphite-850 p-8')}>
-          <h2>{title}</h2>
-          <RequestForm locale={locale} />
+          <RiseText>{title}</RiseText>
+          {/* The form arrives after its heading (section 13, entry 101); the box adds no room. */}
+          <Arrive wait={0.3}>
+            <RequestForm locale={locale} />
+          </Arrive>
         </div>
       </div>
     </section>

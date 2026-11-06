@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 
+import { Arrive } from '@/components/motion/arrive'
 import { cn } from '@/lib/cn'
 
 /**
@@ -8,7 +9,8 @@ import { cn } from '@/lib/cn'
  * panel that sticks under the one before it as the section scrolls past.
  *
  * The card holds the sticking; where each one stops is the section's to decide and arrives as
- * `top`, because it depends on how many cards there are (E7.10).
+ * `top`, because it depends on how many cards there are (E7.10). It rises into the stack with
+ * its gold heading drawn from left to right (section 13, entry 101).
  */
 
 /** The gold gradient, painted through the letters. */
@@ -26,7 +28,7 @@ export interface PrivilegeCardProps {
 
 export function PrivilegeCard({ icon, title, description, top, className }: PrivilegeCardProps) {
   return (
-    <div
+    <Arrive
       className={cn(
         'card sticky -mb-16 gap-4 overflow-hidden bg-graphite-950/90 p-8 pb-24 backdrop-blur-lg last:mb-0 last:pb-14 md:flex-row',
         className,
@@ -36,9 +38,13 @@ export function PrivilegeCard({ icon, title, description, top, className }: Priv
     >
       {icon}
       <div className="gap-4 md:w-full">
-        <h3 className={HEADING}>{title}</h3>
-        <p>{description}</p>
+        <Arrive as="h3" className={HEADING} variant="gild" wait={0.15}>
+          {title}
+        </Arrive>
+        <Arrive as="p" wait={0.3}>
+          {description}
+        </Arrive>
       </div>
-    </div>
+    </Arrive>
   )
 }
