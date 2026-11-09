@@ -212,6 +212,8 @@ jobs:
           # The rows of `lighthouserc.cjs` that budget each layout match on these paths.
           LHCI_BASIC_AIRCRAFT: ${{ steps.pages.outputs.basic }}
           LHCI_GALLERY_AIRCRAFT: ${{ steps.pages.outputs.gallery }}
+          # Leaves out the audits a preview's protection decides (`lighthouserc.cjs`).
+          LHCI_PREVIEW: ${{ github.event_name == 'deployment_status' }}
         with:
           urls: |
             ${{ env.BASE_URL }}/en
