@@ -1,6 +1,6 @@
 # ADR-0004: Tests first, tiers, coverage ratchet and visual parity
 
-Status: accepted (2026-09-11); the coverage ratchet and the tests-required gate replaced by fixed thresholds in [ADR-0008](0008-lean-conventions.md) (2026-09-13)
+Status: accepted (2026-09-11); the coverage ratchet and the tests-required gate replaced by fixed thresholds in [ADR-0008](0008-lean-conventions.md) (2026-09-13); a pull request's browser tiers moved to a seeded build of its commit (#478, 2026-11-09)
 
 ## Context
 
@@ -10,10 +10,10 @@ The legacy repository had no tests and no CI. The rewrite must look exactly like
 
 - **Tests exist before features.** The boilerplate ships Vitest (unit + integration with coverage), Playwright projects `e2e`, `visual` and `a11y`, and Lighthouse CI. The first engineering epic captures the legacy visual baselines from production before any UI is ported.
 - **Every change adds tests.** Unit tests for logic (transforms, validation, formatting, i18n helpers), integration tests for collections, hooks and access control, e2e tests for flows, visual tests for every ported section and page, axe for accessibility. Coverage thresholds in `vitest.config.mts` (statements, lines, functions 80 %, branches 70 % on `src/{collections,lib,utils,hooks,access}`) are a **ratchet**: they never go down and are raised in the pull request that adds tests. Automatic threshold updates were rejected because they would jump to 100 % on a small codebase and block the next change.
-- **Tiers:** local hooks (format, lint, commitlint, branch name, typecheck); the fast `ci` workflow on every pull request push and on `master` (static checks, generated-file drift, migrations with schema-drift check, `test:int` with coverage, build); the heavy `e2e` workflow against deployed URLs (previews of PRs labelled `run-e2e`, every `master` push, nightly, manual) running e2e, visual, a11y (advisory) and Lighthouse budgets.
+- **Tiers:** local hooks (format, lint, commitlint, branch name, typecheck); the fast `ci` workflow on every pull request push and on `master` (static checks, generated-file drift, migrations with schema-drift check, `test:int` with coverage, build); the heavy `e2e` workflow against deployed URLs (previews of PRs labelled `run-e2e`, every `master` push, nightly, manual) running e2e, visual, a11y (advisory) and Lighthouse budgets. For a PR only Lighthouse audits the preview: the browser tiers run against a build of its commit on the seed they are written for, because the preview reads a copy of `main` (#478).
 - **Per pull request, not per commit.** Workflows run on pull request events with `cancel-in-progress`; commits inside a push are not tested individually. Atomic commits are still verified locally by the hooks and by the author before pushing.
 - **Visual parity:** Playwright `toHaveScreenshot` with reduced motion, masks for video and counters, baselines generated on Linux only and reviewed like code. The one-time legacy golden set is published as a Release asset on `legacy/v1`; living baselines are curated in `tests/visual/__screenshots__` with a size budget; Git LFS only if the set grows beyond about 50 MB.
-- **Databases in CI:** a Postgres 17 service container for the fast tier; Neon preview branches for deployed previews.
+- **Databases in CI:** a Postgres 17 service container for the fast tier and for a PR's browser tiers; Neon preview branches for deployed previews.
 
 ## Consequences
 

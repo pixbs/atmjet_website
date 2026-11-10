@@ -10,7 +10,11 @@ export async function hideFloatingHeader(page: Page) {
   await page.addStyleTag({ content: '[data-section="header"] { display: none }' })
 }
 
-/** The pictures are uploads and load lazily, so a capture can otherwise be of empty boxes. */
+/**
+ * The pictures are uploads and load lazily, so a capture can otherwise be of empty boxes. One
+ * that a carousel or a strip clips away is in no capture, and Chromium does not fetch it until it
+ * is scrolled near, so it is not waited for.
+ */
 export async function waitForPhotos(cards: Locator) {
   const photos = cards.locator('img')
   // A card may carry inline icons rather than photographs, and then there is nothing to wait for.
@@ -18,8 +22,31 @@ export async function waitForPhotos(cards: Locator) {
 
   await expect(photos.first()).toBeVisible()
   for (const photo of await photos.all()) {
+    if (await isClippedAway(photo)) continue
+
     await expect(photo).toHaveJSProperty('complete', true)
   }
+}
+
+/** Whether a box that clips its overflow hides the whole of an element. */
+function isClippedAway(element: Locator) {
+  return element.evaluate((node) => {
+    const box = node.getBoundingClientRect()
+    for (let frame = node.parentElement; frame; frame = frame.parentElement) {
+      const { overflowX, overflowY } = getComputedStyle(frame)
+      if (overflowX === 'visible' && overflowY === 'visible') continue
+
+      const clip = frame.getBoundingClientRect()
+      const isOutside =
+        box.right <= clip.left ||
+        box.left >= clip.right ||
+        box.bottom <= clip.top ||
+        box.top >= clip.bottom
+      if (isOutside) return true
+    }
+
+    return false
+  })
 }
 
 /**

@@ -3,6 +3,7 @@
 import { AnimatePresence, m } from 'motion/react'
 import { createContext, use, useId, useState, type ReactNode } from 'react'
 
+import { Arrive } from '@/components/motion/arrive'
 import { cn } from '@/lib/cn'
 import { accordionContent } from '@/lib/motion'
 
@@ -56,12 +57,15 @@ export function AccordionItem({
   value,
   title,
   children,
+  wait,
   className,
 }: {
   /** Identifies the item within its accordion; `Accordion.defaultValue` names one of these. */
   value: string
   title: ReactNode
   children: ReactNode
+  /** Seconds it waits to arrive as it scrolls into view, so a list arrives in turn. */
+  wait?: number
   className?: string
 }) {
   const { openValue, toggle } = useAccordion()
@@ -69,7 +73,7 @@ export function AccordionItem({
   const isOpen = openValue === value
 
   return (
-    <div className={cn('gap-6 border-b border-graphite-800 py-6', className)}>
+    <Arrive className={cn('gap-6 border-b border-graphite-800 py-6', className)} wait={wait}>
       <m.button
         aria-controls={contentId}
         aria-expanded={isOpen}
@@ -100,6 +104,6 @@ export function AccordionItem({
           </m.div>
         )}
       </AnimatePresence>
-    </div>
+    </Arrive>
   )
 }

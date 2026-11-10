@@ -8,6 +8,13 @@ const bypass = process.env.VERCEL_AUTOMATION_BYPASS_SECRET
 const KIB = 1024
 
 /**
+ * A preview answers every request with `x-robots-tag: noindex`, and Lighthouse asks for
+ * `robots.txt` without the bypass header and reads Vercel's login page, so on a preview these two
+ * audits score its protection rather than the site, which staging still answers for (#478).
+ */
+const PROTECTION_AUDITS = process.env.LHCI_PREVIEW === 'true' ? ['is-crawlable', 'robots-txt'] : []
+
+/**
  * One aircraft page per layout (issue #428): the `lighthouse` job passes the ones it found on the
  * deployment, and a local run audits the seed's, `GATMB` unphotographed and `MOUSE` with a gallery.
  */
@@ -55,8 +62,18 @@ module.exports = {
         // A preview deployment is behind Vercel's protection, and without the bypass Lighthouse
         // follows the redirect and scores the login page instead of the site (issue #246). As a
         // header rather than the query parameter, so the secret stays out of the report the run
-        // uploads; a local run sets nothing, and an empty header reads as a failed bypass.
-        ...(bypass ? { extraHeaders: { 'x-vercel-protection-bypass': bypass } } : {}),
+        // uploads; a local run sets nothing, and an empty header reads as a failed bypass. The
+        // toolbar Vercel draws on a preview is no part of the site, so it is asked to stay out:
+        // any value does, and a word survives the CLI flags LHCI passes, where `1` becomes a number.
+        ...(bypass
+          ? {
+              extraHeaders: {
+                'x-vercel-protection-bypass': bypass,
+                'x-vercel-skip-toolbar': 'lighthouse',
+              },
+            }
+          : {}),
+        skipAudits: PROTECTION_AUDITS,
       },
     },
     assert: {

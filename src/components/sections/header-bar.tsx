@@ -5,9 +5,10 @@ import { useTranslations } from 'next-intl'
 import { useEffect, useState, type ReactNode } from 'react'
 
 import { BurgerMenu, Close, Logo } from '@/components/icons'
+import { useIntroStage } from '@/components/motion/intro'
 import { Link, usePathname } from '@/i18n/navigation'
 import { cn } from '@/lib/cn'
-import { spin } from '@/lib/motion'
+import { dropIn, intro, spin } from '@/lib/motion'
 
 /**
  * The bar the whole site is read under (`docs/legacy-inventory.md` section 3.2, issue #88):
@@ -18,7 +19,8 @@ import { spin } from '@/lib/motion'
  * Two behaviours are kept as they were (`docs/legacy-inventory.md` section 13, entry 79): the
  * icons spin as they swap, and the bar stays put while the menu is open however the page moves.
  * Escape closes the menu, which the legacy header did not offer: a menu that covers the viewport
- * and can only be closed by pointer is one a keyboard cannot leave.
+ * and can only be closed by pointer is one a keyboard cannot leave. On the home page the bar
+ * waits out the intro and drops in after the hero (section 13, entry 101).
  */
 
 /** Past this many pixels the legacy bar turned from transparent to blurred. */
@@ -31,6 +33,7 @@ export function HeaderBar({ menu }: { menu: ReactNode }) {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isVisible, setIsVisible] = useState(true)
   const [shownAt, setShownAt] = useState(pathname)
+  const stage = useIntroStage()
 
   // The legacy header closed the menu on every navigation; `usePathname` changes on a link and
   // on the back button alike. Reset while rendering rather than in an effect, so the menu is
@@ -85,7 +88,13 @@ export function HeaderBar({ menu }: { menu: ReactNode }) {
         data-section="header"
       >
         <div className="container my-8!">
-          <header className="flex flex-row justify-between">
+          <m.header
+            animate={stage === 'covered' ? 'hidden' : 'visible'}
+            className="flex flex-row justify-between"
+            custom={intro.delay.header}
+            initial={false}
+            variants={dropIn}
+          >
             <button
               aria-expanded={isOpen}
               aria-label={isOpen ? t('closeMenu') : t('openMenu')}
@@ -108,7 +117,7 @@ export function HeaderBar({ menu }: { menu: ReactNode }) {
             <Link aria-label={t('logo')} href="/">
               <Logo className="h-8 text-white" />
             </Link>
-          </header>
+          </m.header>
         </div>
       </section>
       <AnimatePresence>{isOpen && menu}</AnimatePresence>

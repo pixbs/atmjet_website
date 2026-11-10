@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test'
 
 import { pathFor } from '../e2e/routes'
+import { waitForPhotos } from './chrome'
 
 /**
  * The gallery as the legacy site drew it (issue #101, `docs/legacy-inventory.md` section 6): the
@@ -15,14 +16,8 @@ test('the gallery matches its baseline at one, four and many photos', async ({ p
   await expect(section).toBeVisible()
   await page.evaluate(() => document.fonts.ready)
 
-  // The photos are uploads and load lazily, so a capture taken before they arrive is a capture
-  // of empty boxes.
   await section.scrollIntoViewIfNeeded()
-  const photos = section.locator('img')
-  await expect(photos.first()).toBeVisible()
-  for (const photo of await photos.all()) {
-    await expect(photo).toHaveJSProperty('complete', true)
-  }
+  await waitForPhotos(section)
 
   await expect(section).toHaveScreenshot('gallery.png')
 })

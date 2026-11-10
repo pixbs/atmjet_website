@@ -1,6 +1,7 @@
 import { getTranslations } from 'next-intl/server'
 
 import { KeyFeatureCard } from '@/components/cards/key-feature-card'
+import { Arrive } from '@/components/motion/arrive'
 import { Carousel, CarouselArrows } from '@/components/ui/carousel'
 import type { ImageSource } from '@/lib/media'
 
@@ -27,8 +28,16 @@ export async function KeyFeatures({ title, description, cards }: KeyFeaturesProp
           exactly as it did on the legacy site (docs/adr/0006-styling-and-motion.md). */}
       <div className="relative container w-full gap-4 md:flex-row! md:gap-5">
         <div className="relative z-10 gap-4 md:min-w-80">
-          <h2 className="bg-gold bg-clip-text text-transparent md:bg-fixed">{title}</h2>
-          <p className="mb-8">{description}</p>
+          <Arrive
+            as="h2"
+            className="bg-gold bg-clip-text text-transparent md:bg-fixed"
+            variant="gild"
+          >
+            {title}
+          </Arrive>
+          <Arrive as="p" className="mb-8" wait={0.3}>
+            {description}
+          </Arrive>
         </div>
         <Carousel
           className="w-full"
