@@ -67,7 +67,7 @@
   description: Requires the repository owner (settings, secrets, external accounts)
 - name: run-e2e
   color: '006b75'
-  description: Run the browser test tier on this pull request's preview deployment
+  description: Run the browser tiers on a seeded build of this pull request and Lighthouse on its preview
 - name: priority:p0
   color: 'b60205'
   description: Blocker
