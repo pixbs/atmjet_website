@@ -32,6 +32,8 @@ export const duration = {
   line: 1,
   /** Counter: how long the numbers take to reach their target. */
   count: 0.8,
+  /** One pass of the light across the airport list's skeleton (section 13, entry 100). */
+  sweep: 1.5,
 } as const
 
 /** How far each legacy animation travelled, in pixels (degrees for `spin`). */
@@ -80,6 +82,19 @@ export const fade: Variants = {
 export const spin: Variants = {
   hidden: { opacity: 0, rotate: offset.spin },
   visible: { opacity: 1, rotate: 0, transition: transition.enter },
+}
+
+/**
+ * The light that runs across the airport list's skeleton while its search runs, which the legacy
+ * list never showed (section 13, entry 100): it starts and ends outside the list, so under reduced
+ * motion, where `MotionConfig` drops the run, the skeleton stands still.
+ */
+export const sweep: Variants = {
+  hidden: { x: '-100%' },
+  visible: {
+    x: '200%',
+    transition: { duration: duration.sweep, ease: 'easeInOut', repeat: Infinity },
+  },
 }
 
 /** Cookie modal and booking dialog. */
