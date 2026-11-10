@@ -68,7 +68,7 @@ Local database: `docker compose up -d` (Postgres 17) or any Postgres 16+; copy `
 2. `git switch -c <type>/<issue>-<slug>` from `master` (the number of the main issue), or from the lower branch when stacking one level.
 3. Implement in small verified commits and add the tests the issues list; delete what nothing calls before opening the pull request.
 4. Push, open the pull request with the template and `Closes #<issue>` for every issue the slice completes; for a stack, set the base to the lower branch (`gh pr create --base <branch>`).
-5. Make the `conventions` and `ci` checks pass; request the `run-e2e` label for browser tests on the preview deployment. Squash-merge, bottom-up for a stack: when the lower pull request merges and its branch is deleted, GitHub retargets the next one to `master`.
+5. Make the `conventions` and `ci` checks pass; request the `run-e2e` label for the browser tiers on a seeded build of the branch and Lighthouse on its preview deployment. Squash-merge, bottom-up for a stack: when the lower pull request merges and its branch is deleted, GitHub retargets the next one to `master`.
 
 ## 6. Reference documents
 
