@@ -1,8 +1,5 @@
-import Image from 'next/image'
-
-import { Reveal } from '@/components/motion/reveal'
+import { Arrive, SettleImage } from '@/components/motion/arrive'
 import { cn } from '@/lib/cn'
-import { fadeReveal } from '@/lib/motion'
 import type { ImageSource } from '@/lib/media'
 
 /**
@@ -15,8 +12,13 @@ import type { ImageSource } from '@/lib/media'
  * render nothing (section 13, entry 17), so the widths are ported and the names are not.
  */
 
-/** The card fades in where the others rise: `opacity` alone, over the same half second. */
-const REVEAL = 'relative aspect-portrait w-full shrink-0 justify-end gap-4 pr-10 md:w-1/2'
+/**
+ * The card fades in where it stands rather than rising, because it is a slide and the carousel
+ * moves it, while its photograph is uncovered and settles inside it (section 13, entry 101). It
+ * clips that photograph, which fills it exactly.
+ */
+const CARD =
+  'relative aspect-portrait w-full shrink-0 justify-end gap-4 overflow-hidden pr-10 md:w-1/2'
 
 export interface KeyFeatureCardProps {
   title: string
@@ -27,11 +29,17 @@ export interface KeyFeatureCardProps {
 
 export function KeyFeatureCard({ title, description, image, className }: KeyFeatureCardProps) {
   return (
-    <Reveal className={cn(REVEAL, className)} variants={fadeReveal}>
-      <h3 className="z-10">{title}</h3>
-      <p className="z-10">{description}</p>
+    <Arrive className={cn(CARD, className)} hover variant="fadeIn" whenPeeking>
+      {/* Not split into words: a slide's words size the carousel, and split ones by a fraction
+          of a pixel more. */}
+      <Arrive as="h3" className="z-10" wait={0.35} whenPeeking>
+        {title}
+      </Arrive>
+      <Arrive as="p" className="z-10" wait={0.5} whenPeeking>
+        {description}
+      </Arrive>
       {/* Half the screen from the medium breakpoint up, and the whole of it below. */}
-      <Image
+      <SettleImage
         alt={image.alt}
         className="absolute inset-0 size-full object-cover object-center"
         height={500}
@@ -40,6 +48,6 @@ export function KeyFeatureCard({ title, description, image, className }: KeyFeat
         width={400}
       />
       <div className="darkening absolute inset-0" />
-    </Reveal>
+    </Arrive>
   )
 }

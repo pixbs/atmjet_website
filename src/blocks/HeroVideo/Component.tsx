@@ -1,5 +1,7 @@
+import { IntroBackdrop, IntroWords } from '@/components/motion/intro'
 import { HeroFrame } from '@/components/sections/hero-frame'
 import type { ImageSource } from '@/lib/media'
+import { intro } from '@/lib/motion'
 
 /**
  * The home page hero (issue #111, `docs/legacy-inventory.md` section 5): a video filling the
@@ -9,8 +11,10 @@ import type { ImageSource } from '@/lib/media'
  * rather than captioned: the legacy pointed its only `<track>` at a file that was never there
  * (section 13, entry 14), and dropping that element changes no pixel.
  *
- * No client code: a video that plays itself needs none, and the attributes below are what let
- * it play unasked — `muted` and `playsInline`, which is what iOS requires.
+ * A video that plays itself needs no client code, and the attributes below are what let it play
+ * unasked — `muted` and `playsInline`, which is what iOS requires. The client code here is the
+ * intro's (section 13, entry 101): the words and the picture arrive as the curtain opens, and
+ * the server still sends them at rest.
  *
  * `preload` asks for the metadata rather than the file (issue #175). Autoplay fetches what it
  * needs whatever this says, so on a screen where the video plays nothing changes; where autoplay
@@ -33,29 +37,37 @@ export function HeroVideo({ overline, title, video, videoMobile, poster }: HeroV
   return (
     <HeroFrame
       backdrop={
-        <video
-          aria-hidden
-          autoPlay
-          className="absolute inset-0 z-0 size-full object-cover"
-          loop
-          muted
-          playsInline
-          poster={poster?.src}
-          preload="metadata"
-        >
-          {videoMobile !== undefined && videoMobile !== '' && (
-            <source media="(max-width: 767px)" src={videoMobile} type="video/mp4" />
-          )}
-          <source src={video} type="video/mp4" />
-        </video>
+        <IntroBackdrop>
+          <video
+            aria-hidden
+            autoPlay
+            className="absolute inset-0 z-0 size-full object-cover"
+            loop
+            muted
+            playsInline
+            poster={poster?.src}
+            preload="metadata"
+          >
+            {videoMobile !== undefined && videoMobile !== '' && (
+              <source media="(max-width: 767px)" src={videoMobile} type="video/mp4" />
+            )}
+            <source src={video} type="video/mp4" />
+          </video>
+        </IntroBackdrop>
       }
       contentClassName="justify-center"
       section="hero-video"
     >
-      <p className="text-center text-sm">{overline}</p>
-      <h1 className="text-center">{title}</h1>
+      <p className="text-center text-sm">
+        <IntroWords text={overline} wait={intro.delay.overline} />
+      </p>
+      <h1 className="text-center">
+        <IntroWords text={title} wait={intro.delay.heading} />
+      </h1>
       {/* Hard-coded as the other two heroes carry it, until the copy moves to content (E10.4). */}
-      <p className="absolute bottom-8 left-5 z-20 text-sm">©ATM JET</p>
+      <p className="absolute bottom-8 left-5 z-20 text-sm">
+        <IntroWords text="©ATM JET" wait={intro.delay.signature} />
+      </p>
     </HeroFrame>
   )
 }

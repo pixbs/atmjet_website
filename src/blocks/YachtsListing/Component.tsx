@@ -3,6 +3,7 @@ import { getLocale, getTranslations } from 'next-intl/server'
 import { CharterYachtCard } from '@/components/cards/charter-yacht-card'
 import { ListingFilters } from '@/components/form/listing-filters'
 import { Bathrooms, Cabins, Clock, Guests, Length, Tools } from '@/components/icons'
+import { Arrive, RiseText } from '@/components/motion/arrive'
 import { Select } from '@/components/ui/select'
 import { Link } from '@/i18n/navigation'
 import type { Locale } from '@/i18n/locales'
@@ -20,6 +21,9 @@ import { CHARTER_FILTERS, CHARTER_LISTING, CHARTER_SORTS } from '@/lib/yachts'
  * whole table in the browser on every navigation. What is on screen has an address: the legacy
  * selects were written into the URL and then never read back out of it, so the boxes reset to
  * "All" the moment the page they had asked for arrived (section 4).
+ *
+ * The heading's words rise and the cards of a row arrive one after the other (section 13, entry
+ * 101).
  */
 export interface YachtsListingProps {
   title: string
@@ -30,6 +34,9 @@ export interface YachtsListingProps {
 
 /** The `w-6 h-6` the legacy card gave every icon beside a figure. */
 const ICON = 'size-6 shrink-0 text-graphite-300'
+
+/** Seconds between one card arriving and the next, two to a row at the widest. */
+const STAGGER = 0.12
 
 export async function YachtsListing({ title, heading, search }: YachtsListingProps) {
   // The page has already refused a locale the site does not serve.
@@ -131,18 +138,20 @@ export async function YachtsListing({ title, heading, search }: YachtsListingPro
         {/* `.container` is an unlayered parity rule, so its `flex` beats a plain `md:grid`,
             which on the legacy site was in a layer and won (ADR-0006). */}
         <div className="container gap-10 md:grid! md:grid-cols-2">
-          <h2 className="col-span-full self-center md:text-center">{heading}</h2>
+          <RiseText className="col-span-full self-center md:text-center">{heading}</RiseText>
           {yachts.length === 0 ? (
-            <div className="col-span-full items-center gap-6 rounded-3xl border border-graphite-800 bg-graphite-950 p-6 md:p-10">
-              <h3>{t('none')}</h3>
+            <Arrive className="col-span-full items-center gap-6 rounded-3xl border border-graphite-800 bg-graphite-950 p-6 md:p-10">
+              <RiseText as="h3" wait={0.15}>
+                {t('none')}
+              </RiseText>
               {/* The legacy button wore two class names the stylesheet never defined, so what it
                   rendered is the plain pill of the base layer. */}
               <Link className={cn(buttonVariants({ as: 'link' }))} href="/yachts">
                 {t('reset')}
               </Link>
-            </div>
+            </Arrive>
           ) : (
-            yachts.map((yacht) => (
+            yachts.map((yacht, index) => (
               <CharterYachtCard
                 key={yacht.id}
                 figures={figuresOf(yacht)}
@@ -152,6 +161,7 @@ export async function YachtsListing({ title, heading, search }: YachtsListingPro
                 title={[yacht.manufacturer, yacht.name && `"${yacht.name}"`]
                   .filter(Boolean)
                   .join(' ')}
+                wait={(index % 2) * STAGGER}
               />
             ))
           )}

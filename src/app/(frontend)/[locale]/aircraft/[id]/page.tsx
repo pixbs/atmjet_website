@@ -7,6 +7,7 @@ import { Fragment } from 'react'
 import { MakeBooking } from '@/blocks/MakeBooking/Component'
 import { KeyStatsCard, type KeyStat } from '@/components/cards/key-stats-card'
 import { Guests, Length, Tools } from '@/components/icons'
+import { Arrive, UnveilImage } from '@/components/motion/arrive'
 import { Line } from '@/components/motion/line'
 import { VehicleRequest } from '@/components/form/vehicle-request'
 import { legacyBandPicture } from '@/lib/aircraft'
@@ -37,6 +38,10 @@ import { siteOrigin } from '@/lib/urls'
  * An unknown slug goes to the listing, which is what the legacy page did with
  * `redirect('/aircraft')` — unprefixed there, so it answered only through the middleware; here
  * it carries the locale.
+ *
+ * What is below the screen arrives as it scrolls into view (section 13, entry 101): the cards
+ * rise, the photographs are uncovered from their foot, the rows follow one another. The aircraft's
+ * name is never split into words, because its registration breaks at the hyphen.
  */
 /**
  * The `size-10` the legacy gave every icon beside a figure, in the near-black the cards are
@@ -212,19 +217,20 @@ export default async function AircraftDetailPage({ params }: { params: Promise<D
         <MakeBooking locale={locale as Locale} title={form('title')} variant="plain" />
         <section data-section="aircraft-context">
           <div className="container md:flex-row">
-            <div className="card w-full bg-graphite-950 p-8 md:p-10">
+            <Arrive className="card w-full bg-graphite-950 p-8 md:p-10">
               {/* Every row, whatever the catalogue holds: the card is a table of what is known
                   about the aircraft, and a row it has no value for is drawn empty. */}
-              {rows.map((row) => (
-                <div
+              {rows.map((row, index) => (
+                <Arrive
                   key={row.label}
                   className="h-10 flex-row items-center justify-between border-b border-graphite-800"
+                  wait={0.15 + index * 0.05}
                 >
                   <p className="w-full">{row.label}</p>
                   <p className="w-full">{row.value}</p>
-                </div>
+                </Arrive>
               ))}
-            </div>
+            </Arrive>
           </div>
         </section>
         <JsonLd data={catalogued} />
@@ -336,22 +342,30 @@ export default async function AircraftDetailPage({ params }: { params: Promise<D
         <div className="container gap-12">
           <div className="gap-10 md:grid md:grid-cols-2">
             {beside && (
-              <Image
-                alt={beside.alt}
-                className="rounded-3xl"
-                height={600}
-                src={beside.src}
-                width={600}
-              />
+              // Faded in while the photograph is uncovered; the box around it adds no room.
+              <Arrive variant="fadeIn">
+                <UnveilImage
+                  alt={beside.alt}
+                  className="rounded-3xl"
+                  height={600}
+                  src={beside.src}
+                  wait={0.1}
+                  width={600}
+                />
+              </Arrive>
             )}
-            <div className="top-hero-band gap-6 rounded-3xl border border-graphite-800 bg-graphite-950 p-6 py-10 pb-16 md:sticky md:gap-10 md:self-start md:p-10">
-              <h2>{name}</h2>
+            <Arrive className="top-hero-band gap-6 rounded-3xl border border-graphite-800 bg-graphite-950 p-6 py-10 pb-16 md:sticky md:gap-10 md:self-start md:p-10">
+              <Arrive as="h2" wait={0.15}>
+                {name}
+              </Arrive>
               <div className="flex flex-col gap-4">
-                {paragraphs.map((paragraph) => (
-                  <p key={paragraph}>{paragraph}</p>
+                {paragraphs.map((paragraph, index) => (
+                  <Arrive key={paragraph} as="p" wait={0.3 + index * 0.08}>
+                    {paragraph}
+                  </Arrive>
                 ))}
               </div>
-            </div>
+            </Arrive>
           </div>
           <div className="gap-10 md:grid md:grid-cols-2">
             {/* No rule after the last figure here, where the yacht card draws one
@@ -359,15 +373,17 @@ export default async function AircraftDetailPage({ params }: { params: Promise<D
             <KeyStatsCard stats={stats} title={t('keyStats')} />
             <div className="gap-10">
               {stacked.map((photo) => (
-                <Image
-                  key={photo.src}
-                  alt={photo.alt}
-                  className="rounded-3xl border border-graphite-800 bg-graphite-950"
-                  height={400}
-                  sizes="(min-width: 768px) 45vw, 90vw"
-                  src={photo.src}
-                  width={600}
-                />
+                <Arrive key={photo.src} variant="fadeIn">
+                  <UnveilImage
+                    alt={photo.alt}
+                    className="rounded-3xl border border-graphite-800 bg-graphite-950"
+                    height={400}
+                    sizes="(min-width: 768px) 45vw, 90vw"
+                    src={photo.src}
+                    wait={0.1}
+                    width={600}
+                  />
+                </Arrive>
               ))}
             </div>
           </div>

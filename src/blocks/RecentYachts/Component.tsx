@@ -3,6 +3,7 @@ import { getLocale, getTranslations } from 'next-intl/server'
 import { People, BedDouble, SecurityWorker } from '@/components/icons'
 import { YachtCard } from '@/components/cards/yacht-card'
 import { YachtCarousel } from '@/components/cards/yacht-carousel'
+import { Arrive, RiseText } from '@/components/motion/arrive'
 import type { Locale } from '@/i18n/locales'
 import { listSaleYachts } from '@/lib/data/yachts'
 import { saleYachtSpecs } from '@/lib/yachts'
@@ -17,6 +18,9 @@ import { saleYachtSpecs } from '@/lib/yachts'
  *
  * The labels the cards print come from the message catalogue. The legacy card wrote all eleven
  * of them in English on a site served in three languages (section 10.4).
+ *
+ * The frame rises with its heading's words, and each yacht arrives as it comes on screen,
+ * whether the page scrolls it there or the carousel does (section 13, entry 101).
  */
 export interface RecentYachtsProps {
   title: string
@@ -56,8 +60,8 @@ export async function RecentYachts({ title, limit }: RecentYachtsProps) {
       <div className="container">
         {/* The legacy card carried `rounded-2xl` as well, which never took effect: `.card` is
             unlayered and rounds it further (docs/adr/0006-styling-and-motion.md). */}
-        <div className="card gap-8 bg-graphite-950 p-8 md:gap-10 md:p-10">
-          <h2>{title}</h2>
+        <Arrive className="card gap-8 bg-graphite-950 p-8 md:gap-10 md:p-10">
+          <RiseText wait={0.15}>{title}</RiseText>
           <YachtCarousel labels={{ previous: t('previousYacht'), next: t('nextYacht') }}>
             {yachts.map((yacht) => (
               <YachtCard
@@ -73,7 +77,7 @@ export async function RecentYachts({ title, limit }: RecentYachtsProps) {
               />
             ))}
           </YachtCarousel>
-        </div>
+        </Arrive>
       </div>
     </section>
   )

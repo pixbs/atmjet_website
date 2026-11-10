@@ -1,6 +1,5 @@
 import { RichText } from '@payloadcms/richtext-lexical/react'
 import type { Metadata } from 'next'
-import Image from 'next/image'
 import { notFound, redirect } from 'next/navigation'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 
@@ -8,6 +7,7 @@ import { KeyStatsCard } from '@/components/cards/key-stats-card'
 import { YachtRequest } from '@/components/form/yacht-request'
 import { detailSource } from '@/lib/flight-request'
 import { Bathrooms, Cabins, Clock, Guests, Length, Tools } from '@/components/icons'
+import { Arrive, UnveilImage } from '@/components/motion/arrive'
 import { Line } from '@/components/motion/line'
 import { Gallery } from '@/components/ui/gallery'
 import { JsonLd } from '@/components/ui/json-ld'
@@ -30,6 +30,9 @@ import { siteOrigin } from '@/lib/urls'
  * carrying the locale here. A yacht with no photographs goes the same way: the legacy page
  * refused to draw one (`if (!yacht || !yacht.photos) redirect('/yachts')`) and the gallery the
  * card sits beside would be an empty column.
+ *
+ * What is below the screen arrives as it scrolls into view, as on the aircraft page (section 13,
+ * entry 101); the yacht's name is never split into words, since a name can hold a hyphen.
  */
 /**
  * The `size-10` the legacy gave every icon beside a figure, in the near-black the cards are
@@ -211,51 +214,58 @@ export default async function YachtDetailPage({ params }: { params: Promise<Deta
       <section className="md:py-16 md:pb-24" data-section="yacht-specs">
         <div className="container gap-12">
           <div className="gap-10 md:grid md:grid-cols-2">
-            <div className="overflow-clip">
+            {/* Faded in while the photograph is uncovered; the photograph keeps its stickiness. */}
+            <Arrive className="overflow-clip" variant="fadeIn">
               {last && (
-                <Image
+                <UnveilImage
                   alt={last.alt}
                   className="sticky top-hero-band rounded-3xl border border-graphite-800 bg-graphite-950"
                   height={400}
                   src={last.src}
+                  wait={0.1}
                   width={600}
                 />
               )}
-            </div>
+            </Arrive>
             {/* The rule after the last figure is the yacht card's own; the aircraft card stops
                 at the one before it (section 4). */}
             <KeyStatsCard ruleAfterLast stats={stats} title={t('keyStats')}>
               {/* Drawn whatever the field holds, as the legacy card drew it and as the sale
-                  card's rows are (issue #100): the label is part of the card, not of the value. */}
-              <div className="col-span-full">
+                  card's rows are (issue #100): the label is part of the card, not of the value.
+                  It arrives after the figures. */}
+              <Arrive className="col-span-full" wait={0.25 + stats.length * 0.08}>
                 <p>{t('included')}</p>
                 <h3>{charter.included}</h3>
-              </div>
+              </Arrive>
             </KeyStatsCard>
           </div>
           <div className="relative items-start gap-6 md:grid md:grid-cols-2 md:gap-10">
-            <div className="top-hero-band gap-6 rounded-3xl border border-graphite-800 bg-graphite-950 p-6 py-10 pb-16 md:sticky md:gap-10 md:self-start md:p-10">
-              <h2>{t('about', { name: yacht.name })}</h2>
+            <Arrive className="top-hero-band gap-6 rounded-3xl border border-graphite-800 bg-graphite-950 p-6 py-10 pb-16 md:sticky md:gap-10 md:self-start md:p-10">
+              <Arrive as="h2" wait={0.15}>
+                {t('about', { name: yacht.name })}
+              </Arrive>
               {/* The paragraphs an editor typed (issue #72). The legacy split the description
                   on full stops and dropped whatever followed the last one, so a sentence ending
                   in an abbreviation or a decimal broke in two and the closing words were lost
                   (section 13, entry 50). */}
-              <div className="flex flex-col gap-4">
+              <Arrive className="flex flex-col gap-4" wait={0.3}>
                 {yacht.description && <RichText data={yacht.description} disableContainer />}
-              </div>
-            </div>
+              </Arrive>
+            </Arrive>
             {/* The legacy took `photos.slice(2, -1).slice(2)`, which is the fifth photograph to
                 the second from last: the first four are spoken for by the band and the gallery. */}
             <div className="gap-10">
               {stacked.map((photo) => (
-                <Image
-                  key={photo.src}
-                  alt={photo.alt}
-                  className="rounded-3xl border border-graphite-800 bg-graphite-950"
-                  height={400}
-                  src={photo.src}
-                  width={600}
-                />
+                <Arrive key={photo.src} variant="fadeIn">
+                  <UnveilImage
+                    alt={photo.alt}
+                    className="rounded-3xl border border-graphite-800 bg-graphite-950"
+                    height={400}
+                    src={photo.src}
+                    wait={0.1}
+                    width={600}
+                  />
+                </Arrive>
               ))}
             </div>
           </div>
