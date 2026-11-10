@@ -140,6 +140,24 @@ test.describe('the fleet pages', () => {
     await expect.poll(opacityOf).toBe('1')
   })
 
+  test('bring in a line at the foot of a card that clips it', async ({ page }) => {
+    // On this page and at this width the first key feature's words fit one line, flush with the
+    // foot of the card: held any lower, the line would be outside the card and never seen.
+    await page.setViewportSize({ width: 667, height: 375 })
+    await page.goto(pathFor('/sales_yachts', 'en'))
+    const words = page.locator('[data-section="key-features"] [class*="aspect-portrait"] > p')
+    const opacityOf = () => words.first().evaluate((line) => getComputedStyle(line).opacity)
+    await expect.poll(opacityOf).toBe('0')
+
+    // Scrolled to as a visitor does, until the line is well inside the screen.
+    await expect(async () => {
+      await page.mouse.wheel(0, 50)
+      expect((await words.first().boundingBox())!.y).toBeLessThan(250)
+    }).toPass()
+
+    await expect.poll(opacityOf).toBe('1')
+  })
+
   test('bring a yacht in when the carousel does', async ({ page }) => {
     await page.goto(pathFor('/sales_yachts', 'en'))
     const section = page.locator('[data-section="recent-yachts"]')

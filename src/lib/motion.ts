@@ -207,12 +207,16 @@ export const riseWord: Variants = {
  * `hidden` at once, out of sight, and `custom` is how long it waits before arriving.
  */
 
-/** Words that are not a heading, and anything else that rises a little as it fades in. */
+/**
+ * Words that are not a heading, and anything else that rises a little as it fades in, held in its
+ * own box and lowered only as it arrives: held lower, a line at the foot of a card that clips it
+ * would sit outside the card and never be seen arriving.
+ */
 export const fadeUp: Variants = {
-  hidden: { opacity: 0, y: 32, transition: { duration: 0 } },
+  hidden: { opacity: 0, transition: { duration: 0 } },
   visible: (wait: number = 0) => ({
     opacity: 1,
-    y: 0,
+    y: [32, 0],
     transition: { duration: 1, ease: intro.easing.out, delay: wait },
   }),
 }
