@@ -1,7 +1,8 @@
 # Heavy tier (docs/adr/0004-testing-and-ci-strategy.md): browser tests, visual parity,
 # accessibility and Lighthouse against a deployed URL. Runs for Vercel preview
 # deployments of pull requests labelled "run-e2e", on every master push (staging),
-# nightly and on demand. Advisory on pull requests; the master run is the gate.
+# nightly and on demand; a pull request's browser tiers run against a seeded build of its
+# commit instead (#478). Advisory on pull requests; the master run is the gate.
 name: e2e
 
 on:
@@ -79,14 +80,32 @@ jobs:
     if: needs.gate.outputs.run == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    # A pull request's tiers run against a build of its commit, on the seed the specs are written
+    # for and in a database of their own: its preview reads a copy of `main` they cannot know
+    # (#478). Only that run starts the database, as an empty image starts no container.
+    services:
+      postgres:
+        image: ${{ github.event_name == 'deployment_status' && 'postgres:17-alpine' || '' }}
+        env:
+          POSTGRES_USER: payload
+          POSTGRES_PASSWORD: payload
+          POSTGRES_DB: atmjet_e2e
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U payload -d atmjet_e2e"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
     env:
       CI: 'true'
-      PLAYWRIGHT_BASE_URL: ${{ needs.gate.outputs.base_url }}
-      VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+      # Empty for a pull request, which Playwright reads as the build this job starts.
+      PLAYWRIGHT_BASE_URL: ${{ github.event_name != 'deployment_status' && needs.gate.outputs.base_url || '' }}
+      VERCEL_AUTOMATION_BYPASS_SECRET: ${{ github.event_name != 'deployment_status' && secrets.VERCEL_AUTOMATION_BYPASS_SECRET || '' }}
       # The administrator the tiers sign in as is created through the Payload Local API before the
-      # run (issue #343), in the database the target deployment reads (issue #17). The secret only
-      # has to pass `src/lib/env.ts`: sessions are signed by the deployment, not by this job.
-      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      # run (issue #343), in the database the target reads (issue #17). Against a deployment the
+      # secret only has to pass `src/lib/env.ts`: its sessions are signed by the deployment.
+      DATABASE_URL: ${{ github.event_name == 'deployment_status' && 'postgresql://payload:payload@localhost:5432/atmjet_e2e' || secrets.DATABASE_URL }}
       PAYLOAD_SECRET: ci-only-not-a-secret-0123456789
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -105,6 +124,22 @@ jobs:
           restore-keys: bun-${{ runner.os }}-
       - run: bun install --frozen-lockfile
       - run: bunx playwright install --with-deps chromium
+      - name: Seeded build
+        if: github.event_name == 'deployment_status'
+        env:
+          NEXT_PUBLIC_SITE_URL: http://localhost:3000
+        run: |
+          bun run migrate
+          bun run seed
+          bun run build
+          # Left running for every tier: Playwright reuses a server that answers its readiness URL.
+          nohup bun run start > next-start.log 2>&1 &
+          for _ in $(seq 60); do
+            curl -fs -o /dev/null http://localhost:3000/en/styleguide && exit 0
+            sleep 1
+          done
+          cat next-start.log
+          exit 1
       - name: End-to-end
         run: bun run test:e2e
       - name: Legacy baseline bundle
@@ -177,6 +212,8 @@ jobs:
           # The rows of `lighthouserc.cjs` that budget each layout match on these paths.
           LHCI_BASIC_AIRCRAFT: ${{ steps.pages.outputs.basic }}
           LHCI_GALLERY_AIRCRAFT: ${{ steps.pages.outputs.gallery }}
+          # Leaves out the audits a preview's protection decides (`lighthouserc.cjs`).
+          LHCI_PREVIEW: ${{ github.event_name == 'deployment_status' }}
         with:
           urls: |
             ${{ env.BASE_URL }}/en
